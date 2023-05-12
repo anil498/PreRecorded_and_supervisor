@@ -64,8 +64,6 @@ public class UserController {
         logger.info(getHeaders(request).toString());
         logger.info(request.getHeader("id"));
         logger.info(request.getHeader("token"));
-//        String id = request.getHeader("id");
-//        String token = request.getHeader("token");
         int accId = Integer.parseInt(request.getHeader("accId"));
         String authKey = request.getHeader("authKey");
         String ID = request.getHeader("userId");
@@ -115,24 +113,19 @@ public class UserController {
     public ResponseEntity<UserEntity> createUser(@RequestBody UserEntity user, HttpServletRequest request, HttpServletResponse response) {
         //logger.info(getHeaders(request).toString());
         logger.info(String.valueOf(user));
-//        int accId = Integer.parseInt(request.getHeader("accId"));
-//        String authKey = request.getHeader("authKey");
-//        String ID = request.getHeader("userId");
-//        String token = request.getHeader("token");
-//        UserEntity u = userRepository.findByUserId(ID);
-//        logger.info(String.valueOf(user.getFeatures().getClass()));
-//        logger.info(user.getFeatures().toString());
-// //       logger.info(String.va(user.setAccessId(Arrays.stream(user.getAccessId()).toArray())));
-        //logger.info(user.getFeatures())
-//        if(isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
+        int accId = Integer.parseInt(request.getHeader("accId"));
+        String authKey = request.getHeader("authKey");
+        String ID = request.getHeader("userId");
+        String token = request.getHeader("token");
+        if(isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
             String creation = LocalDateTime.now().format(formatter);
             user.setCreationDate(creation);
             String mypass = passwordEncoder.encode(user.getPassword());
             user.setPassword(mypass);
               return ResponseEntity.ok(userService.createUser(user));
- //           }
+            }
 
-//            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
 
     }
 

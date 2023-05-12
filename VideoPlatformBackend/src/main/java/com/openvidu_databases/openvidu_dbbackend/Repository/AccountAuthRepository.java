@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccountAuthRepository extends JpaRepository<AccountAuthEntity, Integer> {
 
-    @Query(nativeQuery = true,value = "SELECT * FROM acc_auth WHERE account_id=:accountId")
+    @Query(nativeQuery = true,value = "SELECT * FROM account_auth WHERE account_id=:accountId")
     AccountAuthEntity findById(@Param("accountId") int accountId);
 }
