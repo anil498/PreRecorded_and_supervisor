@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: com.openvidu_databases.openvidu_dbbackend.OpenviduDbBackendA
+ pplication
+
