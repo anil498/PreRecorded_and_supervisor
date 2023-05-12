@@ -1,0 +1,180 @@
+<div class="toolbar">
+  <img
+    src="assets/Axis_bank_New_Logo.png"
+    alt=""
+    width="100%"
+    height="80%"
+  />
+
+</div>
+<!-- color code #97144d
+  <h1> Student Login Form </h1>  
+    <form>  
+        <div class="container">   
+            <label>Username : </label>   
+            <input type="text" placeholder="Enter Username" name="username" required>  
+            <label>Password : </label>   
+            <input type="password" placeholder="Enter Password" name="password" required>  
+            <button type="submit">Login</button>   
+            
+           
+              
+        </div>   
+
+    </form>    
+
+    <button (click)="goToPage('master')">
+        <span>Go to master Page</span>
+     </button> -->
+
+<div class="tablediv">
+  <!--
+       <table>
+        <caption>User Details</caption>
+        <th  *ngFor="let header of headers">{{ header }}</th>
+        <th>Video Call</th>
+        
+       
+        <tr *ngFor="let row of rows">
+          <td *ngFor="let header of headers">{{ row[header] }}</td>
+          <td ><button class="callbtn" (click)="callbtnpress()">Start Call</button></td>
+        </tr>
+
+        
+      </table> -->
+
+  <!--  custom table -->
+  <table>
+    <caption>
+      User Details
+    </caption>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone No.</th>
+        <th>Gender</th>
+        <th>Address</th>
+
+        <th>Video Call</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Krishna</td>
+        <td>9876543210</td>
+        <td>Male</td>
+        <td>Mumbai</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Vishnu</td>
+        <td>9876543211</td>
+        <td>Male</td>
+        <td>Noida</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Aditi</td>
+        <td>9876543212</td>
+        <td>Female</td>
+        <td>Pune</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Shiv</td>
+        <td>9876543213</td>
+        <td>Male</td>
+        <td>Chennai</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Divya</td>
+        <td>9876543214</td>
+        <td>Female</td>
+        <td>Hyderabad</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Nirbhay</td>
+        <td>9876543215</td>
+        <td>Male</td>
+        <td>Rajasthan</td>
+
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Manoj</td>
+        <td>9876543216</td>
+        <td>Male</td>
+        <td>Kanpur</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Gunjan</td>
+        <td>9876543217</td>
+        <td>Female</td>
+        <td>Goa</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+     <tr>
+        <td>vikram</td>
+        <td>9876543218</td>
+        <td>Male</td>
+        <td>Mathura</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Vats</td>
+        <td>9876543219</td>
+        <td>Female</td>
+        <td>Kota</td>
+        <td>
+          <button class="callbtn" (click)="callbtnpress()">Start Call</button>
+        </td>
+      </tr>
+      <tr >
+            <td >Mukesh</td>
+            <td >9876543200</td>
+            <td >Male</td>
+            <td>Delhi</td>
+           <td ><button class="callbtn" (click)="callbtnpress()">Start Call</button></td>
+
+          </tr>
+         <!-- <tr >
+            <td >Raj</td>
+            <td >31</td>
+            <td >Male</td>
+            <td>Noida</td>
+           <td ><button class="callbtn" (click)="callbtnpress()">Start Call</button></td>
+
+          </tr> -->
+    </tbody>
+  </table>
+
+  <!--close         -->
+</div>
+
+<!-- <div style="margin: 50px auto;width: 50%;">
+      <h2>Please select a file: </h2>
+      <input type="file" (input)="onFileChange($event)" multiple="false">
+  </div>
+
+  <button (click)='toggleShowTable()' class="btn btn-primary">Scan</button> -->
