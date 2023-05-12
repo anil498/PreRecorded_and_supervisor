@@ -1,0 +1,379 @@
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      Create Account
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+
+  <mat-tab-group
+    #tabGroup
+    [formGroup]="userForm"
+    *ngIf="userForm"
+    [dynamicHeight]="false"
+    mat-align-tabs="center"
+  >
+    <mat-tab label="Account">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <div class="row">
+              <div class="col-12 col-custom">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Name"
+                    formControlName="name"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-custom">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="number"
+                    placeholder="Max User"
+                    formControlName="max_user"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12 col-custom">
+                <mat-form-field>
+                  <mat-label>Account Expiry Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    formControlName="acc_exp_date"
+                  />
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle
+                    matIconSuffix
+                    [for]="picker"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <!-- <mat-form-field>
+              <mat-label>Select a Logo</mat-label>
+              <input
+                type="file"
+                (change)="onPhotoSelected($event)"
+                accept="image/*"
+                style="display: none"
+              />
+              <button mat-icon-button type="button" (click)="fileInput.click()">
+                <mat-icon>photo_camera</mat-icon>
+              </button>
+              <mat-icon *ngIf="photoControl"
+                >check_circle_outline</mat-icon
+              >
+            </mat-form-field>
+            <img
+              *ngIf="photoUrl"
+              [src]="photoUrl"
+              alt="Selected photo"
+              style="border-radius: 50%; max-width: 200px; height: auto"
+            /> -->
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-10 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="Address"
+                formControlName="address"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Account Settings">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Maximum Active Sessions"
+                formControlName="max_active_sessions"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Maximum Duration (in Minutes)"
+                formControlName="max_duration"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Maximum Participants"
+                formControlName="max_participants"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-10 offset-md-1">
+            <mat-label>Select the Access you want:</mat-label>
+          </div>
+        </div>
+
+        <div class="row">
+          <section class="example-section">
+            <mat-checkbox
+              *ngFor="let access of accessData"
+              [value]="access.access_id"
+              class="col-md-10 offset-md-1"
+            >
+              {{ access.name }}
+            </mat-checkbox>
+          </section>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Feature List">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-10 offset-md-1">
+            <mat-label>Select the features you want:</mat-label>
+          </div>
+        </div>
+
+        <div class="row">
+          <section class="example-section">
+            <div *ngFor="let feature of featuresData">
+              <mat-checkbox
+                [value]="feature.feature_id"
+                class="col-md-10 offset-md-1"
+              >
+                {{ feature.name }}
+              </mat-checkbox>
+            </div>
+          </section>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="User Information">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="First Name"
+                formControlName="user_fname"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="Last Name"
+                formControlName="user_lname"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="tel"
+                placeholder="Mobile Number"
+                formControlName="mobile"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="email"
+                placeholder="Email"
+                formControlName="email"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="Login ID"
+                formControlName="login_id"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="password"
+                placeholder="Password"
+                formControlName="password"
+                [(ngModel)]="password"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="password"
+                placeholder="Confirm Password"
+                formControlName="confirm_password"
+                [(ngModel)]="confirm_password"
+              />
+              <!-- <mat-error *ngif="formGroup.hasError('passwordDoNotmatch')">
+                Password must be same
+              </mat-error> -->
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!--    <mat-tab label="Security">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="password"
+                placeholder="Password"
+                formControlName="password"
+                [(ngModel)]="password"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="password"
+                placeholder="Confirm Password"
+                formControlName="confirm_password"
+                [(ngModel)]="confirm_password"
+              />
+               <mat-error *ngif="formGroup.hasError('passwordDoNotmatch')">
+                Password must be same
+              </mat-error> 
+            </mat-form-field>
+          </div>
+        </div>
+
+      </div>
+    </mat-tab>
+
+     <mat-tab label="Settings">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Number of Active Sessions"
+                formControlName="max_active_sessions"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Duration of Sessions(in Minutes)"
+                formControlName="max_duration"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Maximum Number of Participants"
+                formControlName="max_participants"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+     -->
+  </mat-tab-group>
+
+  <div mat-dialog-actions align="end" class="actions">
+    <button
+      *ngIf="!isFirstTab()"
+      class="prev-btn"
+      mat-raised-button
+      (click)="previous()"
+    >
+      <mat-icon>navigate_before</mat-icon> Previous
+    </button>
+    <button
+      *ngIf="!isLastTab()"
+      class="btn-1"
+      mat-raised-button
+      (click)="next()"
+    >
+      Next<mat-icon>navigate_next</mat-icon>
+    </button>
+    <button
+      *ngIf="isLastTab()"
+      class="submit-btn"
+      mat-raised-button
+      (click)="submit()"
+    >
+      Submit
+    </button>
+  </div>
+</div>

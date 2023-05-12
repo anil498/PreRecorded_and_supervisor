@@ -1,0 +1,107 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Edit Profile</h4>
+            <p class="card-category">Complete your profile</p>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="row">
+                <div class="col-md-6 offset-md-1">
+                  <div class="row"><p>User Code: {{ user.userCode }}</p></div>
+                  <div class="row"><p>User Name: {{ user.userId }}</p></div>
+                  <div class="row"><p>First Name: {{ user.userFname }}</p></div>
+                  <div class="row"><p>Last Name: {{ user.userLname }}</p></div>
+                </div>
+              
+                <div class="col-md-4">
+                  <div class="card-profile">
+                    <div class="card-avatar">
+                      <a href="javascript:void(0)">
+                        <img class="img" src="./assets/img/faces/marc.jpg" />
+                      </a>
+                    </div>
+                    <div class="card-body">
+                      <h6 class="card-category text-gray">
+                        {{ user.userType }}
+                      </h6>
+                      <h4 class="card-title">
+                        {{ user.userFname }} {{ user.userLname }}
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+                
+              </div>
+
+
+              <div class="row">
+                <div class="col-md-12">
+                  <p>Address: {{ user.address }}</p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <p>Mobile: {{ user.mobile }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p>Email: {{ user.email }}</p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <p>User Type: {{ user.userType }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p>Account Type: {{ user.accType }}</p>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <p>Account Expiry Date: {{ user.accExpDate }}</p>
+                </div>
+                <div class="col-md-6">
+                  <p>Account Status: {{ user.accStatus }}</p>
+                </div>
+              </div>
+
+              <!-- <button
+                mat-raised-button
+                type="submit"
+                class="btn btn-danger pull-right"
+              >
+                Update Profile
+              </button>
+              <div class="clearfix"></div> -->
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="col-md-4">
+        <div class="card card-profile">
+          <div class="card-avatar">
+            <a href="javascript:void(0)">
+              <img class="img" src="./assets/img/faces/marc.jpg" />
+            </a>
+          </div>
+          <div class="card-body">
+            <h6 class="card-category text-gray">CEO / Co-Founder</h6>
+            <h4 class="card-title">Alec Thompson</h4>
+            <p class="card-description">
+              Don't be scared of the truth because we need to restart the human
+              foundation in truth And I love you like Kanye loves Kanye I love
+              Rick Owens’ bed design but the back is...
+            </p>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>

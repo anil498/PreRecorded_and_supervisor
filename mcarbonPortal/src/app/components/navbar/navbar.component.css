@@ -1,0 +1,21 @@
+.navbar.navbar-absolute {
+
+    background: linear-gradient(0deg, #009688, #0eb3a2);
+    color: white;
+}
+
+.icon-bar{
+    color: white !important;
+}
+
+.nav-link{
+    cursor: pointer;
+}
+ 
+.btn-action{
+    color: #009688;
+}
+
+.navbar .navbar-toggler .navbar-toggler-icon {
+    background-color: white !important;
+}

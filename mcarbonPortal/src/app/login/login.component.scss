@@ -1,0 +1,137 @@
+.container {
+  display: flex;
+  justify-content: right;
+  align-items: start;
+  height: 100vh;
+  margin-left: 200px;
+}
+
+.card {
+  width: 350px;
+  margin-top: 110px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#login-head {
+  color: black;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.login-button {
+  background: linear-gradient(0deg, #009688, #17d1be);
+  margin-top: 16px;
+  color: white;
+}
+
+.mat-card-header {
+  justify-content: center;
+}
+
+@keyframes pan-image {
+  0% {
+    background-position: 36% 42%;
+    background-size: 200%;
+  }
+
+  20% {
+    background-position: 30% 35%;
+    background-size: 200%;
+  }
+
+  20.0001% {
+    /* -- View 2 -- */
+    background-position: 60% 85%;
+    background-size: 500%;
+  }
+
+  40% {
+    background-position: 49% 81%;
+    background-size: 500%;
+  }
+
+  40.0001% {
+    /* -- View 3 -- */
+    background-position: 80% 42%;
+    background-size: 300%;
+  }
+
+  60% {
+    background-position: 84% 33%;
+    background-size: 300%;
+  }
+
+  60.0001% {
+    /* -- View 4 -- */
+    background-position: 0% 0%;
+    background-size: 300%;
+  }
+
+  80% {
+    background-position: 15% 4%;
+    background-size: 300%;
+  }
+
+  80.0001% {
+    /* -- View 5 -- */
+    background-position: 80% 10%;
+    background-size: 300%;
+  }
+
+  100% {
+    background-position: 72% 14%;
+    background-size: 300%;
+  }
+}
+
+// .back {
+//   background-image: url("../../assets/img/back.png");
+//   height: 100%;
+//   width: 100%;
+//   position: absolute;
+//   z-index: 1;
+//   left: 0px;
+//   top: 0px;
+//   background-size: 300%;
+//   background-position: 0% 0%;
+//   // filter: sepia(100%) hue-rotate(160deg);
+//   opacity: 0.9;
+//   animation: pan-image 15s linear infinite;
+// }
+
+.back {
+  background-image: url("../../assets/img/mcarbon_7.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100%;
+}
+
+.alert {
+  padding: 0.75rem 1.25rem;
+}
+
+.alert-danger {
+  background-color: #e9bdc2;
+  color: #b02a37;
+  border-color: #e7908c;
+  border-radius: 10px;
+  font-weight: bolder;
+  font-size: 0.8rem;
+}
+
+::ng-deep .mat-snack-bar-container {
+  background: linear-gradient(60deg, #e8f1ee, #ffffff) !important;
+  color:  #be1818 !important;
+  font-weight: bold;
+}
+
+::ng-deep .mat-simple-snackbar-action {
+  color: black !important;
+}

@@ -1,0 +1,294 @@
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row row-1">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <h4 class="card-title">Send Call Link</h4>
+            <p class="card-category">Enter the details to send the link</p>
+          </div>
+
+          <div class="card-body">
+            <mat-tab-group mat-align-tabs="center">
+              <mat-tab label="SMS">
+                <form id="form1" [formGroup]="userForm" *ngIf="userForm">
+                  <div class="">
+                    <div class="row row-content">
+                      <div class="col-12 offset-xl-2 col-xl-8">
+                        <label
+                          id="phone"
+                          style="
+                            text-align: center;
+                            width: 100%;
+                            color: rgba(75, 72, 72, 0.356);
+                          "
+                          for="firstName"
+                          >Enter Mobile Number to Send Link:
+                        </label>
+                        <input
+                          type="text"
+                          id="fname"
+                          name="firstname"
+                          placeholder="Mobile Number"
+                          formControlName="msisdn"
+                          [(ngModel)]="inputValue"
+                        />
+                        <select formControlName="room">
+                          <option
+                            value=""
+                            style="
+                              text-align: center;
+                              width: 100%;
+                              color: #333333;
+                            "
+                            disabled
+                            selected
+                          >
+                            Select a Session
+                          </option>
+                          <option
+                            *ngFor="let room of rooms"
+                            [value]="room.value"
+                          >
+                            {{ room.label }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 text-center">
+                        <button
+                          class="fbutton1 fbutton"
+                          (click)="submitForm('sms')"
+                        >
+                          <i>SMS</i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 offset-4 text-center" *ngIf="phoneError">
+                        <p class="alert alert-danger">
+                          <strong>Enter valid mobile number</strong>
+                        </p>
+                      </div>
+                      <div class="col-4 offset-4 text-center" *ngIf="roomError">
+                        <p class="alert alert-danger">
+                          <strong>Please select a session</strong>
+                        </p>
+                      </div>
+                      <div class="row" *ngIf="showDescription">
+                        <div class="col-12 offset-xl-2 col-xl-8">
+                          <p class="alert alert-success">
+                            <strong>{{ state }}!</strong> Please find video call
+                            link:-
+                            {{ callUrl }}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="row" *ngIf="failedMessage">
+                        <div class="col-12 offset-xl-2 col-xl-8">
+                          <p class="alert alert-danger">
+                            <strong>{{ state }}!</strong>{{ failedMessageShow }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form></mat-tab
+              >
+              <mat-tab label="Whatsapp"
+                ><form id="form1" [formGroup]="userForm" *ngIf="userForm">
+                  <div class="">
+                    <div class="row row-content">
+                      <div class="col-12 offset-xl-2 col-xl-8">
+                        <label
+                          id="phone"
+                          style="
+                            text-align: center;
+                            width: 100%;
+                            color: rgba(75, 72, 72, 0.356);
+                          "
+                          for="firstName"
+                          >Enter Mobile Number to Send Link:
+                        </label>
+                        <input
+                          type="text"
+                          id="fname"
+                          name="firstname"
+                          placeholder="Mobile Number"
+                          formControlName="msisdn"
+                          [(ngModel)]="inputValue"
+                        />
+                        <select formControlName="room">
+                          <option
+                            value=""
+                            style="
+                              text-align: center;
+                              width: 100%;
+                              color: #333333;
+                            "
+                            disabled
+                            selected
+                          >
+                            Select a Session
+                          </option>
+                          <option
+                            *ngFor="let room of rooms"
+                            [value]="room.value"
+                          >
+                            {{ room.label }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 text-center">
+                        <button
+                          class="fbutton1 fbutton"
+                          (click)="submitForm('whatsapp')"
+                        >
+                          <i>Whatsapp</i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 offset-4 text-center" *ngIf="phoneError">
+                        <p class="alert alert-danger">
+                          <strong>Enter valid mobile number</strong>
+                        </p>
+                      </div>
+                      <div class="col-4 offset-4 text-center" *ngIf="roomError">
+                        <p class="alert alert-danger">
+                          <strong>Please select a session</strong>
+                        </p>
+                      </div>
+                      <div class="row" *ngIf="showDescription">
+                        <div class="col-12 offset-xl-2 col-xl-8">
+                          <p class="alert alert-success">
+                            <strong>{{ state }}!</strong> Please find video call
+                            link:-
+                            {{ callUrl }}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="row" *ngIf="failedMessage">
+                        <div class="col-12 offset-xl-2 col-xl-8">
+                          <p class="alert alert-danger">
+                            <strong>{{ state }}!</strong>{{ failedMessageShow }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </mat-tab>
+
+              <mat-tab label="Notification"
+                ><form id="form1" [formGroup]="userForm" *ngIf="userForm">
+                  <div class="">
+                    <div class="row row-content">
+                      <div class="col-12 offset-xl-2 col-xl-8">
+                        <label
+                          id="phone"
+                          style="
+                            text-align: center;
+                            width: 100%;
+                            color: rgba(75, 72, 72, 0.356);
+                          "
+                          for="firstName"
+                          >Enter Mobile Number to Send Link:
+                        </label>
+                        <input
+                          type="text"
+                          id="fname"
+                          name="firstname"
+                          placeholder="Mobile Number"
+                          formControlName="msisdn"
+                          [(ngModel)]="inputValue"
+                        />
+                        <input
+                          type="text"
+                          id="fname"
+                          name="firstname"
+                          placeholder="Notification Title"
+                          formControlName="title"
+                          [(ngModel)]="titleValue"
+                        />
+                        <input
+                          type="text"
+                          id="fname"
+                          name="firstname"
+                          placeholder="Notification Body"
+                          formControlName="body"
+                          [(ngModel)]="bodyValue"
+                        />
+                        <select formControlName="room">
+                          <option
+                            value=""
+                            style="
+                              text-align: center;
+                              width: 100%;
+                              color: #333333;
+                            "
+                            disabled
+                            selected
+                          >
+                            Select a Session
+                          </option>
+                          <option
+                            *ngFor="let room of rooms"
+                            [value]="room.value"
+                          >
+                            {{ room.label }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12 text-center">
+                        <button
+                          class="fbutton1 fbutton"
+                          (click)="submitForm('notify')"
+                        >
+                          <i>Notification</i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-4 offset-4 text-center" *ngIf="phoneError">
+                        <p class="alert alert-danger">
+                          <strong>Enter valid mobile number</strong>
+                        </p>
+                      </div>
+                      <div class="col-4 offset-4 text-center" *ngIf="roomError">
+                        <p class="alert alert-danger">
+                          <strong>Please select a session</strong>
+                        </p>
+                      </div>
+                      <div class="row" *ngIf="showDescription">
+                        <div class="col-12 offset-xl-2 col-xl-8">
+                          <p class="alert alert-success">
+                            <strong>{{ state }}!</strong> Please find video call
+                            link:-
+                            {{ callUrl }}
+                          </p>
+                        </div>
+                      </div>
+                      <div class="row" *ngIf="failedMessage">
+                        <div class="col-12 offset-xl-2 col-xl-8">
+                          <p class="alert alert-danger">
+                            <strong>{{ state }}!</strong>{{ failedMessageShow }}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form></mat-tab
+              >
+            </mat-tab-group>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

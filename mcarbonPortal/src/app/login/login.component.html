@@ -1,0 +1,77 @@
+<div class="back">
+  <div class="container">
+    <mat-card class="card">
+      <mat-card-header>
+        <mat-card-title id="login-head">Login</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="form" [formGroup]="loginForm">
+          <mat-form-field class="form-field">
+            <input
+              matInput
+              type="text"
+              placeholder="Username"
+              formControlName="username"
+            />
+          </mat-form-field>
+          <mat-form-field class="form-field">
+            <input
+              matInput
+              [type]="hide ? 'password' : 'text'"
+              placeholder="Password"
+              formControlName="password"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              (click)="hide = !hide"
+              [attr.aria-label]="hide ? 'Show password' : 'Hide password'"
+            >
+              <mat-icon>{{ hide ? "visibility_off" : "visibility" }}</mat-icon>
+            </button>
+          </mat-form-field>
+          <button mat-raised-button class="login-button" (click)="login()">
+            Login
+          </button>
+          <div class="row">
+            <div class="col-8 offset-2 text-center" *ngIf="emptyUname">
+              <p class="alert alert-danger">
+                <strong>Enter a Username</strong>
+              </p>
+            </div>
+            <div class="col-8 offset-2 text-center" *ngIf="emptyPass">
+              <p class="alert alert-danger">
+                <strong>Enter Password</strong>
+              </p>
+            </div>
+            <!-- <div class="row" *ngIf="showDescription">
+              <div class="col-12 offset-xl-2 col-xl-8">
+                <p class="alert alert-success">
+                  <strong>{{ state }}!</strong> Please find video call
+                  link:-
+                  {{ callUrl }}
+                </p>
+              </div>
+            </div> -->
+            <!-- <div class="col-8 offset-2 offset-xl-2 col-xl-8 text-center" *ngIf="failedMessage">
+              <p class="alert alert-danger">
+                <strong>{{ state }}!</strong>{{ failedMessageShow }}
+              </p>
+            </div> -->
+          </div>
+
+          <!-- <div class="row" *ngIf="emptyUname">
+            <div class="" style="text-align: center; color: red">
+              <p id="phoneError">Please Enter Username</p>
+            </div>
+          </div>
+          <div class="row" *ngIf="emptyPass">
+            <div class="" style="text-align: center; color: red">
+              <p id="roomError">Please Enter Password</p>
+            </div>
+          </div> -->
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

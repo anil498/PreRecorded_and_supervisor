@@ -1,0 +1,7 @@
+.logo::after{
+    height: 0px !important;
+}
+
+.logo{
+    margin-bottom:30px !important
+}
