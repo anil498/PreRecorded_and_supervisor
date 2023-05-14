@@ -152,7 +152,8 @@
             <mat-checkbox
               *ngFor="let access of accessData"
               [value]="access.access_id"
-              class="col-md-10 offset-md-1"
+              class="col-md-3 offset-md-1"
+              (change)="addAccessId(access, $event.checked)"
             >
               {{ access.name }}
             </mat-checkbox>
@@ -168,16 +169,39 @@
             <mat-label>Select the features you want:</mat-label>
           </div>
         </div>
-
         <div class="row">
           <section class="example-section">
-            <div *ngFor="let feature of featuresData">
-              <mat-checkbox
-                [value]="feature.feature_id"
-                class="col-md-10 offset-md-1"
-              >
-                {{ feature.name }}
-              </mat-checkbox>
+            <div *ngFor="let feature of featuresData" class="row">
+              <div class="col-md-4 offset-md-1">
+                <mat-checkbox
+                  [value]="feature.feature_id"
+                  (change)="
+                    showMetaList(feature, $event.checked);
+                    updateSelectedFeaturesMeta(
+                      feature.feature_id,
+                      feature.meta_list
+                    )
+                  "
+                >
+                  {{ feature.name }}
+                </mat-checkbox>
+              </div>
+              <div class="col-md-6" *ngIf="feature.showMetaList">
+                <div class="row">
+                  <mat-form-field
+                    *ngFor="let meta of feature.selectedMetaList"
+                    class="col-md-6"
+                  >
+                    <input
+                      matInput
+                      value="{{ meta.value }}"
+                      placeholder="{{ meta.key }}"
+                      #metaValue
+                      (change)="setMetaValue(feature.feature_id,meta.key,metaValue.value)"
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
             </div>
           </section>
         </div>
@@ -273,81 +297,6 @@
         </div>
       </div>
     </mat-tab>
-
-    <!--    <mat-tab label="Security">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-5 offset-md-1">
-            <mat-form-field>
-              <input
-                matInput
-                type="password"
-                placeholder="Password"
-                formControlName="password"
-                [(ngModel)]="password"
-              />
-            </mat-form-field>
-          </div>
-          <div class="col-md-5">
-            <mat-form-field>
-              <input
-                matInput
-                type="password"
-                placeholder="Confirm Password"
-                formControlName="confirm_password"
-                [(ngModel)]="confirm_password"
-              />
-               <mat-error *ngif="formGroup.hasError('passwordDoNotmatch')">
-                Password must be same
-              </mat-error> 
-            </mat-form-field>
-          </div>
-        </div>
-
-      </div>
-    </mat-tab>
-
-     <mat-tab label="Settings">
-      <div class="container">
-        <div class="row">
-          <div class="col-md-5 offset-md-1">
-            <mat-form-field>
-              <input
-                matInput
-                type="number"
-                placeholder="Number of Active Sessions"
-                formControlName="max_active_sessions"
-              />
-            </mat-form-field>
-          </div>
-          <div class="col-md-5">
-            <mat-form-field>
-              <input
-                matInput
-                type="number"
-                placeholder="Duration of Sessions(in Minutes)"
-                formControlName="max_duration"
-              />
-            </mat-form-field>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-5 offset-md-1">
-            <mat-form-field>
-              <input
-                matInput
-                type="number"
-                placeholder="Maximum Number of Participants"
-                formControlName="max_participants"
-              />
-            </mat-form-field>
-          </div>
-        </div>
-      </div>
-    </mat-tab>
-
-     -->
   </mat-tab-group>
 
   <div mat-dialog-actions align="end" class="actions">

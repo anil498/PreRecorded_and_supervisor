@@ -202,12 +202,13 @@ export class RestService {
     maxUser: number,
     expDate: string,
 
-    accessId: number[],
     max_active_sessions: number,
     max_duration: number,
     max_participants: number,
+    accessId: number[],
 
     features: number[],
+    featuresMeta: any,
 
     fname: string,
     lname: string,
@@ -231,8 +232,8 @@ export class RestService {
       },
 
       features,
-      features_meta: {},
-      
+      featuresMeta,
+
       fname,
       lname,
       contact,

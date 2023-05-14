@@ -36,8 +36,6 @@ export class CreateAccountComponent implements OnInit {
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
-  photoControl: boolean = false;
-  photoUrl: string = "";
 
   user_fname: string;
   user_lname: string;
@@ -47,25 +45,13 @@ export class CreateAccountComponent implements OnInit {
 
   password: string;
   confirm_password: string;
-
-  access: number[];
-  accessList = [
-    { label: "Creation", value: 1 },
-    { label: "Updation", value: 2 },
-    { label: "View", value: 3 },
-    { label: "Delete", value: 4 },
-  ];
-
-  features: number[];
-  featureList = [
-    { label: "Recording", value: 1 },
-    { label: "Live Chat", value: 2 },
-    { label: "Screen Sharing", value: 3 },
-    { label: "Video Sharing", value: 4 },
-  ];
+  max_duration: number;
+  max_active_sessions: number;
+  max_participants: number;
 
   // featuresData: any = this.restService.getData().features;
   // accessData: any = this.restService.getData().access;
+  selectedAccessId: number[] = [];
   accessData = [
     {
       access_id: 16,
@@ -85,36 +71,47 @@ export class CreateAccountComponent implements OnInit {
       order: 1,
       p_id: 1,
     },
+    {
+      access_id: 26,
+      name: "User Creation",
+      order: 1,
+      p_id: 2,
+    },
+    {
+      access_id: 27,
+      name: "User Deletion",
+      order: 1,
+      p_id: 2,
+    },
   ];
 
+  selectedFeatures: number[] = [];
   featuresData = [
     {
       feature_id: 1,
       name: "Recording",
       meta_list: {
-        max_time: 0,
-        max_dur: 0,
+        max_time: null,
+        max_dur: null,
       },
     },
     {
       feature_id: 2,
       name: "Screen Sharing",
       meta_list: {
-        refresh_rate: 0,
+        refresh_rate: null,
       },
     },
     {
       feature_id: 3,
       name: "Live Chat",
       meta_list: {
-        color: "",
+        color: null,
       },
     },
   ];
 
-  max_duration: number;
-  max_active_sessions: number;
-  max_participants: number;
+  selectedFeaturesMeta = {};
 
   constructor(
     private router: Router,
@@ -124,6 +121,40 @@ export class CreateAccountComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {
     this.loginResponse = this.restService.getToken();
+  }
+
+  updateSelectedFeaturesMeta(featureId, metaValue) {
+    if (!this.selectedFeaturesMeta[featureId]) {
+      this.selectedFeaturesMeta[featureId] = {}; 
+    }
+    this.selectedFeaturesMeta[featureId] = metaValue;
+  }
+
+  setMetaValue(featureId, metaKey, metaValue){
+    this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
+  }
+  showMetaList(feature: any, isChecked: boolean) {
+    if (isChecked) {
+      this.selectedFeatures.push(feature.feature_id);
+      feature.showMetaList = true;
+      feature.selectedMetaList = Object.keys(feature.meta_list).map((key) => {
+        return { key: key, value: feature.meta_list[key] };
+      });
+    } else {
+      const index = this.selectedFeatures.indexOf(feature.feature_id);
+      this.selectedFeatures.splice(index, 1);
+      feature.showMetaList = false;
+      feature.selectedMetaList = [];
+    }
+  }
+
+  addAccessId(access: any, isChecked: boolean) {
+    if (isChecked) {
+      this.selectedAccessId.push(access.access_id);
+    } else {
+      const index = this.selectedAccessId.indexOf(access.access_id);
+      this.selectedAccessId.splice(index, 1);
+    }
   }
 
   async ngOnInit(): Promise<void> {
@@ -164,23 +195,19 @@ export class CreateAccountComponent implements OnInit {
     );
   }
 
-  onPhotoSelected(event) {
-    const file: File = event.target.files[0];
-    const reader: FileReader = new FileReader();
+  // onPhotoSelected(event) {
+  //   const file: File = event.target.files[0];
+  //   const reader: FileReader = new FileReader();
 
-    reader.onloadend = (e) => {
-      this.photoUrl = reader.result as string;
-      this.photoControl = true;
-    };
+  //   reader.onloadend = (e) => {
+  //     this.photoUrl = reader.result as string;
+  //     this.photoControl = true;
+  //   };
 
-    if (file) {
-      reader.readAsDataURL(file);
-    }
-  }
-
-  get options() {
-    return this.userForm.get("options") as FormArray;
-  }
+  //   if (file) {
+  //     reader.readAsDataURL(file);
+  //   }
+  // }
 
   checkPasswords(group: FormGroup) {
     const password = group.controls.password.value;
@@ -231,6 +258,10 @@ export class CreateAccountComponent implements OnInit {
       " " +
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
 
+    this.max_duration = this.userForm.value.max_duration;
+    this.max_participants = this.userForm.value.max_participants;
+    this.max_active_sessions = this.userForm.value.max_active_sessions;
+
     this.user_fname = this.userForm.value.user_fname;
     this.user_lname = this.userForm.value.user_lname;
     this.mobile = this.userForm.value.mobile;
@@ -238,19 +269,8 @@ export class CreateAccountComponent implements OnInit {
     this.login_id = this.userForm.value.login_id;
 
     this.password = this.userForm.value.password;
-    this.access = this.userForm.value.accessList;
 
-    this.max_duration = this.userForm.value.max_duration;
-    this.max_participants = this.userForm.value.max_participants;
-    this.max_active_sessions = this.userForm.value.max_active_sessions;
-
-    this.features = this.userForm.value.featureList;
-    this.features = [1, 2];
-    const selectedOptions = this.options.value
-      .filter((opt) => opt.selected)
-      .map((opt) => opt.value);
-    console.warn(selectedOptions);
-
+    console.warn(this.selectedFeaturesMeta);      
     let response: any;
 
     try {
@@ -262,13 +282,13 @@ export class CreateAccountComponent implements OnInit {
         this.max_user,
         this.exp_date,
 
-        this.access,
         this.max_active_sessions,
         this.max_duration,
         this.max_participants,
+        this.selectedAccessId.sort(),
 
-        this.features,
-
+        this.selectedFeatures.sort(),
+        this.selectedFeaturesMeta,
         this.user_fname,
         this.user_lname,
         this.mobile,
