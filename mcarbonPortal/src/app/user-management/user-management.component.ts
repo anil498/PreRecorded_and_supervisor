@@ -109,17 +109,16 @@ export class UserManagementComponent implements OnInit {
 
   openSnackBar(message: string, color: string) {
     console.warn(this.token + "\n" + this.userId);
-    this.restService.getUserList(this.token, this.userId).then(
-      (response) => {
-        this.users = response;
-        console.log(this.users);
-        this.dataSourceWithPageSize.data = this.users;
-      },
-      (error) => {
-        console.log(error.status);
-      }
-    );
-
+    // this.restService.getUserList(this.token, this.userId).then(
+    //   (response) => {
+    //     this.users = response;
+    //     console.log(this.users);
+    //     this.dataSourceWithPageSize.data = this.users;
+    //   },
+    //   (error) => {
+    //     console.log(error.status);
+    //   }
+    // );
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;
     snackBarConfig.panelClass = [color];

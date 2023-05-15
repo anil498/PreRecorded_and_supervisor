@@ -8,6 +8,7 @@ import {
   OnDestroy,
 } from "@angular/core";
 
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatTabGroup } from "@angular/material/tabs";
 import { MatDialogRef } from "@angular/material/dialog";
@@ -29,6 +30,8 @@ export class FormDialogComponent implements OnInit {
   userForm: FormGroup;
   messageResponse: any;
   loginResponse: any;
+
+  emptyField: boolean = false;
 
   user_fname: string;
   user_lname: string;
@@ -113,7 +116,8 @@ export class FormDialogComponent implements OnInit {
     private dialogRef: MatDialogRef<FormDialogComponent>,
     private restService: RestService,
     private fb: FormBuilder,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private snackBar: MatSnackBar
   ) {}
 
   updateSelectedFeaturesMeta(featureId, metaValue) {
@@ -203,6 +207,7 @@ export class FormDialogComponent implements OnInit {
   }
 
   async submit() {
+    this.emptyField = false;
     this.user_fname = this.userForm.value.user_fname;
     this.user_lname = this.userForm.value.user_lname;
     this.mobile = this.userForm.value.mobile;
@@ -220,6 +225,13 @@ export class FormDialogComponent implements OnInit {
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
+
+    if(this.user_fname == null || this.user_lname == null || this.mobile == null || this.email == null || this.login_id == null || this.password == null || this.confirm_password == null|| this.max_active_sessions == null || this.max_duration == null || this.max_participants){
+      //this.emptyField = true;
+      this.openSnackBar("All fields are mandatory", "snackBar");
+      this.timeOut(3000);
+      return;
+    }
 
     let response: any;
     try {
@@ -254,5 +266,20 @@ export class FormDialogComponent implements OnInit {
     this.messageResponse = response;
     this.dialogRef.close();
     this.restService.closeDialog();
+  }
+
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    this.snackBar.open(message, "Dismiss", snackBarConfig);
+  }
+
+  private timeOut(time: number) {
+    console.warn(this.emptyField);
+    setTimeout(() => {
+      this.emptyField = false;
+    }, time);
+    console.warn(this.emptyField);
   }
 }

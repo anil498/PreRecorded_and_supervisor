@@ -29,6 +29,7 @@ export class RestService {
   setData(response: any) {
     this._response = response;
   }
+  
   setToken(value: string) {
     this._token = value;
   }
@@ -192,7 +193,7 @@ export class RestService {
       },
 
       features,
-      featuresMeta
+      featuresMeta,
     });
   }
 
@@ -223,7 +224,6 @@ export class RestService {
     return this.postRequest2(type, {
       name,
       address,
-      logo,
       maxUser,
       expDate,
 
@@ -317,9 +317,14 @@ export class RestService {
 
   async getUserList(token: string, id: string) {
     console.warn(token + "\n" + id);
+    const accId = 102;
+    const authKey =
+      "AccounteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJpYXQiOjE2ODQwNjE4MjEsImV4cCI6MTY4NDE0ODIyMX0.oDI2pKx1orZ0QlgqTGfRSkvRkocJy65tR6VTGKZTyZU102";
     const headers = new HttpHeaders({
       token: `${token}`,
-      id: `${id}`,
+      userId: `${id}`,
+      accId: `${accId}`,
+      authKey: `${authKey}`,
     });
     try {
       return lastValueFrom(
@@ -337,9 +342,14 @@ export class RestService {
   }
   async getAccountList(token: string, id: string) {
     console.warn(token + "\n" + id);
+    const accId = 102;
+    const authKey =
+      "AccounteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJpYXQiOjE2ODQwNjE4MjEsImV4cCI6MTY4NDE0ODIyMX0.oDI2pKx1orZ0QlgqTGfRSkvRkocJy65tR6VTGKZTyZU102";
     const headers = new HttpHeaders({
       token: `${token}`,
-      id: `${id}`,
+      userId: `${id}`,
+      accId: `${accId}`,
+      authKey: `${authKey}`,
     });
     try {
       return lastValueFrom(

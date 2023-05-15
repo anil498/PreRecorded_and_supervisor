@@ -30,7 +30,7 @@ export class CreateAccountComponent implements OnInit {
   messageResponse: any;
   loginResponse: any;
 
-  nameError = false;
+  emptyError = false;
   maxUserError: boolean;
   expDateError: boolean;
   addressError: boolean;
@@ -259,10 +259,10 @@ export class CreateAccountComponent implements OnInit {
   }
 
   async submit() {
-    this.nameError = false;
+    this.emptyError = false;
     // this.maxUserError = false;
     // this.expDateError = false;
-    this.addressError = false;
+    // this.addressError = false;
     // this.maxSessionError = false;
     // this.maxDurationError = false;
     // this.maxParticiapntsError = false;
@@ -278,15 +278,12 @@ export class CreateAccountComponent implements OnInit {
     this.address = this.userForm.value.address;
     this.max_user = this.userForm.value.max_user;
     this.acc_exp_date = this.userForm.value.acc_exp_date;
-    if (!this.acc_exp_date) {
-      this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
-      this.exp_date =
-        this.exp_date +
-        " " +
-        this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
-    } else {
-      this.exp_date = "";
-    }
+    this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
+    this.exp_date =
+      this.exp_date +
+      " " +
+      this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
+
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
@@ -316,10 +313,10 @@ export class CreateAccountComponent implements OnInit {
       this.login_id == null ||
       this.confirm_password == null
     ) {
-      console.warn(this.nameError);
-      this.nameError = true;
+      console.warn(this.emptyError);
+      this.emptyError = true;
       this.timeOut(3000);
-      console.warn(this.nameError);
+      console.warn(this.emptyError);
       return;
     }
 
@@ -362,10 +359,10 @@ export class CreateAccountComponent implements OnInit {
   }
 
   private timeOut(time: number) {
-    console.warn(this.nameError);
+    console.warn(this.emptyError);
     setTimeout(() => {
-      this.nameError = false;
+      this.emptyError = false;
     }, time);
-    console.warn(this.nameError);
+    console.warn(this.emptyError);
   }
 }

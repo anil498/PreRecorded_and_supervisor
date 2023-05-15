@@ -42,7 +42,7 @@ export class AccountManagementComponent implements OnInit {
     "name",
     "address",
     "maxUser",
-    "accExpDate",
+    "expDate",
     "Action",
   ];
   cols: any[] = [
@@ -108,16 +108,16 @@ export class AccountManagementComponent implements OnInit {
 
   openSnackBar(message: string, color: string) {
     console.warn(this.token + "\n" + this.userId);
-    this.restService.getAccountList(this.token, this.userId).then(
-      (response) => {
-        this.accounts = response;
-        console.log(this.accounts);
-        this.dataSourceWithPageSize.data = this.accounts;
-      },
-      (error) => {
-        console.log(error.status);
-      }
-    );
+    // this.restService.getAccountList(this.token, this.userId).then(
+    //   (response) => {
+    //     this.accounts = response;
+    //     console.log(this.accounts);
+    //     this.dataSourceWithPageSize.data = this.accounts;
+    //   },
+    //   (error) => {
+    //     console.log(error.status);
+    //   }
+    // );
 
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;

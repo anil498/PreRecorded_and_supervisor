@@ -83,6 +83,7 @@ export class LoginComponent implements OnInit {
         this.password
       );
       this.token = loginResponse.token;
+      loginResponse.user_data = JSON.parse(loginResponse.user_data);
       console.warn(loginResponse);
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);

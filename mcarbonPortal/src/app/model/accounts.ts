@@ -3,5 +3,5 @@ export interface Accounts{
     name: string,
     address: string,
     maxUser: number,
-    accExpDate: string,
+    expDate: string,
 }

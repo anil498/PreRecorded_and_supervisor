@@ -1,8 +1,8 @@
-.card-1{
+.card-1 {
   height: 400px !important;
 }
 
-.card-header{
+.card-header {
   margin-bottom: 10px;
 }
 
@@ -10,15 +10,37 @@
   background-color: #e63b37;
 }
 
+/* Alert message */
+.alert {
+  padding: 0.75rem 1.25rem;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.alert-danger {
+  background-color: #e9bdc2;
+  color: #b02a37;
+  border-color: #e7908c;
+  border-radius: 10px;
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
 .btn-1 {
   background: linear-gradient(60deg, #009688, #17d1be);
   color: white;
-  width: 120px
+  width: 120px;
 }
-.prev-btn{
-    background: linear-gradient(60deg,#17d1be ,#009688 );
+.prev-btn {
+  background: linear-gradient(60deg, #17d1be, #009688);
   color: white;
-  width: 120px
+  width: 120px;
 }
 
 .submit-btn {
@@ -27,29 +49,33 @@
   width: 120px;
 }
 
-.actions{
+.actions {
   margin-top: 10px;
 }
 
-.row{
+.row {
   margin-left: auto;
   margin-right: auto;
 }
-mat-tab-group{
+mat-tab-group {
   min-height: 350px;
 }
 
-::ng-deep .mat-checkbox-checked .mat-checkbox-background, 
-::ng-deep .mat-checkbox-indeterminate .mat-checkbox-background .mat-checkbox-ripple.mat-ripple-active .mat-ripple-element {
-  background-color:  #17d1be !important;
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+::ng-deep
+  .mat-checkbox-indeterminate
+  .mat-checkbox-background
+  .mat-checkbox-ripple.mat-ripple-active
+  .mat-ripple-element {
+  background-color: #17d1be !important;
   border-color: #17d1be !important;
-} 
+}
 
-.container{
+.container {
   padding-top: 10px;
 }
 
-.example-section{
+.example-section {
   margin-top: 10px;
 }
 
@@ -63,15 +89,16 @@ mat-tab-group{
   font-size: 0.75rem;
 }
 
-::ng-deep .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
   background-color: #009688;
 }
 
-input[type=file] {
+input[type="file"] {
   display: none;
 }
 
-button[type=button] {
+button[type="button"] {
   border-radius: 50%;
 }
 
@@ -80,7 +107,7 @@ img {
 }
 
 ::ng-deep .mat-datepicker-content {
-  margin-top: 100px!important;
+  margin-top: 100px !important;
 }
 
 .close-btn {
