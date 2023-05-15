@@ -31,7 +31,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Modifying
     @Transactional
-    @Query(nativeQuery = true, value = "update user_data set last_login = CURRENT_TIMESTAMP where login_id = :loginId")
+    @Query(nativeQuery = true, value = "update user_data set last_login = TIMESTAMP where login_id = :loginId")
     void setLastLogin(@Param("loginId") String userId);
 
     @Modifying

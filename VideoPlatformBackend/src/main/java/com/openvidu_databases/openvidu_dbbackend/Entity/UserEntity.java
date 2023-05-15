@@ -54,7 +54,9 @@ public class UserEntity implements Serializable {
     private String creationDate;
 
     @Column(name = "last_login")
-    private String lastLogin;
+  //  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
+  //  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime lastLogin;
 
     @Column(name = "exp_date")
     private String expDate;
@@ -158,11 +160,11 @@ public class UserEntity implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public String getLastLogin() {
+    public LocalDateTime getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(String lastLogin) {
+    public void setLastLogin(LocalDateTime lastLogin) {
         this.lastLogin = lastLogin;
     }
 

@@ -1,11 +1,15 @@
 package com.openvidu_databases.openvidu_dbbackend.Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openvidu_databases.openvidu_dbbackend.Constant.RequestMappings;
 import com.openvidu_databases.openvidu_dbbackend.Entity.AccountAuthEntity;
+import com.openvidu_databases.openvidu_dbbackend.Entity.FeatureEntity;
 import com.openvidu_databases.openvidu_dbbackend.Entity.UserAuthEntity;
 import com.openvidu_databases.openvidu_dbbackend.Entity.UserEntity;
 import com.openvidu_databases.openvidu_dbbackend.Exception.UserNotAuthorizedException;
 import com.openvidu_databases.openvidu_dbbackend.Repository.AccountAuthRepository;
+import com.openvidu_databases.openvidu_dbbackend.Repository.FeatureRepository;
 import com.openvidu_databases.openvidu_dbbackend.Repository.UserAuthRepository;
 import com.openvidu_databases.openvidu_dbbackend.Repository.UserRepository;
 import com.openvidu_databases.openvidu_dbbackend.Services.UserService;
@@ -49,6 +53,9 @@ public class UserController {
 
     @Autowired
     AccountAuthRepository accountAuthRepository;
+
+    @Autowired
+    private FeatureRepository featureRepository;
 
     @Value("${secret.key}")
     private String secret;
@@ -159,7 +166,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> params) {
+    public ResponseEntity<?> login(@RequestBody Map<String, String> params,HttpServletRequest request) throws JsonProcessingException {
         String id = params.get("userId");
         String password = params.get("userPassword");
 
@@ -169,23 +176,36 @@ public class UserController {
         UserAuthEntity user = userAuthRepository.findById(id);
         UserEntity user1 = userRepository.findByUserId(id);
 
+        int accId = Integer.parseInt(request.getHeader("accId"));
+        String authKey = request.getHeader("authKey");
+  //      if(isValidAuthKey(accId,authKey)){
         if (user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(id)) {
             if(isValidTokenLogin(id)){
+                ObjectMapper obj = new ObjectMapper();
+                String res = obj.writeValueAsString(userRepository.findByUserId(id));
                 HashMap<String,String> response=new HashMap<>();
                 response.put("token",user.getToken());
-                response.put("user_data",user1.toString());
+                response.put("user_data",res);
+                response.put("status_code","200");
+                response.put("status_message","Login Successful");
+ //               response.put("features", String.valueOf(byFeature(id)));
                 logger.info(user1.toString());
-                userRepository.setLastLogin(id);
+         //       String lastlogin = LocalDateTime.now().format(formatter);
+        //        user1.setLastLogin(lastlogin);
+        //        userRepository.setLastLogin(id);
+                logger.info("Last Login : "+user1.getLastLogin());
                 return ResponseEntity.ok(response);
             }
             else {
 
                 if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
-                    String token = "User"+generateToken(id)+id;
+                    String token = generateToken(id,"UR");
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime newDateTime = now.plus(accessTime, ChronoUnit.HOURS);
                     UserAuthEntity ua = userAuthRepository.findById(id);
-                    userRepository.setLastLogin(id);
+                  //  String lastlogin = LocalDateTime.now().format(formatter);
+                 //   user1.setLastLogin(lastlogin);
+            //        userRepository.setLastLogin(id);
 
                     if(ua != null){
                         ua.setToken(token);
@@ -205,21 +225,33 @@ public class UserController {
                     Map<String,String> res = new HashMap<>();
                     res.put("token",token);
                     res.put("user_data",user1.toString());
+                    res.put("status_code","200");
+                    res.put("status_message","Login Successful");
                     logger.info(user1.toString());
                     return new ResponseEntity<>(res, HttpStatus.OK);
                 }
-           }
-        }
+     //      }
+        }}
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    private String generateToken(String userId) {
-        return Jwts.builder()
-                .setSubject(userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
+    private String generateToken(String userId,String type) {
+//        return Jwts.builder()
+//                .setSubject(userId)
+//                .setIssuedAt(new Date())
+//                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
+//                .signWith(SignatureAlgorithm.HS256, secret)
+//                .compact();
+        return type+userId+randomString(10);
+    }
+    public static String randomString(int length){
+        char[] ALPHANUMERIC="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        StringBuilder random = new StringBuilder();
+        for(int i =0; i < length; i++) {
+            int index = (int) (Math.random()%ALPHANUMERIC.length);
+            random.append(ALPHANUMERIC[index]);
+        }
+        return random.toString();
     }
 
     public Boolean isValidToken(String id,String token){
@@ -272,6 +304,20 @@ public class UserController {
        }
        return headerMap;
    }
+//   private Integer[] byFeature(String id){
+//
+//        UserEntity user = userRepository.findByUserId(id);
+//        Integer[] val = user.getFeatures();
+//        logger.info("Val : "+val);
+//        ObjectMapper obj = new ObjectMapper();
+//        String i = obj.writeValueAsString(user.getFeatures().toString(),Integer[].class)
+//
+////        List<FeatureEntity> l = {};
+////        for(int i=0;i<val.length;i++){
+////            l.add(featureRepository.findById(val[0]));
+////        }
+//       return val;
+//   }
 //   private Map<Integer,String> featureValues(String loginId){
 //        Integer[] val = userRepository.findFeatures(loginId);
 //

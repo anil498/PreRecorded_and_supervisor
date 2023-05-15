@@ -113,7 +113,7 @@ public class AccountController {
         String ID = request.getHeader("id");
         String token = request.getHeader("token");
 
-        if(isValidToken(ID,token)) {
+ //       if(isValidToken(ID,token)) {
         logger.info(params1);
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
@@ -131,7 +131,7 @@ public class AccountController {
             acc.setCreationDate(creation);
             acc.setMaxUser(params.get("maxUser").getAsInt());
             acc.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-//            acc.setFeaturesMeta((HashMap<String, String>) params.get("featuresMeta"));
+            acc.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
             acc.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
             acc.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
 
@@ -139,7 +139,10 @@ public class AccountController {
 //
             acc.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-            user.setAccountId(acc.getAccountId());
+//            user.setAccountId(acc.getAccountId());
+            user.setFname(params.get("fname").getAsString());
+            user.setLname(params.get("lname").getAsString());
+            user.setExpDate(params.get("expDate").getAsString());
             user.setLoginId(params.get("loginId").getAsString());
             String pass = params.get("password").getAsString();
             String mypass = passwordEncoder.encode(pass);
@@ -148,7 +151,7 @@ public class AccountController {
             user.setEmail(params.get("email").getAsString());
             user.setCreationDate(creation);
             user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-//          user.setFeaturesMeta((HashMap<String, String>) params.get("featuresMeta2"));
+            user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
             user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
             user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
 
@@ -158,7 +161,7 @@ public class AccountController {
 
         logger.info("acc.getMaxUser() : "+acc.getMaxUser());
         if(acc.getMaxUser() == 0){
-            String token1 = "User"+generateToken(user.getLoginId())+user.getUserId();
+            String token1 = generateToken(user.getLoginId(),"UR");
             UserAuthEntity ua = new UserAuthEntity();
             ua.setLoginId(user.getLoginId());
             ua.setUserId(user.getUserId());
@@ -188,35 +191,48 @@ public class AccountController {
             accountAuthRepository.save(auth);
 
             return new ResponseEntity<>("Account Created",HttpStatus.CREATED);
-        }
+ //       }
 
-        return  new ResponseEntity<>("Unauthorised User",HttpStatus.UNAUTHORIZED);
+ //       return  new ResponseEntity<>("Unauthorised User",HttpStatus.UNAUTHORIZED);
 
     }
 
     private String generatedKey(int accountId){
-        String key = "Account"+generateKey(accountId)+accountId;
+        String key = generateKey(accountId,"AC");
         logger.info("AccountAuthKey : "+key);
         logger.info("Unique Authorization key generated...!");
         return key;
     }
 
-    private String generateKey(int accountId) {
-        return Jwts.builder()
-                .setSubject(String.valueOf(accountId))
-                .setIssuedAt(new Date())
-                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
-                .signWith(SignatureAlgorithm.HS256, "accountsecret")
-                .compact();
+    private String generateKey(int accountId,String type) {
+//        return Jwts.builder()
+//                .setSubject(String.valueOf(accountId))
+//                .setIssuedAt(new Date())
+//                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
+//                .signWith(SignatureAlgorithm.HS256, "accountsecret")
+//                .compact();
+        return type+accountId+randomString(10);
     }
-    private String generateToken(String userId) {
-        return Jwts.builder()
-                .setSubject(userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
-                .signWith(SignatureAlgorithm.HS256, secret)
-                .compact();
+    private String generateToken(String userId,String type) {
+//        return Jwts.builder()
+//                .setSubject(userId)
+//                .setIssuedAt(new Date())
+//                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
+//                .signWith(SignatureAlgorithm.HS256, secret)
+//                .compact();
+       return type+userId+randomString(10);
     }
+
+    public static String randomString(int length){
+        char[] ALPHANUMERIC="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        StringBuilder random = new StringBuilder();
+        for(int i =0; i < length; i++) {
+            int index = (int) (System.currentTimeMillis()%ALPHANUMERIC.length);
+            random.append(ALPHANUMERIC[index]);
+        }
+        return random.toString();
+    }
+
 
     public Boolean isValidAuthKey(int accountid,String token){
         AccountAuthEntity acc = accountAuthRepository.findById(accountid);
@@ -227,6 +243,7 @@ public class AccountController {
             return false;
         return true;
     }
+
     public Boolean isValidToken(String id,String token){
         UserAuthEntity user = userAuthRepository.findById(id);
         //logger.info(token);

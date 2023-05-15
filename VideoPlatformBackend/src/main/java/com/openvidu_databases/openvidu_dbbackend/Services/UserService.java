@@ -53,8 +53,8 @@ public class UserService {
         return userRepository.save(existing);
     }
 
-    public String deleteUser(String id) {
-        userRepository.deleteById(id);
+    public String deleteUser(String userId) {
+        userRepository.deleteById(userId);
         return "User successfully deleted.";
     }
 
