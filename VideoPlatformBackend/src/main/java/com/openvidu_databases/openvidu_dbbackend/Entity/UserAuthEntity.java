@@ -10,7 +10,7 @@ public class UserAuthEntity {
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_auth_generator")
-    @SequenceGenerator(name="user_auth_generator", sequenceName = "user_auth_seq")
+    @SequenceGenerator(name="user_auth_generator", sequenceName = "user_auth_seq",allocationSize = 1)
     private int userId;
 
     @Column(name = "login_id",nullable = false,unique = true)

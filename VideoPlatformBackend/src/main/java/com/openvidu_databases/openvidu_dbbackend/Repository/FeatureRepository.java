@@ -10,11 +10,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface FeatureRepository extends JpaRepository<FeatureEntity, Integer> {
     @Query(nativeQuery=true, value = "select * from platform_features where feature_id = :featureId ")
-    FeatureEntity findById(@Param("featureId") String featureId);
+    FeatureEntity findById(@Param("featureId") int featureId);
 
     @Query(nativeQuery=true, value = "select * from platform_features")
     List<FeatureEntity> findAll();

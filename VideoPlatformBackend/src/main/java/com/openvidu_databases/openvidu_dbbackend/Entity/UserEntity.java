@@ -1,18 +1,10 @@
 package com.openvidu_databases.openvidu_dbbackend.Entity;
+
 import java.io.Serializable;
-import java.sql.Array;
-import java.time.LocalDateTime;
 import java.util.*;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.google.api.client.util.DateTime;
 import lombok.Data;
-
 import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.jpa.repository.Temporal;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 
 @Entity
@@ -21,11 +13,10 @@ import javax.persistence.*;
 @Table(name = "user_data")
 public class UserEntity implements Serializable {
 
-    //    private static final long serialVersionUID=810972626450090362960L;
     @Id
     @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_data_generator")
-    @SequenceGenerator(name="user_data_generator", sequenceName = "user_data_seq")
+    @SequenceGenerator(name="user_data_generator", sequenceName = "user_data_seq",allocationSize = 1)
     private int userId;
 
     @Column(name = "account_id")
@@ -34,11 +25,10 @@ public class UserEntity implements Serializable {
     @Column(name = "login_id", unique = true)
     private String loginId;
 
-   // @Lob
     @Column(name = "password")
     private String password;
 
-    @Column(name = "fname",columnDefinition = "varchar(255) default 'NULL'")
+    @Column(name = "fname")
     private String fname;
 
     @Column(name = "lname")
@@ -54,9 +44,7 @@ public class UserEntity implements Serializable {
     private String creationDate;
 
     @Column(name = "last_login")
-  //  @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
-  //  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime lastLogin;
+    private String lastLogin;
 
     @Column(name = "exp_date")
     private String expDate;
@@ -66,24 +54,16 @@ public class UserEntity implements Serializable {
     private HashMap<String, String> session = new HashMap<String, String>(0);
 
     @Column(name = "features",columnDefinition = "integer[]")
-   // @Type(type = "packageofclass.GenericArrayUserType")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
     private Integer[] features;
+
     @Column(name = "access_id",columnDefinition = "integer[]")
-   // @Type(type = "packageofclass.GenericArrayUserType")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
     private Integer[] accessId;
-//    @Column(name="features",columnDefinition="text")
-//    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-//    private HashMap<String, String> features = new HashMap<String, String>(0);
-//
+
     @Column(name="features_meta",columnDefinition="text")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
     private HashMap<String, String> featuresMeta = new HashMap<String, String>(0);
-//
-//    @Column(name="access_id",columnDefinition="text")
-//    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-//    private HashMap<String, String> accessId = new HashMap<String, String>(0);
 
     @Column(name = "status")
     private int status = 1;
@@ -160,11 +140,11 @@ public class UserEntity implements Serializable {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getLastLogin() {
+    public String getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(LocalDateTime lastLogin) {
+    public void setLastLogin(String lastLogin) {
         this.lastLogin = lastLogin;
     }
 
@@ -185,14 +165,6 @@ public class UserEntity implements Serializable {
         this.features = features;
     }
 
-//    public String getFeaturesMeta() {
-//        return featuresMeta;
-//    }
-//
-//    public void setFeaturesMeta(String featuresMeta) {
-//        this.featuresMeta = featuresMeta;
-//    }
-
     public Integer[] getAccessId() {
         return accessId;
     }
@@ -208,22 +180,6 @@ public class UserEntity implements Serializable {
     public void setFeaturesMeta(HashMap<String, String> featuresMeta) {
         this.featuresMeta = featuresMeta;
     }
-
-//    public HashMap<String, String> getFeatures() {
-//        return features;
-//    }
-
-//    public void setFeatures(HashMap<String, String> features) {
-//        this.features = features;
-//    }
-//
-//    public HashMap<String, String> getAccessId() {
-//        return accessId;
-//    }
-//
-//    public void setAccessId(HashMap<String, String> accessId) {
-//        this.accessId = accessId;
-//    }
 
     public int getStatus() {
         return status;

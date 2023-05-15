@@ -21,6 +21,7 @@ import com.openvidu_databases.openvidu_dbbackend.Services.UserService;
 import com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -190,7 +191,12 @@ public class AccountController {
 
             accountAuthRepository.save(auth);
 
-            return new ResponseEntity<>("Account Created",HttpStatus.CREATED);
+            Map<String,String> result = new HashMap<>();
+            result.put("Status Code ","200");
+            result.put("Message", "Account Created");
+
+
+            return new ResponseEntity<>(result,HttpStatus.CREATED);
  //       }
 
  //       return  new ResponseEntity<>("Unauthorised User",HttpStatus.UNAUTHORIZED);
@@ -211,7 +217,7 @@ public class AccountController {
 //                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
 //                .signWith(SignatureAlgorithm.HS256, "accountsecret")
 //                .compact();
-        return type+accountId+randomString(10);
+        return type+accountId+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
     private String generateToken(String userId,String type) {
 //        return Jwts.builder()
@@ -220,18 +226,24 @@ public class AccountController {
 //                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
 //                .signWith(SignatureAlgorithm.HS256, secret)
 //                .compact();
-       return type+userId+randomString(10);
+       return type+userId+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
 
-    public static String randomString(int length){
-        char[] ALPHANUMERIC="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-        StringBuilder random = new StringBuilder();
-        for(int i =0; i < length; i++) {
-            int index = (int) (System.currentTimeMillis()%ALPHANUMERIC.length);
-            random.append(ALPHANUMERIC[index]);
+//    public static String randomString(int length){
+//        char[] ALPHANUMERIC="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+//        StringBuilder random = new StringBuilder();
+//        for(int i =0; i < length; i++) {
+//            int index = (int) (System.currentTimeMillis()%ALPHANUMERIC.length);
+//            random.append(ALPHANUMERIC[index]);
+//        }
+//        return random.toString();
+//    }
+        public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
+            String generatedString = RandomStringUtils.randomAlphanumeric(10);
+            logger.info(generatedString);
+            System.out.println(generatedString);
+            return generatedString;
         }
-        return random.toString();
-    }
 
 
     public Boolean isValidAuthKey(int accountid,String token){

@@ -15,7 +15,7 @@ public class AccountAuthEntity {
     @Id
     @Column(name = "auth_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_auth_generator")
-    @SequenceGenerator(name="account_auth_generator", sequenceName = "account_auth_seq")
+    @SequenceGenerator(name="account_auth_generator", sequenceName = "account_auth_seq",allocationSize = 1)
     private int authId;
 
     @Column(nullable = false, name="account_id")
@@ -31,7 +31,6 @@ public class AccountAuthEntity {
     private LocalDateTime creationDate;
 
     @Column(nullable = false,name="exp_date")
-    @JsonFormat(pattern = "YYYY-MM-dd HH:mm")
     private LocalDateTime expDate;
 
     public int getAuthId() {

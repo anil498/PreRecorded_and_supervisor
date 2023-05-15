@@ -20,7 +20,7 @@ public class AccountEntity {
     @Id
     @Column(name = "account_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "account_data_generator")
-    @SequenceGenerator(name="account_data_generator", sequenceName = "account_data_seq")
+    @SequenceGenerator(name="account_data_generator", sequenceName = "account_data_seq",allocationSize = 1)
     private int accountId;
 
     @Column(name = "name")
@@ -46,7 +46,6 @@ public class AccountEntity {
     private HashMap<String, String> session = new HashMap<String, String>(0);
 
     @Column(name = "features",columnDefinition = "integer[]")
- //   @Type(type = "packageofclass.GenericArrayUserType")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
     private Integer[] features;
 
@@ -55,20 +54,8 @@ public class AccountEntity {
     private HashMap<String, String> featuresMeta = new HashMap<String, String>(0);
 
     @Column(name = "access_id",columnDefinition = "integer[]")
-    //@Type(type = "packageofclass.GenericArrayUserType")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
     private Integer[] accessId;
-//    @Column(name="features",columnDefinition="text")
-//    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-//    private HashMap<String, String> features = new HashMap<String, String>(0);
-//
-//    @Column(name="features_meta",columnDefinition="text")
-//    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-//    private HashMap<String, String> featuresMeta = new HashMap<String, String>(0);
-//
-//    @Column(name="access_id",columnDefinition="text")
-//    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-//    private HashMap<String, String> accessId = new HashMap<String, String>(0);
 
     @Column(name = "status")
     private int status=1;
@@ -165,29 +152,6 @@ public class AccountEntity {
     public void setAccessId(Integer[] accessId) {
         this.accessId = accessId;
     }
-//    public HashMap<String, String> getFeatures() {
-//        return features;
-//    }
-//
-//    public void setFeatures(HashMap<String, String> features) {
-//        this.features = features;
-//    }
-//
-//    public HashMap<String, String> getFeaturesMeta() {
-//        return featuresMeta;
-//    }
-//
-//    public void setFeaturesMeta(HashMap<String, String> featuresMeta) {
-//        this.featuresMeta = featuresMeta;
-//    }
-//
-//    public HashMap<String, String> getAccessId() {
-//        return accessId;
-//    }
-//
-//    public void setAccessId(HashMap<String, String> accessId) {
-//        this.accessId = accessId;
-//    }
 
     public int getStatus() {
         return status;
