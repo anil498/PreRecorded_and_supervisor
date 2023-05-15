@@ -94,6 +94,12 @@ mat-tab-group {
   background-color: #009688;
 }
 
+::ng-deep .mat-snack-bar-container {
+  background: linear-gradient(60deg, #e8f1ee, #ffffff) !important;
+  color: #b02a37 !important;
+  font-weight: bold;
+}
+
 input[type="file"] {
   display: none;
 }

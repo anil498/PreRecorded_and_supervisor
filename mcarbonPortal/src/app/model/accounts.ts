@@ -1,7 +1,9 @@
 export interface Accounts{
-    accountId: number,
     name: string,
-    address: string,
-    maxUser: number,
+    contact: string,
+    email: string,
+    accessDetails: number[],
+    featureDetails: number[],
     expDate: string,
+    status: number,
 }

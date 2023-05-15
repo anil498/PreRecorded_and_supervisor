@@ -10,7 +10,7 @@ import {
 
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { MatTabGroup } from "@angular/material/tabs";
+import { MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
 import { MatDialogRef } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { Router } from "@angular/router";
@@ -25,7 +25,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 export class FormDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
 
-  samePassword= false;
+  samePassword = false;
   currentTabIndex: number = 0;
   userForm: FormGroup;
   messageResponse: any;
@@ -43,7 +43,7 @@ export class FormDialogComponent implements OnInit {
 
   password: string;
   confirm_password: string;
-  
+
   max_duration: number;
   max_active_sessions: number;
   max_participants: number;
@@ -122,12 +122,12 @@ export class FormDialogComponent implements OnInit {
 
   updateSelectedFeaturesMeta(featureId, metaValue) {
     if (!this.selectedFeaturesMeta[featureId]) {
-      this.selectedFeaturesMeta[featureId] = {}; 
+      this.selectedFeaturesMeta[featureId] = {};
     }
     this.selectedFeaturesMeta[featureId] = metaValue;
   }
 
-  setMetaValue(featureId, metaKey, metaValue){
+  setMetaValue(featureId, metaKey, metaValue) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
   }
   showMetaList(feature: any, isChecked: boolean) {
@@ -154,24 +154,50 @@ export class FormDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
-    this.userForm = this.fb.group({
-      user_fname: ["", Validators.required],
-      user_lname: ["", Validators.required],
-      mobile: ["", Validators.required],
-      email: ["", Validators.required],
-      login_id: ["", Validators.required],
-      acc_exp_date: ["", Validators.required],
+    this.userForm = this.fb.group(
+      {
+        user_fname: ["", Validators.required],
+        user_lname: ["", Validators.required],
+        mobile: ["", Validators.required],
+        email: ["", Validators.required],
+        login_id: ["", Validators.required],
+        acc_exp_date: ["", Validators.required],
 
-      password: ["", Validators.required],
-      confirm_password: ["", Validators.required],
-      accessList: ["", Validators.required],
+        password: ["", Validators.required],
+        confirm_password: ["", Validators.required],
+        accessList: ["", Validators.required],
 
-      max_duration: ["", Validators.required],
-      max_active_sessions: ["", Validators.required],
-      max_participants: ["", Validators.required],
+        max_duration: ["", Validators.required],
+        max_active_sessions: ["", Validators.required],
+        max_participants: ["", Validators.required],
 
-      featureList: ["", Validators.required],
-    });
+        featureList: ["", Validators.required],
+      },
+      {
+        validator: [this.passwordMatchValidator],
+      }
+    );
+  }
+
+  passwordMatchValidator(formGroup: FormGroup) {
+    const password = formGroup.get("password").value;
+    const confirm_password = formGroup.get("confirm_password").value;
+
+    if (password !== confirm_password) {
+      formGroup.get("confirm_password").setErrors({ mismatch: true });
+    } else {
+      formGroup.get("confirm_password").setErrors(null);
+    }
+  }
+
+  dateValidator(formGroup: FormGroup) {
+    const expdate = formGroup.get("acc_exp_date").value;
+    const currentDate = new Date();
+    if (expdate < currentDate) {
+      formGroup.get("acc_exp_date").setErrors({ mismatch: true });
+    } else {
+      formGroup.get("confirm_password").setErrors(null);
+    }
   }
 
   previous() {
@@ -188,7 +214,7 @@ export class FormDialogComponent implements OnInit {
     }
   }
 
-  onTabChanged(event: any) {
+  onTabChanged(event: MatTabChangeEvent) {
     this.currentTabIndex = event.index;
   }
 
@@ -221,22 +247,38 @@ export class FormDialogComponent implements OnInit {
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
 
     this.password = this.userForm.value.password;
+    this.confirm_password = this.userForm.value.confirm_password;
 
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
 
-    if(this.user_fname == null || this.user_lname == null || this.mobile == null || this.email == null || this.login_id == null || this.password == null || this.confirm_password == null|| this.max_active_sessions == null || this.max_duration == null || this.max_participants){
+    if (
+      this.user_lname === "" ||
+      this.user_fname === "" ||
+      this.mobile == null ||
+      this.email === "" ||
+      this.login_id === "" ||
+      this.password === "" ||
+      this.confirm_password === "" ||
+      this.max_active_sessions === null ||
+      this.max_duration === null ||
+      this.max_participants === null
+    ) {
       //this.emptyField = true;
       this.openSnackBar("All fields are mandatory", "snackBar");
-      this.timeOut(3000);
+      //this.timeOut(3000);
+      return;
+    }
+
+    if (this.password !== this.confirm_password) {
       return;
     }
 
     let response: any;
     try {
       response = await this.restService.create(
-        "CreateUser",
+        "create",
 
         this.user_fname,
         this.user_lname,
@@ -270,7 +312,7 @@ export class FormDialogComponent implements OnInit {
 
   openSnackBar(message: string, color: string) {
     const snackBarConfig = new MatSnackBarConfig();
-    snackBarConfig.duration = 3000;
+    snackBarConfig.duration = 30000;
     snackBarConfig.panelClass = [color];
     this.snackBar.open(message, "Dismiss", snackBarConfig);
   }

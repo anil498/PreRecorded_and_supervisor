@@ -90,6 +90,10 @@
                         <mat-icon>more_vert</mat-icon>
                       </button>
                       <mat-menu #menu="matMenu" xPosition="before">
+                        <button class="btn-action" mat-menu-item (click)="viewDialog()">
+                          <mat-icon style="color: #009688">remove_red_eye</mat-icon>
+                          <span>View</span>
+                        </button>
                         <button class="btn-action" mat-menu-item (click)="updateDialog(user.userCode)">
                           <mat-icon style="color: #009688">edit</mat-icon>
                           <span>Edit</span>
@@ -100,6 +104,13 @@
                           >
                           <span>Delete</span>
                         </button>
+                        <button class="btn-action" mat-menu-item  (click)="expireData()">
+                          <mat-icon style="color: #009688"
+                            >power_settings_new</mat-icon
+                          >
+                          <span>Expire</span>
+                        </button>
+                        
                       </mat-menu>
                     </td>
                   </ng-container>

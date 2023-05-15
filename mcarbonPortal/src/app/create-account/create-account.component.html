@@ -197,7 +197,13 @@
                       value="{{ meta.value }}"
                       placeholder="{{ meta.key }}"
                       #metaValue
-                      (change)="setMetaValue(feature.feature_id,meta.key,metaValue.value)"
+                      (change)="
+                        setMetaValue(
+                          feature.feature_id,
+                          meta.key,
+                          metaValue.value
+                        )
+                      "
                     />
                   </mat-form-field>
                 </div>
@@ -289,21 +295,21 @@
                 formControlName="confirm_password"
                 [(ngModel)]="confirm_password"
               />
-              <!-- <mat-error *ngif="formGroup.hasError('passwordDoNotmatch')">
-                Password must be same
-              </mat-error> -->
+              <mat-error
+                *ngIf="userForm.hasError('mismatch', 'confirm_password')"
+                >Passwords do not match</mat-error
+              >
             </mat-form-field>
           </div>
         </div>
 
         <div class="row" *ngIf="nameError">
-          <div class="col-md-6 offset-md-3 text-center" >
+          <div class="col-md-6 offset-md-3 text-center">
             <p class="alert alert-danger">
               <strong>All fields are mandatory</strong>
             </p>
           </div>
         </div>
-        
       </div>
     </mat-tab>
   </mat-tab-group>

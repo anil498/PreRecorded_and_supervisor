@@ -83,6 +83,7 @@
                 [for]="picker"
               ></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="userForm.hasError('mismatch', 'acc_exp_date')">Select a valid date</mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -104,7 +105,8 @@
           </div>
           <div class="col-md-5">
             <mat-form-field>
-              <input matInput type="password" placeholder="Confirm Password" />
+              <input matInput type="password" placeholder="Confirm Password" formControlName="confirm_password" />
+              <mat-error *ngIf="userForm.hasError('mismatch', 'confirm_password')">Passwords do not match</mat-error>
             </mat-form-field>
           </div>
         </div>

@@ -38,22 +38,24 @@ export class AccountManagementComponent implements OnInit {
   //   "Account Expiry Date"
   // ];
   displayedColumns: any[] = [
-    "accountId",
     "name",
-    "address",
-    "maxUser",
+    "contact",
+    "email",
+    "access",
+    "features",
     "expDate",
+    "status",
     "Action",
   ];
   cols: any[] = [
-    "User Code",
-    "user ID",
-    "Mobile",
+    "Name",
+    "Contact",
     "Email",
-    "User Type",
-    "Service Type",
+    "Access Details",
+    "Feature Details",
+    "Expiry date",
     "Account Status",
-    "Account Expiry Date",
+    "Action",
   ];
 
   accounts: Accounts[] = [];

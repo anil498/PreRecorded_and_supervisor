@@ -201,7 +201,7 @@ export class CreateAccountComponent implements OnInit {
         featureList: ["", Validators.required],
       },
       {
-        validator: this.checkPasswords,
+        validator: this.passwordMatchValidator,
       }
     );
   }
@@ -220,10 +220,25 @@ export class CreateAccountComponent implements OnInit {
   //   }
   // }
 
-  checkPasswords(group: FormGroup) {
-    const password = group.controls.password.value;
-    const confirmPassword = group.controls.confirm_password.value;
-    return password === confirmPassword ? null : { passwordsDoNotMtach: true };
+  passwordMatchValidator(formGroup: FormGroup) {
+    const password = formGroup.get("password").value;
+    const confirm_password = formGroup.get("confirm_password").value;
+
+    if (password !== confirm_password) {
+      formGroup.get("confirm_password").setErrors({ mismatch: true });
+    } else {
+      formGroup.get("confirm_password").setErrors(null);
+    }
+  }
+
+  dateValidator(formGroup: FormGroup) {
+    const expdate = formGroup.get("acc_exp_date").value;
+    const currentDate = new Date();
+    if (expdate < currentDate) {
+      formGroup.get("acc_exp_date").setErrors({ mismatch: true });
+    } else {
+      formGroup.get("confirm_password").setErrors(null);
+    }
   }
 
   previous() {
@@ -260,19 +275,6 @@ export class CreateAccountComponent implements OnInit {
 
   async submit() {
     this.emptyError = false;
-    // this.maxUserError = false;
-    // this.expDateError = false;
-    // this.addressError = false;
-    // this.maxSessionError = false;
-    // this.maxDurationError = false;
-    // this.maxParticiapntsError = false;
-    // this.fNameError = false;
-    // this.lNameError = false;
-    // this.contactError = false;
-    // this.emailError = false;
-    // this.loginIdError = false;
-    // this.passwordError = false;
-    // this.confirmPasswordError = false;
 
     this.name = this.userForm.value.name;
     this.address = this.userForm.value.address;
@@ -298,7 +300,6 @@ export class CreateAccountComponent implements OnInit {
 
     if (
       this.name == null ||
-      this.name == "" ||
       this.max_user == null ||
       this.acc_exp_date == null ||
       this.address == null ||
