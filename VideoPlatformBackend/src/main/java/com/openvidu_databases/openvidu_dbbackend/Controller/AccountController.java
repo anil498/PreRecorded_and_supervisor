@@ -81,33 +81,33 @@ public class AccountController {
         logger.info(getHeaders(request).toString());
         logger.info(request.getHeader("id"));
         logger.info(request.getHeader("token"));
-        int accId = Integer.parseInt(request.getHeader("accId"));
-        String authKey = request.getHeader("authKey");
-        String ID = request.getHeader("userId");
-        String token = request.getHeader("token");
-        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
+//        int accId = Integer.parseInt(request.getHeader("accId"));
+//        String authKey = request.getHeader("authKey");
+//        String ID = request.getHeader("userId");
+//        String token = request.getHeader("token");
+//        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
             return ResponseEntity.ok(accountService.getAllAccounts());
         }
-        else {
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-    }
+//        else {
+//            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+//        }
+//    }
     @GetMapping("/getById/{id}")
     public ResponseEntity<List<AccountEntity>> getAccountById(@PathVariable int id, HttpServletRequest request) {
 
-        int accId = Integer.parseInt(request.getHeader("accId"));
-        String authKey = request.getHeader("authKey");
-        String ID = request.getHeader("userId");
-        String token = request.getHeader("token");
-        logger.info("authId" + accId);
-        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
+//        int accId = Integer.parseInt(request.getHeader("accId"));
+//        String authKey = request.getHeader("authKey");
+//        String ID = request.getHeader("userId");
+//        String token = request.getHeader("token");
+//        logger.info("authId" + accId);
+//        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
             logger.info(String.valueOf(accountService.getAccountById(id)));
           return ResponseEntity.ok(accountService.getAccountById(id));
         }
-        else{
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-    }
+//        else{
+//            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+//        }
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody String params1, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
@@ -135,12 +135,8 @@ public class AccountController {
             acc.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
             acc.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
             acc.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-
-//                   acc.setFeaturesMeta(params.get("featuresMeta").toString());
-//
             acc.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-//            user.setAccountId(acc.getAccountId());
             user.setFname(params.get("fname").getAsString());
             user.setLname(params.get("lname").getAsString());
             user.setExpDate(params.get("expDate").getAsString());
@@ -192,8 +188,8 @@ public class AccountController {
             accountAuthRepository.save(auth);
 
             Map<String,String> result = new HashMap<>();
-            result.put("Status Code ","200");
-            result.put("Message", "Account Created");
+            result.put("status_code ","200");
+            result.put("message", "Account Created");
 
 
             return new ResponseEntity<>(result,HttpStatus.CREATED);
@@ -256,8 +252,8 @@ public class AccountController {
         return true;
     }
 
-    public Boolean isValidToken(String id,String token){
-        UserAuthEntity user = userAuthRepository.findById(id);
+    public Boolean isValidToken(Integer id,String token){
+        UserAuthEntity user = userAuthRepository.findByUId(id);
         //logger.info(token);
         //logger.info(user.getToken());
         String t = (user.getToken());

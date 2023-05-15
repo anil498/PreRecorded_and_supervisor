@@ -63,7 +63,7 @@ public class UserEntity implements Serializable {
 
     @Column(name="features_meta",columnDefinition="text")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-    private HashMap<String, String> featuresMeta = new HashMap<String, String>(0);
+    private HashMap<String, Object> featuresMeta = new HashMap<String, Object>(0);
 
     @Column(name = "status")
     private int status = 1;
@@ -173,11 +173,11 @@ public class UserEntity implements Serializable {
         this.accessId = accessId;
     }
 
-    public HashMap<String, String> getFeaturesMeta() {
+    public HashMap<String, Object> getFeaturesMeta() {
         return featuresMeta;
     }
 
-    public void setFeaturesMeta(HashMap<String, String> featuresMeta) {
+    public void setFeaturesMeta(HashMap<String, Object> featuresMeta) {
         this.featuresMeta = featuresMeta;
     }
 

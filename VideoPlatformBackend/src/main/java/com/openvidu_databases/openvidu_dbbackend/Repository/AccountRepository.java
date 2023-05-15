@@ -14,7 +14,7 @@ import java.util.List;
 public interface AccountRepository extends JpaRepository<AccountEntity, Integer> {
 
     @Query(nativeQuery=true, value = "select * from account_data")
-    List<AccountEntity> findAll();
+    List<Object> findAlll();
 
     @Query(nativeQuery = true,value = "SELECT * FROM account_data WHERE account_id=:accountId")
     List<AccountEntity> findById(@Param("accountId") int accountId);

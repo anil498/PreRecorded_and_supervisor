@@ -28,13 +28,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public List<UserEntity> getAllChild(String id) {
-         return userRepository.findAllChild(id);
-    }
+//    public List<UserEntity> getAllChild(Integer id) {
+//         return userRepository.findAllChild(id);
+//    }
 
-    public List<UserEntity> getUserById(String id) {
+    public UserEntity getUserById(Integer id) {
         //logger.info(String.valueOf(userRepository.findById(id)));
-        return  userRepository.findById(id);
+        return  userRepository.findByUserId(id);
     }
 
     public UserEntity createUser(UserEntity user) {
@@ -44,7 +44,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public UserEntity updateUser(UserEntity user, String id) {
+    public UserEntity updateUser(UserEntity user, Integer id) {
         UserEntity existing = userRepository.findByUserId(id);
         existing.setEmail(user.getEmail());
         existing.setContact(user.getContact());
@@ -53,7 +53,7 @@ public class UserService {
         return userRepository.save(existing);
     }
 
-    public String deleteUser(String userId) {
+    public String deleteUser(Integer userId) {
         userRepository.deleteById(userId);
         return "User successfully deleted.";
     }

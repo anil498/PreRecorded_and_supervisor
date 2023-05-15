@@ -18,25 +18,25 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     List<UserEntity> findAll();
 
     @Query(nativeQuery=true, value = "select * from user_data where login_id = :loginId ")
-    List<UserEntity> findById(@Param("loginId") String loginId);
+    UserEntity findById(@Param("loginId") String loginId);
 
-    @Query(nativeQuery=true, value = "select * from user_data where login_id = :loginId ")
-    UserEntity findByUserId(@Param("loginId") String loginId);
+    @Query(nativeQuery=true, value = "select * from user_data where user_id = :userId ")
+    UserEntity findByUserId(@Param("userId") Integer userId);
 
-    @Query(nativeQuery=true, value = "select * from user_data where account_id = :accountId ")
-    List<UserEntity> findAllChild(@Param("accountId") String accountId);
+//    @Query(nativeQuery=true, value = "select * from user_data where account_id = :accountId ")
+//    List<UserEntity> findAllChild(@Param("accountId") String accountId);
 
-    @Query(nativeQuery=true, value = "select features from user_data where login_id = :loginId ")
-    Integer[] findFeatures(@Param("loginId") String accountId);
-
-    @Modifying
-    @Transactional
-    @Query(nativeQuery = true, value = "UPDATE user_data SET last_login = :lastlogin WHERE login_id = :id")
-    void setLogin(@Param("lastlogin") String lastlogin, @Param("id") String id);
+    @Query(nativeQuery=true, value = "select features from user_data where user_id = :userId ")
+    Integer[] findFeatures(@Param("userId") Integer userId);
 
     @Modifying
     @Transactional
-    @Query(nativeQuery=true, value = "delete from user_data where login_id = :loginId ")
-    void deleteById(@Param("loginId") String loginId);
+    @Query(nativeQuery = true, value = "UPDATE user_data SET last_login = :lastlogin WHERE user_id = :userId")
+    void setLogin(@Param("lastlogin") String lastlogin, @Param("userId") Integer userId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery=true, value = "delete from user_data where user_id = :userId ")
+    void deleteById(@Param("userId") Integer userId);
 
 }
