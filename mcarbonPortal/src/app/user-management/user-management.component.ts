@@ -1,5 +1,9 @@
 import { Component, OnInit, ViewChild, Input } from "@angular/core";
-import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material/dialog";
+import {
+  MatDialog,
+  MatDialogConfig,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { FormDialogComponent } from "app/form-dialog/form-dialog.component";
 import { RestService } from "app/services/rest.service";
 import { interval, Subscription } from "rxjs";
@@ -26,23 +30,15 @@ export class UserManagementComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   pageSizes = [5, 10, 25, 50, 100, 500];
-  // displayedColumns: string[] = [
-  //   "User Code",
-  //   "User ID",
-  //   "First Name",
-  //   "Last Name",
-  //   "Parent ID",
-  //   "User Type",
-  //   "Account Status",
-  //   "Service Type",
-  //   "Account Expiry Date"
-  // ];
-  displayedColumns: any[] = [
-    "userId",
+
+  displayedColumns: string[] = [
+    "userFname",
+    "userLname",
     "loginId",
-    "mobile",
+    "contact",
     "email",
-    "userType",
+    "expDate",
+    "status",
     "Action",
   ];
   cols: any[] = [
@@ -144,7 +140,7 @@ export class UserManagementComponent implements OnInit {
 
   deleteData(usercode: number) {
     const dialogConfig = new MatDialogConfig();
-    console.log('Confirm Delete');
+    console.log("Confirm Delete");
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
   }
 

@@ -41,8 +41,6 @@ export class AccountManagementComponent implements OnInit {
     "name",
     "contact",
     "email",
-    "access",
-    "features",
     "expDate",
     "status",
     "Action",

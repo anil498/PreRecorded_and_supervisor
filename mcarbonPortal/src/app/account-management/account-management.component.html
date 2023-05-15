@@ -1,6 +1,6 @@
 <div class="main-content">
-    <div class="container-fluid">
-      <!-- <div class="row row-1">
+  <div class="container-fluid">
+    <!-- <div class="row row-1">
         <div class="col-md-6 align-self-center">
           <button
             class="create-btn card-header-danger"
@@ -28,111 +28,185 @@
           </form>
         </div>
       </div> -->
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header card-header-danger">
-              <div class="row">
-                <div class="col-6 align-self-center">
-                  <button
-                    class="create-btn"
-                    mat-raised-button
-                    (click)="createDialog()"
-                  >
-                    <mat-icon>add</mat-icon>Create Account
-                  </button>
-                </div>
-                <div class="col-4 offset-2 align-self-center">
-                  <div class="box">
-                    <input type="text" placeholder="Search..." matInput (keyup)="searchData($event)" #input />
-                    <a href="#" class="icon">
-                      <i>
-                        <mat-icon class="material-icons">search</mat-icon>
-                      </i>
-                    </a>
-                  </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <div class="row">
+              <div class="col-6 align-self-center">
+                <button
+                  class="create-btn"
+                  mat-raised-button
+                  (click)="createDialog()"
+                >
+                  <mat-icon>add</mat-icon>Create Account
+                </button>
+              </div>
+              <div class="col-4 offset-2 align-self-center">
+                <div class="box">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    matInput
+                    (keyup)="searchData($event)"
+                    #input
+                  />
+                  <a href="#" class="icon">
+                    <i>
+                      <mat-icon class="material-icons">search</mat-icon>
+                    </i>
+                  </a>
                 </div>
               </div>
-              <!-- <h4 class="card-title">User List</h4>
-              <p class="card-category">Details of all the admins and customers</p> -->
             </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table
-                  class="table"
-                  mat-table
-                  matSort
-                  [dataSource]="dataSourceWithPageSize"
-                  #sort="matSort"
-                >
-                  <ng-container
+            <!-- <h4 class="card-title">User List</h4>
+              <p class="card-category">Details of all the admins and customers</p> -->
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table
+                class="table"
+                mat-table
+                matSort
+                [dataSource]="dataSourceWithPageSize"
+                #sort="matSort"
+              >
+                <!-- <ng-container
                     [matColumnDef]="column"
                     *ngFor="let column of displayedColumns"
                   >
                     <th mat-header-cell *matHeaderCellDef>{{ column }}</th>
                     <td mat-cell *matCellDef="let user">{{ user[column] }}</td>
-                  </ng-container>
-  
-                  <ng-container matColumnDef="Action">
-                    <th
-                      class="header name-column"
-                      mat-header-cell
-                      *matHeaderCellDef
+                  </ng-container> -->
+
+                <ng-container matColumnDef="name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Name
+                  </th>
+                  <td mat-cell *matCellDef="let account">{{ account.name }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="contact">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Contact
+                  </th>
+                  <td mat-cell *matCellDef="let account">
+                    {{ account.contact }}%
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="email">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Email
+                  </th>
+                  <td mat-cell *matCellDef="let account">
+                    {{ account.email }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="expDate">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Expiry Date
+                  </th>
+                  <td mat-cell *matCellDef="let account">
+                    {{ account.expDate }}
+                  </td>
+                </ng-container>
+                
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                    Status
+                  </th>
+                  <td mat-cell *matCellDef="let account">
+                    {{ account.status }}
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="Action">
+                  <th
+                    class="header name-column"
+                    mat-header-cell
+                    *matHeaderCellDef
+                  >
+                    Action
+                  </th>
+                  <td mat-cell *matCellDef="let account">
+                    <button
+                      mat-icon-button
+                      [matMenuTriggerFor]="menu"
+                      aria-label="Example icon-button with a menu"
                     >
-                      <span>Action</span>
-                    </th>
-                    <td mat-cell *matCellDef="let user">
+                      <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu" xPosition="before">
                       <button
-                        mat-icon-button
-                        [matMenuTriggerFor]="menu"
-                        aria-label="Example icon-button with a menu"
+                        class="btn-action"
+                        mat-menu-item
+                        (click)="viewDialog()"
                       >
-                        <mat-icon>more_vert</mat-icon>
+                        <mat-icon style="color: #009688"
+                          >remove_red_eye</mat-icon
+                        >
+                        <span>View</span>
                       </button>
-                      <mat-menu #menu="matMenu" xPosition="before">
-                        <button class="btn-action" mat-menu-item (click)="viewDialog()">
-                          <mat-icon style="color: #009688">remove_red_eye</mat-icon>
-                          <span>View</span>
-                        </button>
-                        <button class="btn-action" mat-menu-item (click)="updateDialog(user.userCode)">
-                          <mat-icon style="color: #009688">edit</mat-icon>
-                          <span>Edit</span>
-                        </button>
-                        <button class="btn-action" mat-menu-item  (click)="deleteData(user.userCode)">
-                          <mat-icon style="color: #009688"
-                            >delete_outline</mat-icon
-                          >
-                          <span>Delete</span>
-                        </button>
-                        <button class="btn-action" mat-menu-item  (click)="expireData()">
-                          <mat-icon style="color: #009688"
-                            >power_settings_new</mat-icon
-                          >
-                          <span>Expire</span>
-                        </button>
-                        
-                      </mat-menu>
-                    </td>
-                  </ng-container>
-  
-                  <!-- Render Column Name -->
-                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                      <button
+                        class="btn-action"
+                        mat-menu-item
+                        (click)="updateDialog(user.userCode)"
+                      >
+                        <mat-icon style="color: #009688">edit</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button
+                        class="btn-action"
+                        mat-menu-item
+                        (click)="deleteData(user.userCode)"
+                      >
+                        <mat-icon style="color: #009688"
+                          >delete_outline</mat-icon
+                        >
+                        <span>Delete</span>
+                      </button>
+                      <button
+                        class="btn-action"
+                        mat-menu-item
+                        (click)="expireData()"
+                      >
+                        <mat-icon style="color: #009688"
+                          >power_settings_new</mat-icon
+                        >
+                        <span>Expire</span>
+                      </button>
+                    </mat-menu>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let account; columns: displayedColumns"
+                ></tr>
+
+                <!-- Render Column Name -->
+                <!-- <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                   <tr
                     mat-row
                     *matRowDef="let user; columns: displayedColumns"
-                  ></tr>
-  
-                  <tr class="mat-row" *matNoDataRow>
-                    <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-                  </tr>
-                </table>
-                <mat-paginator
-                  #paginator
-                  [pageSizeOptions]="pageSizes"
-                  showFirstLastButtons
-                ></mat-paginator>
-  
-                <!-- <mat-sort #sort (matSortChange)="dataSourceWithPageSize.sort = sort">
+                  ></tr> -->
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell" colspan="4">
+                    No data matching the filter "{{ input.value }}"
+                  </td>
+                </tr>
+              </table>
+              <mat-paginator
+                #paginator
+                [pageSizeOptions]="pageSizes"
+                showFirstLastButtons
+              ></mat-paginator>
+
+              <!-- <mat-sort #sort (matSortChange)="dataSourceWithPageSize.sort = sort">
                   <ng-container *ngFor="let column of displayedColumns">
                     <mat-sort-header
                       [matSortHeaderDisableClear]="true"
@@ -142,11 +216,10 @@
                     >
                   </ng-container>
                 </mat-sort> -->
-              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  
+</div>

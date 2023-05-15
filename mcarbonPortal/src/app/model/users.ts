@@ -1,7 +1,11 @@
 export interface Users{
-    userId: string,
+    userFname: string,
+    userLname: string,
     loginId: string,
-    mobile: number,
+    contact: number,
     email: string,
-    userType: string,
+    access: number[],
+    features: number[],
+    expDate: string,
+    status: number
 }
