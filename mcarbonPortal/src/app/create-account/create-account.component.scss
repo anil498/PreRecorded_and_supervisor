@@ -10,6 +10,28 @@
   background-color: #e63b37;
 }
 
+  /* Alert message */
+  .alert{
+    padding: 0.75rem 1.25rem;
+  }
+
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+
+  .alert-danger{
+    background-color: #e9bdc2;
+    color: #B02A37;
+    border-color: #e7908c;
+    border-radius: 10px;
+    font-weight: bolder;
+    font-size: 1rem;
+  }
+
 .btn-1 {
   background: linear-gradient(60deg, #009688, #17d1be);
   color: white;

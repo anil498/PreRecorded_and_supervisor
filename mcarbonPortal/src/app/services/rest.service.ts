@@ -164,14 +164,16 @@ export class RestService {
     email: string,
     loginId: string,
     exp_date: string,
+
     password: string,
-    accessId: string,
+    accessId: number[],
 
     max_duration: number,
     max_participants: number,
     max_active_sessions: number,
 
-    features: string
+    features: number[],
+    featuresMeta: any
   ) {
     return this.postRequest1(type, {
       userFname,
@@ -190,6 +192,7 @@ export class RestService {
       },
 
       features,
+      featuresMeta
     });
   }
 

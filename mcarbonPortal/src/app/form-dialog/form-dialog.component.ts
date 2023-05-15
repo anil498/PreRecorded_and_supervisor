@@ -13,19 +13,6 @@ import { MatTabGroup } from "@angular/material/tabs";
 import { MatDialogRef } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { Router } from "@angular/router";
-import { MatCalendar } from "@angular/material/datepicker";
-import { MatDateFormats } from "@angular/material/core";
-import { Subject } from "rxjs";
-import { takeUntil } from "rxjs/operators";
-import { Time } from "@angular/common";
-import {
-  DateAdapter,
-  MAT_DATE_FORMATS,
-  MAT_DATE_LOCALE,
-} from "@angular/material/core";
-import { MatDatepickerInputEvent } from "@angular/material/datepicker";
-import { MomentDateAdapter } from "@angular/material-moment-adapter";
-import * as moment from "moment";
 import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
@@ -37,9 +24,11 @@ import { DomSanitizer } from "@angular/platform-browser";
 export class FormDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
 
+  samePassword= false;
   currentTabIndex: number = 0;
   userForm: FormGroup;
   messageResponse: any;
+  loginResponse: any;
 
   user_fname: string;
   user_lname: string;
@@ -51,9 +40,14 @@ export class FormDialogComponent implements OnInit {
 
   password: string;
   confirm_password: string;
+  
+  max_duration: number;
+  max_active_sessions: number;
+  max_participants: number;
 
   // featuresData: any = this.restService.getData().features;
   // accessData: any = this.restService.getData().access;
+  selectedAccessId: number[] = [];
   accessData = [
     {
       access_id: 16,
@@ -73,52 +67,47 @@ export class FormDialogComponent implements OnInit {
       order: 1,
       p_id: 1,
     },
+    {
+      access_id: 26,
+      name: "User Creation",
+      order: 1,
+      p_id: 2,
+    },
+    {
+      access_id: 27,
+      name: "User Deletion",
+      order: 1,
+      p_id: 2,
+    },
   ];
 
+  selectedFeatures: number[] = [];
   featuresData = [
     {
       feature_id: 1,
       name: "Recording",
       meta_list: {
-        max_time: 0,
-        max_dur: 0,
+        max_time: null,
+        max_dur: null,
       },
     },
     {
       feature_id: 2,
       name: "Screen Sharing",
       meta_list: {
-        refresh_rate: 0,
+        refresh_rate: null,
       },
     },
     {
       feature_id: 3,
       name: "Live Chat",
       meta_list: {
-        color: "",
+        color: null,
       },
     },
   ];
-  
-  access: number[];
-  accessList = [
-    { label: "User Creation", value: 1 },
-    { label: "Session Updation", value: 2 },
-    { label: "Report Download", value: 3 },
-  ];
 
-  features: number[];
-  featureList = [
-    { label: "Recording", value: 1 },
-    { label: "Live Chat", value: 2 },
-    { label: "Screen Sharing", value: 3 },
-    { label: "Video Sharing", value: 4 },
-  ];
-
-  max_duration: number;
-  max_active_sessions: number;
-  max_participants: number;
-
+  selectedFeaturesMeta = {};
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<FormDialogComponent>,
@@ -127,6 +116,39 @@ export class FormDialogComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {}
 
+  updateSelectedFeaturesMeta(featureId, metaValue) {
+    if (!this.selectedFeaturesMeta[featureId]) {
+      this.selectedFeaturesMeta[featureId] = {}; 
+    }
+    this.selectedFeaturesMeta[featureId] = metaValue;
+  }
+
+  setMetaValue(featureId, metaKey, metaValue){
+    this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
+  }
+  showMetaList(feature: any, isChecked: boolean) {
+    if (isChecked) {
+      this.selectedFeatures.push(feature.feature_id);
+      feature.showMetaList = true;
+      feature.selectedMetaList = Object.keys(feature.meta_list).map((key) => {
+        return { key: key, value: feature.meta_list[key] };
+      });
+    } else {
+      const index = this.selectedFeatures.indexOf(feature.feature_id);
+      this.selectedFeatures.splice(index, 1);
+      feature.showMetaList = false;
+      feature.selectedMetaList = [];
+    }
+  }
+
+  addAccessId(access: any, isChecked: boolean) {
+    if (isChecked) {
+      this.selectedAccessId.push(access.access_id);
+    } else {
+      const index = this.selectedAccessId.indexOf(access.access_id);
+      this.selectedAccessId.splice(index, 1);
+    }
+  }
   async ngOnInit(): Promise<void> {
     this.userForm = this.fb.group({
       user_fname: ["", Validators.required],
@@ -145,12 +167,6 @@ export class FormDialogComponent implements OnInit {
       max_participants: ["", Validators.required],
 
       featureList: ["", Validators.required],
-
-      screen_share: false,
-      live_chat: false,
-      recording: false,
-      broadcasting: false,
-      transcoding: false,
     });
   }
 
@@ -200,13 +216,10 @@ export class FormDialogComponent implements OnInit {
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
 
     this.password = this.userForm.value.password;
-    this.access = this.userForm.value.accessList;
 
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
-    this.features = this.userForm.value.featureList;
-    // this.features = Object.keys(this.userForm.value);
 
     let response: any;
     try {
@@ -219,14 +232,16 @@ export class FormDialogComponent implements OnInit {
         this.email,
         this.login_id,
         this.exp_date,
+
         this.password,
-        this.access.toString(),
+        this.selectedAccessId.sort(),
 
         this.max_duration,
         this.max_participants,
         this.max_active_sessions,
 
-        this.features.toString()
+        this.selectedFeatures.sort(),
+        this.selectedFeaturesMeta
       );
       console.warn(response);
       if (response.statusCode === 200) {

@@ -295,6 +295,15 @@
             </mat-form-field>
           </div>
         </div>
+
+        <div class="row" *ngIf="nameError">
+          <div class="col-md-6 offset-md-3 text-center" >
+            <p class="alert alert-danger">
+              <strong>All fields are mandatory</strong>
+            </p>
+          </div>
+        </div>
+        
       </div>
     </mat-tab>
   </mat-tab-group>

@@ -24,11 +24,28 @@ import { DomSanitizer } from "@angular/platform-browser";
 export class CreateAccountComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
 
-  samePassword: false;
+  samePassword = false;
   currentTabIndex: number = 0;
   userForm: FormGroup;
   messageResponse: any;
   loginResponse: any;
+
+  nameError = false;
+  maxUserError: boolean;
+  expDateError: boolean;
+  addressError: boolean;
+
+  maxSessionError: boolean;
+  maxDurationError: boolean;
+  maxParticiapntsError: boolean;
+
+  fNameError: boolean;
+  lNameError: boolean;
+  contactError: boolean;
+  emailError: boolean;
+  loginIdError: boolean;
+  passwordError: boolean;
+  confirmPasswordError: boolean;
 
   name: string;
   address: string;
@@ -125,12 +142,12 @@ export class CreateAccountComponent implements OnInit {
 
   updateSelectedFeaturesMeta(featureId, metaValue) {
     if (!this.selectedFeaturesMeta[featureId]) {
-      this.selectedFeaturesMeta[featureId] = {}; 
+      this.selectedFeaturesMeta[featureId] = {};
     }
     this.selectedFeaturesMeta[featureId] = metaValue;
   }
 
-  setMetaValue(featureId, metaKey, metaValue){
+  setMetaValue(featureId, metaKey, metaValue) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
   }
   showMetaList(feature: any, isChecked: boolean) {
@@ -182,12 +199,6 @@ export class CreateAccountComponent implements OnInit {
         max_participants: ["", Validators.required],
 
         featureList: ["", Validators.required],
-
-        options: this.fb.array([]),
-        video_share: false,
-        screen_share: false,
-        live_chat: false,
-        recording: false,
       },
       {
         validator: this.checkPasswords,
@@ -248,16 +259,34 @@ export class CreateAccountComponent implements OnInit {
   }
 
   async submit() {
+    this.nameError = false;
+    // this.maxUserError = false;
+    // this.expDateError = false;
+    this.addressError = false;
+    // this.maxSessionError = false;
+    // this.maxDurationError = false;
+    // this.maxParticiapntsError = false;
+    // this.fNameError = false;
+    // this.lNameError = false;
+    // this.contactError = false;
+    // this.emailError = false;
+    // this.loginIdError = false;
+    // this.passwordError = false;
+    // this.confirmPasswordError = false;
+
     this.name = this.userForm.value.name;
     this.address = this.userForm.value.address;
     this.max_user = this.userForm.value.max_user;
     this.acc_exp_date = this.userForm.value.acc_exp_date;
-    this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
-    this.exp_date =
-      this.exp_date +
-      " " +
-      this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
-
+    if (!this.acc_exp_date) {
+      this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
+      this.exp_date =
+        this.exp_date +
+        " " +
+        this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
+    } else {
+      this.exp_date = "";
+    }
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
@@ -270,7 +299,30 @@ export class CreateAccountComponent implements OnInit {
 
     this.password = this.userForm.value.password;
 
-    console.warn(this.selectedFeaturesMeta);      
+    if (
+      this.name == null ||
+      this.name == "" ||
+      this.max_user == null ||
+      this.acc_exp_date == null ||
+      this.address == null ||
+      this.max_active_sessions == null ||
+      this.max_duration == null ||
+      this.max_participants == null ||
+      this.password == null ||
+      this.user_fname == null ||
+      this.user_lname == null ||
+      this.mobile == null ||
+      this.email == null ||
+      this.login_id == null ||
+      this.confirm_password == null
+    ) {
+      console.warn(this.nameError);
+      this.nameError = true;
+      this.timeOut(3000);
+      console.warn(this.nameError);
+      return;
+    }
+
     let response: any;
 
     try {
@@ -307,5 +359,13 @@ export class CreateAccountComponent implements OnInit {
     this.messageResponse = response;
     this.dialogRef.close();
     this.restService.closeDialog();
+  }
+
+  private timeOut(time: number) {
+    console.warn(this.nameError);
+    setTimeout(() => {
+      this.nameError = false;
+    }, time);
+    console.warn(this.nameError);
   }
 }
