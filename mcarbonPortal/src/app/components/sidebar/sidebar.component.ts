@@ -15,7 +15,7 @@ export const ROUTES: RouteInfo[] = [
     title: "Dashboard",
     icon: "dashboard",
     class: "",
-    show: true,
+    show: false,
   },
   {
     path: "/app/user-profile",
@@ -29,14 +29,14 @@ export const ROUTES: RouteInfo[] = [
     title: "Account Management",
     icon: "supervisor_account",
     class: "",
-    show: true,
+    show: false,
   },
   {
     path: "/app/user-management",
     title: "User Management",
     icon: "people",
     class: "",
-    show: true,
+    show: false,
   },
   {
     path: "/app/session-management",
@@ -50,7 +50,7 @@ export const ROUTES: RouteInfo[] = [
     title: "Dynamic Support",
     icon: "headset_mic",
     class: "",
-    show: true,
+    show: false,
   },
 ];
 
@@ -61,14 +61,58 @@ export const ROUTES: RouteInfo[] = [
 })
 export class SidebarComponent implements OnInit {
   menuItems: any[];
-  accessId: any[];
+  accessList: any[];
   constructor(private restService: RestService) {}
 
   ngOnInit() {
     this.menuItems = ROUTES.filter((menuItem) => menuItem);
-    this.accessId = this.restService.getData()["Features"];
-    console.log(this.accessId);
+    this.accessList = [
+      {
+        accessId: 1,
+        name: "Account Management",
+        order: 1,
+        p_id: 0,
+        status: 1,
+      },
+      {
+        accessId: 2,
+        name: "User Management",
+        order: 2,
+        p_id: 0,
+        status: 1,
+      },
+      {
+        accessId: 3,
+        name: "Session Management",
+        order: 3,
+        p_id: 0,
+        status: 1,
+      },
+      {
+        accessId: 4,
+        name: "Dynamic Support",
+        order: 1,
+        p_id: 0,
+        status: 1,
+      },
+    ];
+
+    this.showSideNav();
   }
+
+  showSideNav() {
+    this.accessList.forEach((access) => {
+      if (access.p_id == 0) {
+        this.menuItems.forEach((menuItem) => {
+          if (access.name === menuItem.title) {
+            console.log(access.p_id);
+            menuItem.show = true;
+          }
+        });
+      }
+    });
+  }
+
   isMobileMenu() {
     if ($(window).width() > 991) {
       return false;

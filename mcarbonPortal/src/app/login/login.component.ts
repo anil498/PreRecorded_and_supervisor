@@ -92,16 +92,19 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["/app/dashboard"]);
     } catch (err) {
       console.log(err);
-      //this.state = err.error.error;
-      this.failedMessage = true;
-      this.failedMessageShow = "";
+      if (err.status === 0) {
+        this.state = "Server Not Responding";
+      } else {
+        this.state = err.error.error;
+        this.failedMessage = true;
+        this.failedMessageShow = "";
 
+        if (err.status === 401) {
+          this.state = "Unauthorized User";
+        }
+      }
       const snackBarConfig = new MatSnackBarConfig();
       snackBarConfig.duration = 3000;
-      if (err.status === 401) {
-        this.state = "Unauthorized User";
-      }
-
       this.snackBar.open(this.state, "Dismiss", snackBarConfig);
       this.timeOut(3000);
       return;
