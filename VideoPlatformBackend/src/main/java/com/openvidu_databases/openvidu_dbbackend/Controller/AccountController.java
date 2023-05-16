@@ -7,15 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.openvidu_databases.openvidu_dbbackend.Constant.RequestMappings;
-import com.openvidu_databases.openvidu_dbbackend.Entity.AccountAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.AccountEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserEntity;
+import com.openvidu_databases.openvidu_dbbackend.Entity.*;
 //import com.openvidu_databases.openvidu_dbbackend.Repository.AccountAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.AccountAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.AccountRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.UserAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.UserRepository;
+import com.openvidu_databases.openvidu_dbbackend.Repository.*;
 import com.openvidu_databases.openvidu_dbbackend.Services.AccountService;
 import com.openvidu_databases.openvidu_dbbackend.Services.UserService;
 import com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType;
@@ -36,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -59,6 +54,9 @@ public class AccountController {
     private UserService userService;
 
     @Autowired
+    private AccessRepository accessRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
@@ -77,44 +75,73 @@ public class AccountController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<AccountEntity>> getAllAccounts(HttpServletRequest request) {
+    public ResponseEntity<List<AccountEntity>> getAllAccounts(HttpServletRequest request) throws JsonProcessingException {
         logger.info(getHeaders(request).toString());
-        logger.info(request.getHeader("id"));
-        logger.info(request.getHeader("token"));
-//        int accId = Integer.parseInt(request.getHeader("accId"));
-//        String authKey = request.getHeader("authKey");
-//        String ID = request.getHeader("userId");
-//        String token = request.getHeader("token");
-//        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
-            return ResponseEntity.ok(accountService.getAllAccounts());
-        }
-//        else {
-//            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-//        }
-//    }
-    @GetMapping("/getById/{id}")
-    public ResponseEntity<List<AccountEntity>> getAccountById(@PathVariable int id, HttpServletRequest request) {
 
-//        int accId = Integer.parseInt(request.getHeader("accId"));
-//        String authKey = request.getHeader("authKey");
-//        String ID = request.getHeader("userId");
-//        String token = request.getHeader("token");
-//        logger.info("authId" + accId);
-//        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
-            logger.info(String.valueOf(accountService.getAccountById(id)));
-          return ResponseEntity.ok(accountService.getAccountById(id));
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-//        else{
-//            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-//        }
-//    }
+        if(!(byAccess(authId,1000))){
+            logger.info("for 1000 : "+byAccess(authId,1000));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(accountService.getAllAccounts());
+    }
+    @GetMapping("/getById/{id}")
+    public ResponseEntity<List<AccountEntity>> getAccountById(@PathVariable int id, HttpServletRequest request) throws JsonProcessingException {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(authId,1000))){
+            logger.info("for 1000 : "+byAccess(authId,1000));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(accountService.getAccountById(id));
+    }
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody String params1, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
-        String ID = request.getHeader("id");
-        String token = request.getHeader("token");
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
 
- //       if(isValidToken(ID,token)) {
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(authId,1000) && byAccess(authId,1005))){
+            logger.info("for 1000 : "+byAccess(authId,1000));
+            logger.info("for 1005 : "+byAccess(authId,1005));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
         logger.info(params1);
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
@@ -152,22 +179,9 @@ public class AccountController {
             user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
             user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
 
-        accountService.createAccount(acc);
-        user.setAccountId(acc.getAccountId());
-        userService.createUser(user);
-
-        logger.info("acc.getMaxUser() : "+acc.getMaxUser());
-        if(acc.getMaxUser() == 0){
-            String token1 = generateToken(user.getLoginId(),"UR");
-            UserAuthEntity ua = new UserAuthEntity();
-            ua.setLoginId(user.getLoginId());
-            ua.setUserId(user.getUserId());
-            ua.setToken(token1);
-            ua.setCreationDate(LocalDateTime.now());
-            ua.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-            userAuthRepository.save(ua);
-
-        }
+            accountService.createAccount(acc);
+            user.setAccountId(acc.getAccountId());
+            userService.createUser(user);
 
             AccountAuthEntity auth = accountAuthRepository.findById(acc.getAccountId());
             if(auth != null){
@@ -182,21 +196,31 @@ public class AccountController {
                 auth.setAuthKey(generatedKey(acc.getAccountId()));
                 auth.setCreationDate(LocalDateTime.now());
                 auth.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
             }
 
             accountAuthRepository.save(auth);
+
+            int authId1 = auth.getAuthId();
+            logger.info("acc.getMaxUser() : "+acc.getMaxUser());
+            if(acc.getMaxUser() == 0){
+                logger.info("Checking userId : "+user.getUserId());
+                String token1 = generateToken(user.getUserId(),"UR");
+                UserAuthEntity ua = new UserAuthEntity();
+                ua.setLoginId(user.getLoginId());
+                ua.setUserId(user.getUserId());
+                ua.setToken(token1);
+                ua.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+                ua.setAuthId(authId1);
+                ua.setCreationDate(LocalDateTime.now());
+                ua.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                userAuthRepository.save(ua);
+            }
 
             Map<String,String> result = new HashMap<>();
             result.put("status_code ","200");
             result.put("message", "Account Created");
 
-
             return new ResponseEntity<>(result,HttpStatus.CREATED);
- //       }
-
- //       return  new ResponseEntity<>("Unauthorised User",HttpStatus.UNAUTHORIZED);
-
     }
 
     private String generatedKey(int accountId){
@@ -213,16 +237,20 @@ public class AccountController {
 //                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
 //                .signWith(SignatureAlgorithm.HS256, "accountsecret")
 //                .compact();
-        return type+accountId+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+        String val = String.format("%04d", accountId);
+        logger.info("Format val = "+val);
+        return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
-    private String generateToken(String userId,String type) {
+    private String generateToken(int userId,String type) {
 //        return Jwts.builder()
 //                .setSubject(userId)
 //                .setIssuedAt(new Date())
 //                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
 //                .signWith(SignatureAlgorithm.HS256, secret)
 //                .compact();
-       return type+userId+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+        String val = String.format("%04d", userId);
+        logger.info("Format val = "+val);
+       return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
 
 //    public static String randomString(int length){
@@ -242,27 +270,88 @@ public class AccountController {
         }
 
 
-    public Boolean isValidAuthKey(int accountid,String token){
-        AccountAuthEntity acc = accountAuthRepository.findById(accountid);
-       // logger.info(token);
-        //logger.info(user.getToken());
-        String key = acc.getAuthKey();
-        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(key.equals(token)))
-            return false;
-        return true;
+//    public Boolean isValidAuthKey(int accountid,String token){
+//        AccountAuthEntity acc = accountAuthRepository.findById(accountid);
+//       // logger.info(token);
+//        //logger.info(user.getToken());
+//        String key = acc.getAuthKey();
+//        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(key.equals(token)))
+//            return false;
+//        return true;
+//    }
+        public int isValidAuthKey(String authKey){
+            AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+
+            if(acc == null)return 0;
+            // logger.info(token);
+            //logger.info(user.getToken());
+            String key = (acc.getAuthKey());
+            if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
+                return 0;
+            }
+            int authId = acc.getAuthId();
+            return authId;
+        }
+        public Boolean isValidToken(int authId,String token){
+            UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+            if(user == null)return false;
+            logger.info("DAta by authId.."+user);
+            //logger.info(user.getToken());
+            String t = (user.getToken());
+            if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
+                return false;
+            return true;
+        }
+
+//    public Boolean isValidToken(int id,String token){
+//        UserAuthEntity user = userAuthRepository.findByUId(id);
+//        //logger.info(token);
+//        //logger.info(user.getToken());
+//        String t = (user.getToken());
+//        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
+//            return false;
+//        return true;
+//    }
+
+
+    private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
+
+        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+        int userId = user.getUserId();
+        UserEntity u = userRepository.findByUserId(userId);
+        if(user == null) return false;
+        ObjectMapper obj = new ObjectMapper();
+        String str = obj.writeValueAsString(u.getAccessId());
+        logger.info("Val : "+str);
+        String[] string = str.replaceAll("\\[", "")
+                .replaceAll("]", "")
+                .split(",");
+        int[] arr = new int[string.length];
+        int[] apiArr = new int[string.length];
+        for (int i = 0; i < string.length; i++) {
+            arr[i] = Integer.valueOf(string[i]);
+        }
+        int size = arr.length;
+        for (int i = 0; i < arr.length; i++) {
+            AccessEntity access = accessRepository.findById(arr[i]);
+            int apiId = access.getApiId();
+            apiArr[i] = apiId;
+        }
+
+        boolean apiPresent  = ifExistInApiArray(apiArr,toCheckValue);
+        logger.info("IfAPIPresent.... : "+apiPresent);
+        logger.info("String : " + str);
+        logger.info("Integer array : " + Arrays.toString(arr));
+        logger.info("API array : " + Arrays.toString(apiArr));
+        return apiPresent;
+
     }
 
-    public Boolean isValidToken(Integer id,String token){
-        UserAuthEntity user = userAuthRepository.findByUId(id);
-        //logger.info(token);
-        //logger.info(user.getToken());
-        String t = (user.getToken());
-        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
-            return false;
-        return true;
+    private boolean ifExistInApiArray(int[] arr,int toCheckValue){
+        logger.info("ToCheck Array is : "+arr);
+        logger.info("TocheckVal is : "+toCheckValue);
+        return IntStream.of(arr).anyMatch(x -> x == toCheckValue);
     }
-
-
     private Map<String, String> getHeaders(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaderNames();
         Map<String, String> headerMap = new HashMap<>();

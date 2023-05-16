@@ -51,7 +51,7 @@ public class UserEntity implements Serializable {
 
     @Column(name="session",columnDefinition="text")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-    private HashMap<String, String> session = new HashMap<String, String>(0);
+    private HashMap<String, Object> session = new HashMap<String, Object>(0);
 
     @Column(name = "features",columnDefinition = "integer[]")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
@@ -148,11 +148,11 @@ public class UserEntity implements Serializable {
         this.lastLogin = lastLogin;
     }
 
-    public HashMap<String, String> getSession() {
+    public HashMap<String, Object> getSession() {
         return session;
     }
 
-    public void setSession(HashMap<String, String> session) {
+    public void setSession(HashMap<String, Object> session) {
         this.session = session;
     }
 //

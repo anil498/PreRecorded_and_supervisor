@@ -34,7 +34,7 @@ public class MapType implements UserType {
         {
             synchronized (MapType.class)
             {
-                javaType = MAPPER.getTypeFactory().constructType(new TypeReference<Map<String,String>>()
+                javaType = MAPPER.getTypeFactory().constructType(new TypeReference<Map<String,Object>>()
                 {
                 });        return javaType;
             }
