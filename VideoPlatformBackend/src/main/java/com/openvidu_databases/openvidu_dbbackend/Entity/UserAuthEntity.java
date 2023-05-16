@@ -1,7 +1,10 @@
 package com.openvidu_databases.openvidu_dbbackend.Entity;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Entity
 @Table(name = "user_auth")
@@ -9,12 +12,13 @@ public class UserAuthEntity {
 
     @Id
     @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_auth_generator")
-    @SequenceGenerator(name="user_auth_generator", sequenceName = "user_auth_seq",allocationSize = 1)
     private int userId;
 
     @Column(name = "login_id",nullable = false,unique = true)
     private String loginId;
+
+    @Column(name = "auth_id")
+    private int authId;
 
     @Column(nullable = false, name="token")
     private String token;
@@ -24,6 +28,10 @@ public class UserAuthEntity {
 
     @Column(nullable = false,name="exp_date")
     private LocalDateTime expDate;
+
+    @Column(name = "access_id",columnDefinition = "integer[]")
+    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
+    private Integer[] accessId;
 
     public int getUserId() { return userId; }
 
@@ -57,14 +65,28 @@ public class UserAuthEntity {
         this.expDate = expDate;
     }
 
+    public int getAuthId() {
+        return authId;
+    }
+
+    public void setAuthId(int authId) {
+        this.authId = authId;
+    }
+
+    public Integer[] getAccessId() { return accessId; }
+
+    public void setAccessId(Integer[] accessId) { this.accessId = accessId; }
+
     @Override
     public String toString() {
         return "UserAuthEntity{" +
                 "userId=" + userId +
                 ", loginId='" + loginId + '\'' +
+                ", authId=" + authId +
                 ", token='" + token + '\'' +
                 ", creationDate=" + creationDate +
                 ", expDate=" + expDate +
+                ", accessId='" + accessId + '\'' +
                 '}';
     }
 }

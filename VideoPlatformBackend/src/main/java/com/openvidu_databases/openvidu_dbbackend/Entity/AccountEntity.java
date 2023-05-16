@@ -35,15 +35,12 @@ public class AccountEntity {
     @Column(name = "creation_date")
     private String creationDate;
 
-    @Column(name = "max_admin")
-    private int maxAdmin;
-
     @Column(name = "max_user")
     private int maxUser;
 
     @Column(name="session",columnDefinition="text")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-    private HashMap<String, String> session = new HashMap<String, String>(0);
+    private HashMap<String, Object> session = new HashMap<String,Object>(0);
 
     @Column(name = "features",columnDefinition = "integer[]")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
@@ -51,7 +48,7 @@ public class AccountEntity {
 
     @Column(name="features_meta",columnDefinition="text")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
-    private HashMap<String, String> featuresMeta = new HashMap<String, String>(0);
+    private HashMap<String, Object> featuresMeta = new HashMap<String, Object>(0);
 
     @Column(name = "access_id",columnDefinition = "integer[]")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
@@ -105,14 +102,6 @@ public class AccountEntity {
         this.creationDate = creationDate;
     }
 
-    public int getMaxAdmin() {
-        return maxAdmin;
-    }
-
-    public void setMaxAdmin(int maxAdmin) {
-        this.maxAdmin = maxAdmin;
-    }
-
     public int getMaxUser() {
         return maxUser;
     }
@@ -121,11 +110,11 @@ public class AccountEntity {
         this.maxUser = maxUser;
     }
 
-    public HashMap<String, String> getSession() {
+    public HashMap<String, Object> getSession() {
         return session;
     }
 
-    public void setSession(HashMap<String, String> session) {
+    public void setSession(HashMap<String, Object> session) {
         this.session = session;
     }
 
@@ -137,11 +126,11 @@ public class AccountEntity {
         this.features = features;
     }
 
-    public HashMap<String, String> getFeaturesMeta() {
+    public HashMap<String, Object> getFeaturesMeta() {
         return featuresMeta;
     }
 
-    public void setFeaturesMeta(HashMap<String, String> featuresMeta) {
+    public void setFeaturesMeta(HashMap<String, Object> featuresMeta) {
         this.featuresMeta = featuresMeta;
     }
 
@@ -177,7 +166,6 @@ public class AccountEntity {
                 ", address='" + address + '\'' +
                 ", logo=" + Arrays.toString(logo) +
                 ", creationDate='" + creationDate + '\'' +
-                ", maxAdmin='" + maxAdmin + '\'' +
                 ", maxUser='" + maxUser + '\'' +
                 ", session=" + session +
                 ", features=" + features +

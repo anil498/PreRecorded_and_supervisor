@@ -3,15 +3,9 @@ package com.openvidu_databases.openvidu_dbbackend.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openvidu_databases.openvidu_dbbackend.Constant.RequestMappings;
-import com.openvidu_databases.openvidu_dbbackend.Entity.AccountAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.FeatureEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserEntity;
+import com.openvidu_databases.openvidu_dbbackend.Entity.*;
 import com.openvidu_databases.openvidu_dbbackend.Exception.UserNotAuthorizedException;
-import com.openvidu_databases.openvidu_dbbackend.Repository.AccountAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.FeatureRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.UserAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.UserRepository;
+import com.openvidu_databases.openvidu_dbbackend.Repository.*;
 import com.openvidu_databases.openvidu_dbbackend.Services.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -34,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -60,6 +55,9 @@ public class UserController {
     @Autowired
     private FeatureRepository featureRepository;
 
+    @Autowired
+    private AccessRepository accessRepository;
+
     @Value("${secret.key}")
     private String secret;
 
@@ -72,13 +70,14 @@ public class UserController {
     @GetMapping("/getAll")
     public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request) {
         logger.info(getHeaders(request).toString());
-        logger.info(request.getHeader("id"));
-        logger.info(request.getHeader("token"));
-        int accId = Integer.parseInt(request.getHeader("accId"));
-        String authKey = request.getHeader("authKey");
-        Integer ID = Integer.valueOf(request.getHeader("userId"));
-        String token = request.getHeader("token");
-        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+        int authId = isValidAuthKey(authKey);
+        logger.info("Auth Id .. "+authId);
+        if(authId == 0){
+            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        if (isValidToken(authId,token)) {
             return ResponseEntity.ok(userService.getAllUsers());
         }
         else {
@@ -106,11 +105,14 @@ public class UserController {
     @GetMapping("/getById/{id}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id, HttpServletRequest request) {
 
-        int accId = Integer.parseInt(request.getHeader("accId"));
-        String authKey = request.getHeader("authKey");
-        Integer ID = Integer.valueOf(request.getHeader("userId"));
-        String token = request.getHeader("token");
-        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+        int authId = isValidAuthKey(authKey);
+        logger.info("Auth Id .. "+authId);
+        if(authId == 0){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if (isValidToken(authId,token)) {
             logger.info(String.valueOf(userService.getUserById(id)));
             return ResponseEntity.ok(userService.getUserById(id));
         }
@@ -120,42 +122,63 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody UserEntity user, HttpServletRequest request, HttpServletResponse response) {
-        //logger.info(getHeaders(request).toString());
-        logger.info(String.valueOf(user));
-        int accId = Integer.parseInt(request.getHeader("accId"));
-        String authKey = request.getHeader("authKey");
-        Integer ID = Integer.valueOf(request.getHeader("userId"));
-        String token = request.getHeader("token");
-        if(isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
-            String creation = LocalDateTime.now().format(formatter);
-            user.setCreationDate(creation);
-            String mypass = passwordEncoder.encode(user.getPassword());
-            user.setPassword(mypass);
-            Map<String,String> result = new HashMap<>();
-            userService.createUser(user);
-            result.put("status_code ","200");
-            result.put("message", "User Created");
-              return ResponseEntity.ok(result);
-            }
+    public ResponseEntity<?> createUser(@RequestBody UserEntity user, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
 
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(authId,1001) && byAccess(authId,1006))){
+            logger.info("for 1001 : "+byAccess(authId,1001));
+            logger.info("for 1006 : "+byAccess(authId,1006));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+        String creation = LocalDateTime.now().format(formatter);
+        user.setAccountId(acc.getAccountId());
+        user.setCreationDate(creation);
+        String mypass = passwordEncoder.encode(user.getPassword());
+        user.setPassword(mypass);
+        Map<String,String> result = new HashMap<>();
+        userService.createUser(user);
+        result.put("status_code ","200");
+        result.put("message", "User Created");
+        return ResponseEntity.ok(result);
 
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserEntity> updateUser(@PathVariable Integer id, @RequestBody UserEntity user, HttpServletRequest request) {
-        int accId = Integer.parseInt(request.getHeader("accId"));
-        String authKey = request.getHeader("authKey");
-        Integer ID = Integer.valueOf(request.getHeader("userId"));
-        String token = request.getHeader("token");
+    public ResponseEntity<UserEntity> updateUser(@PathVariable Integer id, @RequestBody UserEntity user, HttpServletRequest request) throws JsonProcessingException {
 
-        if(isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
-            return ResponseEntity.ok(userService.updateUser(user, id));
-        }
-        else{
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        if(!(byAccess(authId,1001) && byAccess(authId,1006))){
+            logger.info("for 1001 : "+byAccess(authId,1001));
+            logger.info("for 1006 : "+byAccess(authId,1006));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(userService.updateUser(user, id));
     }
     @PostMapping("/up")
     public ResponseEntity<UserEntity> update(@RequestBody Map<String, String> params, HttpServletRequest request) {
@@ -168,21 +191,37 @@ public class UserController {
         }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer id, @RequestBody UserEntity user, HttpServletRequest request) {
-        int accId = Integer.parseInt(request.getHeader("accId"));
-        String authKey = request.getHeader("authKey");
-        Integer ID = Integer.valueOf(request.getHeader("userId"));
-        String token = request.getHeader("token");
-        if(isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
-            return ResponseEntity.ok(userService.deleteUser(id));
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id, @RequestBody UserEntity user, HttpServletRequest request) throws JsonProcessingException {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        else{
-            return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        if(!(byAccess(authId,1001) && byAccess(authId,1006))){
+            logger.info("for 1001 : "+byAccess(authId,1001));
+            logger.info("for 1006 : "+byAccess(authId,1006));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        return ResponseEntity.ok(userService.deleteUser(id));
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> params,HttpServletRequest request) throws JsonProcessingException {
+        String authKey = request.getHeader("Authorization");
+        int authId = isValidAuthKey(authKey);
+        logger.info("Auth Id .. "+authId);
+        if(authId == 0){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         String loginId = params.get("loginId");
         String password = params.get("password");
 
@@ -195,13 +234,11 @@ public class UserController {
         logger.info("userId "+userId);
         UserAuthEntity user = userAuthRepository.findByAuthId(userId);
         logger.info("userId"+userId);
-        //UserEntity user1 = userRepository.findByUserId(userId);
 
-//        int accId = Integer.parseInt(request.getHeader("accId"));
-//        String authKey = request.getHeader("authKey");
-//  //      if(isValidAuthKey(accId,authKey)){
         if (user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId)) {
+            logger.info("Inside first if ...");
             if(isValidTokenLogin(userId)){
+                logger.info("Inside second if ...");
                 ObjectMapper obj = new ObjectMapper();
                 String res = obj.writeValueAsString(user1);
                 HashMap<String,String> response=new HashMap<>();
@@ -210,22 +247,19 @@ public class UserController {
                 response.put("status_code","200");
                 response.put("status_message","Login Successful");
                 response.put("Features", String.valueOf(byFeature(user1.getUserId())));
- //               response.put("features", String.valueOf(byFeature(id)));
- //               logger.info(user1.toString());
-                String lastlogin = LocalDateTime.now().format(formatter);
+//                String lastlogin = LocalDateTime.now().format(formatter);
         //        user1.setLastLogin(lastlogin);
         //        userRepository.setLastLogin(id);
  //               logger.info("last login :"+lastlogin);
               //  logger.info("UE :"+u1);
  //               userRepository.setLogin(lastlogin,userId);
  //               logger.info("Last Login : "+user1.getLastLogin());
-               // byFeature(user1.getUserId());
                 return ResponseEntity.ok(response);
             }
             else {
 
                 if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
-                    String token = generateToken(userId,"UR");
+                    String token1 = generateToken(userId,"UR");
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime newDateTime = now.plus(accessTime, ChronoUnit.HOURS);
                     UserAuthEntity ua = userAuthRepository.findByAuthId(userId);
@@ -236,7 +270,8 @@ public class UserController {
                  //   logger.info("Last Login : "+user1.getLastLogin());
 
                     if(ua != null){
-                        ua.setToken(token);
+                        ua.setToken(token1);
+                        ua.setAuthId(authId);
                         ua.setCreationDate(now);
                         ua.setExpDate(newDateTime);
                     }
@@ -244,14 +279,15 @@ public class UserController {
                         ua = new UserAuthEntity();
                         ua.setLoginId(user1.getLoginId());
                         ua.setUserId(user1.getUserId());
-                        ua.setToken(token);
+                        ua.setToken(token1);
+                        ua.setAuthId(authId);
                         ua.setCreationDate(now);
                         ua.setExpDate(newDateTime);
                     }
 
                     userAuthRepository.save(ua);
                     Map<String,String> res = new HashMap<>();
-                    res.put("token",token);
+                    res.put("token",token1);
                     res.put("user_data",user1.toString());
                     res.put("status_code","200");
                     res.put("status_message","Login Successful");
@@ -265,25 +301,11 @@ public class UserController {
     }
 
     private String generateToken(Integer userId,String type) {
-//        return Jwts.builder()
-//                .setSubject(userId)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
-//                .signWith(SignatureAlgorithm.HS256, secret)
-//                .compact();
-    //    return type+userId+randomString(10);
-        return type+userId+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+        String val = String.format("%04d", userId);
+        logger.info("Format val = "+val);
+        return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
-//    public static String randomString(int length){
-//        char[] ALPHANUMERIC="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-//        StringBuilder random = new StringBuilder();
-//        for(int i =0; i < length; i++) {
-//            int index = (int) (Math.random()%ALPHANUMERIC.length);
-//            random.append(ALPHANUMERIC[index]);
-//        }
-//        return random.toString();
-//    }
-    //@Test
+
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
         logger.info(generatedString);
@@ -291,46 +313,34 @@ public class UserController {
         return generatedString;
     }
 
-    public Boolean isValidToken(Integer id,String token){
-        UserAuthEntity user = userAuthRepository.findByUId(id);
-        //logger.info(token);
+    public int isValidAuthKey(String authKey){
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+        if(acc == null)return 0;
+        String key = (acc.getAuthKey());
+        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
+            return 0;
+        }
+        int authId = acc.getAuthId();
+        return authId;
+    }
+    public Boolean isValidToken(int authId,String token){
+        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+        if(user == null)return false;
+        logger.info("DAta by authId.."+user);
         //logger.info(user.getToken());
         String t = (user.getToken());
         if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
             return false;
         return true;
     }
+    public Boolean isValidTokenLogin(int id){
 
-    public Boolean isValidTokenLogin(Integer id){
         UserAuthEntity user = userAuthRepository.findByUId(id);
-        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) )
+        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) ) {
             return false;
+        }
         return true;
     }
-    public Boolean isValidAuthKey(int accountid,String token){
-        AccountAuthEntity acc = accountAuthRepository.findById(accountid);
-        // logger.info(token);
-        //logger.info(user.getToken());
-        String key = (acc.getAuthKey());
-        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(key.equals(token)))
-            return false;
-        return true;
-    }
-//    private String generatedKey(int accountId){
-//        String key = "Account"+generateKey(accountId)+accountId;
-//        logger.info("AccountAuthKey : "+key);
-// //       logger.info("Unique Authorization key generated...!");
-//        return key;
-//    }
-
- //   private String generateKey(int accountId) {
-//        return Jwts.builder()
-//                .setSubject(String.valueOf(accountId))
-//                .setIssuedAt(new Date())
-//                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
-//                .signWith(SignatureAlgorithm.HS256, "accountsecret")
-//                .compact();
- //   }
 
    private Map<String, String> getHeaders(HttpServletRequest request) {
        Enumeration<String> headers = request.getHeaderNames();
@@ -341,7 +351,6 @@ public class UserController {
        }
        return headerMap;
    }
- //  Integer fid = byFeature("admin8");
 
    private String byFeature(Integer userId) throws JsonProcessingException {
 
@@ -357,7 +366,6 @@ public class UserController {
         Map<Integer,String> res = new HashMap<>();
         for (int i = 0; i < string.length; i++) {
            arr[i] = Integer.valueOf(string[i]);
-
         }
         ObjectMapper obj1 = new ObjectMapper();
        String str1="";
@@ -368,9 +376,53 @@ public class UserController {
         logger.info("String : " + str);
         logger.info("\nInteger array : "
                + Arrays.toString(arr));
-
         return str1;
    }
+
+    private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
+
+        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+        int userId = user.getUserId();
+        UserEntity u = userRepository.findByUserId(userId);
+        if(user == null) return false;
+        ObjectMapper obj = new ObjectMapper();
+        String str = obj.writeValueAsString(u.getAccessId());
+        logger.info("Val : "+str);
+        String[] string = str.replaceAll("\\[", "")
+                .replaceAll("]", "")
+                .split(",");
+        int[] arr = new int[string.length];
+        int[] apiArr = new int[string.length];
+        for (int i = 0; i < string.length; i++) {
+            arr[i] = Integer.valueOf(string[i]);
+        }
+        int size = arr.length;
+        for (int i = 0; i < arr.length; i++) {
+            AccessEntity access = accessRepository.findById(arr[i]);
+            int apiId = access.getApiId();
+            apiArr[i] = apiId;
+        }
+
+        boolean apiPresent  = ifExistInApiArray(apiArr,toCheckValue);
+        logger.info("IfAPIPresent.... : "+apiPresent);
+        logger.info("String : " + str);
+        logger.info("Integer array : " + Arrays.toString(arr));
+        logger.info("API array : " + Arrays.toString(apiArr));
+        return apiPresent;
+
+    }
+
+    private boolean ifExistInApiArray(int[] arr,int toCheckValue){
+        logger.info("ToCheck Array is : "+arr);
+        logger.info("TocheckVal is : "+toCheckValue);
+        return IntStream.of(arr).anyMatch(x -> x == toCheckValue);
+    }
+    private boolean ifExistInAccessArray(int[] arr,int toCheckValue){
+        boolean test
+                = Arrays.asList(arr)
+                .contains(toCheckValue);
+        return test;
+    }
 
 }
 
