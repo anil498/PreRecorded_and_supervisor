@@ -37,6 +37,8 @@ export class UserManagementComponent implements OnInit {
     "loginId",
     "contact",
     "email",
+    "access",
+    "features",
     "expDate",
     "status",
     "Action",
@@ -68,21 +70,12 @@ export class UserManagementComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.restService.dialogClosed$.subscribe(() => {
-      this.openSnackBar("User Created", "snackBar");
-    });
+    // this.restService.dialogClosed$.subscribe(() => {
+    //   this.openSnackBar("User Created", "snackBar");
+    // });
 
     console.warn(this.token + "\n" + this.userId);
-    this.restService.getUserList(this.token, this.userId).then(
-      (response) => {
-        this.users = response;
-        console.log(this.users);
-        this.dataSourceWithPageSize.data = this.users;
-      },
-      (error) => {
-        console.log(error.status);
-      }
-    );
+    this.viewTable();
 
     // this.updateSubscription = interval(6000).subscribe((val) => {
     //   this.restService.getUserList(this.token, this.userId).then(
@@ -131,6 +124,23 @@ export class UserManagementComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
     });
+  }
+
+  viewTable(){
+    this.restService.getUserList(this.token, this.userId).then(
+      (response) => {
+        this.users = response;
+        console.log(this.users);
+        this.dataSourceWithPageSize.data = this.users;
+      },
+      (err) => {
+        console.log(err.error.error);
+        this.snackBar.open(err.error.error, "Close", {
+          duration: 3000,
+          panelClass: ["snackBar"],
+        });
+      }
+    );
   }
 
   searchData(event: Event) {

@@ -1,5 +1,9 @@
 import { Component, OnInit, ViewChild, Input } from "@angular/core";
-import { MatDialog, MatDialogConfig, MatDialogRef } from "@angular/material/dialog";
+import {
+  MatDialog,
+  MatDialogConfig,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { interval, Subscription } from "rxjs";
 import { MatTableDataSource } from "@angular/material/table";
@@ -39,8 +43,10 @@ export class AccountManagementComponent implements OnInit {
   // ];
   displayedColumns: any[] = [
     "name",
-    "contact",
-    "email",
+    // "contact",
+    // "email",
+    "access",
+    "features",
     "expDate",
     "status",
     "Action",
@@ -72,9 +78,9 @@ export class AccountManagementComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.restService.dialogClosed$.subscribe(() => {
-      this.openSnackBar("Account Created", "snackBar");
-    });
+    // this.restService.dialogClosed$.subscribe(() => {
+    //   this.openSnackBar("Account Created", "snackBar");
+    // });
 
     console.warn(this.token + "\n" + this.userId);
     this.restService.getAccountList(this.token, this.userId).then(
@@ -83,8 +89,12 @@ export class AccountManagementComponent implements OnInit {
         console.log(this.accounts);
         this.dataSourceWithPageSize.data = this.accounts;
       },
-      (error) => {
-        console.log(error.status);
+      (err) => {
+        console.log(err.error.error);
+        this.snackBar.open(err.error.error, "Close", {
+          duration: 3000,
+          panelClass: ["snackBar"],
+        });
       }
     );
     // this.updateSubscription = interval(6000).subscribe((val) => {
@@ -144,9 +154,8 @@ export class AccountManagementComponent implements OnInit {
 
   deleteData(usercode: number) {
     const dialogConfig = new MatDialogConfig();
-    console.log('Confirm Delete');
+    console.log("Confirm Delete");
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
-
   }
 
   updateDialog(usercode: number) {
@@ -161,5 +170,3 @@ export class AccountManagementComponent implements OnInit {
     });
   }
 }
-
-

@@ -91,7 +91,7 @@ export class LoginComponent implements OnInit {
       this.router.navigate(["/app/dashboard"]);
     } catch (error) {
       console.log(error);
-      this.state = error.statusText;
+      this.state = error.error.error;
       this.failedMessage = true;
       this.failedMessageShow = "";
 

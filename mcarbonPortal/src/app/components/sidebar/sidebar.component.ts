@@ -49,7 +49,7 @@ export const ROUTES: RouteInfo[] = [
     title: "Dynamic Support",
     icon: "headset_mic",
     class: "",
-    show: false,
+    show: true,
   },
 ];
 

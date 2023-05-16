@@ -277,7 +277,7 @@ export class FormDialogComponent implements OnInit {
 
     let response: any;
     try {
-      response = await this.restService.create(
+      response = await this.restService.createUser(
         "create",
 
         this.user_fname,

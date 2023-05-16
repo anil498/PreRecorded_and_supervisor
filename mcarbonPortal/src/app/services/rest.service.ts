@@ -156,7 +156,7 @@ export class RestService {
     return this.loginRequest(type, { userId, userPassword });
   }
 
-  async create(
+  async createUser(
     type: string,
 
     userFname: string,
