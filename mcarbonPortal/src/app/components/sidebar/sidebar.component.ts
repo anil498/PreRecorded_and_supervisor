@@ -1,13 +1,14 @@
 import { Component, OnInit } from "@angular/core";
-
+import { RestService } from "app/services/rest.service";
 declare const $: any;
 declare interface RouteInfo {
   path: string;
   title: string;
   icon: string;
   class: string;
-  show: boolean
+  show: boolean;
 }
+
 export const ROUTES: RouteInfo[] = [
   {
     path: "/app/dashboard",
@@ -60,11 +61,13 @@ export const ROUTES: RouteInfo[] = [
 })
 export class SidebarComponent implements OnInit {
   menuItems: any[];
-
-  constructor() {}
+  accessId: any[];
+  constructor(private restService: RestService) {}
 
   ngOnInit() {
     this.menuItems = ROUTES.filter((menuItem) => menuItem);
+    this.accessId = this.restService.getData()["Features"];
+    console.log(this.accessId);
   }
   isMobileMenu() {
     if ($(window).width() > 991) {

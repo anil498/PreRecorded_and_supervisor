@@ -84,20 +84,21 @@ export class LoginComponent implements OnInit {
       );
       this.token = loginResponse.token;
       loginResponse.user_data = JSON.parse(loginResponse.user_data);
+      loginResponse.Features = JSON.parse(loginResponse.Features);
       console.warn(loginResponse);
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);
       this.restService.setUserId(this.username);
       this.router.navigate(["/app/dashboard"]);
-    } catch (error) {
-      console.log(error);
-      this.state = error.error.error;
+    } catch (err) {
+      console.log(err);
+      //this.state = err.error.error;
       this.failedMessage = true;
       this.failedMessageShow = "";
 
       const snackBarConfig = new MatSnackBarConfig();
       snackBarConfig.duration = 3000;
-      if (error.status === 401) {
+      if (err.status === 401) {
         this.state = "Unauthorized User";
       }
 

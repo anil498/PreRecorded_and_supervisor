@@ -29,7 +29,7 @@ export class RestService {
   setData(response: any) {
     this._response = response;
   }
-  
+
   setToken(value: string) {
     this._token = value;
   }
@@ -59,7 +59,7 @@ export class RestService {
     console.warn(body);
     try {
       const headers = {
-        Authorization: "AABBCCDD",
+        Authorization: "AC1XD9cyYcNxO",
         "Content-Type": "application/json",
       };
       return lastValueFrom(
@@ -82,10 +82,8 @@ export class RestService {
     console.warn(body);
     try {
       const headers = new HttpHeaders({
-        Authorization: "AABBCCDD",
-        "Content-Type": "application/json",
-        token: `${this._token}`,
-        id: `${this._userId}`,
+        Authorization: "AC1XD9cyYcNxO",
+        Token: `${this._token}`,
       });
       return lastValueFrom(
         this.http.post<any>(this.url + "/user/" + path, body, { headers })
@@ -107,10 +105,8 @@ export class RestService {
     console.warn(body);
     try {
       const headers = new HttpHeaders({
-        Authorization: "AABBCCDD",
-        "Content-Type": "application/json",
-        token: `${this._token}`,
-        id: `${this._userId}`,
+        Authorization: "AC1XD9cyYcNxO",
+        Token: `${this._token}`,
       });
       return lastValueFrom(
         this.http.post<any>(this.url + "/account/" + path, body, { headers })
@@ -152,8 +148,8 @@ export class RestService {
     }
   }
 
-  async login(type: string, userId: string, userPassword: string) {
-    return this.loginRequest(type, { userId, userPassword });
+  async login(type: string, loginId: string, password: string) {
+    return this.loginRequest(type, { loginId, password });
   }
 
   async createUser(
@@ -321,10 +317,8 @@ export class RestService {
     const authKey =
       "AccounteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJpYXQiOjE2ODQwNjE4MjEsImV4cCI6MTY4NDE0ODIyMX0.oDI2pKx1orZ0QlgqTGfRSkvRkocJy65tR6VTGKZTyZU102";
     const headers = new HttpHeaders({
-      token: `${token}`,
-      userId: `${id}`,
-      accId: `${accId}`,
-      authKey: `${authKey}`,
+      Token: `${token}`,
+      Authorization: "AC1XD9cyYcNxO",
     });
     try {
       return lastValueFrom(
@@ -346,10 +340,8 @@ export class RestService {
     const authKey =
       "AccounteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJpYXQiOjE2ODQwNjE4MjEsImV4cCI6MTY4NDE0ODIyMX0.oDI2pKx1orZ0QlgqTGfRSkvRkocJy65tR6VTGKZTyZU102";
     const headers = new HttpHeaders({
-      token: `${token}`,
-      userId: `${id}`,
-      accId: `${accId}`,
-      authKey: `${authKey}`,
+      Token: `${token}`,
+      Authorization: "AC1XD9cyYcNxO",
     });
     try {
       return lastValueFrom(
