@@ -48,11 +48,11 @@ public class AccessEntity {
         this.name = name;
     }
 
-    public int getOrder() {
+    public int getSeq() {
         return seq;
     }
 
-    public void setOrder(int seq) {
+    public void setSeq(int seq) {
         this.seq = seq;
     }
 
@@ -85,7 +85,7 @@ public class AccessEntity {
         return "AccessEntity{" +
                 "accessId=" + accessId +
                 ", name='" + name + '\'' +
-                ", order=" + seq +
+                ", seq=" + seq +
                 ", pId=" + pId +
                 ", apiId=" + apiId +
                 ", status=" + status +

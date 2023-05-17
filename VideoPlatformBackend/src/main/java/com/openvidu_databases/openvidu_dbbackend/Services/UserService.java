@@ -34,7 +34,7 @@ public class UserService {
 
     public UserEntity getUserById(Integer id) {
         //logger.info(String.valueOf(userRepository.findById(id)));
-        return  userRepository.findByUserId(id);
+        return (UserEntity) userRepository.findByUserId(id);
     }
 
     public UserEntity createUser(UserEntity user) {
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public UserEntity updateUser(UserEntity user, Integer id) {
-        UserEntity existing = userRepository.findByUserId(id);
+        UserEntity existing = (UserEntity) userRepository.findByUserId(id);
         existing.setEmail(user.getEmail());
         existing.setContact(user.getContact());
         existing.setFname(user.getFname());

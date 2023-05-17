@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AccessRepository extends JpaRepository<AccessEntity, Integer> {
     @Query(nativeQuery=true, value = "select * from platform_access where access_id = :accessId ")
-    AccessEntity findById(@Param("accessId") int accessId);
+    Object findById(@Param("accessId") int accessId);
+    @Query(nativeQuery=true, value = "select * from platform_access where access_id = :accessId ")
+    AccessEntity findByAccessId(@Param("accessId") int accessId);
 }

@@ -98,6 +98,32 @@ public class AccountController {
 
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
+/*    @GetMapping("/getAll")
+    public ResponseEntity<List<AccountEntity>> getAllUsersFromAccount(HttpServletRequest request) throws JsonProcessingException {
+        logger.info(getHeaders(request).toString());
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(authId,1000))){
+            logger.info("for 1000 : "+byAccess(authId,1000));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(accountService.getAllAccounts());
+    }
+
+ */
     @GetMapping("/getById/{id}")
     public ResponseEntity<List<AccountEntity>> getAccountById(@PathVariable int id, HttpServletRequest request) throws JsonProcessingException {
 
@@ -128,13 +154,13 @@ public class AccountController {
         String token = request.getHeader("Token");
 
         int authId = isValidAuthKey(authKey);
+        logger.info("Auth Id : "+authId);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1000) && byAccess(authId,1005))){
-            logger.info("for 1000 : "+byAccess(authId,1000));
-            logger.info("for 1005 : "+byAccess(authId,1005));
+        if(!(byAccess(authId,1001))){
+            logger.info("for 1001 : "+byAccess(authId,1001));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -164,6 +190,8 @@ public class AccountController {
             acc.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
             acc.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
+            UserAuthEntity u = userAuthRepository.findByAuthId(authId);
+            logger.info("User Data : "+u);
             user.setFname(params.get("fname").getAsString());
             user.setLname(params.get("lname").getAsString());
             user.setExpDate(params.get("expDate").getAsString());
@@ -174,6 +202,7 @@ public class AccountController {
             user.setContact(params.get("contact").getAsString());
             user.setEmail(params.get("email").getAsString());
             user.setCreationDate(creation);
+            user.setParentId(u.getUserId());
             user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
             user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
             user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
@@ -209,7 +238,7 @@ public class AccountController {
                 ua.setLoginId(user.getLoginId());
                 ua.setUserId(user.getUserId());
                 ua.setToken(token1);
-                ua.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+ //               ua.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
                 ua.setAuthId(authId1);
                 ua.setCreationDate(LocalDateTime.now());
                 ua.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
@@ -231,54 +260,23 @@ public class AccountController {
     }
 
     private String generateKey(int accountId,String type) {
-//        return Jwts.builder()
-//                .setSubject(String.valueOf(accountId))
-//                .setIssuedAt(new Date())
-//                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
-//                .signWith(SignatureAlgorithm.HS256, "accountsecret")
-//                .compact();
-        String val = String.format("%04d", accountId);
+        String val = String.format("%03d", accountId);
         logger.info("Format val = "+val);
         return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
     private String generateToken(int userId,String type) {
-//        return Jwts.builder()
-//                .setSubject(userId)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new java.sql.Date(System.currentTimeMillis() + 86400000))
-//                .signWith(SignatureAlgorithm.HS256, secret)
-//                .compact();
-        String val = String.format("%04d", userId);
+        String val = String.format("%03d", userId);
         logger.info("Format val = "+val);
        return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
 
-//    public static String randomString(int length){
-//        char[] ALPHANUMERIC="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-//        StringBuilder random = new StringBuilder();
-//        for(int i =0; i < length; i++) {
-//            int index = (int) (System.currentTimeMillis()%ALPHANUMERIC.length);
-//            random.append(ALPHANUMERIC[index]);
-//        }
-//        return random.toString();
-//    }
-        public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
-            String generatedString = RandomStringUtils.randomAlphanumeric(10);
-            logger.info(generatedString);
-            System.out.println(generatedString);
-            return generatedString;
-        }
+    public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
+        String generatedString = RandomStringUtils.randomAlphanumeric(10);
+        logger.info(generatedString);
+        System.out.println(generatedString);
+        return generatedString;
+    }
 
-
-//    public Boolean isValidAuthKey(int accountid,String token){
-//        AccountAuthEntity acc = accountAuthRepository.findById(accountid);
-//       // logger.info(token);
-//        //logger.info(user.getToken());
-//        String key = acc.getAuthKey();
-//        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(key.equals(token)))
-//            return false;
-//        return true;
-//    }
         public int isValidAuthKey(String authKey){
             AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
 
@@ -303,22 +301,14 @@ public class AccountController {
             return true;
         }
 
-//    public Boolean isValidToken(int id,String token){
-//        UserAuthEntity user = userAuthRepository.findByUId(id);
-//        //logger.info(token);
-//        //logger.info(user.getToken());
-//        String t = (user.getToken());
-//        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
-//            return false;
-//        return true;
-//    }
-
-
     private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
 
         UserAuthEntity user = userAuthRepository.findByAuthId(authId);
-        int userId = user.getUserId();
+        logger.info("User auth data by Auth Id :"+user);
+        Integer userId = user.getUserId();
+        logger.info("User ID is : "+userId);
         UserEntity u = userRepository.findByUserId(userId);
+        logger.info("User data by User Id :"+u);
         if(user == null) return false;
         ObjectMapper obj = new ObjectMapper();
         String str = obj.writeValueAsString(u.getAccessId());
@@ -333,7 +323,7 @@ public class AccountController {
         }
         int size = arr.length;
         for (int i = 0; i < arr.length; i++) {
-            AccessEntity access = accessRepository.findById(arr[i]);
+            AccessEntity access = accessRepository.findByAccessId(arr[i]);
             int apiId = access.getApiId();
             apiArr[i] = apiId;
         }
@@ -361,7 +351,5 @@ public class AccountController {
         }
         return headerMap;
     }
-
-
 
 }

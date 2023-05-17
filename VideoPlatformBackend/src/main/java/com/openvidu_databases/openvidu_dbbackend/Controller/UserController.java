@@ -68,21 +68,28 @@ public class UserController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request) {
+    public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request) throws JsonProcessingException {
         logger.info(getHeaders(request).toString());
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
+
         int authId = isValidAuthKey(authKey);
-        logger.info("Auth Id .. "+authId);
         if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if (isValidToken(authId,token)) {
-            return ResponseEntity.ok(userService.getAllUsers());
-        }
-        else {
+        if(!(byAccess(authId,1001))){
+            logger.info("for 1001 : "+byAccess(authId,1001));
+            logger.info("for 1006 : "+byAccess(authId,1006));
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
 //    @GetMapping("/child/{id}")
@@ -103,22 +110,28 @@ public class UserController {
 //    }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id, HttpServletRequest request) {
+    public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
+
         int authId = isValidAuthKey(authKey);
-        logger.info("Auth Id .. "+authId);
         if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if (isValidToken(authId,token)) {
-            logger.info(String.valueOf(userService.getUserById(id)));
+        if(!(byAccess(authId,1001))){
+            logger.info("for 1001 : "+byAccess(authId,1001));
+            logger.info("for 1006 : "+byAccess(authId,1006));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
             return ResponseEntity.ok(userService.getUserById(id));
-        }
-        else{
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
+
     }
 
     @PostMapping("/create")
@@ -132,9 +145,8 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1001) && byAccess(authId,1006))){
-            logger.info("for 1001 : "+byAccess(authId,1001));
-            logger.info("for 1006 : "+byAccess(authId,1006));
+        if(!(byAccess(authId,2001))){
+            logger.info("for 1006 : "+byAccess(authId,2001));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -144,9 +156,12 @@ public class UserController {
         }
 
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+        int accountId = acc.getAccountId();
+        UserAuthEntity u = userAuthRepository.findByAuthId(authId);
         String creation = LocalDateTime.now().format(formatter);
         user.setAccountId(acc.getAccountId());
         user.setCreationDate(creation);
+        user.setParentId(u.getUserId());
         String mypass = passwordEncoder.encode(user.getPassword());
         user.setPassword(mypass);
         Map<String,String> result = new HashMap<>();
@@ -168,9 +183,8 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1001) && byAccess(authId,1006))){
-            logger.info("for 1001 : "+byAccess(authId,1001));
-            logger.info("for 1006 : "+byAccess(authId,1006));
+        if(!(byAccess(authId,2002))){
+            logger.info("for 1001 : "+byAccess(authId,2002));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -201,8 +215,7 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1001) && byAccess(authId,1006))){
-            logger.info("for 1001 : "+byAccess(authId,1001));
+        if(!(byAccess(authId,2003))){
             logger.info("for 1006 : "+byAccess(authId,1006));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
@@ -240,15 +253,16 @@ public class UserController {
             if(isValidTokenLogin(userId)){
                 logger.info("Inside second if ...");
                 ObjectMapper obj = new ObjectMapper();
-                String res = obj.writeValueAsString(user1);
-                HashMap<String,String> response=new HashMap<>();
+             //   String res = obj.writeValueAsString(user1);
+                HashMap<String,Object> response=new HashMap<>();
                 response.put("token",user.getToken());
-                response.put("user_data",res);
+                response.put("user_data",user1);
                 response.put("status_code","200");
                 response.put("status_message","Login Successful");
-                response.put("Features", String.valueOf(byFeature(user1.getUserId())));
-//                String lastlogin = LocalDateTime.now().format(formatter);
-        //        user1.setLastLogin(lastlogin);
+                response.put("Features", featureData(user1.getUserId()));
+                response.put("Access", accessData(user1.getUserId()));
+                String lastlogin = LocalDateTime.now().format(formatter);
+                user1.setLastLogin(lastlogin);
         //        userRepository.setLastLogin(id);
  //               logger.info("last login :"+lastlogin);
               //  logger.info("UE :"+u1);
@@ -264,9 +278,10 @@ public class UserController {
                     LocalDateTime newDateTime = now.plus(accessTime, ChronoUnit.HOURS);
                     UserAuthEntity ua = userAuthRepository.findByAuthId(userId);
                     String lastlogin = LocalDateTime.now().format(formatter);
+                    user1.setLastLogin(lastlogin);
                 //    logger.info("last login1 :"+lastlogin);
                 //    logger.info("UE :"+u1);
-                //    userRepository.setLogin(lastlogin,userId);
+                 //   userRepository.setLogin(lastlogin,userId);
                  //   logger.info("Last Login : "+user1.getLastLogin());
 
                     if(ua != null){
@@ -286,12 +301,13 @@ public class UserController {
                     }
 
                     userAuthRepository.save(ua);
-                    Map<String,String> res = new HashMap<>();
+                    Map<String,Object> res = new HashMap<>();
                     res.put("token",token1);
-                    res.put("user_data",user1.toString());
+                    res.put("user_data",user1);
                     res.put("status_code","200");
                     res.put("status_message","Login Successful");
-                    res.put("Features", String.valueOf(byFeature(user1.getUserId())));
+                    res.put("Features", featureData(user1.getUserId()));
+                    res.put("Features", accessData(user1.getUserId()));
                     logger.info(user1.toString());
                     return new ResponseEntity<>(res, HttpStatus.OK);
                 }
@@ -301,7 +317,7 @@ public class UserController {
     }
 
     private String generateToken(Integer userId,String type) {
-        String val = String.format("%04d", userId);
+        String val = String.format("%03d", userId);
         logger.info("Format val = "+val);
         return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
@@ -352,7 +368,7 @@ public class UserController {
        return headerMap;
    }
 
-   private String byFeature(Integer userId) throws JsonProcessingException {
+   private Object featureData(Integer userId) throws JsonProcessingException {
 
         UserEntity user = userRepository.findByUserId(userId);
 
@@ -367,18 +383,46 @@ public class UserController {
         for (int i = 0; i < string.length; i++) {
            arr[i] = Integer.valueOf(string[i]);
         }
-        ObjectMapper obj1 = new ObjectMapper();
+//        Object obj1[] = new Objec[];
        String str1="";
         for (int i = 0; i < arr.length; i++) {
-             str1 += obj.writeValueAsString(featureRepository.findById(arr[i]))+",";
+             str1 += obj.writeValueAsString(featureRepository.findById(arr[i]));
         }
+       // str1 = "["+str1+"]";
         logger.info("Response : "+res);
-        logger.info("String : " + str);
+        logger.info("String : " + str1);
         logger.info("\nInteger array : "
                + Arrays.toString(arr));
         return str1;
    }
 
+    private String accessData(Integer userId) throws JsonProcessingException {
+
+        UserEntity user = userRepository.findByUserId(userId);
+
+        ObjectMapper obj = new ObjectMapper();
+        String str = obj.writeValueAsString(user.getAccessId());
+        logger.info("Val : "+str);
+        String[] string = str.replaceAll("\\[", "")
+                .replaceAll("]", "")
+                .split(",");
+        int[] arr = new int[string.length];
+        Map<Integer,String> res = new HashMap<>();
+        for (int i = 0; i < string.length; i++) {
+            arr[i] = Integer.valueOf(string[i]);
+        }
+        ObjectMapper obj1 = new ObjectMapper();
+        String str1="";
+        for (int i = 0; i < arr.length; i++) {
+            str1 += obj.writeValueAsString(accessRepository.findById(arr[i]));
+        }
+       // str1 = "["+str1+"]";
+        logger.info("Response : "+res);
+        logger.info("String : " + str1);
+        logger.info("\nInteger array : "
+                + Arrays.toString(arr));
+        return str1;
+    }
     private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
 
         UserAuthEntity user = userAuthRepository.findByAuthId(authId);
@@ -398,7 +442,7 @@ public class UserController {
         }
         int size = arr.length;
         for (int i = 0; i < arr.length; i++) {
-            AccessEntity access = accessRepository.findById(arr[i]);
+            AccessEntity access = accessRepository.findByAccessId(arr[i]);
             int apiId = access.getApiId();
             apiArr[i] = apiId;
         }

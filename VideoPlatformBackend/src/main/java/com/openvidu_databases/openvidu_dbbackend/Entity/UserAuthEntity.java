@@ -29,9 +29,9 @@ public class UserAuthEntity {
     @Column(nullable = false,name="exp_date")
     private LocalDateTime expDate;
 
-    @Column(name = "access_id",columnDefinition = "integer[]")
-    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
-    private Integer[] accessId;
+//    @Column(name = "access_id",columnDefinition = "integer[]")
+//    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
+//    private Integer[] accessId;
 
     public int getUserId() { return userId; }
 
@@ -73,9 +73,9 @@ public class UserAuthEntity {
         this.authId = authId;
     }
 
-    public Integer[] getAccessId() { return accessId; }
-
-    public void setAccessId(Integer[] accessId) { this.accessId = accessId; }
+//    public Integer[] getAccessId() { return accessId; }
+//
+//    public void setAccessId(Integer[] accessId) { this.accessId = accessId; }
 
     @Override
     public String toString() {
@@ -86,7 +86,6 @@ public class UserAuthEntity {
                 ", token='" + token + '\'' +
                 ", creationDate=" + creationDate +
                 ", expDate=" + expDate +
-                ", accessId='" + accessId + '\'' +
                 '}';
     }
 }

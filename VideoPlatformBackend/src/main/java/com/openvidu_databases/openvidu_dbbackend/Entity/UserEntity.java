@@ -49,6 +49,9 @@ public class UserEntity implements Serializable {
     @Column(name = "exp_date")
     private String expDate;
 
+    @Column(name = "parent_id")
+    private int parentId;
+
     @Column(name="session",columnDefinition="text")
     @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.MapType")
     private HashMap<String, Object> session = new HashMap<String, Object>(0);
@@ -181,6 +184,22 @@ public class UserEntity implements Serializable {
         this.featuresMeta = featuresMeta;
     }
 
+    public String getExpDate() {
+        return expDate;
+    }
+
+    public void setExpDate(String expDate) {
+        this.expDate = expDate;
+    }
+
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
     public int getStatus() {
         return status;
     }
@@ -193,20 +212,21 @@ public class UserEntity implements Serializable {
     public String toString() {
         return "UserEntity{" +
                 "userId=" + userId +
-                ", accountId='" + accountId + '\'' +
+                ", accountId=" + accountId +
                 ", loginId='" + loginId + '\'' +
                 ", password='" + password + '\'' +
                 ", fname='" + fname + '\'' +
                 ", lname='" + lname + '\'' +
-                ", mobile='" + contact + '\'' +
+                ", contact='" + contact + '\'' +
                 ", email='" + email + '\'' +
                 ", creationDate='" + creationDate + '\'' +
                 ", lastLogin='" + lastLogin + '\'' +
                 ", expDate='" + expDate + '\'' +
+                ", parentId=" + parentId +
                 ", session=" + session +
-                ", features='" + features + '\'' +
+                ", features=" + Arrays.toString(features) +
+                ", accessId=" + Arrays.toString(accessId) +
                 ", featuresMeta=" + featuresMeta +
-                ", accessId='" + accessId + '\'' +
                 ", status=" + status +
                 '}';
     }
