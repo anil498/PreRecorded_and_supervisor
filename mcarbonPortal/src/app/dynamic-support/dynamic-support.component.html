@@ -10,7 +10,7 @@
 
           <div class="card-body">
             <mat-tab-group mat-align-tabs="center">
-              <mat-tab label="SMS">
+              <mat-tab label="SMS" *ngIf="showSMSTab">
                 <form id="form1" [formGroup]="userForm" *ngIf="userForm">
                   <div class="">
                     <div class="row row-content">
@@ -96,7 +96,7 @@
                   </div>
                 </form></mat-tab
               >
-              <mat-tab label="Whatsapp"
+              <mat-tab label="Whatsapp" *ngIf="showWhatsappTab"
                 ><form id="form1" [formGroup]="userForm" *ngIf="userForm">
                   <div class="">
                     <div class="row row-content">
@@ -183,7 +183,7 @@
                 </form>
               </mat-tab>
 
-              <mat-tab label="Call on App"
+              <mat-tab label="Call on App" *ngIf="showAppTab"
                 ><form id="form1" [formGroup]="userForm" *ngIf="userForm">
                   <div class="">
                     <div class="row row-content">

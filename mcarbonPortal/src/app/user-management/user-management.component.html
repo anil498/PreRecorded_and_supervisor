@@ -1,33 +1,5 @@
 <div class="main-content">
   <div class="container-fluid">
-    <!-- <div class="row row-1">
-      <div class="col-md-6 align-self-center">
-        <button
-          class="create-btn card-header-danger"
-          mat-raised-button
-          (click)="openDialog()"
-        >
-          <mat-icon>add</mat-icon>Create New User
-        </button>
-      </div>
-      <div class="col-md-4 offset-md-2 align-self-center searchbar">
-        <form class="example-form">
-          <mat-form-field class="">
-            <span matPrefix> </span>
-            <input
-              type="tel"
-              matInput
-              placeholder="Search"
-              name="search"
-              [(ngModel)]="search"
-            />
-            <button matSuffix mat-button><mat-icon>search</mat-icon></button>
-          </mat-form-field>
-          <br />
-          {{ search }}
-        </form>
-      </div>
-    </div> -->
     <div class="row">
       <div class="col-md-12">
         <div class="card">
@@ -38,6 +10,7 @@
                   class="create-btn"
                   mat-raised-button
                   (click)="createDialog()"
+                  *ngIf="showCreateButton"
                 >
                   <mat-icon>add</mat-icon>Create User
                 </button>
@@ -179,6 +152,7 @@
                         class="btn-action"
                         mat-menu-item
                         (click)="updateDialog(user.userCode)"
+                        *ngIf="showEdit"
                       >
                         <mat-icon style="color: #009688">edit</mat-icon>
                         <span>Edit</span>
@@ -187,6 +161,7 @@
                         class="btn-action"
                         mat-menu-item
                         (click)="deleteData(user.userCode)"
+                        *ngIf="showDelete"
                       >
                         <mat-icon style="color: #009688"
                           >delete_outline</mat-icon

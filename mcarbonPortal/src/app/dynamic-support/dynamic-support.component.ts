@@ -23,12 +23,13 @@ import {
   templateUrl: "./dynamic-support.component.html",
   styleUrls: ["./dynamic-support.component.scss"],
 })
-
 export class DynamicSupportComponent implements OnInit {
   title = "Dynamic Support";
-  // faWhatsapp1 = faWhatsappSquare;
-  // faWhatsapp2 = faSquareWhatsapp;
-  // faMessage = faMessage;
+  accessList: any[];
+  showSMSTab = false;
+  showWhatsappTab = false;
+  showAppTab = false;
+
   userForm: FormGroup;
   showDescription: boolean;
   failedMessage: boolean;
@@ -49,12 +50,12 @@ export class DynamicSupportComponent implements OnInit {
     private router: Router,
     private restService: RestService,
     private fb: FormBuilder
-    
   ) {
-    this.url = "https://demo2.progate.mobi/dynamicsupport/#/call/"
+    this.url = "https://demo2.progate.mobi/dynamicsupport/#/call/";
   }
 
   async ngOnInit(): Promise<void> {
+    this.show();
     this.userForm = this.fb.group({
       title: ["", [Validators.required]],
       body: ["", [Validators.required]],
@@ -62,10 +63,28 @@ export class DynamicSupportComponent implements OnInit {
       room: ["", Validators.required],
     });
   }
+
+  show() {
+    this.accessList.forEach((access) => {
+      if (access.pId == 5000) {
+        if (access.apiId == 5001) {
+          this.showSMSTab = true;
+        }
+
+        if (access.apiId == 5002) {
+          this.showWhatsappTab = true;
+        }
+
+        if (access.apiId == 5003) {
+          this.showAppTab = true;
+        }
+      }
+    });
+  }
   ngAfterViewInit() {}
 
   goTo(sessionId: string) {
-			window.open(this.url + sessionId, '_blank');
+    window.open(this.url + sessionId, "_blank");
     // this.router.navigate([`/${path}`, sessionId]);
   }
 
@@ -128,10 +147,9 @@ export class DynamicSupportComponent implements OnInit {
       } else {
         this.state = messageResponse.description;
         this.showDescription = true;
-        this.timeOut(3000); 
+        this.timeOut(3000);
       }
-    } 
-    else if (type == "whatsapp") {
+    } else if (type == "whatsapp") {
       const type = "template";
       const from = "919811026184";
       const templateId = "53571";
@@ -164,9 +182,7 @@ export class DynamicSupportComponent implements OnInit {
         this.goTo(sessionId);
         //this.goTo("/call", sessionId);
       }
-    } 
-
-    else if (type == "notify") {
+    } else if (type == "notify") {
       try {
         for (let i = 0; i < numbers.length; i++) {
           messageResponse = await this.restService.sendNotify(

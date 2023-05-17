@@ -65,6 +65,12 @@ export class AccountManagementComponent implements OnInit {
   accounts: Accounts[] = [];
   dataSourceWithPageSize = new MatTableDataSource(this.accounts);
 
+  accessList: any[];
+  showCreateButton = false;
+  showTable = false;
+  showDelete = false;
+  showEdit = false;
+
   constructor(
     private dialog: MatDialog,
     private router: Router,
@@ -78,25 +84,71 @@ export class AccountManagementComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    // this.restService.dialogClosed$.subscribe(() => {
-    //   this.openSnackBar("Account Created", "snackBar");
-    // });
-
     console.warn(this.token + "\n" + this.userId);
-    this.restService.getAccountList(this.token, this.userId).then(
-      (response) => {
-        this.accounts = response;
-        console.log(this.accounts);
-        this.dataSourceWithPageSize.data = this.accounts;
+
+    // this.accessList = this.restService.getData().access;
+    this.accessList = [
+      {
+        accessId: 1,
+        name: "Account Management",
+        order: 1,
+        pId: 0,
+        status: 1,
       },
-      (err) => {
-        console.log(err.error.error);
-        this.snackBar.open(err.error.error, "Close", {
-          duration: 3000,
-          panelClass: ["snackBar"],
-        });
-      }
-    );
+      {
+        accessId: 2,
+        name: "User Management",
+        order: 2,
+        pId: 0,
+        status: 1,
+      },
+      {
+        accessId: 3,
+        name: "Session Management",
+        order: 3,
+        pId: 0,
+        status: 1,
+      },
+      {
+        accessId: 4,
+        name: "Dynamic Support",
+        order: 1,
+        pId: 0,
+        status: 1,
+      },
+      {
+        accessId: 5,
+        name: "Account Creation",
+        order: 1,
+        pId: 1,
+        status: 1,
+      },
+      {
+        accessId: 6,
+        name: "Account Deletion",
+        order: 1,
+        pId: 1,
+        status: 1,
+      },
+      {
+        accessId: 7,
+        name: "Account Updation",
+        order: 1,
+        pId: 1,
+        status: 1,
+      },
+      {
+        accessId: 8,
+        name: "View Account Table",
+        order: 1,
+        pId: 1,
+        status: 1,
+      },
+    ];
+
+    this.show();
+    this.viewTable();
+
     // this.updateSubscription = interval(6000).subscribe((val) => {
     //   this.restService.getUserList(this.token, this.userId).then(
     //     (response) => {
@@ -109,6 +161,45 @@ export class AccountManagementComponent implements OnInit {
     //     }
     //   );
     // });
+  }
+
+  viewTable() {
+    this.restService.getAccountList(this.token, this.userId).then(
+      (response) => {
+        this.accounts = response;
+        console.log(this.accounts);
+        this.dataSourceWithPageSize.data = this.accounts;
+      },
+      (err) => {
+        let msg = "";
+        if (err.status == 0) {
+          msg = "Server not Responding";
+        } else {
+          msg = err.error.error;
+        }
+        this.snackBar.open(msg, "Close", {
+          duration: 3000,
+          panelClass: ["snackBar"],
+        });
+      }
+    );
+  }
+  show() {
+    this.accessList.forEach((access) => {
+      if (access.pId == 1000) {
+        if (access.apiId == 1001) {
+          this.showCreateButton = true;
+        }
+
+        if (access.apiId == 1002) {
+          this.showEdit = true;
+        }
+
+        if (access.apiId == 1003) {
+          this.showDelete = true;
+        }
+      }
+    });
   }
 
   ngAfterViewInit() {

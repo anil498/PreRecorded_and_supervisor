@@ -38,6 +38,7 @@
                   class="create-btn"
                   mat-raised-button
                   (click)="createDialog()"
+                  *ngIf="showCreateButton"
                 >
                   <mat-icon>add</mat-icon>Create Account
                 </button>
@@ -149,6 +150,7 @@
                         class="btn-action"
                         mat-menu-item
                         (click)="updateDialog(user.userCode)"
+                        *ngIf="showEdit"
                       >
                         <mat-icon style="color: #009688">edit</mat-icon>
                         <span>Edit</span>
@@ -157,6 +159,7 @@
                         class="btn-action"
                         mat-menu-item
                         (click)="deleteData(user.userCode)"
+                        *ngIf="showDelete"
                       >
                         <mat-icon style="color: #009688"
                           >delete_outline</mat-icon

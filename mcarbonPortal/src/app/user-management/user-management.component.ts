@@ -26,6 +26,10 @@ export class UserManagementComponent implements OnInit {
   search: String = "";
   token: string;
   userId: string;
+  accessList: any[];
+  showCreateButton = false;
+  showEdit = false;
+  showDelete = false;
   private updateSubscription: Subscription;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -75,6 +79,8 @@ export class UserManagementComponent implements OnInit {
     // });
 
     console.warn(this.token + "\n" + this.userId);
+
+    this.show();
     this.viewTable();
 
     // this.updateSubscription = interval(6000).subscribe((val) => {
@@ -91,6 +97,24 @@ export class UserManagementComponent implements OnInit {
     // });
   }
 
+  show() {
+    this.accessList.forEach((access) => {
+      if (access.pId == 2000) {
+        if (access.apiId == 2001) {
+          this.showCreateButton = true;
+        }
+
+        if (access.apiId == 2002) {
+          this.showEdit = true;
+        }
+
+        if (access.apiId == 2003) {
+          this.showDelete = true;
+        }
+      }
+    });
+  }
+
   ngAfterViewInit() {
     this.dataSourceWithPageSize.paginator = this.paginator;
     this.dataSourceWithPageSize.sort = this.sort;
@@ -98,16 +122,7 @@ export class UserManagementComponent implements OnInit {
 
   openSnackBar(message: string, color: string) {
     console.warn(this.token + "\n" + this.userId);
-    // this.restService.getUserList(this.token, this.userId).then(
-    //   (response) => {
-    //     this.users = response;
-    //     console.log(this.users);
-    //     this.dataSourceWithPageSize.data = this.users;
-    //   },
-    //   (error) => {
-    //     console.log(error.status);
-    //   }
-    // );
+    //this.viewTable()
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;
     snackBarConfig.panelClass = [color];
@@ -126,7 +141,7 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
-  viewTable(){
+  viewTable() {
     this.restService.getUserList(this.token, this.userId).then(
       (response) => {
         this.users = response;
@@ -134,8 +149,13 @@ export class UserManagementComponent implements OnInit {
         this.dataSourceWithPageSize.data = this.users;
       },
       (err) => {
-        console.log(err.error.error);
-        this.snackBar.open(err.error.error, "Close", {
+        let msg = "";
+        if (err.status == 0) {
+          msg = "Server Not Responding";
+        } else {
+          msg = err.error.error;
+        }
+        this.snackBar.open(msg, "Close", {
           duration: 3000,
           panelClass: ["snackBar"],
         });
