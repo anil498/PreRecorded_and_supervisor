@@ -1,8 +1,10 @@
 package com.openvidu_databases.openvidu_dbbackend.Services;
 
 import com.openvidu_databases.openvidu_dbbackend.Entity.AccountEntity;
+import com.openvidu_databases.openvidu_dbbackend.Entity.SessionEntity;
 import com.openvidu_databases.openvidu_dbbackend.Entity.UserEntity;
 import com.openvidu_databases.openvidu_dbbackend.Repository.AccountRepository;
+import com.openvidu_databases.openvidu_dbbackend.Repository.SessionRepository;
 import com.openvidu_databases.openvidu_dbbackend.Repository.UserAuthRepository;
 import com.openvidu_databases.openvidu_dbbackend.Repository.UserRepository;
 
@@ -21,6 +23,8 @@ public class UserService {
     private UserAuthRepository userAuthRepository;
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private SessionRepository sessionRepository;
 
     private static final Logger logger= LoggerFactory.getLogger(UserService.class);
     public List<UserEntity> getAllUsers() {
@@ -57,6 +61,8 @@ public class UserService {
         userRepository.deleteById(userId);
         return "User successfully deleted.";
     }
+
+
 
 }
 

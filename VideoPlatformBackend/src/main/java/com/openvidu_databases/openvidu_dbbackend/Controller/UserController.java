@@ -1,7 +1,11 @@
 package com.openvidu_databases.openvidu_dbbackend.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.openvidu_databases.openvidu_dbbackend.Constant.RequestMappings;
 import com.openvidu_databases.openvidu_dbbackend.Entity.*;
 import com.openvidu_databases.openvidu_dbbackend.Exception.UserNotAuthorizedException;
@@ -30,6 +34,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(RequestMappings.APICALLUSER)
@@ -57,6 +63,9 @@ public class UserController {
 
     @Autowired
     private AccessRepository accessRepository;
+
+    @Autowired
+    private SessionRepository sessionRepository;
 
     @Value("${secret.key}")
     private String secret;
@@ -89,7 +98,7 @@ public class UserController {
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        return ResponseEntity.ok(userService.getAllUsers());
+        return ok(userService.getAllUsers());
     }
 
 //    @GetMapping("/child/{id}")
@@ -130,7 +139,7 @@ public class UserController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-            return ResponseEntity.ok(userService.getUserById(id));
+            return ok(userService.getUserById(id));
 
     }
 
@@ -168,7 +177,7 @@ public class UserController {
         userService.createUser(user);
         result.put("status_code ","200");
         result.put("message", "User Created");
-        return ResponseEntity.ok(result);
+        return ok(result);
 
     }
 
@@ -192,7 +201,7 @@ public class UserController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        return ResponseEntity.ok(userService.updateUser(user, id));
+        return ok(userService.updateUser(user, id));
     }
     @PostMapping("/up")
     public ResponseEntity<UserEntity> update(@RequestBody Map<String, String> params, HttpServletRequest request) {
@@ -224,7 +233,7 @@ public class UserController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        return ResponseEntity.ok(userService.deleteUser(id));
+        return ok(userService.deleteUser(id));
     }
 
     @PostMapping("/login")
@@ -253,7 +262,6 @@ public class UserController {
             if(isValidTokenLogin(userId)){
                 logger.info("Inside second if ...");
                 ObjectMapper obj = new ObjectMapper();
-             //   String res = obj.writeValueAsString(user1);
                 HashMap<String,Object> response=new HashMap<>();
                 response.put("token",user.getToken());
                 response.put("user_data",user1);
@@ -263,12 +271,7 @@ public class UserController {
                 response.put("Access", accessData(user1.getUserId()));
                 String lastlogin = LocalDateTime.now().format(formatter);
                 user1.setLastLogin(lastlogin);
-        //        userRepository.setLastLogin(id);
- //               logger.info("last login :"+lastlogin);
-              //  logger.info("UE :"+u1);
- //               userRepository.setLogin(lastlogin,userId);
- //               logger.info("Last Login : "+user1.getLastLogin());
-                return ResponseEntity.ok(response);
+                return  ResponseEntity.ok(response);
             }
             else {
 
@@ -279,10 +282,6 @@ public class UserController {
                     UserAuthEntity ua = userAuthRepository.findByAuthId(userId);
                     String lastlogin = LocalDateTime.now().format(formatter);
                     user1.setLastLogin(lastlogin);
-                //    logger.info("last login1 :"+lastlogin);
-                //    logger.info("UE :"+u1);
-                 //   userRepository.setLogin(lastlogin,userId);
-                 //   logger.info("Last Login : "+user1.getLastLogin());
 
                     if(ua != null){
                         ua.setToken(token1);
@@ -307,7 +306,7 @@ public class UserController {
                     res.put("status_code","200");
                     res.put("status_message","Login Successful");
                     res.put("Features", featureData(user1.getUserId()));
-                    res.put("Features", accessData(user1.getUserId()));
+                    res.put("Access", accessData(user1.getUserId()));
                     logger.info(user1.toString());
                     return new ResponseEntity<>(res, HttpStatus.OK);
                 }
@@ -315,6 +314,7 @@ public class UserController {
         }}
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
+
 
     private String generateToken(Integer userId,String type) {
         String val = String.format("%03d", userId);
@@ -368,60 +368,57 @@ public class UserController {
        return headerMap;
    }
 
-   private Object featureData(Integer userId) throws JsonProcessingException {
+//   private Object featureData(Integer userId) throws JsonProcessingException {
+//
+//        UserEntity user = userRepository.findByUserId(userId);
 
+//        ObjectMapper obj = new ObjectMapper();
+//        String str = obj.writeValueAsString(user.getFeatures());
+//        logger.info("Val : "+str);
+//        String[] string = str.replaceAll("\\[", "")
+//               .replaceAll("]", "")
+//               .split(",");
+//        int[] arr = new int[string.length];
+//        Map<Integer,String> res = new HashMap<>();
+//        for (int i = 0; i < string.length; i++) {
+//           arr[i] = Integer.valueOf(string[i]);
+//        }
+////        Object obj1[] = new Objec[];
+//       String str1="";
+//        for (int i = 0; i < arr.length; i++) {
+//             str1 += obj.writeValueAsString(featureRepository.findById(arr[i]));
+//        }
+//       // str1 = "["+str1+"]";
+//        logger.info("Response : "+res);
+//        logger.info("String : " + str1);
+//        logger.info("\nInteger array : "
+//               + Arrays.toString(arr));
+//        return str1;
+ //  }
+private Object featureData(Integer userId) throws JsonProcessingException {
+    UserEntity user = userRepository.findByUserId(userId);
+    Integer[] featuresId = user.getFeatures();
+    ObjectMapper objectMapper = new ObjectMapper();
+    List<FeatureEntity> featureEntities = new ArrayList<>();
+
+    for (int i = 0; i < featuresId.length; i++) {
+        FeatureEntity featureEntity = featureRepository.findByFeatureId(featuresId[i]);
+        featureEntities.add(featureEntity);
+    }
+    return objectMapper.convertValue(featureEntities, JsonNode.class);
+}
+
+    private Object accessData(Integer userId) throws JsonProcessingException {
         UserEntity user = userRepository.findByUserId(userId);
+        Integer[] accessId = user.getAccessId();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<AccessEntity> accessEntities = new ArrayList<>();
 
-        ObjectMapper obj = new ObjectMapper();
-        String str = obj.writeValueAsString(user.getFeatures());
-        logger.info("Val : "+str);
-        String[] string = str.replaceAll("\\[", "")
-               .replaceAll("]", "")
-               .split(",");
-        int[] arr = new int[string.length];
-        Map<Integer,String> res = new HashMap<>();
-        for (int i = 0; i < string.length; i++) {
-           arr[i] = Integer.valueOf(string[i]);
+        for (int i = 0; i < accessId.length; i++) {
+            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
+            accessEntities.add(accessEntity);
         }
-//        Object obj1[] = new Objec[];
-       String str1="";
-        for (int i = 0; i < arr.length; i++) {
-             str1 += obj.writeValueAsString(featureRepository.findById(arr[i]));
-        }
-       // str1 = "["+str1+"]";
-        logger.info("Response : "+res);
-        logger.info("String : " + str1);
-        logger.info("\nInteger array : "
-               + Arrays.toString(arr));
-        return str1;
-   }
-
-    private String accessData(Integer userId) throws JsonProcessingException {
-
-        UserEntity user = userRepository.findByUserId(userId);
-
-        ObjectMapper obj = new ObjectMapper();
-        String str = obj.writeValueAsString(user.getAccessId());
-        logger.info("Val : "+str);
-        String[] string = str.replaceAll("\\[", "")
-                .replaceAll("]", "")
-                .split(",");
-        int[] arr = new int[string.length];
-        Map<Integer,String> res = new HashMap<>();
-        for (int i = 0; i < string.length; i++) {
-            arr[i] = Integer.valueOf(string[i]);
-        }
-        ObjectMapper obj1 = new ObjectMapper();
-        String str1="";
-        for (int i = 0; i < arr.length; i++) {
-            str1 += obj.writeValueAsString(accessRepository.findById(arr[i]));
-        }
-       // str1 = "["+str1+"]";
-        logger.info("Response : "+res);
-        logger.info("String : " + str1);
-        logger.info("\nInteger array : "
-                + Arrays.toString(arr));
-        return str1;
+        return objectMapper.convertValue(accessEntities, JsonNode.class);
     }
     private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
 
@@ -466,6 +463,12 @@ public class UserController {
                 = Arrays.asList(arr)
                 .contains(toCheckValue);
         return test;
+    }
+
+
+    @PostMapping("/createSession")
+    public ResponseEntity<SessionEntity> createSession(@RequestBody SessionEntity session, HttpServletRequest request, HttpServletResponse response) {
+        return ResponseEntity.ok(sessionRepository.save(session));
     }
 
 }

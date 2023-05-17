@@ -50,13 +50,13 @@ public class GeneralMessagingService implements MessagingService {
     public SubmitResponse sendSms(HttpServletRequest request, HttpServletResponse response, Object... args) throws IOException, URISyntaxException {
         SubmitResponse submitResponse = null;
         try {
-            SubmitResponse failedResponse = validateSessionAndRequest(args);
-            if (failedResponse != null)
-                return failedResponse;
+ //           SubmitResponse failedResponse = validateSessionAndRequest(args);
+//            if (failedResponse != null)
+//                return failedResponse;
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             HttpEntity<String> entity = new HttpEntity<String>(headers);
-            URI uri = new URI(createURL(smsUrl, args[1], URLEncoder.encode(createURL(smsText, args[2]), "UTF-8")));
+            URI uri = new URI(createURL(smsUrl, args[0], URLEncoder.encode(createURL(smsText, "UTF-8"))));
             submitResponse = restTemplate.exchange(uri, HttpMethod.GET, entity, SubmitResponse.class).getBody();
             return submitResponse;
         } catch (HttpClientErrorException ex) {
@@ -73,10 +73,6 @@ public class GeneralMessagingService implements MessagingService {
             } catch (JsonProcessingException e) {
                 logger.error("Error in Paring Bad Request {}",e.getMessage());
             }
-        } catch (OpenViduJavaClientException e) {
-            throw new RuntimeException(e);
-        } catch (OpenViduHttpException e) {
-            throw new RuntimeException(e);
         }
         throw new RuntimeException("Internal server error occurred.");
     }
@@ -136,15 +132,12 @@ public class GeneralMessagingService implements MessagingService {
         Optional<SubmitResponse> validationResponse = validateSession((String) args[0]);
         if (validationResponse.isPresent())
             return validationResponse.get();
-        Optional<SubmitResponse> reqValidationResponse = validateRequest(String.valueOf(args[1]), (String) args[2]);
+        Optional<SubmitResponse> reqValidationResponse = validateRequest(String.valueOf(args[1]));
         return reqValidationResponse.orElse(null);
     }
-    private Optional<SubmitResponse> validateRequest(String msisdn,String callUrl) {
+    private Optional<SubmitResponse> validateRequest(String msisdn) {
         if (msisdn == null || msisdn.equalsIgnoreCase("")) {
             return Optional.of(getFailedSubmitResponse(TextError.MISSING_MSISDN, 0L));
-        }
-        if (callUrl == null || callUrl.equalsIgnoreCase("")) {
-            return Optional.of(getFailedSubmitResponse(TextError.MISSING_CALLURL, 0L));
         }
         return Optional.empty();
     }

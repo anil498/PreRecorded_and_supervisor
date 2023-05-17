@@ -13,4 +13,7 @@ public interface AccessRepository extends JpaRepository<AccessEntity, Integer> {
     Object findById(@Param("accessId") int accessId);
     @Query(nativeQuery=true, value = "select * from platform_access where access_id = :accessId ")
     AccessEntity findByAccessId(@Param("accessId") int accessId);
+
+    @Query(nativeQuery=true, value = "select * from platform_access where access_id = :accessId ")
+    AccessEntity findByAccessIds(@Param("accessId") int accessId);
 }
