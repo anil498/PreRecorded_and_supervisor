@@ -1,7 +1,7 @@
 # Build OpenVidu Call for production
 FROM node:lts-alpine3.16 as video-platform-build
 
-WORKDIR /video-platform
+WORKDIR /
 
 ARG BASE_HREF=/
 
@@ -20,7 +20,7 @@ FROM maven
 
 WORKDIR /opt/video-platform
 
-COPY --from=video-platform-build /video-platform/video-platform-java .
+COPY --from=video-platform-build /VideoPlatformBackend .
 
 # Install backend dependencies and build it for production
 RUN mvn clean install package
