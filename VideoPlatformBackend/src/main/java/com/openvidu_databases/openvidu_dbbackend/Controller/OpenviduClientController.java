@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openvidu_databases.openvidu_dbbackend.Constant.RequestMappings;
-import com.openvidu_databases.openvidu_dbbackend.Entity.AccountAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.FeatureEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserEntity;
+import com.openvidu_databases.openvidu_dbbackend.Entity.*;
 import com.openvidu_databases.openvidu_dbbackend.Repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,15 +41,14 @@ public class OpenviduClientController {
     @GetMapping("/get")
     public ResponseEntity<?> featureList(@RequestBody Map<String,String> params, HttpServletRequest request) throws JsonProcessingException {
         String authKey = request.getHeader("Authorization");
-        int authId = isValidAuthKey(authKey);
-        logger.info("Auth Id .. " + authId);
-        if (authId == 0) {
+        int check = isValidAuthKey(authKey);
+        logger.info("Check val .. " + check);
+        if (check == 0) {
             return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         String token = request.getHeader("Token");
-        Boolean userId= isValidToken(authId,token);
-        logger.info("Auth Id .. " + authId);
-        if (!userId) {
+        Boolean isValid= isValidToken(token);
+        if (!isValid) {
             return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         String sessionKey=null;
@@ -60,9 +56,11 @@ public class OpenviduClientController {
             sessionKey=params.get("sessionKey");
         }
         HashMap<String,Object> response=new HashMap<>();
-        UserAuthEntity userAuthEntity=userAuthRepository.findByAuthId(authId);
-        response.put("user",userRepository.findById(userAuthEntity.getUserId()));
-        response.put("feature",featureData(userAuthEntity.getUserId()));
+        UserAuthEntity userAuthEntity=userAuthRepository.findByToken(token);
+        SessionEntity session = sessionRepository.findBySessionKey(sessionKey);
+        int userId=session.getUserId();
+        response.put("user",userRepository.findById(userId));
+        response.put("feature",featureData(userId));
         response.put("session",sessionRepository.findBySessionKey(sessionKey));
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
@@ -81,20 +79,16 @@ public class OpenviduClientController {
     public int isValidAuthKey(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         if(acc == null)return 0;
-        String key = (acc.getAuthKey());
-        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
+        if(acc.getExpDate().isBefore(LocalDateTime.now())){
             return 0;
         }
-        int authId = acc.getAuthId();
-        return authId;
+        return 1;
     }
-    public Boolean isValidToken(int authId,String token){
-        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+    public Boolean isValidToken(String token){
+        UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
-        logger.info("DAta by authId.."+user);
-        //logger.info(user.getToken());
-        String t = (user.getToken());
-        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
+
+        if(user.getExpDate().isBefore(LocalDateTime.now()))
             return false;
         return true;
     }

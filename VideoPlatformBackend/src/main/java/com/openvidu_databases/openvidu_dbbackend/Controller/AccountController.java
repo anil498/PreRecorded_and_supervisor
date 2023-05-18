@@ -81,18 +81,18 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
-        if(authId == 0){
+        int check = isValidAuthKey(authKey);
+        if(check == 0) {
             logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1000))){
-            logger.info("for 1000 : "+byAccess(authId,1000));
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!isValidToken(authId,token)) {
+        if(!isValidToken(token)) {
             logger.info("Invalid Token !");
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(1000,token))){
+            logger.info("for 1000 : "+byAccess(1000,token));
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -130,18 +130,19 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
-        if(authId == 0){
+        int check = isValidAuthKey(authKey);
+        if(check == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1000))){
-            logger.info("for 1000 : "+byAccess(authId,1000));
-            logger.info("Permission Denied. Don't have access for this service!");
+
+        if(!isValidToken(token)) {
+            logger.info("Invalid Token !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(authId,token)) {
-            logger.info("Invalid Token !");
+        if(!(byAccess(1000,token))){
+            logger.info("for 1000 : "+byAccess(1000,token));
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -153,19 +154,19 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
-        logger.info("Auth Id : "+authId);
-        if(authId == 0){
+        int check = isValidAuthKey(authKey);
+        logger.info("Auth Id : "+check);
+        if(check == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1001))){
-            logger.info("for 1001 : "+byAccess(authId,1001));
-            logger.info("Permission Denied. Don't have access for this service!");
+        if(!isValidToken(token)) {
+            logger.info("Invalid Token !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(authId,token)) {
-            logger.info("Invalid Token !");
+        if(!(byAccess(1001,token))){
+            logger.info("for 1001 : "+byAccess(1001,token));
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
         logger.info(params1);
@@ -190,7 +191,7 @@ public class AccountController {
             acc.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
             acc.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
-            UserAuthEntity u = userAuthRepository.findByAuthId(authId);
+            UserAuthEntity u = userAuthRepository.findByToken(token);
             logger.info("User Data : "+u);
             user.setFname(params.get("fname").getAsString());
             user.setLname(params.get("lname").getAsString());
@@ -277,33 +278,26 @@ public class AccountController {
         return generatedString;
     }
 
-        public int isValidAuthKey(String authKey){
-            AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+    public int isValidAuthKey(String authKey){
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
 
-            if(acc == null)return 0;
-            // logger.info(token);
-            //logger.info(user.getToken());
-            String key = (acc.getAuthKey());
-            if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
-                return 0;
-            }
-            int authId = acc.getAuthId();
-            return authId;
+        if(acc == null)return 0;
+        if(acc.getExpDate().isBefore(LocalDateTime.now())){
+            return 0;
         }
-        public Boolean isValidToken(int authId,String token){
-            UserAuthEntity user = userAuthRepository.findByAuthId(authId);
-            if(user == null)return false;
-            logger.info("DAta by authId.."+user);
-            //logger.info(user.getToken());
-            String t = (user.getToken());
-            if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
-                return false;
-            return true;
-        }
+        return 1;
+    }
+    public Boolean isValidToken(String token){
+        UserAuthEntity user = userAuthRepository.findByToken(token);
+        if(user == null)return false;
+        if(user.getExpDate().isBefore(LocalDateTime.now()))
+            return false;
+        return true;
+    }
 
-    private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
+    private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
 
-        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+        UserAuthEntity user = userAuthRepository.findByToken(token);
         logger.info("User auth data by Auth Id :"+user);
         Integer userId = user.getUserId();
         logger.info("User ID is : "+userId);
