@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { ROUTES } from '../sidebar/sidebar.component';
 import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
 import { Router } from '@angular/router';
-
+import { RestService } from 'app/services/rest.service';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
@@ -16,7 +16,7 @@ export class NavbarComponent implements OnInit {
     private toggleButton: any;
     private sidebarVisible: boolean;
 
-    constructor(location: Location,  private element: ElementRef, private router: Router) {
+    constructor(location: Location,  private element: ElementRef, private router: Router, private restService: RestService ) {
       this.location = location;
           this.sidebarVisible = false;
     }
@@ -37,6 +37,10 @@ export class NavbarComponent implements OnInit {
 
     goTo(path: string){
         this.router.navigate([`/${path}`]);
+    }
+
+    logout(){
+        this.restService.logout();
     }
 
     sidebarOpen() {

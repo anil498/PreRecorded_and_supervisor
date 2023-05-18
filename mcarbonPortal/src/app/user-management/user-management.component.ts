@@ -71,6 +71,8 @@ export class UserManagementComponent implements OnInit {
   ) {
     this.token = this.restService.getToken();
     this.userId = this.restService.getUserId();
+    this.accessList = this.restService.getData().Access;
+
   }
 
   async ngOnInit(): Promise<void> {
@@ -98,21 +100,23 @@ export class UserManagementComponent implements OnInit {
   }
 
   show() {
-    this.accessList.forEach((access) => {
-      if (access.pId == 2000) {
-        if (access.apiId == 2001) {
-          this.showCreateButton = true;
-        }
+    if (this.accessList.length > 0) {
+      this.accessList.forEach((access) => {
+        if (access.pId == 2000) {
+          if (access.apiId == 2001) {
+            this.showCreateButton = true;
+          }
 
-        if (access.apiId == 2002) {
-          this.showEdit = true;
-        }
+          if (access.apiId == 2002) {
+            this.showEdit = true;
+          }
 
-        if (access.apiId == 2003) {
-          this.showDelete = true;
+          if (access.apiId == 2003) {
+            this.showDelete = true;
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   ngAfterViewInit() {

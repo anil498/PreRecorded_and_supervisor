@@ -66,67 +66,11 @@ export class CreateAccountComponent implements OnInit {
   max_active_sessions: number;
   max_participants: number;
 
-  // featuresData: any = this.restService.getData().features;
-  // accessData: any = this.restService.getData().access;
+  featuresData: any = this.restService.getData().Features;
+  accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
-  accessData = [
-    {
-      access_id: 16,
-      name: "Account Creation",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 17,
-      name: "Account Deletion",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 18,
-      name: "Account Updation",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 26,
-      name: "User Creation",
-      order: 1,
-      p_id: 2,
-    },
-    {
-      access_id: 27,
-      name: "User Deletion",
-      order: 1,
-      p_id: 2,
-    },
-  ];
 
   selectedFeatures: number[] = [];
-  featuresData = [
-    {
-      feature_id: 1,
-      name: "Recording",
-      meta_list: {
-        max_time: null,
-        max_dur: null,
-      },
-    },
-    {
-      feature_id: 2,
-      name: "Screen Sharing",
-      meta_list: {
-        refresh_rate: null,
-      },
-    },
-    {
-      feature_id: 3,
-      name: "Live Chat",
-      meta_list: {
-        color: null,
-      },
-    },
-  ];
 
   selectedFeaturesMeta = {};
 
@@ -152,13 +96,13 @@ export class CreateAccountComponent implements OnInit {
   }
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedFeatures.push(feature.feature_id);
+      this.selectedFeatures.push(feature.featureId);
       feature.showMetaList = true;
-      feature.selectedMetaList = Object.keys(feature.meta_list).map((key) => {
-        return { key: key, value: feature.meta_list[key] };
+      feature.selectedMetaList = Object.keys(feature.metaList).map((key) => {
+        return { key: key, value: feature.metaList[key] };
       });
     } else {
-      const index = this.selectedFeatures.indexOf(feature.feature_id);
+      const index = this.selectedFeatures.indexOf(feature.featureId);
       this.selectedFeatures.splice(index, 1);
       feature.showMetaList = false;
       feature.selectedMetaList = [];
@@ -167,9 +111,9 @@ export class CreateAccountComponent implements OnInit {
 
   addAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedAccessId.push(access.access_id);
+      this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.access_id);
+      const index = this.selectedAccessId.indexOf(access.accessId);
       this.selectedAccessId.splice(index, 1);
     }
   }
@@ -320,6 +264,7 @@ export class CreateAccountComponent implements OnInit {
       console.warn(this.emptyError);
       return;
     }
+    console.warn(this.selectedAccessId);
 
     let response: any;
 

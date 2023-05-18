@@ -83,60 +83,6 @@ export class LoginComponent implements OnInit {
         this.password
       );
       this.token = loginResponse.token;
-      //loginResponse.user_data = JSON.parse(loginResponse.user_data);
-      //loginResponse.Features = JSON.parse(loginResponse.Features);
-      const accessList = `[
-        {
-          "accessId": 1,
-          "name": "Account Management",
-          "order": 1,
-          "p_id": 0,
-          "status": 1
-        },
-        {
-          "accessId": 2,
-          "name": "User Management",
-          "order": 2,
-          "p_id": 0,
-          "status": 1
-        },
-        {
-          "accessId": 3,
-          "name": "Session Management",
-          "order": 3,
-          "p_id": 0,
-          "status": 1
-        },
-        {
-          "accessId": 4,
-          "name": "Dynamic Support",
-          "order": 1,
-          "p_id": 0,
-          "status": 1
-        },
-        {
-          "accessId": 6,
-          "name": "Account Deletion",
-          "order": 1,
-          "p_id": 1,
-          "status": 1
-        },
-        {
-          "accessId": 7,
-          "name": "Account Updation",
-          "order": 1,
-          "p_id": 1,
-          "status": 1
-        },
-        {
-          "accessId": 8,
-          "name": "View Account Table",
-          "order": 1,
-          "p_id": 1,
-          "status": 1
-        }
-      ]`;
-      loginResponse.Access = JSON.parse(accessList);
       console.warn(loginResponse);
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);

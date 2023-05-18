@@ -52,6 +52,7 @@ export class DynamicSupportComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.url = "https://demo2.progate.mobi/dynamicsupport/#/call/";
+    this.accessList = this.restService.getData().Access;
   }
 
   async ngOnInit(): Promise<void> {
@@ -84,7 +85,7 @@ export class DynamicSupportComponent implements OnInit {
   ngAfterViewInit() {}
 
   goTo(sessionId: string) {
-    window.open(this.url + sessionId, "_blank");
+    window.open(sessionId, "_blank");
     // this.router.navigate([`/${path}`, sessionId]);
   }
 
@@ -130,7 +131,7 @@ export class DynamicSupportComponent implements OnInit {
           );
         }
         console.warn(messageResponse);
-        this.goTo(sessionId);
+        this.goTo(messageResponse.callurl);
       } catch (error) {
         console.log(error);
         this.state = error.statusText;
@@ -179,8 +180,7 @@ export class DynamicSupportComponent implements OnInit {
         this.failedMessageShow = "";
         this.timeOut(3000);
         console.warn(messageResponse);
-        this.goTo(sessionId);
-        //this.goTo("/call", sessionId);
+        this.goTo(messageResponse.callurl);
       }
     } else if (type == "notify") {
       try {
@@ -192,6 +192,7 @@ export class DynamicSupportComponent implements OnInit {
             numbers[i]
           );
         }
+
         //this.goTo("/call", sessionId);
       } catch (error) {
         console.log(error);
@@ -202,10 +203,10 @@ export class DynamicSupportComponent implements OnInit {
       }
       this.failedMessage = false;
       console.warn(messageResponse);
-      this.goTo(sessionId);
+      this.goTo(messageResponse.callurl);
     }
     //console.log("Message Sent: ", messageResponse);
-    this.callUrl = messageResponse.callUrl;
+    this.callUrl = messageResponse.callurl;
     this.failedMessageShow = " Please find video call link:- " + this.callUrl;
     this.timeOut(3000);
   }

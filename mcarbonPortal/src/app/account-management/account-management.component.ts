@@ -65,68 +65,7 @@ export class AccountManagementComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     console.warn(this.token + "\n" + this.userId);
 
-    // this.accessList = this.restService.getData().access;
-    this.accessList = [
-      {
-        accessId: 1,
-        name: "Account Management",
-        order: 1,
-        pId: 0,
-        status: 1,
-      },
-      {
-        accessId: 2,
-        name: "User Management",
-        order: 2,
-        pId: 0,
-        status: 1,
-      },
-      {
-        accessId: 3,
-        name: "Session Management",
-        order: 3,
-        pId: 0,
-        status: 1,
-      },
-      {
-        accessId: 4,
-        name: "Dynamic Support",
-        order: 1,
-        pId: 0,
-        status: 1,
-      },
-      {
-        accessId: 5,
-        name: "Account Creation",
-        order: 1,
-        pId: 1000,
-        apiId: 1001,
-        status: 1,
-      },
-      {
-        accessId: 6,
-        name: "Account Deletion",
-        order: 1,
-        pId: 1000,
-        apiId: 1003,
-        status: 1,
-      },
-      {
-        accessId: 7,
-        name: "Account Updation",
-        order: 1,
-        pId: 1000,
-        apiId: 1002,
-        status: 1,
-      },
-      {
-        accessId: 8,
-        name: "View Account Table",
-        order: 1,
-        pId: 1,
-        status: 1,
-      },
-    ];
+    this.accessList = this.restService.getData().Access;
 
     this.show();
     this.viewTable();
@@ -217,9 +156,11 @@ export class AccountManagementComponent implements OnInit {
     this.dataSourceWithPageSize.filter = filterValue.trim().toLowerCase();
   }
 
-  deleteData(usercode: number) {
-    const dialogConfig = new MatDialogConfig();
+  deleteAccount(account: any) {
+    //const dialogConfig = new MatDialogConfig();
+    this.restService.deleteAccount(this.token,account.accountId)
     console.log("Confirm Delete");
+
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
   }
 
@@ -229,7 +170,10 @@ export class AccountManagementComponent implements OnInit {
     dialogConfig.height = "550px";
     dialogConfig.data = account;
     console.log("Dialog Form Opened");
-    const dialogRef = this.dialog.open(UpdateAccountDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(
+      UpdateAccountDialogComponent,
+      dialogConfig
+    );
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();

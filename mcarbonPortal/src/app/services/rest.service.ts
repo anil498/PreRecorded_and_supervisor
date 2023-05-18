@@ -1,5 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Router } from "@angular/router";
 import { catchError, lastValueFrom, Subject } from "rxjs";
 
 @Injectable({
@@ -9,21 +10,24 @@ export class RestService {
   private dialogClosedSource = new Subject<boolean>();
   public dialogClosed$ = this.dialogClosedSource.asObservable();
 
+  private authKey = "AC001brEyWGNuwW";
   private _response: any;
   private _token: string;
   private _userId: string;
   private baseHref: string;
   private url: string;
+  private url1: string;
   private token: string;
   private userId: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.baseHref =
       "/" +
       (!!window.location.pathname.split("/")[1]
         ? window.location.pathname.split("/")[1] + "/"
         : "");
-    this.url = "http://172.17.0.122:5000/VPService/v1";
+    this.url = "http://172.17.0.122:5000/VPService/v1/";
+    this.url1 = "http://172.17.0.122:5000/";
   }
 
   setData(response: any) {
@@ -55,15 +59,15 @@ export class RestService {
   }
 
   private loginRequest(path: string, body: any): Promise<any> {
-    console.warn(this.url + "/" + path);
+    console.warn(this.baseHref + "/" + path);
     console.warn(body);
     try {
       const headers = {
-        Authorization: "AC1XD9cyYcNxO",
+        Authorization: `${this.authKey}`,
         "Content-Type": "application/json",
       };
       return lastValueFrom(
-        this.http.post<any>(this.url + "/user/" + path, body, { headers })
+        this.http.post<any>(this.baseHref + "user/" + path, body, { headers })
       );
     } catch (error) {
       console.warn(error);
@@ -78,15 +82,15 @@ export class RestService {
   }
 
   private postRequest1(path: string, body: any): Promise<any> {
-    console.warn(this.url + "/" + path);
+    console.warn(this.baseHref + "/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
-        Authorization: "AC1XD9cyYcNxO",
+        Authorization: `${this.authKey}`,
         Token: `${this._token}`,
       });
       return lastValueFrom(
-        this.http.post<any>(this.url + "/user/" + path, body, { headers })
+        this.http.post<any>(this.baseHref + "user/" + path, body, { headers })
       );
     } catch (error) {
       console.warn(error);
@@ -101,15 +105,15 @@ export class RestService {
   }
 
   private postRequest2(path: string, body: any): Promise<any> {
-    console.warn(this.url + "/" + path);
+    console.warn(this.baseHref + "/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
-        Authorization: "AC1XD9cyYcNxO",
+        Authorization: `${this.authKey}`,
         Token: `${this._token}`,
       });
       return lastValueFrom(
-        this.http.post<any>(this.url + "/account/" + path, body, { headers })
+        this.http.post<any>(this.baseHref + "account/" + path, body, { headers })
       );
     } catch (error) {
       console.warn(error);
@@ -130,12 +134,18 @@ export class RestService {
   ): Promise<any> {
     console.warn(body);
     try {
-      const headers = {
-        "Content-Type": "application/json",
-        sessionid: sessionId,
-      };
+      // const headers = {
+      //   "Content-Type": "application/json",
+      //   sessionid: sessionId,
+      // };
+      const headers = new HttpHeaders({
+        Token: `${this._token}`,
+        Authorization: `${this.authKey}`,
+      });
+
+      console.warn(headers);
       return lastValueFrom(
-        this.http.post<any>(this.url + path, body, { headers })
+        this.http.post<any>(this.baseHref + path, body, { headers })
       );
     } catch (error) {
       if (error.status === 404) {
@@ -152,15 +162,23 @@ export class RestService {
     return this.loginRequest(type, { loginId, password });
   }
 
+  logout() {
+    this.setData(null);
+    this.setToken(null);
+    this.setUserId(null);
+
+    this.router.navigate([""]);
+  }
+
   async createUser(
     type: string,
 
-    userFname: string,
-    userLname: string,
+    fname: string,
+    lname: string,
     contact: number,
     email: string,
     loginId: string,
-    exp_date: string,
+    expDate: string,
 
     password: string,
     accessId: number[],
@@ -173,12 +191,12 @@ export class RestService {
     featuresMeta: any
   ) {
     return this.postRequest1(type, {
-      userFname,
-      userLname,
+      fname,
+      lname,
       contact,
       email,
       loginId,
-      exp_date,
+      expDate,
       password,
       accessId,
 
@@ -295,7 +313,7 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.url + "/user/getById/" + id, { headers })
+        this.http.get<any>(this.baseHref + "user/getById/" + id, { headers })
       );
     } catch (error) {
       if (error.status === 404) {
@@ -309,16 +327,13 @@ export class RestService {
 
   async getUserList(token: string, id: string) {
     console.warn(token + "\n" + id);
-    const accId = 102;
-    const authKey =
-      "AccounteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJpYXQiOjE2ODQwNjE4MjEsImV4cCI6MTY4NDE0ODIyMX0.oDI2pKx1orZ0QlgqTGfRSkvRkocJy65tR6VTGKZTyZU102";
     const headers = new HttpHeaders({
       Token: `${token}`,
-      Authorization: "AC1XD9cyYcNxO",
+      Authorization: `${this.authKey}`,
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.url + "/user/getAll/", { headers })
+        this.http.get<any>(this.baseHref + "user/getAll/", { headers })
       );
     } catch (error) {
       if (error.status === 404) {
@@ -332,16 +347,13 @@ export class RestService {
   }
   async getAccountList(token: string, id: string) {
     console.warn(token + "\n" + id);
-    const accId = 102;
-    const authKey =
-      "AccounteyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDIiLCJpYXQiOjE2ODQwNjE4MjEsImV4cCI6MTY4NDE0ODIyMX0.oDI2pKx1orZ0QlgqTGfRSkvRkocJy65tR6VTGKZTyZU102";
     const headers = new HttpHeaders({
       Token: `${token}`,
-      Authorization: "AC1XD9cyYcNxO",
+      Authorization: `${this.authKey}`,
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.url + "/account/getAll", { headers })
+        this.http.get<any>(this.baseHref + "account/getAll", { headers })
       );
     } catch (error) {
       if (error.status === 404) {
@@ -354,12 +366,20 @@ export class RestService {
     }
   }
 
+  async deleteAccount(token: string, id: string) {
+    const headers = new HttpHeaders({
+      Token: `${token}`,
+      Authorization: `${this.authKey}`,
+    });
+
+    this.postRequest2(`delete/${id}`, {});
+  }
+
   async sendSMS(sessionId: string, msisdn: string, callUrl: string) {
     console.log("sms Sent");
     try {
-      return this.callRequest(sessionId, "/video/api/sendSms", {
+      return this.callRequest(sessionId, "video/api/sendSms", {
         msisdn,
-        callUrl,
       });
     } catch (error) {
       console.log(error);
@@ -375,9 +395,8 @@ export class RestService {
   ) {
     console.warn("Whatsapp Message Sent");
     try {
-      return this.callRequest(sessionId, "/video/api/sendWhatsapp", {
+      return this.callRequest(sessionId, "video/api/sendWhatsapp", {
         msisdn,
-        callUrl,
         from,
         type,
         templateId,
@@ -395,9 +414,8 @@ export class RestService {
   ) {
     console.warn("Notification Sent");
     try {
-      return this.callRequest(sessionId, "/video/api/notification", {
+      return this.callRequest(sessionId, "video/api/notification", {
         msisdn,
-        sessionId,
         title,
         body,
       });

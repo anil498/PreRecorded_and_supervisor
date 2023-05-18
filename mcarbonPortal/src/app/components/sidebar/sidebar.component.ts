@@ -73,47 +73,14 @@ export class SidebarComponent implements OnInit {
 
   ngOnInit() {
     this.menuItems = ROUTES.filter((menuItem) => menuItem);
-    this.accessList = [
-      {
-        accessId: 1,
-        name: "Account Management",
-        order: 1,
-        p_id: 0,
-        apiId: 1000,
-        status: 1,
-      },
-      {
-        accessId: 2,
-        name: "User Management",
-        order: 2,
-        p_id: 0,
-        apiId: 2000,
-        status: 1,
-      },
-      {
-        accessId: 3,
-        name: "Session Management",
-        order: 3,
-        p_id: 0,
-        apiId: 4000,
-        status: 1,
-      },
-      {
-        accessId: 4,
-        name: "Dynamic Support",
-        order: 1,
-        p_id: 0,
-        apiId: 5000,
-        status: 1,
-      },
-    ];
+    this.accessList = this.restService.getData().Access;
 
     this.showSideNav();
   }
 
   showSideNav() {
     this.accessList.forEach((access) => {
-      if (access.p_id == 0) {
+      if (access.pId == 0) {
         this.menuItems.forEach((menuItem) => {
           if (access.apiId === menuItem.apiId) {
             menuItem.show = true;
