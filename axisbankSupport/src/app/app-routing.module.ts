@@ -10,8 +10,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InfoComponent } from './mycomp/info/info.component';
 const routes: Routes = [
   { path: '', component: InfoComponent },
-  { path: 'table', component: LoginComponent },
-{ path: '', redirectTo: 'employee', pathMatch: 'full' }];
+  { path: 'table', component: LoginComponent },];
+// { path: '', redirectTo: 'employee', pathMatch: 'full' }];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

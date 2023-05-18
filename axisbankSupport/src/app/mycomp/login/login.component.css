@@ -3,8 +3,20 @@
     width:100%;
     height: 80dp;
     background-color: #ffffff;
+    font-style: italic;
 
 }
+
+.top-right-paragraph {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: larger;
+  padding-top: 5px;
+  padding-right: 15px;
+  color: #ffffff;
+}
+
 .tablediv
 {
     width: 90%;
@@ -27,6 +39,7 @@ caption
 {
     color: #ffffff;
     size: 44px;
+    padding: 10px;
 
 }
 th{
@@ -53,6 +66,8 @@ table, th, td {
   }
 .callbtn
 {
+    width: 50%;
+    height: 80%;
     background-color:#97144d;
     border:none; 
     border-radius:10px; 
