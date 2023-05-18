@@ -5,46 +5,43 @@
     width="100%"
     height="80%"
   />
-
+  <p class="top-right-paragraph">Hello, {{username}}</p>
 </div>
 <!-- color code #97144d
-  <h1> Student Login Form </h1>  
-    <form>  
-        <div class="container">   
-            <label>Username : </label>   
-            <input type="text" placeholder="Enter Username" name="username" required>  
-            <label>Password : </label>   
-            <input type="password" placeholder="Enter Password" name="password" required>  
-            <button type="submit">Login</button>   
-            
-           
-              
-        </div>   
-
-    </form>    
 
     <button (click)="goToPage('master')">
         <span>Go to master Page</span>
      </button> -->
 
-<div class="tablediv">
-  <!--
+    <div class="tablediv">
+  
        <table>
         <caption>User Details</caption>
         <th  *ngFor="let header of headers">{{ header }}</th>
-        <th>Video Call</th>
+        
         
        
-        <tr *ngFor="let row of rows">
-          <td *ngFor="let header of headers">{{ row[header] }}</td>
-          <td ><button class="callbtn" (click)="callbtnpress()">Start Call</button></td>
+        <tr *ngFor="let row of rows; let i = index">
+          <!-- <td *ngFor="let header of headers"><button *ngIf="header=='ConnectToUser'">click</button></td> -->
+          <!-- <td ><button class="callbtn" (click)="callbtnpress()">{{ row[header] }}</button></td> -->
+         <ng-container *ngFor="let header of headers">
+          <ng-container  *ngIf="header=='Send Video Call Link'; else minorContent">
+            <!-- <td><button class="callbtn"(click)="ConnectToUserClickByUpdate(row['Phone No'],row[header],i,header)">{{ row[header] }}</button></td> -->
+           
+            <td><button class="callbtn"(click)="ConnectToUserClick(row['Phone No'],row[header],i)">{{ row[header] }}</button></td>
+          </ng-container>
+          <ng-template #minorContent>
+            <td>{{ row[header] }}</td>
+          </ng-template>
+        </ng-container>
+       
         </tr>
 
         
-      </table> -->
+      </table> 
 
   <!--  custom table -->
-  <table>
+   <!--<table>
     <caption>
       User Details
     </caption>
@@ -158,16 +155,9 @@
            <td ><button class="callbtn" (click)="callbtnpress()">Start Call</button></td>
 
           </tr>
-         <!-- <tr >
-            <td >Raj</td>
-            <td >31</td>
-            <td >Male</td>
-            <td>Noida</td>
-           <td ><button class="callbtn" (click)="callbtnpress()">Start Call</button></td>
-
-          </tr> -->
+        
     </tbody>
-  </table>
+   </table> -->
 
   <!--close         -->
 </div>
