@@ -12,7 +12,7 @@ RUN npm install --location=global npm
 # Build OpenVidu Call frontend
 # RUN rm mcarbonPortal/package-lock.json && \
     # Install frontend dependencies and build it for production
-RUN cd mcarbonPortal && npm install && \
+RUN cd mcarbonPortal && npm install --force && \
     npm run prod:build-java ${BASE_HREF} && \
     cd ../ && rm -rf mcarbonPortal
 
