@@ -15,7 +15,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { Router } from "@angular/router";
 import { Users } from "../model/users";
 import { MatSort, Sort } from "@angular/material/sort";
-import { UpdateDialogComponent } from "app/update-dialog/update-dialog.component";
+import { UpdateUserDialogComponent } from "app/update-user-dialog/update-user-dialog.component";
 
 @Component({
   selector: "app-user-management",
@@ -179,7 +179,7 @@ export class UserManagementComponent implements OnInit {
     dialogConfig.width = "690px";
     dialogConfig.height = "550px";
     console.log("Dialog Form Opened");
-    const dialogRef = this.dialog.open(UpdateDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(UpdateUserDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();

@@ -10,7 +10,6 @@ import { SessionManagementComponent } from "app/session-management/session-manag
 import { FormDialogComponent } from "app/form-dialog/form-dialog.component";
 import { DeleteDialogComponent } from "app/delete-dialog/delete-dialog.component";
 import { DynamicSupportComponent } from "app/dynamic-support/dynamic-support.component";
-import { UpdateDialogComponent } from "app/update-dialog/update-dialog.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
@@ -32,6 +31,8 @@ import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatMenuModule } from "@angular/material/menu";
 import { AccountManagementComponent } from "app/account-management/account-management.component";
 import { CreateAccountComponent } from "app/create-account/create-account.component";
+import { UpdateAccountDialogComponent } from "app/update-account-dialog/update-account-dialog.component";
+import { UpdateUserDialogComponent } from "app/update-user-dialog/update-user-dialog.component";
 
 
 @NgModule({
@@ -64,11 +65,12 @@ import { CreateAccountComponent } from "app/create-account/create-account.compon
     DashboardComponent,
     UserProfileComponent,
     UserManagementComponent,
+    UpdateUserDialogComponent,
     SessionManagementComponent,
     AccountManagementComponent,
+    UpdateAccountDialogComponent,
     FormDialogComponent,
     CreateAccountComponent,
-    UpdateDialogComponent,
     DeleteDialogComponent,
     DynamicSupportComponent,
   ],

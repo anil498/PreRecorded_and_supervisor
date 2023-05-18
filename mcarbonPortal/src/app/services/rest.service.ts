@@ -242,52 +242,48 @@ export class RestService {
     });
   }
 
-  async update(
+  async updateAccount(
     type: string,
-    fname: string,
-    lname: string,
-    mobile: number,
-    email: string,
+
+    name: string,
     address: string,
-    userId: string,
-    parentId: string,
-    userType: string,
-    serviceType: string,
-    userPassword: string,
-    accStatus: string,
-    accExpDate: string,
-    maxUsers: number,
+    logo: Blob,
+    maxUser: number,
+    expDate: string,
+
     maxDuration: number,
     maxParticipants: number,
-    activeSessions: number,
-    screen_share: boolean,
-    video_share: boolean,
-    live_chat: boolean,
-    recording: boolean
+    maxActiveSessions: number,
+    accessId: number[],
+
+    features: number[],
+    featureMeta: any,
+
+    fname,
+    lname,
+    mobile,
+    email,
+    loginId,
+    password
   ) {
     return this.postRequest1(type, {
+      name,
+      address,
+      maxUser,
+      expDate,
+
+      session: {
+        maxDuration,
+        maxParticipants,
+        maxActiveSessions,
+      },
+
       fname,
       lname,
       mobile,
       email,
-      address,
-      userId,
-      parentId,
-      userType,
-      serviceType,
-      userPassword,
-      accStatus,
-      accExpDate,
-      maxUsers,
-      maxDuration,
-      maxParticipants,
-      activeSessions,
-      extraAttributes: {
-        screen_share,
-        video_share,
-        live_chat,
-        recording,
-      },
+      loginId,
+      password,
     });
   }
 

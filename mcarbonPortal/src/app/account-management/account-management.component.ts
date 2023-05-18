@@ -14,8 +14,8 @@ import { MatPaginator } from "@angular/material/paginator";
 import { Router } from "@angular/router";
 import { Accounts } from "../model/accounts";
 import { MatSort, Sort } from "@angular/material/sort";
-import { UpdateDialogComponent } from "app/update-dialog/update-dialog.component";
 import { CreateAccountComponent } from "app/create-account/create-account.component";
+import { UpdateAccountDialogComponent } from "app/update-account-dialog/update-account-dialog.component";
 
 @Component({
   selector: "app-account-management",
@@ -30,17 +30,6 @@ export class AccountManagementComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   pageSizes = [5, 10, 25, 50, 100, 500];
-  // displayedColumns: string[] = [
-  //   "User Code",
-  //   "User ID",
-  //   "First Name",
-  //   "Last Name",
-  //   "Parent ID",
-  //   "User Type",
-  //   "Account Status",
-  //   "Service Type",
-  //   "Account Expiry Date"
-  // ];
   displayedColumns: any[] = [
     "name",
     // "contact",
@@ -49,16 +38,6 @@ export class AccountManagementComponent implements OnInit {
     "features",
     "expDate",
     "status",
-    "Action",
-  ];
-  cols: any[] = [
-    "Name",
-    "Contact",
-    "Email",
-    "Access Details",
-    "Feature Details",
-    "Expiry date",
-    "Account Status",
     "Action",
   ];
 
@@ -120,21 +99,24 @@ export class AccountManagementComponent implements OnInit {
         accessId: 5,
         name: "Account Creation",
         order: 1,
-        pId: 1,
+        pId: 1000,
+        apiId: 1001,
         status: 1,
       },
       {
         accessId: 6,
         name: "Account Deletion",
         order: 1,
-        pId: 1,
+        pId: 1000,
+        apiId: 1003,
         status: 1,
       },
       {
         accessId: 7,
         name: "Account Updation",
         order: 1,
-        pId: 1,
+        pId: 1000,
+        apiId: 1002,
         status: 1,
       },
       {
@@ -184,6 +166,7 @@ export class AccountManagementComponent implements OnInit {
       }
     );
   }
+
   show() {
     this.accessList.forEach((access) => {
       if (access.pId == 1000) {
@@ -209,16 +192,7 @@ export class AccountManagementComponent implements OnInit {
 
   openSnackBar(message: string, color: string) {
     console.warn(this.token + "\n" + this.userId);
-    // this.restService.getAccountList(this.token, this.userId).then(
-    //   (response) => {
-    //     this.accounts = response;
-    //     console.log(this.accounts);
-    //     this.dataSourceWithPageSize.data = this.accounts;
-    //   },
-    //   (error) => {
-    //     console.log(error.status);
-    //   }
-    // );
+    this.viewTable();
 
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;
@@ -249,12 +223,13 @@ export class AccountManagementComponent implements OnInit {
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
   }
 
-  updateDialog(usercode: number) {
+  updateAccountDialog(account: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "690px";
     dialogConfig.height = "550px";
+    dialogConfig.data = account;
     console.log("Dialog Form Opened");
-    const dialogRef = this.dialog.open(UpdateDialogComponent, dialogConfig);
+    const dialogRef = this.dialog.open(UpdateAccountDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
