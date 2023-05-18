@@ -178,5 +178,19 @@
   },
   "cli": {
     "analytics": false
-  }
+  },
+  "name": "openvidu-call",
+  "private": true,
+  "scripts": {
+    "dev:start": "ng serve --configuration development",
+    "dev:build": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/",
+    "prod:build": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/dist/public/ --configuration production --base-href=\"${1:-/}\"; }; func",
+    "dev:build-java": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back-java/src/main/resources/static/",
+    "prod:build-java": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back-java/src/main/resources/static/ --configuration production --base-href=\"${1:-/}\"; }; func",
+    "e2e:basic": "tsc --project ./e2e && npx mocha --recursive --timeout 30000 ./e2e/dist/openvidu-call.test.js",
+    "e2e:auth": "tsc --project ./e2e && npx mocha --recursive --timeout 30000 ./e2e/dist/openvidu-call.auth.test.js",
+    "e2e:basic-ci": "cross-env LAUNCH_MODE=CI npm run e2e:basic",
+    "e2e:auth-ci": "cross-env LAUNCH_MODE=CI npm run e2e:auth",
+    "test": "ng test openvidu-call --watch=false --code-coverage"
+}
 }
