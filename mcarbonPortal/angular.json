@@ -178,14 +178,5 @@
   },
   "cli": {
     "analytics": false
-  },
-  "name": "video-platform",
-  "private": true,
-  "scripts": {
-    "dev:start": "ng serve --configuration development",
-    "dev:build": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/",
-    "prod:build": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/dist/public/ --configuration production --base-href=\"${1:-/}\"; }; func",
-    "dev:build-java": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back-java/src/main/resources/static/",
-    "prod:build-java": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../VideoPlatformBackend/src/main/resources/static/ --configuration production --base-href=\"${1:-/}\"; }; func"
-}
+  }
 }
