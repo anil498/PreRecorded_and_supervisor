@@ -20,7 +20,7 @@ FROM maven
 
 WORKDIR /opt/video-platform
 
-COPY --from=video-platform-call-build /video-platform/video-platform-java .
+COPY --from=video-platform-build /video-platform/video-platform-java .
 
 # Install backend dependencies and build it for production
 RUN mvn clean install package
