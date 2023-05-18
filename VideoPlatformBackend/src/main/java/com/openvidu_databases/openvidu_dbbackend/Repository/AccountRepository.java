@@ -18,4 +18,7 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
 
     @Query(nativeQuery = true,value = "SELECT * FROM account_data WHERE account_id=:accountId")
     List<AccountEntity> findById(@Param("accountId") int accountId);
+
+    @Query(nativeQuery = true,value = "SELECT * FROM account_data WHERE account_id=:accountId")
+    AccountEntity findByAccountId(@Param("accountId") int accountId);
 }

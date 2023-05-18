@@ -53,10 +53,11 @@ public class GeneralMessagingService implements MessagingService {
  //           SubmitResponse failedResponse = validateSessionAndRequest(args);
 //            if (failedResponse != null)
 //                return failedResponse;
+            logger.info(smsText,smsUrl);
             HttpHeaders headers = new HttpHeaders();
             headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
             HttpEntity<String> entity = new HttpEntity<String>(headers);
-            URI uri = new URI(createURL(smsUrl, args[0], URLEncoder.encode(createURL(smsText, "UTF-8"))));
+            URI uri = new URI(createURL(smsUrl, args[0], URLEncoder.encode(createURL(smsText, args[1]), "UTF-8")));
             submitResponse = restTemplate.exchange(uri, HttpMethod.GET, entity, SubmitResponse.class).getBody();
             return submitResponse;
         } catch (HttpClientErrorException ex) {
@@ -89,15 +90,15 @@ public class GeneralMessagingService implements MessagingService {
             headers.add("apikey", waApiKey);
             logger.info(Arrays.toString(args));
             WhatsappSubmit body = new WhatsappSubmit();
-            body.setFrom(String.valueOf(args[3]));
-            body.setTo(String.valueOf(args[1]));
-            body.setType(String.valueOf(args[4]));
-            logger.info(String.valueOf(args[4]));
+            body.setFrom(String.valueOf(args[2]));
+            body.setTo(String.valueOf(args[0]));
+            body.setType(String.valueOf(args[3]));
+            logger.info(String.valueOf(args[3]));
             ArrayList<String> placeHolders = new ArrayList<>();
-            logger.info("Args 4 value = "+String.valueOf(args[4]));
-            placeHolders.add((String) args[2]);
-            logger.info("Args 2 value = "+(String) args[2]);
-            message message = new message(String.valueOf(args[5]),placeHolders);
+            logger.info("Args 3 value = "+String.valueOf(args[3]));
+            placeHolders.add((String) args[1]);
+            logger.info("Args 1 value = "+(String) args[1]);
+            message message = new message(String.valueOf(args[4]),placeHolders);
             logger.info("Value of message = "+String.valueOf(message));
             body.setMessage(message);
             ObjectMapper jsonBody=new ObjectMapper();

@@ -1,5 +1,7 @@
 package com.openvidu_databases.openvidu_dbbackend.Controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -8,15 +10,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.openvidu_databases.openvidu_dbbackend.Constant.RequestMappings;
-import com.openvidu_databases.openvidu_dbbackend.Entity.AccountAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.SessionEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserAuthEntity;
-import com.openvidu_databases.openvidu_dbbackend.Entity.UserEntity;
+import com.openvidu_databases.openvidu_dbbackend.Entity.*;
 import com.openvidu_databases.openvidu_dbbackend.Models.AppNotification;
 import com.openvidu_databases.openvidu_dbbackend.Models.SubmitResponse;
-import com.openvidu_databases.openvidu_dbbackend.Repository.AccountAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.SessionRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.UserAuthRepository;
+import com.openvidu_databases.openvidu_dbbackend.Repository.*;
 import com.openvidu_databases.openvidu_dbbackend.Services.MessagingService;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
@@ -35,9 +32,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -51,6 +51,9 @@ public class MessageApiController {
     private String firebaseCollection;
     @Value("${call.prefix}")
     private String callPrefix;
+
+    @Value(("${call.access.time}"))
+    private int callAccessTime;
     @Autowired
     FirebaseMessaging firebaseMessaging;
     @Autowired
@@ -60,9 +63,18 @@ public class MessageApiController {
     @Autowired
     AccountAuthRepository accountAuthRepository;
     @Autowired
+    AccountRepository accountRepository;
+    @Autowired
     UserAuthRepository userAuthRepository;
     @Autowired
     SessionRepository sessionRepository;
+    @Autowired
+    AccessRepository accessRepository;
+    @Autowired
+    UserRepository userRepository;
+
+    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     private static final Logger logger= LoggerFactory.getLogger(MessageApiController.class);
     @PostMapping(value="/sendSms", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,6 +86,11 @@ public class MessageApiController {
         int authId = isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(authId,5001))){
+            logger.info("for 1001 : "+byAccess(authId,2002));
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!isValidToken(authId,token)) {
@@ -92,37 +109,81 @@ public class MessageApiController {
 
 //        logger.info("Request response {}",responseSms);
         String sessionKey = storeSessions(authId,msisdn);
-        String callUrl= getHeaders(request).get("origin")+callPrefix+sessionKey;
+        String callUrl= callPrefix+sessionKey;
+//        String callUrl = callPrefix+sessionKey;
+        String callUrlSupport = callPrefix+sessionKey+"_1";
         logger.info(callUrl);
-        SubmitResponse responseSms=messagingService.sendSms(request,response,msisdn);
+        SubmitResponse responseSms=messagingService.sendSms(request,response,msisdn,callUrl);
         responseSms.setCallUrl(callUrl);
-        return ResponseEntity.ok(responseSms);
+        HashMap<String,String> res=new HashMap<>();
+        res.put("callurl",callUrlSupport);
+        logger.info(String.valueOf(responseSms));
+        return ResponseEntity.ok(res);
  //       return responseSms;
     }
     @PostMapping ("/sendWhatsapp")
-    public SubmitResponse sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
+    public ResponseEntity<?> sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(authId,5002))){
+            logger.info("for 1001 : "+byAccess(authId,2002));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         String from= (String) params.get("from");
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
         String templateid= (String) params.get("templateId");
-        //String placeHolder= getHeaders(request).get("origin")+(String) params.get("callUrl");
-        String placeHolder= "https://demo2.progate.mobi"+(String) params.get("callUrl");
-        String sessionId =getHeaders(request).get("sessionid");
-        //String callUrl= getHeaders(request).get("origin")+(String) params.get("callUrl");
-        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
-        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.API, params != null ? params.toString() : "{}",getHeaders(request));
-        SubmitResponse responseSms=messagingService.sendWA(request,response,sessionId,to,placeHolder,from,type,templateid);
-        responseSms.setCallUrl(callUrl);
+        String sessionKey = storeSessions(authId,to);
+        String placeHolder= callPrefix+sessionKey;
+        String callUrlSupport = callPrefix+sessionKey+"_1";
+//        String placeHolder= "https://demo2.progate.mobi"+(String) params.get("callUrl");
+//        String sessionId =getHeaders(request).get("sessionid");
 
+        String callUrl= callPrefix+sessionKey;
+//        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.API, params != null ? params.toString() : "{}",getHeaders(request));
+        SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateid);
+        responseSms.setCallUrl(callUrl);
+        HashMap<String,String> res=new HashMap<>();
+        res.put("callurl",callUrlSupport);
         logger.info("Request response {}",responseSms);
-        return responseSms;
+        return ResponseEntity.ok(res);
+//        return responseSms;
     }
 
     @PostMapping("/notification")
-    public ResponseEntity<?> sendNotification(@RequestBody(required = false) Map<String, ?> params) throws IOException {
+    public ResponseEntity<?> sendNotification(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException {
 
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(authId,5003))){
+            logger.info("for 1001 : "+byAccess(authId,2002));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(authId,token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         String phoneNumber= (String) params.get("msisdn");
-        String sessionId = (String) params.get("sessionId");
+//        String sessionId = (String) params.get("sessionId");
         String title = (String) params.get("title");
         String body = (String) params.get("body");
 
@@ -136,11 +197,11 @@ public class MessageApiController {
             } else {
                 System.out.println("No such document!");
             }
-
-            HashMap<String,String> response=new HashMap<>();
+            String sessionKey = storeSessions(authId,phoneNumber);
+            HashMap<String,String> res=new HashMap<>();
             HashMap<String, String>map= new HashMap<>();
             map.put("TITLE",title);
-            map.put("SESSION_ID",sessionId);
+            map.put("SESSION_ID",sessionKey);
             map.put("BODY",body);
 
 
@@ -149,11 +210,14 @@ public class MessageApiController {
                     .putAllData(map)
                     .build();
 
+            String callUrl = callPrefix+sessionKey;
+            String callUrlSupport = callPrefix+sessionKey+"_1";
             // Send notification message
             String id=firebaseMessaging.send(message);
-            response.put("id",id);
-            response.put("sessionId",sessionId);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            res.put("id",id);
+
+            res.put("callurl",callUrlSupport);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             //   looger.error("Getting Exception While Submitting the message {}",e.getStackTrace());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -187,18 +251,62 @@ public class MessageApiController {
         return true;
     }
     private String storeSessions(Integer authId, String msisdn){
+        String creation = LocalDateTime.now().format(formatter);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
         SessionEntity session = new SessionEntity();
         UserAuthEntity userAuth = userAuthRepository.findByAuthId(authId);
         AccountAuthEntity acc = accountAuthRepository.findByAuthId(authId);
+        AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
+        session.setSessionName(account.getName());
         session.setUserId(userAuth.getUserId());
         session.setMobile(msisdn);
         session.setAccountId(acc.getAccountId());
         session.setStatus("1");
         String sessionId=acc.getAccountId()+"_"+userAuth.getUserId()+"_"+System.currentTimeMillis();
         session.setSessionId(sessionId);
-        session.setSessionKey(givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect());
+        String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+        session.setSessionKey(sessionKey);
+        String supportKey = sessionKey+"_1";
+        session.setSessionSupportKey(supportKey);
+        session.setCreation(creation);
+        session.setExpDate(newDateTime);
+
         sessionRepository.save(session);
         return session.getSessionKey();
+    }
+    private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
+
+        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+        int userId = user.getUserId();
+        UserEntity u = userRepository.findByUserId(userId);
+        if(user == null) return false;
+        ObjectMapper obj = new ObjectMapper();
+        String str = obj.writeValueAsString(u.getAccessId());
+        logger.info("Val : "+str);
+        String[] string = str.replaceAll("\\[", "")
+                .replaceAll("]", "")
+                .split(",");
+        int[] arr = new int[string.length];
+        int[] apiArr = new int[string.length];
+        for (int i = 0; i < string.length; i++) {
+            arr[i] = Integer.valueOf(string[i]);
+        }
+        int size = arr.length;
+        for (int i = 0; i < arr.length; i++) {
+            AccessEntity access = accessRepository.findByAccessId(arr[i]);
+            int apiId = access.getApiId();
+            apiArr[i] = apiId;
+        }
+        boolean apiPresent  = ifExistInApiArray(apiArr,toCheckValue);
+        return apiPresent;
+
+    }
+
+    private boolean ifExistInApiArray(int[] arr,int toCheckValue){
+        logger.info("ToCheck Array is : "+arr);
+        logger.info("TocheckVal is : "+toCheckValue);
+        return IntStream.of(arr).anyMatch(x -> x == toCheckValue);
     }
     private Map<String, String> getHeaders(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaderNames();

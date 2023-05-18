@@ -8,10 +8,7 @@ import com.openvidu_databases.openvidu_dbbackend.Entity.AccountAuthEntity;
 import com.openvidu_databases.openvidu_dbbackend.Entity.FeatureEntity;
 import com.openvidu_databases.openvidu_dbbackend.Entity.UserAuthEntity;
 import com.openvidu_databases.openvidu_dbbackend.Entity.UserEntity;
-import com.openvidu_databases.openvidu_dbbackend.Repository.AccountAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.FeatureRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.UserAuthRepository;
-import com.openvidu_databases.openvidu_dbbackend.Repository.UserRepository;
+import com.openvidu_databases.openvidu_dbbackend.Repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,8 +38,11 @@ public class OpenviduClientController {
     AccountAuthRepository accountAuthRepository;
     @Autowired
     UserAuthRepository userAuthRepository;
+    @Autowired
+    SessionRepository sessionRepository;
+
     @GetMapping("/get")
-    public ResponseEntity<?> featureList(HttpServletRequest request , HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<?> featureList(@RequestBody Map<String,String> params, HttpServletRequest request) throws JsonProcessingException {
         String authKey = request.getHeader("Authorization");
         int authId = isValidAuthKey(authKey);
         logger.info("Auth Id .. " + authId);
@@ -54,8 +55,16 @@ public class OpenviduClientController {
         if (!userId) {
             return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        String sessionKey=null;
+        if(params.containsKey("sessionKey")){
+            sessionKey=params.get("sessionKey");
+        }
+        HashMap<String,Object> response=new HashMap<>();
         UserAuthEntity userAuthEntity=userAuthRepository.findByAuthId(authId);
-        return ResponseEntity.ok(featureData(userAuthEntity.getUserId()));
+        response.put("user",userRepository.findById(userAuthEntity.getUserId()));
+        response.put("feature",featureData(userAuthEntity.getUserId()));
+        response.put("session",sessionRepository.findBySessionKey(sessionKey));
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
     private Object featureData(Integer userId) throws JsonProcessingException {
         UserEntity user = userRepository.findByUserId(userId);

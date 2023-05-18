@@ -244,6 +244,7 @@ public class UserController {
         if(authId == 0){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+
         String loginId = params.get("loginId");
         String password = params.get("password");
 
@@ -251,11 +252,17 @@ public class UserController {
         logger.info("password : "+password);
 
         UserEntity user1 = userRepository.findById(loginId);
+
         logger.info("user "+user1);
         int userId = user1.getUserId();
+
         logger.info("userId "+userId);
         UserAuthEntity user = userAuthRepository.findByAuthId(userId);
         logger.info("userId"+userId);
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findById(user1.getAccountId());
+        if(!(accountAuthEntity.getAuthKey().equals(authKey))){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
 
         if (user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId)) {
             logger.info("Inside first if ...");
@@ -443,12 +450,7 @@ private Object featureData(Integer userId) throws JsonProcessingException {
             int apiId = access.getApiId();
             apiArr[i] = apiId;
         }
-
         boolean apiPresent  = ifExistInApiArray(apiArr,toCheckValue);
-        logger.info("IfAPIPresent.... : "+apiPresent);
-        logger.info("String : " + str);
-        logger.info("Integer array : " + Arrays.toString(arr));
-        logger.info("API array : " + Arrays.toString(apiArr));
         return apiPresent;
 
     }

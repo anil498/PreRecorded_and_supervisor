@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @EntityScan
@@ -17,9 +18,11 @@ public class SessionEntity {
     @Column(name = "user_id" ) Integer userId;
     @Column(name = "session_name") String sessionName;
     @Column(name = "session_key" ) String sessionKey;
+    @Column(name = "session_support_key" ) String sessionSupportKey;
+    @Column(name = "user_info" ) String userInfo;
     @Column(name = "mobile") String mobile;
     @Column(name = "creation_date") String creation;
-    @Column(name = "exp_date") String expDate;
+    @Column(name = "exp_date") LocalDateTime expDate;
     @Column(name = "status") String status;
 
     public String getSessionId() {
@@ -78,11 +81,11 @@ public class SessionEntity {
         this.creation = creation;
     }
 
-    public String getExpDate() {
+    public LocalDateTime getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(String expDate) {
+    public void setExpDate(LocalDateTime expDate) {
         this.expDate = expDate;
     }
 
@@ -94,6 +97,22 @@ public class SessionEntity {
         this.status = status;
     }
 
+    public String getSessionSupportKey() {
+        return sessionSupportKey;
+    }
+
+    public void setSessionSupportKey(String sessionSupportKey) {
+        this.sessionSupportKey = sessionSupportKey;
+    }
+
+    public String getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(String userInfo) {
+        this.userInfo = userInfo;
+    }
+
     @Override
     public String toString() {
         return "SessionEntity{" +
@@ -102,9 +121,11 @@ public class SessionEntity {
                 ", userId=" + userId +
                 ", sessionName='" + sessionName + '\'' +
                 ", sessionKey='" + sessionKey + '\'' +
+                ", sessionSupportKey='" + sessionSupportKey + '\'' +
+                ", userInfo='" + userInfo + '\'' +
                 ", mobile='" + mobile + '\'' +
                 ", creation='" + creation + '\'' +
-                ", expDate='" + expDate + '\'' +
+                ", expDate=" + expDate +
                 ", status='" + status + '\'' +
                 '}';
     }
