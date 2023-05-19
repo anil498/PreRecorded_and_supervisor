@@ -94,8 +94,8 @@ public class VideoPlatform {
     StringEntity params = new StringEntity(json.toString(), StandardCharsets.UTF_8);
     HttpPost request = new HttpPost(this.hostname + API_PATH + API_FEATURES);
     request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-    request.setHeader("AccountToken", accountIdToken);
-    request.setHeader("UserToken", userIdToken);
+    request.setHeader("Authorization", accountIdToken);
+    request.setHeader("Token", userIdToken);
     request.setEntity(params);
     try {
       return (SessionRequest) this.httpClient.execute(request, responseHandler);
