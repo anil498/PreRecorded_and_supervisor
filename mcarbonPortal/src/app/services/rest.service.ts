@@ -21,12 +21,12 @@ export class RestService {
   private userId: string;
 
   constructor(private http: HttpClient, private router: Router) {
-    this.baseHref =
-      "/" +
+    //this.baseHref =
+    "/" +
       (!!window.location.pathname.split("/")[1]
         ? window.location.pathname.split("/")[1] + "/"
         : "");
-    this.url = "http://172.17.0.122:5000/VPService/v1/";
+    this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
     this.url1 = "http://172.17.0.122:5000/";
   }
 
@@ -113,7 +113,9 @@ export class RestService {
         Token: `${this._token}`,
       });
       return lastValueFrom(
-        this.http.post<any>(this.baseHref + "account/" + path, body, { headers })
+        this.http.post<any>(this.baseHref + "account/" + path, body, {
+          headers,
+        })
       );
     } catch (error) {
       console.warn(error);
@@ -308,12 +310,12 @@ export class RestService {
   async getUserById(token: string, id: string) {
     console.warn(token + "\n" + id);
     const headers = new HttpHeaders({
-      token: `${token}`,
-      id: `${id}`,
+      Token: `${token}`,
+      Authorization: `${this.authKey}`,
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "user/getById/" + id, { headers })
+        this.http.get<any>(this.baseHref + "user/getById/" + `${this._response.user_data.userId}`, { headers })
       );
     } catch (error) {
       if (error.status === 404) {

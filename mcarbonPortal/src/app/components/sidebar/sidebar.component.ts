@@ -17,7 +17,7 @@ export const ROUTES: RouteInfo[] = [
     icon: "dashboard",
     class: "",
     apiId: null,
-    show: false,
+    show: true,
   },
   {
     path: "/app/user-profile",

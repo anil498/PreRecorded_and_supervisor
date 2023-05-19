@@ -1,90 +1,55 @@
 <div class="main-content">
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-md-8">
         <div class="card">
           <div class="card-header card-header-danger">
             <h4 class="card-title">Edit Profile</h4>
             <p class="card-category">Complete your profile</p>
           </div>
-          <div class="card-body">
-            <form>
-              <div class="row">
-                <div class="col-md-6 offset-md-1">
-                  <div class="row"><p>User Code: {{ user.userCode }}</p></div>
-                  <div class="row"><p>User Name: {{ user.userId }}</p></div>
-                  <div class="row"><p>First Name: {{ user.userFname }}</p></div>
-                  <div class="row"><p>Last Name: {{ user.userLname }}</p></div>
+          <div class="card-body card-custom">
+            <div class="row row-1">
+              <div class="col-md-5 offset-md-1 heading">
+                <div class="row">
+                  <p>First Name:</p>
                 </div>
-              
-                <div class="col-md-4">
-                  <div class="card-profile">
-                    <div class="card-avatar">
-                      <a href="javascript:void(0)">
-                        <img class="img" src="./assets/img/faces/marc.jpg" />
-                      </a>
-                    </div>
-                    <div class="card-body">
-                      <h6 class="card-category text-gray">
-                        {{ user.userType }}
-                      </h6>
-                      <h4 class="card-title">
-                        {{ user.userFname }} {{ user.userLname }}
-                      </h4>
-                    </div>
-                  </div>
+                <div class="row">
+                  <p>Last Name:</p>
                 </div>
-                
-              </div>
-
-
-              <div class="row">
-                <div class="col-md-12">
-                  <p>Address: {{ user.address }}</p>
+                <div class="row">
+                  <p>Login ID:</p>
+                </div>
+                <div class="row">
+                  <p>Contact:</p>
+                </div>
+                <div class="row">
+                  <p>Email:</p>
                 </div>
               </div>
 
-              <div class="row">
-                <div class="col-md-6">
-                  <p>Mobile: {{ user.mobile }}</p>
+              <div class="col-md-5">
+                <div class="row">
+                  <p>{{ user.fname }}</p>
                 </div>
-                <div class="col-md-6">
-                  <p>Email: {{ user.email }}</p>
+                <div class="row">
+                  <p>{{ user.lname }}</p>
                 </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <p>User Type: {{ user.userType }}</p>
+                <div class="row">
+                  <p>{{ user.loginId }}</p>
                 </div>
-                <div class="col-md-6">
-                  <p>Account Type: {{ user.accType }}</p>
+                <div class="row">
+                  <p>{{ user.contact }}</p>
                 </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <p>Account Expiry Date: {{ user.accExpDate }}</p>
-                </div>
-                <div class="col-md-6">
-                  <p>Account Status: {{ user.accStatus }}</p>
+                <div class="row">
+                  <p>{{ user.email }}</p>
                 </div>
               </div>
-
-              <!-- <button
-                mat-raised-button
-                type="submit"
-                class="btn btn-danger pull-right"
-              >
-                Update Profile
-              </button>
-              <div class="clearfix"></div> -->
-            </form>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- <div class="col-md-4">
+      <div class="col-md-4">
         <div class="card card-profile">
           <div class="card-avatar">
             <a href="javascript:void(0)">
@@ -92,16 +57,62 @@
             </a>
           </div>
           <div class="card-body">
-            <h6 class="card-category text-gray">CEO / Co-Founder</h6>
-            <h4 class="card-title">Alec Thompson</h4>
-            <p class="card-description">
-              Don't be scared of the truth because we need to restart the human
-              foundation in truth And I love you like Kanye loves Kanye I love
-              Rick Owens’ bed design but the back is...
-            </p>
+            <h6 class="card-category text-gray"></h6>
+            <h4 class="card-title">{{ user.fname }} {{ user.lname }}</h4>
+            <div class="card-description">
+              <div class="row">
+                <div
+                  class="col-md-5 offset-md-1"
+                  style="font-weight: bold; font-size: 1rem"
+                >
+                  Expiry Date:
+                </div>
+                <div class="col-md-5">{{ user.expDate }}</div>
+              </div>
+              <div class="row">
+                <div
+                  class="col-md-5 offset-md-1"
+                  style="font-weight: bold; font-size: 1rem"
+                >
+                  Status:
+                </div>
+                <div class="col-md-5" *ngIf="active">
+                  <button style="color: green">Active</button>
+                </div>
+                <div class="col-md-5" *ngIf="deactive">
+                  <button style="color: red">Deactive</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-      </div> -->
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card card-profile">
+          <div class="card-body">
+            <h6 class="card-category text-gray">Access List</h6>
+            <div *ngFor="let access of accessList">
+              <h4 class="card-title">{{ access.name }}</h4>
+              <div class="card-description"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card card-profile">
+          <div class="card-body">
+            <h6 class="card-category text-gray">Feature List</h6>
+            <div *ngFor="let feature of featureList">
+              <h4 class="card-title">{{ feature.name }}</h4>
+              <p class="card-description"></p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

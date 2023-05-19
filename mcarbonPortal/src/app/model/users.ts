@@ -1,9 +1,10 @@
 export interface Users{
-    userFname: string,
-    userLname: string,
+    fname: string,
+    lname: string,
     loginId: string,
     contact: number,
     email: string,
+    address: string,
     access: number[],
     features: number[],
     expDate: string,

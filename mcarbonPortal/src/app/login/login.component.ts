@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);
       this.restService.setUserId(this.username);
-      this.router.navigate(["/app/user-profile"]);
+      this.router.navigate(["/app/dashboard"]);
     } catch (err) {
       console.log(err);
       if (err.status === 0) {

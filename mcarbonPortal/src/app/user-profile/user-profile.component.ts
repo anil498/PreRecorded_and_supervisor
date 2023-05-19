@@ -10,20 +10,32 @@ import { User } from "../model/user";
 export class UserProfileComponent implements OnInit {
   token: string;
   userId: string;
-  user: any;
+  user: User;
+  active: boolean = false;
+  deactive: boolean = false;
+  accessList : any[] = [];
+  featureList: any[] = [];
   constructor(private restService: RestService) {}
 
   async ngOnInit(): Promise<void> {
     this.token = this.restService.getToken();
     this.userId = this.restService.getUserId();
+    this.accessList = this.restService.getData().Access;
+    this.featureList = this.restService.getData().Features;
     this.restService.getUserById(this.token, this.userId).then(
       (response) => {
-        this.user = <User>response[0];
+        console.warn(response);
+        this.user = <User>response;
         console.log(this.user);
       },
       (error) => {
         console.log(error.status);
       }
     );
+
+    if (this.user.status == 1) this.active = true;
+    else {
+      this.deactive = true;
+    }
   }
 }

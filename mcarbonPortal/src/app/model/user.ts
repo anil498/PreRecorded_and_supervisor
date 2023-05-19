@@ -1,13 +1,12 @@
 export interface User{
-    userCode: number,
-    userId: string,
-    userFname: string,
-    userLname: string,
-    address: string,
-    mobile: number,
+    fname: string,
+    lname: string,
+    loginId: string,
+    contact: number,
     email: string,
-    userType: string,
-    serviceType: string,
-    accStatus: string,
-    accExpDate: string,
+    address: string,
+    accessId: number[],
+    features: number[],
+    expDate: string,
+    status: number
 }
