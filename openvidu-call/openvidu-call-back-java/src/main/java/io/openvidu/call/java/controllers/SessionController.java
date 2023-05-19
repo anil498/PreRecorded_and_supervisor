@@ -134,10 +134,10 @@ public class SessionController {
           sessionRequest.setSessionKey(jsonElement3.getAsString());
           sessionRequest.setSessionSupportKey(jsonElement4.getAsString());
           sessionRequest.setSessionExpiredTime(jsonElement5.getAsString());
-          sessionRequest.setMaxParticipants(2);
-          sessionRequest.setMaxActiveSessions(2);
-          sessionRequest.setMaxUserActiveSessions(2);
-          sessionRequest.setMaxUserParticipants(2);
+          sessionRequest.setMaxParticipants(20);
+          sessionRequest.setMaxActiveSessions(20);
+          sessionRequest.setMaxUserActiveSessions(20);
+          sessionRequest.setMaxUserParticipants(20);
           logger.info(sessionRequest.toString());
           sessionId=sessionRequest.getSessionUniqueId();
           logger.info("Fetched Details from video platform {}", sessionRequest.toString());
