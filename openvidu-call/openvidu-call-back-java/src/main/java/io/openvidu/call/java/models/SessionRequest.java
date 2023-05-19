@@ -12,7 +12,7 @@ public class SessionRequest {
   private String accountId;
   private String userId;
   private Boolean isRecording;
-  private Boolean isBroadCasting;
+  private Boolean isBroadCasting=false;
   private String recordingMode;
   private Boolean isSessionCreator;
   private Boolean isScreenSharing;
@@ -31,27 +31,6 @@ public class SessionRequest {
   private String participantName;
   private String sessionKey;
   private String sessionSupportKey;
-
-  public SessionRequest(JsonObject jsonObject) throws JsonProcessingException {
-    this.isRecording=jsonObject.get("isRecording").getAsBoolean();
-    this.isBroadCasting=jsonObject.get("isBroadCasting").getAsBoolean();
-    this.recordingMode=jsonObject.get("recordingMode").getAsString();
-//    this.isSessionCreator=jsonObject.get("isSessionCreator").getAsBoolean();
-    this.isScreenSharing=jsonObject.get("isScreenSharing").getAsBoolean();
-    this.isChatEnabled=jsonObject.get("isChatEnabled").getAsBoolean();
-    this.allowTransCoding=jsonObject.get("allowTransCoding").getAsBoolean();
-    this.maxActiveSessions=jsonObject.get("maxActiveSessions").getAsInt();
-    this.maxParticipants=jsonObject.get("maxParticipants").getAsInt();
-    this.maxDuration=jsonObject.get("maxDuration").getAsInt();
-    this.maxUserActiveSessions=jsonObject.get("maxUserActiveSessions").getAsInt();
-    this.maxUserParticipants=jsonObject.get("maxUserParticipants").getAsInt();
-    this.maxUserDuration=jsonObject.get("maxUserDuration").getAsInt();
-    this.accountId=jsonObject.get("accountId").getAsString();
-    this.userId=jsonObject.get("userId").getAsString();
-    this.showSessionId=jsonObject.get("showSessionId").getAsBoolean();
-    ObjectMapper objectMapper=new ObjectMapper();
-    this.sessionLogo=objectMapper.readValue(jsonObject.get("sessionLogo").toString(),Byte[].class);
-  }
 
   public Boolean getRecording() {
     return isRecording;

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.openvidu.call.java.Constants.SessionConstant;
@@ -95,7 +96,7 @@ public class SessionController {
         logger.info("Call Type of this session is {}",callType);
         String sessionIdKey = params.get("sessionId").toString();
         String sessionId=null;
-        SessionRequest sessionRequest=null;
+        SessionRequest sessionRequest=new SessionRequest();
         try {
 //          String jsonString = "{\"accountId\":\"mcarbon\",\"userId\":\"admin\",\"isRecording\":\"true\",\"isBroadCasting\":\"false\",\"recordingMode\":\"custom\",\"isSessionCreator\":\"true\",\"isScreenSharing\":\"true\",\"isChatEnabled\":\"true\",\"allowTransCoding\":\"false\",\"maxActiveSessions\":\"5\",\"maxParticipants\":\"2\",\"maxDuration\":\"1000\",\"maxUserActiveSessions\":\"2\",\"maxUserParticipants\":\"2\",\"maxUserDuration\":\"1000\"}";
 //          Gson gson=new Gson();
@@ -104,17 +105,39 @@ public class SessionController {
           String jsonString = this.videoPlatformService.getVideoPlatformProperties(accountIdToken, userIdToken,sessionIdKey);
           logger.info(jsonString);
           JsonObject jsonObject=gson.fromJson(jsonString,JsonObject.class);
-          sessionRequest.setSessionUniqueId(jsonObject.getAsJsonObject("session").get("sessionId").getAsString());
-          sessionRequest.setUserId(jsonObject.getAsJsonObject("user").get("userId").getAsString());
-          sessionRequest.setAccountId(jsonObject.getAsJsonObject("user").get("accountID").getAsString());
-          sessionRequest.setSessionKey(jsonObject.getAsJsonObject("session").get("sessionKey").getAsString());
-          sessionRequest.setSessionSupportKey(jsonObject.getAsJsonObject("session").get("sessionSupportKey").getAsString());
-          sessionRequest.setSessionExpiredTime(jsonObject.getAsJsonObject("session").get("expDate").getAsString());
+          JsonElement jsonElement=jsonObject.getAsJsonObject("session").get("sessionId");
+          JsonElement jsonElement1=jsonObject.getAsJsonObject("user").get("userId");
+          JsonElement jsonElement2=jsonObject.getAsJsonObject("user").get("accountId");
+          JsonElement jsonElement3=jsonObject.getAsJsonObject("session").get("sessionKey");
+          JsonElement jsonElement4=jsonObject.getAsJsonObject("session").get("sessionSupportKey");
+          JsonElement jsonElement5=jsonObject.getAsJsonObject("session").get("expDate");
+          JsonElement fname=jsonObject.getAsJsonObject("user").get("fname");
+          JsonElement lname=jsonObject.getAsJsonObject("user").get("lname");
+          sessionRequest.setParticipantName(fname.getAsString()+lname.getAsString());
+          JsonArray jsonArray=jsonObject.getAsJsonArray("feature");
+          for (JsonElement jsonElement6 : jsonArray) {
+            JsonObject featureObject = jsonElement6.getAsJsonObject();
+            JsonElement nameElement = featureObject.get("name");
+            String name = nameElement.getAsString();
+            logger.info(name);
+            if(name.equals("Recording")){
+              sessionRequest.setRecording(true);
+            }else if(name.equals("Screen Share")){
+              sessionRequest.setScreenSharing(true);
+            }else if(name.equals("Chat")){
+              sessionRequest.setChatEnabled(true);
+            }
+          }
+          sessionRequest.setSessionUniqueId(jsonElement.getAsString());
+          sessionRequest.setUserId(jsonElement1.getAsString());
+          sessionRequest.setAccountId(jsonElement2.getAsString());
+          sessionRequest.setSessionKey(jsonElement3.getAsString());
+          sessionRequest.setSessionSupportKey(jsonElement4.getAsString());
+          sessionRequest.setSessionExpiredTime(jsonElement5.getAsString());
           sessionRequest.setMaxParticipants(2);
           sessionRequest.setMaxActiveSessions(2);
           sessionRequest.setMaxUserActiveSessions(2);
           sessionRequest.setMaxUserParticipants(2);
-          sessionRequest.setScreenSharing(jsonObject.getAsJsonObject("feature").getAsBoolean());
           logger.info(sessionRequest.toString());
           sessionId=sessionRequest.getSessionUniqueId();
           logger.info("Fetched Details from video platform {}", sessionRequest.toString());
@@ -145,15 +168,15 @@ public class SessionController {
         boolean hasModeratorValidToken = this.openviduService.isModeratorSessionValid(sessionId, moderatorCookie);
         boolean hasParticipantValidToken = this.openviduService.isParticipantSessionValid(sessionId,
           participantCookie);
-        if (params.containsKey("isSessionCreator")) {
-          sessionRequest.setSessionCreator((Boolean) params.get("isSessionCreator"));
-          sessionRequest.setParticipantName(sessionRequest.getUserId());
-        }else {
-          sessionRequest.setParticipantName("");
+        if (!sessionIdKey.equals(sessionRequest.getSessionSupportKey())) {
+          sessionRequest.setParticipantName("Customer");
         }
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
 //			boolean iAmTheFirstConnection = sessionCreated.getActiveConnections().size() == 0;
-        boolean iAmSessionCreator = sessionRequest.getSessionCreator();
+        boolean iAmSessionCreator=false;
+        if(sessionIdKey.equals(sessionRequest.getSessionSupportKey())) {
+           iAmSessionCreator = true;
+        }
         boolean isSessionCreator = hasModeratorValidToken || iAmSessionCreator;
 
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
