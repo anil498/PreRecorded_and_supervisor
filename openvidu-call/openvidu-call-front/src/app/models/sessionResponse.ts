@@ -2,8 +2,8 @@ import { RecordingInfo } from 'openvidu-angular';
 export interface sessionResponse{
     isRecording:boolean;
     isBroadCasting:boolean;
-    cameraToken:String;
-    screenToken:String;
+    cameraToken:string;
+    screenToken:string;
     recordings:RecordingInfo[];
     isScreenSharing:boolean;
     isChatEnabled:boolean;
