@@ -99,12 +99,12 @@ public class SessionController {
         String sessionId=null;
         SessionRequest sessionRequest=null;
         try {
-        sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionId);
-      }catch (Exception e){
+        sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionIdKey);
+        sessionId=sessionRequest.getSessionUniqueId();
+        }catch (Exception e){
           logger.error("Getting Exception while fetching record {}",e);
         }
         String sessionKey=sessionRequest.getAccountId()+SessionConstant.SESSION_PREFIX+sessionRequest.getUserId()+SessionConstant.SESSION_PREFIX+sessionId;
-        sessionRequest.setSessionUniqueId(sessionKey);
         Session sessionCreated = null;
         if (validateSession(sessionRequest, sessionKey,sessionIdToSessionContextMap)) {
           sessionCreated = this.openviduService.createSession(sessionId, sessionRequest.getRecordingMode());
