@@ -15,5 +15,6 @@ public interface UserAuthRepository extends JpaRepository<UserAuthEntity, Intege
     @Query(nativeQuery = true,value = "SELECT * FROM user_auth WHERE auth_id=:authId")
     UserAuthEntity findByAuthId(@Param("authId") Integer authId);
 
-
+    @Query(nativeQuery = true,value = "SELECT * FROM user_auth WHERE token=:token")
+    UserAuthEntity findByToken(@Param("token") String token);
 }

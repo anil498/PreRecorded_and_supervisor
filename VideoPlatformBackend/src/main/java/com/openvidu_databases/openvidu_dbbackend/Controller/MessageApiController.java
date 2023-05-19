@@ -88,16 +88,15 @@ public class MessageApiController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,5001))){
-            logger.info("for 1001 : "+byAccess(authId,2002));
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!isValidToken(authId,token)) {
+
+        if(!isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-
+        if(!(byAccess(5001,token))){
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
 
         String msisdn= (String) params.get("msisdn");
         //logger.info("getHeaders(request) = "+getHeaders(request));
@@ -108,7 +107,7 @@ public class MessageApiController {
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.API, params != null ? params.toString() : "{}",getHeaders(request));
 
 //        logger.info("Request response {}",responseSms);
-        String sessionKey = storeSessions(authId,msisdn);
+        String sessionKey = storeSessions(token,authKey,msisdn);
         String callUrl= callPrefix+sessionKey;
 //        String callUrl = callPrefix+sessionKey;
         String callUrlSupport = callPrefix+sessionKey+"_1";
@@ -126,17 +125,16 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
-        if(authId == 0){
+        int check = isValidAuthKey(authKey);
+        if(check == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,5002))){
-            logger.info("for 1001 : "+byAccess(authId,2002));
+        if(!(byAccess(5002,token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(authId,token)) {
+        if(!isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -144,7 +142,7 @@ public class MessageApiController {
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
         String templateid= (String) params.get("templateId");
-        String sessionKey = storeSessions(authId,to);
+        String sessionKey = storeSessions(token,authKey,to);
         String placeHolder= callPrefix+sessionKey;
         String callUrlSupport = callPrefix+sessionKey+"_1";
 //        String placeHolder= "https://demo2.progate.mobi"+(String) params.get("callUrl");
@@ -173,15 +171,16 @@ public class MessageApiController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,5003))){
-            logger.info("for 1001 : "+byAccess(authId,2002));
+        if(!(byAccess(5003,token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(authId,token)) {
+
+        if(!isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+
         String phoneNumber= (String) params.get("msisdn");
 //        String sessionId = (String) params.get("sessionId");
         String title = (String) params.get("title");
@@ -197,7 +196,7 @@ public class MessageApiController {
             } else {
                 System.out.println("No such document!");
             }
-            String sessionKey = storeSessions(authId,phoneNumber);
+            String sessionKey = storeSessions(token,authKey,phoneNumber);
             HashMap<String,String> res=new HashMap<>();
             HashMap<String, String>map= new HashMap<>();
             map.put("TITLE",title);
@@ -233,30 +232,27 @@ public class MessageApiController {
     public int isValidAuthKey(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         if(acc == null)return 0;
-        String key = (acc.getAuthKey());
-        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
+        if(acc.getExpDate().isBefore(LocalDateTime.now())){
             return 0;
         }
-        int authId = acc.getAuthId();
-        return authId;
+
+        return 1;
     }
-    public Boolean isValidToken(int authId,String token){
-        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+    public Boolean isValidToken(String token){
+        UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
-        logger.info("DAta by authId.."+user);
-        //logger.info(user.getToken());
-        String t = (user.getToken());
-        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
+        if(user.getExpDate().isBefore(LocalDateTime.now()))
             return false;
         return true;
     }
-    private String storeSessions(Integer authId, String msisdn){
+    private String storeSessions(String token,String authKey,String msisdn){
         String creation = LocalDateTime.now().format(formatter);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
         SessionEntity session = new SessionEntity();
-        UserAuthEntity userAuth = userAuthRepository.findByAuthId(authId);
-        AccountAuthEntity acc = accountAuthRepository.findByAuthId(authId);
+
+        UserAuthEntity userAuth = userAuthRepository.findByToken(token);
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
         session.setSessionName(account.getName());
         session.setUserId(userAuth.getUserId());
@@ -270,14 +266,14 @@ public class MessageApiController {
         String supportKey = sessionKey+"_1";
         session.setSessionSupportKey(supportKey);
         session.setCreation(creation);
-        session.setExpDate(newDateTime);
+        session.setExpDate(String.valueOf(newDateTime));
 
         sessionRepository.save(session);
         return session.getSessionKey();
     }
-    private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
+    private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
 
-        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+        UserAuthEntity user = userAuthRepository.findByToken(token);
         int userId = user.getUserId();
         UserEntity u = userRepository.findByUserId(userId);
         if(user == null) return false;

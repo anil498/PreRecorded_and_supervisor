@@ -22,7 +22,7 @@ public class SessionEntity {
     @Column(name = "user_info" ) String userInfo;
     @Column(name = "mobile") String mobile;
     @Column(name = "creation_date") String creation;
-    @Column(name = "exp_date") LocalDateTime expDate;
+    @Column(name = "exp_date") String expDate;
     @Column(name = "status") String status;
 
     public String getSessionId() {
@@ -81,11 +81,11 @@ public class SessionEntity {
         this.creation = creation;
     }
 
-    public LocalDateTime getExpDate() {
+    public String getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(LocalDateTime expDate) {
+    public void setExpDate(String expDate) {
         this.expDate = expDate;
     }
 

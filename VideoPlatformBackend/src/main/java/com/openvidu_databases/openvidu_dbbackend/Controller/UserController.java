@@ -59,6 +59,9 @@ public class UserController {
     AccountAuthRepository accountAuthRepository;
 
     @Autowired
+    AccountRepository accountRepository;
+
+    @Autowired
     private FeatureRepository featureRepository;
 
     @Autowired
@@ -87,14 +90,15 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1001))){
-            logger.info("for 1001 : "+byAccess(authId,1001));
-            logger.info("for 1006 : "+byAccess(authId,1006));
-            logger.info("Permission Denied. Don't have access for this service!");
+
+        if(!isValidToken(token)) {
+            logger.info("Invalid Token !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(authId,token)) {
-            logger.info("Invalid Token !");
+
+        if(!(byAccess(1001,token))){
+            logger.info("for 1001 : "+byAccess(1001,token));
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -129,16 +133,16 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,1001))){
-            logger.info("for 1001 : "+byAccess(authId,1001));
-            logger.info("for 1006 : "+byAccess(authId,1006));
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!isValidToken(authId,token)) {
+        if(!isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        if(!(byAccess(1001,token))){
+            logger.info("for 1001 : "+byAccess(1001,token));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+
             return ok(userService.getUserById(id));
 
     }
@@ -149,24 +153,29 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
-        if(authId == 0){
+        int accountId = isValidAuthKey(authKey);
+        if(accountId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,2001))){
-            logger.info("for 1006 : "+byAccess(authId,2001));
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!isValidToken(authId,token)) {
+        if(!isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        if(!(byAccess(2001,token))){
+            logger.info("for 1006 : "+byAccess(2001,token));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        AccountEntity a = accountRepository.findByAccountId(accountId);
+        int maxUsers = a.getMaxUser();
+
+        if(maxUsers == 0){
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        int accountId = acc.getAccountId();
-        UserAuthEntity u = userAuthRepository.findByAuthId(authId);
+        UserAuthEntity u = userAuthRepository.findByToken(token);
         String creation = LocalDateTime.now().format(formatter);
         user.setAccountId(acc.getAccountId());
         user.setCreationDate(creation);
@@ -192,13 +201,13 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,2002))){
-            logger.info("for 1001 : "+byAccess(authId,2002));
-            logger.info("Permission Denied. Don't have access for this service!");
+        if(!isValidToken(token)) {
+            logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(authId,token)) {
-            logger.info("Invalid Token !");
+        if(!(byAccess(2002,token))){
+            logger.info("for 1001 : "+byAccess(2002,token));
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         return ok(userService.updateUser(user, id));
@@ -224,15 +233,16 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(authId,2003))){
-            logger.info("for 1006 : "+byAccess(authId,1006));
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!isValidToken(authId,token)) {
+        if(!isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        if(!(byAccess(2003,token))){
+            logger.info("for 1006 : "+byAccess(1006,token));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+
         return ok(userService.deleteUser(id));
     }
 
@@ -257,14 +267,13 @@ public class UserController {
         int userId = user1.getUserId();
 
         logger.info("userId "+userId);
-        UserAuthEntity user = userAuthRepository.findByAuthId(userId);
+        UserAuthEntity user = userAuthRepository.findByUId(userId);
         logger.info("userId"+userId);
-        AccountAuthEntity accountAuthEntity = accountAuthRepository.findById(user1.getAccountId());
-        if(!(accountAuthEntity.getAuthKey().equals(authKey))){
+
+        if (!(user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId))) {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
-        if (user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId)) {
             logger.info("Inside first if ...");
             if(isValidTokenLogin(userId)){
                 logger.info("Inside second if ...");
@@ -286,7 +295,7 @@ public class UserController {
                     String token1 = generateToken(userId,"UR");
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime newDateTime = now.plus(accessTime, ChronoUnit.HOURS);
-                    UserAuthEntity ua = userAuthRepository.findByAuthId(userId);
+                    UserAuthEntity ua = userAuthRepository.findByUId(userId);
                     String lastlogin = LocalDateTime.now().format(formatter);
                     user1.setLastLogin(lastlogin);
 
@@ -307,6 +316,7 @@ public class UserController {
                     }
 
                     userAuthRepository.save(ua);
+
                     Map<String,Object> res = new HashMap<>();
                     res.put("token",token1);
                     res.put("user_data",user1);
@@ -317,8 +327,7 @@ public class UserController {
                     logger.info(user1.toString());
                     return new ResponseEntity<>(res, HttpStatus.OK);
                 }
-     //      }
-        }}
+        }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
@@ -346,13 +355,13 @@ public class UserController {
         int authId = acc.getAuthId();
         return authId;
     }
-    public Boolean isValidToken(int authId,String token){
-        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+    public Boolean isValidToken(String token){
+        UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
-        logger.info("DAta by authId.."+user);
+        logger.info("Data by authId.."+user);
         //logger.info(user.getToken());
         String t = (user.getToken());
-        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) || token == null || !(t.equals(token)))
+        if(user.getExpDate().isBefore(LocalDateTime.now()) || !(t.equals(token)))
             return false;
         return true;
     }
@@ -375,45 +384,19 @@ public class UserController {
        return headerMap;
    }
 
-//   private Object featureData(Integer userId) throws JsonProcessingException {
-//
-//        UserEntity user = userRepository.findByUserId(userId);
 
-//        ObjectMapper obj = new ObjectMapper();
-//        String str = obj.writeValueAsString(user.getFeatures());
-//        logger.info("Val : "+str);
-//        String[] string = str.replaceAll("\\[", "")
-//               .replaceAll("]", "")
-//               .split(",");
-//        int[] arr = new int[string.length];
-//        Map<Integer,String> res = new HashMap<>();
-//        for (int i = 0; i < string.length; i++) {
-//           arr[i] = Integer.valueOf(string[i]);
-//        }
-////        Object obj1[] = new Objec[];
-//       String str1="";
-//        for (int i = 0; i < arr.length; i++) {
-//             str1 += obj.writeValueAsString(featureRepository.findById(arr[i]));
-//        }
-//       // str1 = "["+str1+"]";
-//        logger.info("Response : "+res);
-//        logger.info("String : " + str1);
-//        logger.info("\nInteger array : "
-//               + Arrays.toString(arr));
-//        return str1;
- //  }
-private Object featureData(Integer userId) throws JsonProcessingException {
-    UserEntity user = userRepository.findByUserId(userId);
-    Integer[] featuresId = user.getFeatures();
-    ObjectMapper objectMapper = new ObjectMapper();
-    List<FeatureEntity> featureEntities = new ArrayList<>();
+    private Object featureData(Integer userId) throws JsonProcessingException {
+        UserEntity user = userRepository.findByUserId(userId);
+        Integer[] featuresId = user.getFeatures();
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<FeatureEntity> featureEntities = new ArrayList<>();
 
-    for (int i = 0; i < featuresId.length; i++) {
-        FeatureEntity featureEntity = featureRepository.findByFeatureId(featuresId[i]);
-        featureEntities.add(featureEntity);
+        for (int i = 0; i < featuresId.length; i++) {
+            FeatureEntity featureEntity = featureRepository.findByFeatureId(featuresId[i]);
+            featureEntities.add(featureEntity);
+        }
+        return objectMapper.convertValue(featureEntities, JsonNode.class);
     }
-    return objectMapper.convertValue(featureEntities, JsonNode.class);
-}
 
     private Object accessData(Integer userId) throws JsonProcessingException {
         UserEntity user = userRepository.findByUserId(userId);
@@ -427,9 +410,9 @@ private Object featureData(Integer userId) throws JsonProcessingException {
         }
         return objectMapper.convertValue(accessEntities, JsonNode.class);
     }
-    private boolean byAccess(Integer authId,int toCheckValue) throws JsonProcessingException {
+    private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
 
-        UserAuthEntity user = userAuthRepository.findByAuthId(authId);
+        UserAuthEntity user = userAuthRepository.findByToken(token);
         int userId = user.getUserId();
         UserEntity u = userRepository.findByUserId(userId);
         if(user == null) return false;
@@ -467,11 +450,6 @@ private Object featureData(Integer userId) throws JsonProcessingException {
         return test;
     }
 
-
-    @PostMapping("/createSession")
-    public ResponseEntity<SessionEntity> createSession(@RequestBody SessionEntity session, HttpServletRequest request, HttpServletResponse response) {
-        return ResponseEntity.ok(sessionRepository.save(session));
-    }
 
 }
 
