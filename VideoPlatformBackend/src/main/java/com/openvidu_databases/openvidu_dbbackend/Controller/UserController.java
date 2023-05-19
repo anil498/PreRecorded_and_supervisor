@@ -96,8 +96,8 @@ public class UserController {
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!(byAccess(1001,token))){
-            logger.info("for 1001 : "+byAccess(1001,token));
+        if(!(byAccess(2000,token))){
+            logger.info("for 1001 : "+byAccess(2000,token));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -137,8 +137,8 @@ public class UserController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(1001,token))){
-            logger.info("for 1001 : "+byAccess(1001,token));
+        if(!(byAccess(2000,token))){
+            logger.info("for 1001 : "+byAccess(2000,token));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -261,7 +261,7 @@ public class UserController {
         logger.info("loginId : "+loginId);
         logger.info("password : "+password);
 
-        UserEntity user1 = userRepository.findById(loginId);
+        UserEntity user1 = userRepository.findByLoginId(loginId);
 
         logger.info("user "+user1);
         int userId = user1.getUserId();

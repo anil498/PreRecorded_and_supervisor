@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     List<UserEntity> findAll();
 
     @Query(nativeQuery=true, value = "select * from user_data where login_id = :loginId ")
-    UserEntity findById(@Param("loginId") String loginId);
+    UserEntity findByLoginId(@Param("loginId") String loginId);
 
     @Query(nativeQuery=true, value = "select * from user_data where user_id = :userId ")
     UserEntity findByUserId(@Param("userId") Integer userId);
