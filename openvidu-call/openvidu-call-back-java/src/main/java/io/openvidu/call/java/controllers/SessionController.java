@@ -170,6 +170,9 @@ public class SessionController {
           participantCookie);
         if (!sessionIdKey.equals(sessionRequest.getSessionSupportKey())) {
           sessionRequest.setParticipantName("Customer");
+          nickname="Customers";
+        }else {
+          nickname="Support";
         }
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
 //			boolean iAmTheFirstConnection = sessionCreated.getActiveConnections().size() == 0;
@@ -188,6 +191,9 @@ public class SessionController {
         response.put("isBroadcastingActive", sessionCreated.isBeingBroadcasted());
         response.put("sessionLogo",sessionRequest.getSessionLogo());
         response.put("participantName",sessionRequest.getParticipantName());
+        response.put("isChatEnabled",sessionRequest.getChatEnabled());
+        response.put("showSessionId",sessionRequest.getShowSessionId());
+        response.put("isScreenSharing",sessionRequest.getScreenSharing());
         Connection cameraConnection = null;
         if (validateParticipantJoined(sessionRequest, sessionKey,sessionIdToSessionContextMap)) {
           cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role,sessionKey);

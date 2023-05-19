@@ -105,5 +105,6 @@ export class CallComponent implements OnInit {
 		this.chatEnabled=response.isChatEnabled;
 		this.showSessionId=response.showSessionId;
 		this.partitcipantName=response.participantName;
+		console.log(this.partitcipantName);
 	}
 }
