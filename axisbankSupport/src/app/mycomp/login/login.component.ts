@@ -24,9 +24,9 @@ export class LoginComponent {
   // data!:any;
   data = [
     {
-      Name: 'Prashant',
-      'Phone No': '9636189023',
-      Address: 'Noida',
+      Name: 'Saheemuddin Khan',
+      'Phone No': '8285955472',
+      Address: 'SMS Noida',
       
       'Last Interaction Mode':'SMS',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
@@ -34,81 +34,81 @@ export class LoginComponent {
 
     },
     {
-      Name: 'Vats',
-      'Phone No': '9636189023',
-      Address: 'Mumbai',
+      Name: 'Saheemuddin Khan',
+      'Phone No': '8285955472',
+      Address: 'WhatsApp Noida',
       
       'Last Interaction Mode':'WhatsApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'WhatsApp',
     },
     {
-      Name: 'Anil',
-      'Phone No': '9636189023',
-      Address: 'Pune',
+      Name: 'Saheemuddin Khan',
+      'Phone No': '8285955472',
+      Address: 'App Noida',
       
       'Last Interaction Mode':'CallToApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'CallToApp',
     },
     {
-      Name: 'Krishna',
-      'Phone No': '9639500599',
-      Address: 'Chennai',
+      Name: 'Pranjal Mishra',
+      'Phone No': '9958333645',
+      Address: 'SMS Chennai',
       'Last Interaction Mode':'SMS',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'SMS',
     },
     {
-      Name: 'Aditi',
-      'Phone No': '9984392555',
-      Address: 'Kanpur',
+      Name: 'Pranjal Mishra',
+      'Phone No': '9958333645',
+      Address: 'WhatsApp Chennai',
       'Last Interaction Mode':'WhatsApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'WhatsApp',
     },
     {
-      Name: 'Divya',
+      Name: 'Anil Kumar',
       'Phone No': '9636189023',
-      Address: 'Goa',
+      Address: 'App Chennai',
       'Last Interaction Mode':'CallToApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'CallToApp',
     },
     {
-      Name: 'Manoj',
-      'Phone No': '9639500599',
-      Address: 'Kota',
+      Name: 'Anil Kumar',
+      'Phone No': '9636189023',
+      Address: 'SMS Chennai',
       'Last Interaction Mode':'SMS',
       'Last Interaction Time':'5/5/2023, 10:44 A.M ',
       'Send Video Call Link': 'SMS',
     },
     {
-      Name: 'Shiv',
-      'Phone No': '9984392555',
-      Address: 'Delhi',
+      Name: 'Gaurav ',
+      'Phone No': '9560553080',
+      Address: 'WhatsApp Noida',
       //  
       'Last Interaction Mode':'WhatsApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'WhatsApp',
     },
     {
-      Name: 'Vishnu',
-      'Phone No': '9636189023',
-      Address: 'Rajasthan',
+      Name: 'Prashant',
+      'Phone No': '9639500599',
+      Address: 'APP Rajasthan',
      
       'Last Interaction Mode':'CallToApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'CallToApp',
     },
     {
-      Name: 'Gunjan',
-      'Phone No': '9639500599',
-      Address: 'Noida',
+      Name: 'Vatsala',
+      'Phone No': '9984392555',
+      Address: 'SMS Noida',
       
       'Last Interaction Mode':'SMS',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'SMS',
+      'Send Video Call Link': 'WhatsApp',
     },
     
    
@@ -238,13 +238,25 @@ export class LoginComponent {
     this.data[index]['Last Interaction Mode']="Video Call";
     
     this.data[index]['Last Interaction Time']=this.getCurrentTime();;
-    
+     ///
+       let choice=-1;
+       choice=index%3;
+       if(choice==0)
+       connecttype ='SMS'
+       else if(choice==1)
+       connecttype == 'WhatsApp'
+       else 
+       connecttype == 'CallToApp'
+
+     ///
+
+
     if (connecttype == 'SMS') {
       console.log('function call for sms');
       this.SendBySMS(phone_no);
     } else if (connecttype == 'WhatsApp') {
       console.log('function call for WhatsApp');
-      this.SendByWhatsApp(phone_no);
+      this.SendByWhatsApp(phone_no,this.userinfo);
     } else if (connecttype == 'CallToApp') {
       console.log('function call for App');
       this.SendByApp(phone_no);
@@ -317,7 +329,7 @@ export class LoginComponent {
   } //###########sendbysms close
 
   /////---------------------------------------------------------
-  async SendByWhatsApp(phone_no: string) {
+  async SendByWhatsApp(phone_no: string,userdetils:string) {
     console.log(' call api for  WhatsApp by no' + phone_no);
 
     //------------------
@@ -336,7 +348,8 @@ export class LoginComponent {
         callUrl,
         from,
         type,
-        templateId
+        templateId,
+        userdetils
       );
     } catch (error) {
       console.log(error);
@@ -390,10 +403,11 @@ export class LoginComponent {
         'Please join the video call',
         '',
         'axis_session',
-        '9876543210'
+        phone_no
       );
     } catch (error) {
       //this.goTo("/call", sessionId);
+      console.log("error in catch of this.restservice.sendNotify( ");
       console.log(error);
       //  this.state = error.statusText;
       //  this.failedMessage = true;
