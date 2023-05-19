@@ -45,7 +45,7 @@ public class VideoPlatform {
   protected String hostname;
   protected CloseableHttpClient httpClient;
   protected static final String API_PATH = "VPService/v1";
-  protected static final String API_FEATURES = "/client";
+  protected static final String API_FEATURES = "/client/get";
   protected static final String API_SESSION = "/sessionDetails";
   protected static final String API_CALLBACK = "/sessionCallback";
 
