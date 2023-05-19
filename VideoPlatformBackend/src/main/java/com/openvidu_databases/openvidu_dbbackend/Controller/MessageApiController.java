@@ -107,7 +107,11 @@ public class MessageApiController {
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.API, params != null ? params.toString() : "{}",getHeaders(request));
 
 //        logger.info("Request response {}",responseSms);
-        String sessionKey = storeSessions(token,authKey,msisdn);
+        String userInfo=null;
+        if(params.containsKey("userInfo")){
+            userInfo= String.valueOf(params.get("userInfo"));
+        }
+        String sessionKey = storeSessions(token,authKey,msisdn,userInfo);
         String callUrl= callPrefix+sessionKey;
 //        String callUrl = callPrefix+sessionKey;
         String callUrlSupport = callPrefix+sessionKey+"_1";
@@ -142,7 +146,11 @@ public class MessageApiController {
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
         String templateid= (String) params.get("templateId");
-        String sessionKey = storeSessions(token,authKey,to);
+        String userInfo=null;
+        if(params.containsKey("userInfo")){
+            userInfo= String.valueOf(params.get("userInfo"));
+        }
+        String sessionKey = storeSessions(token,authKey,to,userInfo);
         String placeHolder= callPrefix+sessionKey;
         String callUrlSupport = callPrefix+sessionKey+"_1";
 //        String placeHolder= "https://demo2.progate.mobi"+(String) params.get("callUrl");
@@ -196,7 +204,11 @@ public class MessageApiController {
             } else {
                 System.out.println("No such document!");
             }
-            String sessionKey = storeSessions(token,authKey,phoneNumber);
+            String userInfo=null;
+            if(params.containsKey("userInfo")){
+                userInfo= String.valueOf(params.get("userInfo"));
+            }
+            String sessionKey = storeSessions(token,authKey,phoneNumber,userInfo);
             HashMap<String,String> res=new HashMap<>();
             HashMap<String, String>map= new HashMap<>();
             map.put("TITLE",title);
@@ -245,7 +257,7 @@ public class MessageApiController {
             return false;
         return true;
     }
-    private String storeSessions(String token,String authKey,String msisdn){
+    private String storeSessions(String token,String authKey,String msisdn,String userInfo){
         String creation = LocalDateTime.now().format(formatter);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
@@ -266,6 +278,7 @@ public class MessageApiController {
         String supportKey = sessionKey+"_1";
         session.setSessionSupportKey(supportKey);
         session.setCreation(creation);
+        session.setUserInfo(userInfo);
         session.setExpDate(String.valueOf(newDateTime));
 
         sessionRepository.save(session);
