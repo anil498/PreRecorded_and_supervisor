@@ -27,7 +27,8 @@ export class WebSocketService {
     }
 
     public alert(message){
-        this.stompClient.send("/topic/support", {}, JSON.stringify(message));    
+        const body = { "sessionId": message};
+        this.stompClient.send("/topic/alert", {}, JSON.stringify(body));    
     }
     public available(message){
         const body = { "sessionId": message};

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService } from '../services/rest.service';
+import { WebSocketService } from '../services/websocket.service';
 
 @Component({
 	selector: 'app-dashboard',
@@ -10,7 +11,7 @@ import { RestService } from '../services/rest.service';
 export class DashboardComponent implements OnInit {
 	title = 'openvidu-angular';
 	name: string ;
-	constructor(private router: Router , private restService: RestService) {}
+	constructor(private router: Router , private restService: RestService , private webSocketService: WebSocketService) {}
 
 	ngOnInit(): void {}
 
@@ -18,9 +19,12 @@ export class DashboardComponent implements OnInit {
 
 	goTo(path: string) {
 		
+		
+		this.router.navigate([`/${path}`, {roomName: 'm-call' , name: this.name}]);
+		localStorage.removeItem('key');
 
-
-		this.router.navigate([`/${path}`, {roomName: 'daily-call2' , name: this.name}]);
+		
+		
 		
 		// const body = {
 		// 	notifyTo: 'support',
@@ -31,7 +35,5 @@ export class DashboardComponent implements OnInit {
 		
 	}
 
-	EnterName(value: string){
-		this.name = value;
-	}
+
 }

@@ -11,10 +11,13 @@ export class ConfirmationDialogService {
   open:boolean;
   modalInstance:any;
 
-  constructor(private modalService: NgbModal) { }
+  constructor(private modalService: NgbModal) {
+    
+   }
 
   public confirm(
-    title: string='Customer Call Join Request',
+
+    title: string='Call Join Request',
     message: string='Do You Want to Join?',
     btnOkText: string = 'Join',
     btnCancelText: string = 'Cancel',

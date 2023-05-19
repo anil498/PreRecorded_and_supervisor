@@ -79,7 +79,6 @@ export class SuperDashboardComponent implements OnInit {
 							
 	
 					this.webSocketService.send(this.sessionId);
-					this.webSocketService.alert(this.sessionId);
 					this.busy = true;
 					this.open = true;
 				} else this.webSocketService.available(this.sessionId);

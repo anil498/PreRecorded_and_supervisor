@@ -5,6 +5,7 @@ import { RestService } from '../../services/rest.service';
 import { Subscription } from 'rxjs';
 import { OpenVidu, Publisher, Session } from 'openvidu-browser';
 import { HttpClient } from '@angular/common/http';
+import { WebSocketService } from 'src/app/services/websocket.service';
 
 @Component({
 	selector: 'call-support',
@@ -12,9 +13,8 @@ import { HttpClient } from '@angular/common/http';
 	styleUrls: ['./call-support.component.css']
 })
 export class CallSupportComponent implements OnInit {
-	
 	// Objects and Variables declaration
-	
+
 	previousSessionId: string = '';
 	sessionId: string;
 	tokens: TokenModel;
@@ -28,7 +28,7 @@ export class CallSupportComponent implements OnInit {
 	private isDebugSession: boolean = false;
 	message: string;
 	subscription: Subscription;
-	mute: string ;
+	mute: string;
 
 	merge: boolean = false;
 	openVidu: any;
@@ -41,14 +41,13 @@ export class CallSupportComponent implements OnInit {
 		private route: ActivatedRoute,
 		private http: HttpClient,
 		private openviduService: OpenViduService,
-		private participants: ParticipantService
+		private participants: ParticipantService,
+		private webSocketService: WebSocketService
 	) {
 		const value2 = localStorage.getItem('key');
-		if(value2=='true'){
-			this.merge=true;
-			
+		if (value2 == 'true') {
+			this.merge = true;
 		}
-
 	}
 	async ngOnInit() {
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
@@ -160,7 +159,7 @@ export class CallSupportComponent implements OnInit {
 	}
 
 	private async requestForTokens() {
-		const response = await this.restService.getTokensFromBackend1(this.sessionId,'support');
+		const response = await this.restService.getTokensFromBackend1(this.sessionId, 'support');
 		this.recordingList = response.recordings;
 		this.tokens = {
 			webcam: response.cameraToken,
@@ -188,19 +187,19 @@ export class CallSupportComponent implements OnInit {
 			sessionId: id
 		};
 
-
+		const session_message = 'callhold';
+		this.webSocketService.alert(session_message);
 		this.toggleHold();
-
 
 		this.router.navigate([]).then(() => {
 			window.open(`/#/call-support/${id}`, '_blank');
 		});
-		
-		localStorage.setItem('key','true');
-		this.restService.postRequest(id , body);
+
+		localStorage.setItem('key', 'true');
+		this.restService.postRequest(id, body);
 	}
 
-	async mergecall(){
+	async mergecall() {
 		console.warn('Merge Button Clicked');
 
 		const id = this.sessionId;
@@ -210,63 +209,41 @@ export class CallSupportComponent implements OnInit {
 		};
 
 		this.restService.postRequest(id, body);
-		window.close();
 
+		window.close();
 	}
 
-
 	toggleHold() {
-
 		const publishAudio = !this.participants.isMyAudioActive();
-		
+		if(!publishAudio){
 		this.openviduService.publishAudio(publishAudio);
-		
-		
-		
-		
+
 		console.warn('TOOLBAR HOLD BUTTON CLICKED');
-		
-		
-		
-		
+
 		const remoteParticipants = this.participants.getRemoteParticipants();
-		
 		const len = remoteParticipants.length;
-		
+
 		if (len <= 0) console.warn('Nothing ' + len);
-		
 		else {
-		
-		 for (let i = 0; i < len; i++) {
-		
-		const remoteid = remoteParticipants[i].id;
-		
-		remoteParticipants.forEach((id) => {
-		
-		//console.warn(id.id);
-		
-		});
-		
-		
-		
-		
-		let isAudio = !remoteParticipants[i].isMutedForcibly;
-		
-		console.warn(isAudio);
-		
-		isAudio
-		
-		 ? console.warn('Participant with ID ' + remoteid + ' has been muted')
-		
-		 : console.warn('Participant with ID ' + remoteid + ' has been unmuted');
-		
-		this.participants.setRemoteMutedForcibly(remoteid, isAudio);
-		
-		 }
-		
+			for (let i = 0; i < len; i++) {
+				const remoteid = remoteParticipants[i].id;
+				remoteParticipants.forEach((id) => {
+					//console.warn(id.id);
+				});
+
+				let isAudio = !remoteParticipants[i].isMutedForcibly;
+
+				console.warn(isAudio);
+
+				isAudio
+					? console.warn('Participant with ID ' + remoteid + ' has been muted')
+					: console.warn('Participant with ID ' + remoteid + ' has been unmuted');
+
+				this.participants.setRemoteMutedForcibly(remoteid, isAudio);
+			}
 		}
-		
-		 }
-
-
+	}else{
+		console.warn("Audio Muted");
+	}
+}
 }

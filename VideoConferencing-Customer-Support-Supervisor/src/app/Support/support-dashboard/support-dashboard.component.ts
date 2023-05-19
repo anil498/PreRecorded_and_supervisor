@@ -22,6 +22,7 @@ export class SupportDashboardComponent implements OnInit {
 	busy: boolean;
 	open: boolean;
 	count: boolean;
+	id: string;
 
 	count2: any = 0;
 
@@ -70,7 +71,7 @@ export class SupportDashboardComponent implements OnInit {
 		
 		console.log('Notification');
 		this.confirmationDialogService
-			.confirm('CustomerVideo Call Request..', 'Do you really want to Join ... ?')
+		    .confirm('Customer Video Call Request..', 'Do you really want to Join ... ?')
 			.then((confirmed) => {
 				console.log('User confirmed:', confirmed);
 				if (confirmed) {

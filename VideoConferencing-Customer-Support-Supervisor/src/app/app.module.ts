@@ -17,8 +17,8 @@ import { CallComponent } from './openvidu-call/call.component';
 import { TestingComponent } from './testing-app/testing.component';
 // openvidu-angular
 import { OpenViduAngularModule } from 'openvidu-angular';
-import { CallCustomerComponent } from './customer/call-customer/call-customer.component';
-import { CallSupportComponent } from './Support/call-support/call-support.component';
+import { CallCustomerComponent, PopupComponent } from './customer/call-customer/call-customer.component';
+import { CallSupportComponent} from './Support/call-support/call-support.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
 import { WebSocketService } from './services/websocket.service';
 import { ConfirmationDialogService } from './confirmation-dialog/confirmation-dialog.service';
@@ -52,7 +52,8 @@ import { SharedService} from './services/shared.service'
 		CustomerDashboardComponent,
 		ConfirmationDialogComponent,
 		SuperDashboardComponent,
-		CallSuperComponent
+		CallSuperComponent,
+		PopupComponent
 	],
 	imports: [
 		MatSortModule,
@@ -74,7 +75,7 @@ import { SharedService} from './services/shared.service'
 		AppRoutingModule // Order is important, AppRoutingModule must be the last import for useHash working
 	],
 	providers: [WebSocketService, ConfirmationDialogService , SharedService],
-	entryComponents: [ConfirmationDialogComponent],
+	entryComponents: [ConfirmationDialogComponent , PopupComponent],
 	bootstrap: [AppComponent]
 })
 export class AppModule {}
