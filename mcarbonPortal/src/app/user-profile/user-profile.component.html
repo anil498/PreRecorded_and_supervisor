@@ -49,7 +49,7 @@
         </div>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-4 profile">
         <div class="card card-profile">
           <div class="card-avatar">
             <a href="javascript:void(0)">
@@ -57,7 +57,7 @@
             </a>
           </div>
           <div class="card-body">
-            <h6 class="card-category text-gray"></h6>
+            <h6 class="card-category"></h6>
             <h4 class="card-title">{{ user.fname }} {{ user.lname }}</h4>
             <div class="card-description">
               <div class="row">
@@ -93,9 +93,9 @@
       <div class="col-md-6">
         <div class="card card-profile">
           <div class="card-body">
-            <h6 class="card-category text-gray">Access List</h6>
+            <h6 class="card-title text-gray">Access List</h6>
             <div *ngFor="let access of accessList">
-              <h4 class="card-title">{{ access.name }}</h4>
+              <h4 class="card-category">{{ access.name }}</h4>
               <div class="card-description"></div>
             </div>
           </div>
@@ -105,9 +105,9 @@
       <div class="col-md-6">
         <div class="card card-profile">
           <div class="card-body">
-            <h6 class="card-category text-gray">Feature List</h6>
+            <h6 class="card-title text-gray">Feature List</h6>
             <div *ngFor="let feature of featureList">
-              <h4 class="card-title">{{ feature.name }}</h4>
+              <h4 class="card-category">{{ feature.name }}</h4>
               <p class="card-description"></p>
             </div>
           </div>

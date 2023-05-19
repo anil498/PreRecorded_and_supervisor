@@ -17,11 +17,11 @@ export class RestService {
   private userId!: string;
 
   constructor(private http: HttpClient) {
-    this.url =
-      '/' +
-      (!!window.location.pathname.split('/')[1]
-        ? window.location.pathname.split('/')[1] + '/'
-        : '');
+    // this.url =
+    //   '/' +
+    //   (!!window.location.pathname.split('/')[1]
+    //     ? window.location.pathname.split('/')[1] + '/'
+    //     : '');
        
     // this.url="https://demo2.progate.mobi/dynamicsupport/send/sendNotification";
 
@@ -30,7 +30,7 @@ export class RestService {
 
     
     //mychnage run sms and chat
-    //this.url = 'http://172.17.0.122:5000';
+    this.url = 'https://demo2.progate.mobi';
   } //constructur close
 
   private callRequest(
@@ -38,7 +38,7 @@ export class RestService {
     path: string,
     body: any
   ): Promise<any> {
-    console.warn(body);
+    console.log("callrequest body"+body);
     try {
       //app run by this header
       // const headers = {
@@ -46,22 +46,22 @@ export class RestService {
       //   sessionid: sessionId,
       // };
       const headers = new HttpHeaders({
-        Token: `UR003sQnEP5XGCC`,
+        Token: `UR101S3yyOTKf5u`,
 
-        Authorization: 'AC003WgfiPGR6cG',
+        Authorization: 'AC101rFSyWDmFBf',
       });
 
       return lastValueFrom(
         this.http.post<any>(this.url + path, body, { headers })
       );
-    } catch (error) {
-      console.log('error' + error);
-      //   if (error.status === 404) {
-      //     throw {
-      //       status: error.status,
-      //       message: "Cannot connect with backend. " + error.url + " not found",
-      //     };
-      //   }
+    } catch (error:any) {
+      console.log('error in call request catch' + error);
+        if (error.status === 404) {
+          throw {
+            status: error.status,
+            message: "Cannot connect with backend. " + error.url + " not found",
+          };
+        }
       throw error;
     }
   } //call request promise close
@@ -70,7 +70,7 @@ export class RestService {
     console.log('sms Sent');
 
     try {
-      return this.callRequest(sessionId, '/video/api/sendSms', {
+      return this.callRequest(sessionId, '/VPService/v1/video/api/sendSms', {
         msisdn,
 
         // callUrl,
@@ -92,12 +92,13 @@ export class RestService {
 
     type: string,
 
-    templateId: string
+    templateId: string,
+    userInfo:string
   ) {
     console.warn('Whatsapp Message Sent');
 
     try {
-      return this.callRequest(sessionId, '/video/api/sendWhatsapp', {
+      return this.callRequest(sessionId, '/VPService/v1/video/api/sendWhatsapp', {
         msisdn,
 
         callUrl,
@@ -107,6 +108,7 @@ export class RestService {
         type,
 
         templateId,
+        userInfo
       });
     } catch (error) {
       console.log(error);
@@ -118,19 +120,20 @@ export class RestService {
   async sendNotify(
     title: string,
     body: string,
-    sessId: string,
-    phoneNumber: string
+    sessionId: string,
+    msisdn: string
   ) {
-    console.warn('Notification Sent');
+    console.log('sendNotify run Notification Sent by data'+title+body+sessionId+msisdn);
     try {
       //===="/video/api/notification"
-      return this.callRequest(sessId, 'send/sendNotification', {
-        phoneNumber,
-        sessId,
+      ///VPService/v1/video/api/notification
+      return this.callRequest(sessionId, '/VPService/v1/video/api/notification', {
+        msisdn,
         title,
         body,
       });
     } catch (error) {
+      console.log("error in cath this.callRequest of restsevice sendnotify");
       console.log(error);
     }
   } //send notify clsoe

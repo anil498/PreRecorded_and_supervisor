@@ -16,7 +16,7 @@
     <div class="tablediv">
   
        <table>
-        <caption>User Details</caption>
+        <caption>Customer Details</caption>
         <th  *ngFor="let header of headers">{{ header }}</th>
         
         
@@ -28,7 +28,7 @@
           <ng-container  *ngIf="header=='Send Video Call Link'; else minorContent">
             <!-- <td><button class="callbtn"(click)="ConnectToUserClickByUpdate(row['Phone No'],row[header],i,header)">{{ row[header] }}</button></td> -->
            
-            <td><button class="callbtn"(click)="ConnectToUserClick(row['Phone No'],row[header],i)">{{ row[header] }}</button></td>
+            <td><button class="callbtn"(click)="ConnectToUserClick(row['Phone No'],row[header],i)">Video Call</button></td>
           </ng-container>
           <ng-template #minorContent>
             <td>{{ row[header] }}</td>
