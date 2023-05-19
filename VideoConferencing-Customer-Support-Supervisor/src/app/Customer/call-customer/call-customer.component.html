@@ -1,0 +1,40 @@
+<ov-videoconference
+        [tokens]="tokens"
+        (onJoinButtonClicked)="onJoinClicked()"
+        (onToolbarLeaveButtonClicked)="onToolbarLeaveButtonClicked()"
+        (onToolbarCameraButtonClicked)="onToolbarCameraButtonClicked()"
+        (onToolbarMicrophoneButtonClicked)="onToolbarMicrophoneButtonClicked()"
+        (onToolbarScreenshareButtonClicked)="onToolbarScreenshareButtonClicked()"
+        (onToolbarFullscreenButtonClicked)="onToolbarFullscreenButtonClicked()"
+        (onToolbarParticipantsPanelButtonClicked)="onToolbarParticipantsPanelButtonClicked()"
+        (onToolbarChatPanelButtonClicked)="onToolbarChatPanelButtonClicked()"
+        (onToolbarStartRecordingClicked)="onStartRecordingClicked()"
+        (onToolbarStopRecordingClicked)="onStopRecordingClicked()"
+        (onActivitiesPanelStartRecordingClicked)="onStartRecordingClicked()"
+        (onActivitiesPanelStopRecordingClicked)="onStopRecordingClicked()"
+        (onActivitiesPanelDeleteRecordingClicked)="onDeleteRecordingClicked($event)"
+        (onNodeCrashed)="onNodeCrashed()"
+        [minimal]="false"
+        [prejoin]="false"
+        [participantName]="getName"
+        [videoMuted]="false"
+        [audioMuted]="false"
+        [activitiesPanelRecordingActivity]="true"
+        [recordingActivityRecordingsList]="recordingList"
+        [recordingActivityRecordingError]="recordingError"
+        [toolbarSettingsButton]="true"
+        [toolbarCaptionsButton]="false"
+        [toolbarDisplayLogo]="false"
+        [toolbarDisplaySessionName]="false"
+        [toolbarRecordingButton]="false"
+        [toolbarChatPanelButton]="true"
+        [toolbarActivitiesPanelButton]="false"
+        [toolbarParticipantsPanelButton]="false"
+        [toolbarBackgroundEffectsButton]="false"
+        [toolbarBroadcastingButton]="false"
+        
+>
+        
+
+</ov-videoconference>
+
