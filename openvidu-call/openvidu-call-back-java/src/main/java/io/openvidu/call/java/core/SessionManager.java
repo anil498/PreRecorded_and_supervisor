@@ -1,12 +1,12 @@
 package io.openvidu.call.java.core;
 
 import io.openvidu.call.java.Constants.SessionConstant;
-import io.openvidu.call.java.config.Config;
+//import io.openvidu.call.java.config.Config;
 import io.openvidu.call.java.threads.NamedThreadPoolFactory;
-import io.openvidu.call.java.threads.TimerTask;
-import io.openvidu.call.java.util.HandleTimeoutEvent;
-import mcarbon.timer.Timer;
-import mcarbon.util.McQueue;
+//import io.openvidu.call.java.threads.TimerTask;
+//import io.openvidu.call.java.util.HandleTimeoutEvent;
+//import mcarbon.timer.Timer;
+//import mcarbon.util.McQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,7 @@ public class SessionManager {
   }
 
   private void startThreads() {
-    McQueue timeOutQueue = new McQueue();
+//    McQueue timeOutQueue = new McQueue();
     try {
 //      logger.info("Time {}",timerTaskInterval);
 //      ScheduledExecutorService timerTaskService = Executors.newSingleThreadScheduledExecutor(new NamedThreadPoolFactory(SessionConstant.TIMER_INVOKER_THREAD));

@@ -1,6 +1,6 @@
 package io.openvidu.call.java.util;
 
-import io.openvidu.call.java.config.Config;
+//import io.openvidu.call.java.config.Config;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.SessionCallback;
 import io.openvidu.call.java.models.SessionRequest;
@@ -38,7 +38,7 @@ public class CommonUtil {
         + "]");
     } else {
       try {
-        Config.timer.add(request.getSessionUniqueId(), request, timeOut);
+//        Config.timer.add(request.getSessionUniqueId(), request, timeOut);
         logger.info("Timer is added for[" + timeOut + "] sec for sessionId:[" + request.getSessionUniqueId() + "]");
       } catch (Exception e) {
         e.printStackTrace();
