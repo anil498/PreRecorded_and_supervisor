@@ -267,12 +267,8 @@ public class UserController {
         int userId = user1.getUserId();
 
         logger.info("userId "+userId);
-        UserAuthEntity user = userAuthRepository.findByAuthId(userId);
+        UserAuthEntity user = userAuthRepository.findByUId(userId);
         logger.info("userId"+userId);
-        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
-        if(!(accountAuthEntity.getAuthKey().equals(authKey))){
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
 
         if (!(user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId))) {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
@@ -356,8 +352,8 @@ public class UserController {
         if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
             return 0;
         }
-        int accountId = acc.getAccountId();
-        return accountId;
+        int authId = acc.getAuthId();
+        return authId;
     }
     public Boolean isValidToken(String token){
         UserAuthEntity user = userAuthRepository.findByToken(token);
