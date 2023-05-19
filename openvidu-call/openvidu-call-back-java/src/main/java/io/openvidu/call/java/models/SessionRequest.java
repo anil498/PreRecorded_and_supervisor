@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import java.util.Arrays;
 
 public class SessionRequest {
+  private String sessionName;
   private String sessionUniqueId;
   private String accountId;
   private String userId;
@@ -28,6 +29,8 @@ public class SessionRequest {
   private Byte[] sessionLogo;
   private Boolean showSessionId;
   private String participantName;
+  private String sessionKey;
+  private String sessionSupportKey;
 
   public SessionRequest(JsonObject jsonObject) throws JsonProcessingException {
     this.isRecording=jsonObject.get("isRecording").getAsBoolean();
@@ -218,10 +221,35 @@ public class SessionRequest {
     this.showSessionId = showSessionId;
   }
 
+  public String getSessionName() {
+    return sessionName;
+  }
+
+  public void setSessionName(String sessionName) {
+    this.sessionName = sessionName;
+  }
+
+  public String getSessionKey() {
+    return sessionKey;
+  }
+
+  public void setSessionKey(String sessionKey) {
+    this.sessionKey = sessionKey;
+  }
+
+  public String getSessionSupportKey() {
+    return sessionSupportKey;
+  }
+
+  public void setSessionSupportKey(String sessionSupportKey) {
+    this.sessionSupportKey = sessionSupportKey;
+  }
+
   @Override
   public String toString() {
     return "SessionRequest{" +
-      "sessionUniqueId='" + sessionUniqueId + '\'' +
+      "sessionName='" + sessionName + '\'' +
+      ", sessionUniqueId='" + sessionUniqueId + '\'' +
       ", accountId='" + accountId + '\'' +
       ", userId='" + userId + '\'' +
       ", isRecording=" + isRecording +
@@ -242,6 +270,8 @@ public class SessionRequest {
       ", sessionLogo=" + Arrays.toString(sessionLogo) +
       ", showSessionId=" + showSessionId +
       ", participantName='" + participantName + '\'' +
+      ", sessionKey='" + sessionKey + '\'' +
+      ", sessionSupportKey='" + sessionSupportKey + '\'' +
       '}';
   }
 }

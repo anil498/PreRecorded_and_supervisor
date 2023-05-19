@@ -77,9 +77,9 @@ public class VideoPlatform {
     this.httpClient = builder.build();
   }
 
-  public SessionRequest getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey) {
-    HttpClientResponseHandler<SessionRequest> responseHandler = new HttpClientResponseHandler<SessionRequest>() {
-      public SessionRequest handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
+  public String getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey) {
+    HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
+      public String handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
         int status = response.getCode();
         if (status == 200) {
 //          return new SessionRequest(httpResponseEntityToJson(response.getEntity()));
@@ -98,7 +98,7 @@ public class VideoPlatform {
     request.setHeader("Token", userIdToken);
     request.setEntity(params);
     try {
-      return (SessionRequest) this.httpClient.execute(request, responseHandler);
+      return this.httpClient.execute(request, responseHandler);
     } catch (IOException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
     }

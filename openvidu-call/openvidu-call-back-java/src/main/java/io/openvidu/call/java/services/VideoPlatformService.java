@@ -1,5 +1,6 @@
 package io.openvidu.call.java.services;
 
+import com.google.gson.JsonObject;
 import io.openvidu.call.java.models.SessionCallback;
 import io.openvidu.call.java.models.SessionRequest;
 import io.openvidu.call.java.util.VideoPlatform;
@@ -23,7 +24,7 @@ public class VideoPlatformService {
   public void init() {
     this.videoPlatform = new VideoPlatform(VIDEOPLATFORM_URL);
   }
-  public SessionRequest getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey){
+  public String getVideoPlatformProperties(String accountIdToken, String userIdToken, String sessionKey){
     return videoPlatform.getVideoPlatformProperties(accountIdToken,userIdToken,sessionKey);
   }
   public HashMap<String,Integer> getExpiredSession(){
