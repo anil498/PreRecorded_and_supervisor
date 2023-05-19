@@ -161,6 +161,10 @@ public class SessionController {
         String PARTICIPANT_TOKEN_NAME = OpenViduService.PARTICIPANT_TOKEN_NAME;
 //			boolean IS_RECORDING_ENABLED = CALL_RECORDING.toUpperCase().equals("ENABLED");
         boolean IS_RECORDING_ENABLED = sessionRequest.getRecording();
+        if (!sessionIdKey.equals(sessionRequest.getSessionSupportKey())) {
+          sessionRequest.setParticipantName("Customer");
+          IS_RECORDING_ENABLED = false;
+        }
 //			boolean IS_BROADCAST_ENABLED = CALL_BROADCAST.toUpperCase().equals("ENABLED");
         boolean IS_BROADCAST_ENABLED = sessionRequest.getBroadCasting();
         boolean PRIVATE_FEATURES_ENABLED = IS_RECORDING_ENABLED || IS_BROADCAST_ENABLED;
@@ -168,18 +172,13 @@ public class SessionController {
         boolean hasModeratorValidToken = this.openviduService.isModeratorSessionValid(sessionId, moderatorCookie);
         boolean hasParticipantValidToken = this.openviduService.isParticipantSessionValid(sessionId,
           participantCookie);
-        if (!sessionIdKey.equals(sessionRequest.getSessionSupportKey())) {
-          sessionRequest.setParticipantName("Customer");
-          nickname="Customers";
-        }else {
-          nickname="Support";
-        }
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
 //			boolean iAmTheFirstConnection = sessionCreated.getActiveConnections().size() == 0;
         boolean iAmSessionCreator=false;
         if(sessionIdKey.equals(sessionRequest.getSessionSupportKey())) {
            iAmSessionCreator = true;
         }
+        sessionRequest.setSessionCreator(iAmSessionCreator);
         boolean isSessionCreator = hasModeratorValidToken || iAmSessionCreator;
 
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
@@ -194,6 +193,7 @@ public class SessionController {
         response.put("isChatEnabled",sessionRequest.getChatEnabled());
         response.put("showSessionId",sessionRequest.getShowSessionId());
         response.put("isScreenSharing",sessionRequest.getScreenSharing());
+        response.put("isSessionCreator",sessionRequest.getSessionCreator());
         Connection cameraConnection = null;
         if (validateParticipantJoined(sessionRequest, sessionKey,sessionIdToSessionContextMap)) {
           cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role,sessionKey);
