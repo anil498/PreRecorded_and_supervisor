@@ -32,9 +32,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-//    public List<UserEntity> getAllChild(Integer id) {
-//         return userRepository.findAllChild(id);
-//    }
+    public List<UserEntity> getAllChild(Integer id) {
+         return userRepository.findAllChild(id);
+    }
 
     public UserEntity getUserById(Integer id) {
         //logger.info(String.valueOf(userRepository.findById(id)));

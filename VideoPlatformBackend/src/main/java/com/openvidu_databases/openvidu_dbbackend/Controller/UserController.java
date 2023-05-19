@@ -105,22 +105,30 @@ public class UserController {
         return ok(userService.getAllUsers());
     }
 
-//    @GetMapping("/child/{id}")
-//    public ResponseEntity<List<UserEntity>> getAllChildById(@PathVariable Integer id, HttpServletRequest request) {
-//
-//        int accId = Integer.parseInt(request.getHeader("accId"));
-//        String authKey = request.getHeader("authKey");
-//        Integer ID = Integer.valueOf(request.getHeader("userId"));
-//        String token = request.getHeader("token");
-//        logger.info(String.valueOf(ID));
-//        logger.info(token);
-//        if (isValidAuthKey(accId,authKey) && isValidToken(ID,token)) {
-//            return ResponseEntity.ok(userService.getAllChild(id));
-//        }
-//        else{
-//            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
-//        }
-//    }
+    @GetMapping("/child")
+    public ResponseEntity<List<UserEntity>> getAllChild(HttpServletRequest request) throws JsonProcessingException {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+
+        if(!isValidToken(token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+
+        if(!(byAccess(2000,token))){
+            logger.info("for 1001 : "+byAccess(2000,token));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+        }
+        UserAuthEntity user = userAuthRepository.findByToken(token);
+            return ResponseEntity.ok(userService.getAllChild(user.getUserId()));
+    }
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {

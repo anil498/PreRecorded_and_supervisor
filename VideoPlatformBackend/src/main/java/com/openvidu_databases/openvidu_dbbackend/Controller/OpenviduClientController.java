@@ -38,30 +38,45 @@ public class OpenviduClientController {
     @Autowired
     SessionRepository sessionRepository;
 
-    @GetMapping("/get")
+    @PostMapping("/get")
     public ResponseEntity<?> featureList(@RequestBody Map<String,String> params, HttpServletRequest request) throws JsonProcessingException {
         String authKey = request.getHeader("Authorization");
         int check = isValidAuthKey(authKey);
         logger.info("Check val .. " + check);
         if (check == 0) {
+            logger.info("Unauthorised user, wrong authorization key !");
             return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         String token = request.getHeader("Token");
         Boolean isValid= isValidToken(token);
         if (!isValid) {
+            logger.info("Invalid Token !");
             return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         String sessionKey=null;
         if(params.containsKey("sessionKey")){
             sessionKey=params.get("sessionKey");
         }
+
+
         HashMap<String,Object> response=new HashMap<>();
         UserAuthEntity userAuthEntity=userAuthRepository.findByToken(token);
         SessionEntity session = sessionRepository.findBySessionKey(sessionKey);
-        int userId=session.getUserId();
+        SessionEntity sess = sessionRepository.findBySessionSupportKey(sessionKey);
+        int userId=0;
+        if(session == null){
+            userId=sess.getUserId();
+            response.put("session",sessionRepository.findBySessionSupportKey(sessionKey));
+        }
+        else{
+            userId = session.getUserId();
+            response.put("session",sessionRepository.findBySessionKey(sessionKey));
+        }
+
         response.put("user",userRepository.findById(userId));
         response.put("feature",featureData(userId));
-        response.put("session",sessionRepository.findBySessionKey(sessionKey));
+
+
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
     private Object featureData(Integer userId) throws JsonProcessingException {
