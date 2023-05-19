@@ -307,8 +307,8 @@ export class RestService {
     });
   }
 
-  async getUserById(token: string, id: string) {
-    console.warn(token + "\n" + id);
+  async getUserById(token: string) {
+    console.warn(token + "\n");
     const headers = new HttpHeaders({
       Token: `${token}`,
       Authorization: `${this.authKey}`,
@@ -335,7 +335,7 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "user/getAll/", { headers })
+        this.http.get<any>(this.baseHref + "user/child/", { headers })
       );
     } catch (error) {
       if (error.status === 404) {
