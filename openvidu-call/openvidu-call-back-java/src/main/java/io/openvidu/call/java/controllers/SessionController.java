@@ -197,9 +197,12 @@ public class SessionController {
         Connection cameraConnection = null;
         if (validateParticipantJoined(sessionRequest, sessionKey,sessionIdToSessionContextMap)) {
           cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role,sessionKey);
-//			Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
+          if(sessionRequest.getScreenSharing()) {
+            Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role, sessionKey);
+            response.put("screenToken", screenConnection.getToken());
+          }
           response.put("cameraToken", cameraConnection.getToken());
-//			response.put("screenToken", screenConnection.getToken());
+
         } else {
           response.clear();
           response.put("reason", "Max participant joined");
