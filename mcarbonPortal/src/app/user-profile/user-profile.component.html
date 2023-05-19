@@ -59,20 +59,27 @@
           <div class="card-body">
             <h6 class="card-category text-gray"></h6>
             <h4 class="card-title">{{ user.fname }} {{ user.lname }}</h4>
-            <div
-              class="card-description"
-              style="font-weight: bold; font-size: 1rem"
-            >
+            <div class="card-description">
               <div class="row">
-                <div class="col-md-5">Expiry Date:</div>
-                <div class="col-md-6">{{ user.expDate }}</div>
+                <div
+                  class="col-md-5 offset-md-1"
+                  style="font-weight: bold; font-size: 1rem"
+                >
+                  Expiry Date:
+                </div>
+                <div class="col-md-5">{{ user.expDate }}</div>
               </div>
               <div class="row">
-                <div class="col-md-5">Status:</div>
-                <div class="col-md-6" *ngIf="checkStatus">
+                <div
+                  class="col-md-5 offset-md-1"
+                  style="font-weight: bold; font-size: 1rem"
+                >
+                  Status:
+                </div>
+                <div class="col-md-5" *ngIf="active">
                   <button style="color: green">Active</button>
                 </div>
-                <div class="col-md-5" *ngIf="checkStatus">
+                <div class="col-md-5" *ngIf="deactive">
                   <button style="color: red">Deactive</button>
                 </div>
               </div>

@@ -11,7 +11,8 @@ export class UserProfileComponent implements OnInit {
   token: string;
   userId: string;
   user: User;
-  checkStatus: number;
+  active: boolean = false;
+  deactive: boolean = false;
   accessList : any[] = [];
   featureList: any[] = [];
   constructor(private restService: RestService) {}
@@ -32,9 +33,9 @@ export class UserProfileComponent implements OnInit {
       }
     );
 
-    if (this.user.status == 1) this.checkStatus = 1;
+    if (this.user.status == 1) this.active = true;
     else {
-      this.checkStatus = 0;
+      this.deactive = true;
     }
   }
 }
