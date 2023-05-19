@@ -10,7 +10,7 @@ export class RestService {
   private dialogClosedSource = new Subject<boolean>();
   public dialogClosed$ = this.dialogClosedSource.asObservable();
 
-  private authKey = "AC001brEyWGNuwW";
+  private authKey = "AC051vwuGeoU75L";
   private _response: any;
   private _token: string;
   private _userId: string;
@@ -21,13 +21,9 @@ export class RestService {
   private userId: string;
 
   constructor(private http: HttpClient, private router: Router) {
-    //this.baseHref =
-    "/" +
-      (!!window.location.pathname.split("/")[1]
-        ? window.location.pathname.split("/")[1] + "/"
-        : "");
-    this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
-    this.url1 = "http://172.17.0.122:5000/";
+    // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
+    this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
+    //this.url1 = "http://172.17.0.122:5000/";
   }
 
   setData(response: any) {
