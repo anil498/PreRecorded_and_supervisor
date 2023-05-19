@@ -1,0 +1,43 @@
+
+<ov-videoconference
+	[tokens]="tokens"
+	(onJoinButtonClicked)="onJoinClicked()"
+	(onToolbarLeaveButtonClicked)="onToolbarLeaveButtonClicked()"
+	(onToolbarCameraButtonClicked)="onToolbarCameraButtonClicked()"
+	(onToolbarMicrophoneButtonClicked)="onToolbarMicrophoneButtonClicked()"
+	(onToolbarScreenshareButtonClicked)="onToolbarScreenshareButtonClicked()"
+	(onToolbarFullscreenButtonClicked)="onToolbarFullscreenButtonClicked()"
+	(onToolbarParticipantsPanelButtonClicked)="onToolbarParticipantsPanelButtonClicked()"
+	(onToolbarChatPanelButtonClicked)="onToolbarChatPanelButtonClicked()"
+	(onToolbarStartRecordingClicked)="onStartRecordingClicked()"
+	(onToolbarStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelStartRecordingClicked)="onStartRecordingClicked()"
+	(onActivitiesPanelStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelDeleteRecordingClicked)="onDeleteRecordingClicked($event)"
+	(onNodeCrashed)="onNodeCrashed()"
+	[minimal]="false"
+	[prejoin]="false"
+	[participantName]="'Support'"
+	[videoMuted]="true"
+	[audioMuted]="false"
+	[activitiesPanelRecordingActivity]="true"
+	[recordingActivityRecordingsList]="recordingList"
+	[recordingActivityRecordingError]="recordingError"
+	[toolbarSettingsButton]="true"
+	[toolbarCaptionsButton]="false"
+    [toolbarDisplayLogo]="false"
+    [toolbarDisplaySessionName]="false"
+	[toolbarBackgroundEffectsButton]="false"
+    [toolbarBroadcastingButton]="false"
+	[activitiesPanelBroadcastingActivity]="false"
+>
+	<div *ovToolbarAdditionalButtons style="text-align: center">
+		<button mat-icon-button  (click)="connectToSupervisor()">
+			<mat-icon>supervisor_account</mat-icon>
+		</button>
+
+		<button mat-icon-button *ngIf="merge" (click)="mergecall()">
+			<mat-icon>switch_video</mat-icon>
+		</button>
+	</div>
+</ov-videoconference>

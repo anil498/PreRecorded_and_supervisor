@@ -1,0 +1,44 @@
+<ov-videoconference
+	[tokens]="tokens"
+	(onJoinButtonClicked)="onJoinClicked()"
+	(onToolbarLeaveButtonClicked)="onToolbarLeaveButtonClicked()"
+	(onToolbarCameraButtonClicked)="onToolbarCameraButtonClicked()"
+	(onToolbarMicrophoneButtonClicked)="onToolbarMicrophoneButtonClicked()"
+	(onToolbarScreenshareButtonClicked)="onToolbarScreenshareButtonClicked()"
+	(onToolbarFullscreenButtonClicked)="onToolbarFullscreenButtonClicked()"
+	(onToolbarParticipantsPanelButtonClicked)="onToolbarParticipantsPanelButtonClicked()"
+	(onToolbarChatPanelButtonClicked)="onToolbarChatPanelButtonClicked()"
+	(onToolbarStartRecordingClicked)="onStartRecordingClicked()"
+	(onToolbarStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelStartRecordingClicked)="onStartRecordingClicked()"
+	(onActivitiesPanelStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelDeleteRecordingClicked)="onDeleteRecordingClicked($event)"
+	(onNodeCrashed)="onNodeCrashed()"
+	[minimal]="false"
+	[prejoin]="false"
+	[videoMuted]="true"
+	[audioMuted]="false"
+	[participantName]="'Supervisor'"
+	[activitiesPanelRecordingActivity]="true"
+	[recordingActivityRecordingsList]="recordingList"
+	[recordingActivityRecordingError]="recordingError"
+	[toolbarSettingsButton]="true"
+	[toolbarCaptionsButton]="false"
+    [toolbarDisplayLogo]="false"
+    [toolbarDisplaySessionName]="false"
+	[toolbarBackgroundEffectsButton]="false"
+    [toolbarBroadcastingButton]="false"
+	[activitiesPanelBroadcastingActivity]="false"
+>
+	<!-- <div *ovToolbarAdditionalButtons style="text-align: center">
+		<button mat-icon-button (click)="mergebutton()">
+			<mat-icon>switch_video</mat-icon>
+		</button>
+	</div> -->
+	
+  `
+	<!-- <div *ovActivitiesPanel>HELLO</div> -->
+
+	<!-- <ov-toolbar *ovToolbar [activitiesPanelButton]="false"
+	[chatPanelButton]="false"></ov-toolbar> -->
+</ov-videoconference>
