@@ -13,6 +13,7 @@ RUN npm install --location=global npm
 RUN rm openvidu-call-front/package-lock.json && \
     # Install frontend dependencies and build it for production
     cd openvidu-call-front && npm install && \
+    npm install ./dist/openvidu-angular/openvidu-angular-*.tgz
     npm run prod:build-java ${BASE_HREF} && \
     cd ../ && rm -rf openvidu-call-front
 
