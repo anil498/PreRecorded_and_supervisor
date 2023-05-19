@@ -16,6 +16,7 @@ import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.SessionRequest;
 import io.openvidu.call.java.services.VideoPlatformService;
+import io.openvidu.call.java.util.CommonUtil;
 import io.openvidu.call.java.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,56 +97,11 @@ public class SessionController {
         logger.info("Call Type of this session is {}",callType);
         String sessionIdKey = params.get("sessionId").toString();
         String sessionId=null;
-        SessionRequest sessionRequest=new SessionRequest();
+        SessionRequest sessionRequest=null;
         try {
-//          String jsonString = "{\"accountId\":\"mcarbon\",\"userId\":\"admin\",\"isRecording\":\"true\",\"isBroadCasting\":\"false\",\"recordingMode\":\"custom\",\"isSessionCreator\":\"true\",\"isScreenSharing\":\"true\",\"isChatEnabled\":\"true\",\"allowTransCoding\":\"false\",\"maxActiveSessions\":\"5\",\"maxParticipants\":\"2\",\"maxDuration\":\"1000\",\"maxUserActiveSessions\":\"2\",\"maxUserParticipants\":\"2\",\"maxUserDuration\":\"1000\"}";
-//          Gson gson=new Gson();
-//          JsonObject jsonObject=gson.fromJson(jsonString.toString(),JsonObject.class);
-          Gson gson=new Gson();
-          String jsonString = this.videoPlatformService.getVideoPlatformProperties(accountIdToken, userIdToken,sessionIdKey);
-          logger.info(jsonString);
-          JsonObject jsonObject=gson.fromJson(jsonString,JsonObject.class);
-          JsonElement jsonElement=jsonObject.getAsJsonObject("session").get("sessionId");
-          JsonElement jsonElement1=jsonObject.getAsJsonObject("user").get("userId");
-          JsonElement jsonElement2=jsonObject.getAsJsonObject("user").get("accountId");
-          JsonElement jsonElement3=jsonObject.getAsJsonObject("session").get("sessionKey");
-          JsonElement jsonElement4=jsonObject.getAsJsonObject("session").get("sessionSupportKey");
-          JsonElement jsonElement5=jsonObject.getAsJsonObject("session").get("expDate");
-          JsonElement fname=jsonObject.getAsJsonObject("user").get("fname");
-          JsonElement lname=jsonObject.getAsJsonObject("user").get("lname");
-          sessionRequest.setParticipantName(fname.getAsString()+lname.getAsString());
-          JsonArray jsonArray=jsonObject.getAsJsonArray("feature");
-          for (JsonElement jsonElement6 : jsonArray) {
-            JsonObject featureObject = jsonElement6.getAsJsonObject();
-            JsonElement nameElement = featureObject.get("name");
-            String name = nameElement.getAsString();
-            logger.info(name);
-            if(name.equals("Recording")){
-              sessionRequest.setRecording(true);
-            }else if(name.equals("Screen Share")){
-              sessionRequest.setScreenSharing(true);
-            }else if(name.equals("Chat")){
-              sessionRequest.setChatEnabled(true);
-            }
-          }
-          sessionRequest.setSessionUniqueId(jsonElement.getAsString());
-          sessionRequest.setUserId(jsonElement1.getAsString());
-          sessionRequest.setAccountId(jsonElement2.getAsString());
-          sessionRequest.setSessionKey(jsonElement3.getAsString());
-          sessionRequest.setSessionSupportKey(jsonElement4.getAsString());
-          sessionRequest.setSessionExpiredTime(jsonElement5.getAsString());
-          sessionRequest.setMaxParticipants(20);
-          sessionRequest.setMaxActiveSessions(20);
-          sessionRequest.setMaxUserActiveSessions(20);
-          sessionRequest.setMaxUserParticipants(20);
-          logger.info(sessionRequest.toString());
-          sessionId=sessionRequest.getSessionUniqueId();
-          logger.info("Fetched Details from video platform {}", sessionRequest.toString());
-        }catch (Exception e){
-          logger.error("Getting Exception while fetching details from video Platform {}",e);
-          response.clear();
-          response.put("reason","Getting Error while fetching records");
-          return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+        sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionId);
+      }catch (Exception e){
+          logger.error("Getting Exception while fetching record {}",e);
         }
         String sessionKey=sessionRequest.getAccountId()+SessionConstant.SESSION_PREFIX+sessionRequest.getUserId()+SessionConstant.SESSION_PREFIX+sessionId;
         sessionRequest.setSessionUniqueId(sessionKey);
