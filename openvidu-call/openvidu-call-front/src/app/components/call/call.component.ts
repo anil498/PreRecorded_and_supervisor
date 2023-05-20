@@ -61,7 +61,14 @@ export class CallComponent implements OnInit {
 	onLeaveButtonClicked() {
 		this.isSessionAlive = false;
 		this.closeClicked = true;
-		this.router.navigate([`/`]);
+		// this.router.navigate([`/`]);
+		if (this.participantName1 === "Customer") {
+			// Navigate to a specific URL for customers
+			window.location.href = "https://www.axisbank.com/grab-deals/online-offers";
+		  } else {
+			// Close the window
+			window.location.href = "https://www.axisbank.com/grab-deals/online-offers";
+		  }
 	}
 	participantName(){
 		return this.participantName1
