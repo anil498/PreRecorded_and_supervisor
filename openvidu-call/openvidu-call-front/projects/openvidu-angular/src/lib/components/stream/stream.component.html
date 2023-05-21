@@ -8,7 +8,8 @@
 	<div *ngIf="!isMinimal && showNickname" id="nickname-container" class="nickname" [class.fullscreen]="isFullscreen">
 		<div (click)="toggleNicknameForm()" class="nicknameContainer" selected *ngIf="!toggleNickname">
 			<span id="nickname" *ngIf="this._stream.type === 'CAMERA'">{{ this._stream.participant.nickname }}</span>
-			<span id="nickname" *ngIf="this._stream.type === 'SCREEN'">{{ this._stream.participant.nickname }}_SCREEN</span>
+			<span id="nickname" *ngIf="this._stream.type === 'SCREEN'">{{ this._stream.participant.nickname }}</span>
+			<span id="nickname" >{{ this._stream.participant.nickname }}</span>
 		</div>
 		<div *ngIf="toggleNickname && !this._stream.streamManager?.remote" [class.fullscreen]="isFullscreen" id="nickname-input-container">
 			<input
