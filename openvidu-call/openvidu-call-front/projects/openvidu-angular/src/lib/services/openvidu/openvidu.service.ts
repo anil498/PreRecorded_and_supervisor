@@ -574,7 +574,7 @@ export class OpenViduService {
 	 * @param lang
 	 */
 	async subscribeStreamToStt(stream: Stream, lang: string): Promise<void> {
-		await this.getWebcamSession().subscribeToSpeechToText(stream, lang);
+		// await this.getWebcamSession().subscribeToSpeechToText(stream, lang);
 		this.log.d(`Subscribed stream ${stream.streamId} to STT with ${lang} language.`);
 	}
 
@@ -589,7 +589,7 @@ export class OpenViduService {
 				const stream = p.getCameraConnection().streamManager.stream;
 				if (stream) {
 					try {
-						await this.getWebcamSession().unsubscribeFromSpeechToText(stream);
+						// await this.getWebcamSession().unsubscribeFromSpeechToText(stream);
 					} catch (error) {
 						this.log.e(`Error unsubscribing ${stream.streamId} from STT:`, error);
 					}

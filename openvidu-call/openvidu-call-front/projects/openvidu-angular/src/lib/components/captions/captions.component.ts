@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { PanelEvent, PanelService } from '../../services/panel/panel.service';
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Session, SpeechToTextEvent } from 'openvidu-browser';
+// import { Session, SpeechToTextEvent } from 'openvidu-browser';
 import { CaptionModel } from '../../models/caption.model';
 import { PanelSettingsOptions, PanelType } from '../../models/panel.model';
 import { CaptionService } from '../../services/caption/caption.service';
@@ -41,7 +41,7 @@ export class CaptionsComponent implements OnInit {
 
 	captionEvents: CaptionModel[] = [];
 
-	session: Session;
+	// session: Session;
 	isSttReady: boolean = true;
 
 	private deleteFirstTimeout: NodeJS.Timeout;
@@ -68,7 +68,7 @@ export class CaptionsComponent implements OnInit {
 		this.subscribeToSTTStatus();
 		this.captionService.setCaptionsEnabled(true);
 		this.captionLangSelected = this.captionService.getLangSelected();
-		this.session = this.openviduService.getWebcamSession();
+		// this.session = this.openviduService.getWebcamSession();
 
 		await this.openviduService.subscribeRemotesToSTT(this.captionLangSelected.ISO);
 
@@ -83,7 +83,7 @@ export class CaptionsComponent implements OnInit {
 		if (this.screenSizeSub) this.screenSizeSub.unsubscribe();
 		if (this.panelTogglingSubscription) this.panelTogglingSubscription.unsubscribe();
 		if(this.sttStatusSubscription) this.sttStatusSubscription.unsubscribe();
-		this.session.off('speechToTextMessage');
+		// this.session.off('speechToTextMessage');
 		this.captionEvents = [];
 
 	}
@@ -93,26 +93,26 @@ export class CaptionsComponent implements OnInit {
 	}
 
 	private subscribeToTranscription() {
-		this.session.on('speechToTextMessage', (event: SpeechToTextEvent) => {
-			if(!!event.text) {
-				clearInterval(this.deleteAllTimeout);
-				const { connectionId, data } = event.connection;
-				const nickname: string = this.participantService.getNicknameFromConnectionData(data);
-				const color = this.participantService.getRemoteParticipantByConnectionId(connectionId)?.colorProfile || '';
+		// this.session.on('speechToTextMessage', (event: SpeechToTextEvent) => {
+		// 	if(!!event.text) {
+		// 		clearInterval(this.deleteAllTimeout);
+		// 		const { connectionId, data } = event.connection;
+		// 		const nickname: string = this.participantService.getNicknameFromConnectionData(data);
+		// 		const color = this.participantService.getRemoteParticipantByConnectionId(connectionId)?.colorProfile || '';
 
-				const caption: CaptionModel = {
-					connectionId,
-					nickname,
-					color,
-					text: event.text,
-					type: event.reason
-				};
-				this.updateCaption(caption);
-				// Delete all events when there are no more events for a period of time
-				this.deleteAllEventsAfterDelay(this.DELETE_TIMEOUT);
-				this.cd.markForCheck();
-			}
-		});
+		// 		const caption: CaptionModel = {
+		// 			connectionId,
+		// 			nickname,
+		// 			color,
+		// 			text: event.text,
+		// 			type: event.reason
+		// 		};
+		// 		this.updateCaption(caption);
+		// 		// Delete all events when there are no more events for a period of time
+		// 		this.deleteAllEventsAfterDelay(this.DELETE_TIMEOUT);
+		// 		this.cd.markForCheck();
+		// 	}
+		// });
 	}
 	private updateCaption(caption: CaptionModel): void {
 		let captionEventsCopy = [...this.captionEvents];

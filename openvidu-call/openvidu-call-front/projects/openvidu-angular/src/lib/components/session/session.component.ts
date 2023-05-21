@@ -280,14 +280,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 
 	private subscribeToOpenViduException() {
 		this.session.on('exception', async (event: ExceptionEvent) => {
-			if (event.name === ExceptionEventName.SPEECH_TO_TEXT_DISCONNECTED) {
-				this.log.w(event.name, event.message);
-				this.openviduService.setSTTReady(false);
-				// Try to re-subscribe to STT
-				await this.openviduService.subscribeRemotesToSTT(this.captionService.getLangSelected().ISO);
-			} else {
-				this.log.e(event.name, event.message);
-			}
+			// if (event.name === ExceptionEventName.SPEECH_TO_TEXT_DISCONNECTED) {
+			// 	this.log.w(event.name, event.message);
+			// 	this.openviduService.setSTTReady(false);
+			// 	// Try to re-subscribe to STT
+			// 	await this.openviduService.subscribeRemotesToSTT(this.captionService.getLangSelected().ISO);
+			// } else {
+			// 	this.log.e(event.name, event.message);
+			// }
 		});
 	}
 
@@ -367,7 +367,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.participantService.removeConnectionByConnectionId(connectionId);
 			if (this.openviduService.isSttReady() && this.captionService.areCaptionsEnabled() && isRemoteConnection && isCameraType) {
 				try {
-					await this.session.unsubscribeFromSpeechToText(event.stream);
+					// await this.session.unsubscribeFromSpeechToText(event.stream);
 				} catch (error) {
 					this.log.e('Error unsubscribing from STT: ', error);
 				}
