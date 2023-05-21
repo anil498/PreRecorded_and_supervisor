@@ -121,7 +121,7 @@ public class MessageApiController {
         HashMap<String,String> res=new HashMap<>();
         res.put("callurl",callUrlSupport);
         logger.info(String.valueOf(responseSms));
-        return ResponseEntity.ok(sessionRepository.findBySessionKey(sessionKey));
+        return ResponseEntity.ok(res);
  //       return responseSms;
     }
     @PostMapping ("/sendWhatsapp")
@@ -164,7 +164,7 @@ public class MessageApiController {
         HashMap<String,String> res=new HashMap<>();
         res.put("callurl",callUrlSupport);
         logger.info("Request response {}",responseSms);
-        return ResponseEntity.ok(sessionRepository.findBySessionKey(sessionKey));
+        return ResponseEntity.ok(res);
 //        return responseSms;
     }
 
@@ -209,15 +209,12 @@ public class MessageApiController {
                 userInfo= String.valueOf(params.get("userInfo"));
             }
             String sessionKey = storeSessions(token,authKey,phoneNumber,userInfo);
-
-            SessionEntity sess = sessionRepository.findBySessionKey(sessionKey);
-            String sessionId = sess.getSessionId();
-
             HashMap<String,String> res=new HashMap<>();
             HashMap<String, String>map= new HashMap<>();
             map.put("TITLE",title);
-            map.put("SESSION_ID",sessionId);
+            map.put("SESSION_ID",sessionKey);
             map.put("BODY",body);
+
 
             Message message = Message.builder()
                     .setToken(appNotification.getUsertoken())
@@ -231,7 +228,7 @@ public class MessageApiController {
             res.put("id",id);
 
             res.put("callurl",callUrlSupport);
-            return new ResponseEntity<>(sessionRepository.findBySessionKey(sessionKey), HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             //   looger.error("Getting Exception While Submitting the message {}",e.getStackTrace());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
