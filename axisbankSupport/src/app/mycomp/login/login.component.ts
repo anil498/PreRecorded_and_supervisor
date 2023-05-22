@@ -23,9 +23,10 @@ export class LoginComponent {
   dateTimeString :string='';
   // data!:any;
   data = [
+    // Mr. Rajendra Bhandhare - 9833607063
     {
-      Name: 'Saheemuddin Khan',
-      'Phone No': '8285955472',
+      Name: 'Mr. Rajendra Bhandhare',
+      'Phone No': '9833607063',
       Address: 'SMS Noida',
       
       'Last Interaction Mode':'SMS',
@@ -33,18 +34,20 @@ export class LoginComponent {
       'Send Video Call Link': 'SMS',
 
     },
+    // Mr. Sanjay Sinha - 9910234718
     {
-      Name: 'Saheemuddin Khan',
-      'Phone No': '8285955472',
+      Name: 'Mr. Sanjay Sinha',
+      'Phone No': '9910234718',
       Address: 'WhatsApp Noida',
       
       'Last Interaction Mode':'WhatsApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'WhatsApp',
     },
+    //Mr. Narayanan - 9769029125
     {
-      Name: 'Saheemuddin Khan',
-      'Phone No': '8285955472',
+      Name: 'Mr. Narayanan',
+      'Phone No': '9769029125',
       Address: 'App Noida',
       
       'Last Interaction Mode':'CallToApp',
@@ -52,40 +55,41 @@ export class LoginComponent {
       'Send Video Call Link': 'CallToApp',
     },
     {
-      Name: 'Pranjal Mishra',
-      'Phone No': '9958333645',
+      Name: 'Mr. Narayanan',
+      'Phone No': '9769029125',
       Address: 'SMS Chennai',
       'Last Interaction Mode':'SMS',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'SMS',
     },
     {
-      Name: 'Pranjal Mishra',
-      'Phone No': '9958333645',
+      Name: 'Mr. Narayanan',
+      'Phone No': '9769029125',
       Address: 'WhatsApp Chennai',
       'Last Interaction Mode':'WhatsApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'WhatsApp',
     },
+    //Pallavi - 9773603893
     {
-      Name: 'Anil Kumar',
-      'Phone No': '9636189023',
+      Name: 'Pallavi',
+      'Phone No': '9773603893',
       Address: 'App Chennai',
       'Last Interaction Mode':'CallToApp',
       'Last Interaction Time':'5/5/2023, 10:44 A.M',
       'Send Video Call Link': 'CallToApp',
     },
     {
-      Name: 'Anil Kumar',
-      'Phone No': '9636189023',
+      Name: 'Pallavi',
+      'Phone No': '9773603893',
       Address: 'SMS Chennai',
       'Last Interaction Mode':'SMS',
       'Last Interaction Time':'5/5/2023, 10:44 A.M ',
       'Send Video Call Link': 'SMS',
     },
     {
-      Name: 'Gaurav ',
-      'Phone No': '9560553080',
+      Name: 'Pallavi',
+      'Phone No': '9773603893',
       Address: 'WhatsApp Noida',
       //  
       'Last Interaction Mode':'WhatsApp',
@@ -93,8 +97,8 @@ export class LoginComponent {
       'Send Video Call Link': 'WhatsApp',
     },
     {
-      Name: 'Prashant',
-      'Phone No': '9639500599',
+      Name: 'Anil',
+      'Phone No': '9636189023',
       Address: 'APP Rajasthan',
      
       'Last Interaction Mode':'CallToApp',
@@ -102,8 +106,8 @@ export class LoginComponent {
       'Send Video Call Link': 'CallToApp',
     },
     {
-      Name: 'Vatsala',
-      'Phone No': '9984392555',
+      Name: 'Saheemuddin',
+      'Phone No': '8285955472',
       Address: 'SMS Noida',
       
       'Last Interaction Mode':'SMS',
@@ -114,7 +118,7 @@ export class LoginComponent {
    
   ];
   constructor(private router: Router,private aroute: ActivatedRoute, private restservice: RestService) {
-    this.headers = Object.keys(this.data[0]);
+    this.headers = Object.keys( this.data[0]);
     this.rows = this.data;
     // this.showData();
   }
