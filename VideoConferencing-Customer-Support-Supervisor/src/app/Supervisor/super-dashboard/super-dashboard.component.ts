@@ -19,6 +19,7 @@ export class SuperDashboardComponent implements OnInit {
 	open: boolean;
 	count: boolean;
 	checkid: string = null;
+	session_message: string;
 
 	count2: any = 0;
 
@@ -36,6 +37,7 @@ export class SuperDashboardComponent implements OnInit {
 
 				
 				// Subscribe to notification topic
+
 				stompClient.subscribe('/topic/supervisor', (notifications) => {
 					console.log(this.router.url);
 					this.sessionId1 = JSON.parse(notifications.body).sessionId;
@@ -53,14 +55,6 @@ export class SuperDashboardComponent implements OnInit {
 						this.webSocketService.available(this.sessionId1);
 					}
 				});
-				stompClient.subscribe('/topic/supervisor', (notifications) => {
-					this.sessionId = JSON.parse(notifications.body).sessionId;
-					console.log('alert' + this.router.url);
-					if (this.router.url === '/') {
-						this.confirmationDialogService.close(false);
-					}
-				});
-
 				
 			});
 		}
@@ -74,15 +68,17 @@ export class SuperDashboardComponent implements OnInit {
 				console.log('User confirmed:', confirmed);
 				if (confirmed) {
 					console.warn(this.sessionId);
-									
 					this.goTo('call-super');
-							
-	
-					this.webSocketService.send(this.sessionId);
+
+					this.session_message = 'confirmed';
+					this.webSocketService.confirmation(this.session_message);
 					this.busy = true;
 					this.open = true;
-				} else this.webSocketService.available(this.sessionId);
-				//  this.goTo('/')
+				} else {
+					this.session_message = 'notconfirmed';
+					this.webSocketService.confirmation(this.session_message);
+				}
+				
 				if (this.open != true) {
 					this.busy = false;
 				}

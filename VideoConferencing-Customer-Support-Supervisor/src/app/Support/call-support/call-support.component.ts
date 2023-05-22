@@ -30,9 +30,13 @@ export class CallSupportComponent implements OnInit {
 	subscription: Subscription;
 	mute: string;
 
+	isvisible: boolean = true;
 	merge: boolean = false;
 	openVidu: any;
 	session: Session;
+
+	private publisherlist: Publisher[];
+	private openvidu:  OpenVidu;
 
 	constructor(
 		private restService: RestService,
@@ -42,12 +46,28 @@ export class CallSupportComponent implements OnInit {
 		private http: HttpClient,
 		private openviduService: OpenViduService,
 		private participants: ParticipantService,
-		private webSocketService: WebSocketService
+		private webSocketService: WebSocketService,
+		private openViduService: OpenViduService
 	) {
 		const value2 = localStorage.getItem('key');
 		if (value2 == 'true') {
 			this.merge = true;
+			this.isvisible = false;
 		}
+
+		let stompClient = this.webSocketService.connect();
+		stompClient.connect({}, (frame) => {
+
+			stompClient.subscribe('/topic/hide', (notifications) => {
+				this.isvisible = false;
+			});
+	
+
+		stompClient.subscribe('/topic/unhold', (notifications) => {
+			this.publisherlist[0].publishVideo(false) ;
+			this.publisherlist[0].publishAudio(true) ;
+		});
+	});
 	}
 	async ngOnInit() {
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
@@ -66,6 +86,10 @@ export class CallSupportComponent implements OnInit {
 		} finally {
 			this.loading = false;
 		}
+
+
+		
+	
 	}
 
 	async onNodeCrashed() {
@@ -187,63 +211,38 @@ export class CallSupportComponent implements OnInit {
 			sessionId: id
 		};
 
-		const session_message = 'callhold';
-		this.webSocketService.alert(session_message);
-		this.toggleHold();
 
+		this.session = this.openViduService.getSession();
+					this.openvidu = this.session.openvidu;
+					this.publisherlist = this.openvidu.publishers;
+					console.log("Publishers are : " + this.publisherlist.length)
+					
+					this.publisherlist[0].publishVideo(false) ;
+					this.publisherlist[0].publishAudio(false) ;
+
+		
 		this.router.navigate([]).then(() => {
-			window.open(`/#/call-support/${id}`, '_blank');
+			window.open(`/#/confirm?roomName=${this.sessionId}`, '_blank');
 		});
 
+		// this.router.navigate([]).then(() => {
+		// 	window.open(`/#/call-support/${id}`, '_blank');
+		// });
+
+		// this.isvisible = false;
 		localStorage.setItem('key', 'true');
-		this.restService.postRequest(id, body);
+		// this.restService.postRequest(id, body);
 	}
 
 	async mergecall() {
 		console.warn('Merge Button Clicked');
 
-		const id = this.sessionId;
-		const body = {
-			notifyTo: 'support',
-			sessionId: id
-		};
-
-		this.restService.postRequest(id, body);
+		const session_message = 'mergecall';
+		this.webSocketService.mergecall(session_message);
+		this.webSocketService.unhold(session_message);
 
 		window.close();
 	}
 
-	toggleHold() {
-		const publishAudio = !this.participants.isMyAudioActive();
-		if(!publishAudio){
-		this.openviduService.publishAudio(publishAudio);
 
-		console.warn('TOOLBAR HOLD BUTTON CLICKED');
-
-		const remoteParticipants = this.participants.getRemoteParticipants();
-		const len = remoteParticipants.length;
-
-		if (len <= 0) console.warn('Nothing ' + len);
-		else {
-			for (let i = 0; i < len; i++) {
-				const remoteid = remoteParticipants[i].id;
-				remoteParticipants.forEach((id) => {
-					//console.warn(id.id);
-				});
-
-				let isAudio = !remoteParticipants[i].isMutedForcibly;
-
-				console.warn(isAudio);
-
-				isAudio
-					? console.warn('Participant with ID ' + remoteid + ' has been muted')
-					: console.warn('Participant with ID ' + remoteid + ' has been unmuted');
-
-				this.participants.setRemoteMutedForcibly(remoteid, isAudio);
-			}
-		}
-	}else{
-		console.warn("Audio Muted");
-	}
-}
 }

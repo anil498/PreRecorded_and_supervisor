@@ -68,11 +68,9 @@ export class CallSuperComponent implements OnInit {
 	
 					
 					// Subscribe to notification topic
-					stompClient.subscribe('/topic/support', (notifications) => {
+					stompClient.subscribe('/topic/mergecall', (notifications) => {
 						console.log(this.router.url);
-						
-						
-					this.mergebutton();
+						this.mergebutton();
 						
 					});
 				});

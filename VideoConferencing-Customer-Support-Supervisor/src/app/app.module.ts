@@ -13,7 +13,7 @@ import { environment } from 'src/environments/environment';
 
 import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { CallComponent } from './openvidu-call/call.component';
+import { CallComponent } from './call-confirmation/call.component';
 import { TestingComponent } from './testing-app/testing.component';
 // openvidu-angular
 import { OpenViduAngularModule } from 'openvidu-angular';
@@ -32,8 +32,9 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { CustomerDashboardComponent } from './customer/customer-dashboard/customer-dashboard.component';
 import { SupportDashboardComponent } from './Support/support-dashboard/support-dashboard.component';
-import { SuperDashboardComponent } from './Supervisor/super-dashboard/super-dashboard.component'
-import { CallSuperComponent } from './Supervisor/call-super/call-super.component'
+import { SuperDashboardComponent } from './Supervisor/super-dashboard/super-dashboard.component';
+import { CallSuperComponent } from './Supervisor/call-super/call-super.component';
+import { CallSuperConfirmationComponent } from './callsuper-confirmation/callsuper-confirmation.component';
 
 import { SharedService} from './services/shared.service'
 
@@ -53,7 +54,8 @@ import { SharedService} from './services/shared.service'
 		ConfirmationDialogComponent,
 		SuperDashboardComponent,
 		CallSuperComponent,
-		PopupComponent
+		PopupComponent,
+		CallSuperConfirmationComponent
 	],
 	imports: [
 		MatSortModule,
