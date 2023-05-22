@@ -22,6 +22,7 @@ export class SupportDashboardComponent implements OnInit {
 	busy: boolean;
 	open: boolean;
 	count: boolean;
+	id: string;
 
 	count2: any = 0;
 
@@ -54,11 +55,14 @@ export class SupportDashboardComponent implements OnInit {
 						this.webSocketService.available(this.sessionId1);
 					}
 				});
-				stompClient.subscribe('/topic/support', (notifications) => {
-					this.sessionId = JSON.parse(notifications.body).sessionId;
-					console.log('alert' + this.router.url);
-					if (this.router.url === '/') {
-						this.confirmationDialogService.close(false);
+
+				stompClient.subscribe('/topic/sendname', (notifications) => {
+					this.name = JSON.parse(notifications.body).sessionId;		
+					console.warn('Name Recieved : ' + this.name);
+
+					if (this.name == undefined) {
+						this.name = 'Customer';
+						console.log(this.name);
 					}
 				});
 			});
@@ -66,11 +70,10 @@ export class SupportDashboardComponent implements OnInit {
 	}
 
 	public openConfirmationDialog() {
-		// this.sessionId = 'daily-call';
 		
 		console.log('Notification');
 		this.confirmationDialogService
-			.confirm('CustomerVideo Call Request..', 'Do you really want to Join ... ?')
+		    .confirm((this.name + ' Video Call Request..'), 'Do you really want to Join ... ?')
 			.then((confirmed) => {
 				console.log('User confirmed:', confirmed);
 				if (confirmed) {
@@ -83,7 +86,7 @@ export class SupportDashboardComponent implements OnInit {
 					this.open = true;
 				} else {
 					this.session_message = 'notconfirmed';
-					this.webSocketService.available(this.session_message);
+					this.webSocketService.send(this.session_message);
 				}
 
 				if (this.open != true) {
@@ -98,6 +101,7 @@ export class SupportDashboardComponent implements OnInit {
 	goTo(path: string) {
 		console.log('Route SessionId' + this.sessionId);
 		this.confirmationDialogService.close(false);
+		
 		this.router.navigate([`/${path}`, this.sessionId]);
 	}
 	handleMessage(message) {

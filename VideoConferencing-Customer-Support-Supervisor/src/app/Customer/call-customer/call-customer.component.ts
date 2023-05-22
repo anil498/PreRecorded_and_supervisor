@@ -13,9 +13,10 @@ import {
 import { RestService } from '../../services/rest.service';
 import { Subscription } from 'rxjs';
 import { animals, colors, Config, countries, names, uniqueNamesGenerator } from 'unique-names-generator';
-import { OpenVidu, Publisher, Session } from 'openvidu-browser';
+import { OpenVidu, Publisher, PublisherProperties, Session } from 'openvidu-browser';
 import { WebSocketService } from '../../services/websocket.service';
-
+import { Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
 	selector: 'call-customer',
@@ -40,9 +41,13 @@ export class CallCustomerComponent implements OnInit {
 	message: string;
 	subscription: Subscription;
 	getName: string;
-	session: Session;
-    publisher: Publisher;
-	openVidu: OpenVidu;
+	id: string;
+
+	private openvidu:  OpenVidu;
+	private OV: any; // OpenVidu object
+	private session: Session; // OpenVidu session object
+	private publisher: Publisher; // OpenVidu publisher object
+	private publisherlist: Publisher[];
 
 	// Constructor for declaring objects/properties
 
@@ -53,36 +58,65 @@ export class CallCustomerComponent implements OnInit {
 		private route: ActivatedRoute,
 		private broadcastingService: BroadcastingService,
 		private participants: ParticipantService,
-		private webSocketService: WebSocketService , 
-
+		private webSocketService: WebSocketService,
+		private dialog: MatDialog,
+		private openViduService: OpenViduService
 	) {
-		// this.openVidu = new OpenVidu();
-		// this.session = this.openVidu.initSession();
-		// const publisherOptions = {
-		// 	insertMode: 'append', // Choose how the video element is inserted in the target element
-		// 	mirror: false // Set to true if you want to mirror the published video
-		//   };
-  		// this.publisher = this.openVidu.initPublisher(undefined,publisherOptions);
+		this.OV = new OpenVidu();
+
+		// Initialize session
+		// this.session = this.OV.initSession();
+
+		let stompClient = this.webSocketService.connect();
+
+		stompClient.connect({}, (frame) => {
+			stompClient.subscribe('/topic/alert', (notifications) => {
+				this.id = JSON.parse(notifications.body).sessionId;
+				console.warn('Successfully Recieved Notification : ' + this.id);
+				if (this.id == 'callhold') {
+					console.warn('call hold Works');
+
+					this.session = this.openViduService.getSession();
+					this.openvidu = this.session.openvidu;
+					this.publisherlist = this.openvidu.publishers;
+					console.log("Publishers are : " + this.publisherlist.length)
+					
+					this.publisherlist[0].publishVideo(false);
+					this.publisherlist[0].publishAudio(false);
+
+					// this.publishRingtone();
+
+					const dialogRef = this.dialog.open(PopupComponent, {
+						width: '400px', // Set the desired width
+						data: {
+							/* Optionally pass data to the dialog component */
+							message: 'This call is put on Hold , Please Wait ... '
+						},
+						disableClose: true
+					});
+
+					// Handle dialog close or dismiss actions if needed
+					dialogRef.afterClosed().subscribe((result) => {
+						// Handle dialog close event
+						// this.unpublishRingtone();
+
+						this.publisherlist[0].publishVideo(true) ;
+						this.publisherlist[0].publishAudio(true) ;
+						
+					});
+				}
+			});
+		});
 	}
 
 	async ngOnInit() {
-
-		// const body = {
-		// 	notifyTo: 'support',
-		// 	sessionId: 'daily-call2'
-		// };
-
-		// this.restService.postRequest('daily-call2' , body);
-
-
-		// The below code checks if the roomName parameter is provided . If it exists it sets the sessionID to roomName
-		// , else the code will genrate a randomn name
+		
 
 		if (this.route.snapshot.paramMap.get('roomName') != null) {
 			console.warn('RoomName exists !!!');
 			this.sessionId = this.route.snapshot.paramMap.get('roomName');
 			this.getName = this.route.snapshot.paramMap.get('name');
-			if(this.getName == 'undefined' ){
+			if (this.getName == 'undefined') {
 				this.getName = 'Customer';
 				console.log(this.getName);
 			}
@@ -93,7 +127,6 @@ export class CallCustomerComponent implements OnInit {
 			this.sessionId = this.getRandomName();
 			console.log(this.sessionId);
 		}
-
 
 		// below code determines whether the sessionId string matches the regular expression and sets a
 		// boolean flag to indicate whether the session is a debug session or not.
@@ -114,7 +147,7 @@ export class CallCustomerComponent implements OnInit {
 			this.loading = false;
 		}
 
-
+					
 	}
 
 	// Request the tokens again for reconnect to the session
@@ -168,9 +201,12 @@ export class CallCustomerComponent implements OnInit {
 	// Toolbar Leave Button Clicked
 
 	onToolbarLeaveButtonClicked() {
+
 		this.isSessionAlive = false;
 		this.closeClicked = true;
 		this.router.navigate(['customer']);
+		
+	
 	}
 
 	// Camera Button Clicked
@@ -256,10 +292,10 @@ export class CallCustomerComponent implements OnInit {
 	// Request for tokens from backend
 
 	private async requestForTokens() {
-		console.log("Building A Session");
-		const response = await this.restService.getTokensFromBackend1(this.sessionId , 'customer');
+		console.log('Building A Session');
+		const response = await this.restService.getTokensFromBackend1(this.sessionId, 'customer');
 		if (response.cameraToken != null && response.screenToken != null) {
-			console.log("Got Tokens");
+			console.log('Got Tokens');
 			this.recordingList = response.recordings;
 			this.tokens = {
 				webcam: response.cameraToken,
@@ -284,21 +320,91 @@ export class CallCustomerComponent implements OnInit {
 		return uniqueNamesGenerator(configName).replace(/[^\w-]/g, '');
 	}
 
-	// Connect to Support Button Clicked
+	duration: any;
 
-	// async connectToSupport() {
-	// 	console.warn('TOOLBAR SUPPORT BUTTON CLICKED');
+	publishRingtone() {
+		// Create a custom video element with the video and audio streams
+		let videoElement = document.createElement('video');
+		videoElement.src = 'assets/audio/Fade.mp3';
 
-	// 	localStorage.removeItem('key');
+		// Wait for video to be loaded and start playing
+		videoElement.onloadedmetadata = async () => {
+			videoElement.play();
 
-	// 	const roomname = this.sessionId;
-	// 	const url = `customer1/#/call?roomname=${roomname}`;
+			// Create an AudioContext
+			const audioContext = new AudioContext();
 
-	// 	const body = {
-	// 				notifyTo: 'support',
-	// 				sessionId: this.sessionId
-	// 			};
+			// Create a MediaElementSourceNode to connect the videoElement to the AudioContext
+			const sourceNode = audioContext.createMediaElementSource(videoElement);
 
-	// 	this.restService.postRequest(roomname , body);
-	// }
+			// Create a MediaStreamDestination to capture the audio from the AudioContext
+			const audioDestination = audioContext.createMediaStreamDestination();
+			sourceNode.connect(audioDestination);
+
+			// Create a video stream from the canvas
+			let canvas = document.createElement('canvas');
+			const videoWidth = videoElement.videoWidth;
+			const videoHeight = videoElement.videoHeight;
+			canvas.width = videoWidth;
+			canvas.height = videoHeight;
+			const canvasContext = canvas.getContext('2d');
+			const videoStream = canvas.captureStream();
+			const audioTrack = audioDestination.stream.getAudioTracks()[0];
+			this.duration = videoElement.duration;
+
+			console.log('Audio is : ' + audioTrack);
+
+			// Initialize publisher
+			this.publisher = this.OV.initPublisher(undefined, {
+				audioSource: audioTrack,
+				videoSource: undefined,
+				publishAudio: true,
+				publishVideo: false,
+				mirror: false,
+				frameRate: 60
+			});
+
+			// Connect to session and publish
+			this.session.connect(this.tokens.screen).then(() => {
+				this.session.publish(this.publisher);
+			});
+		};
+	}
+
+	unpublishRingtone() {
+		this.session.unpublish(this.publisher);
+		this.publisher = null;
+		this.session.disconnect();
+	}
+}
+
+@Component({
+	selector: 'app-popup',
+	template: ` <p style="font-size: larger;">{{ data.message }}</p> `
+})
+export class PopupComponent {
+	id: string;
+
+	constructor(
+		private webSocketService: WebSocketService,
+		public dialogRef: MatDialogRef<PopupComponent>,
+		@Inject(MAT_DIALOG_DATA) public data: any
+	) {
+		let stompClient = this.webSocketService.connect();
+
+		stompClient.connect({}, (frame) => {
+			stompClient.subscribe('/topic/alert', (notifications) => {
+				this.id = JSON.parse(notifications.body).sessionId;
+				console.warn('Successfully Recieved Notification : ' + this.id);
+				if (this.id == 'callnothold') {
+					console.warn('call not hold Works');
+					this.closePopup();
+				}
+			});
+		});
+	}
+
+	closePopup(): void {
+		this.dialogRef.close();
+	}
 }

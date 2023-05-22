@@ -68,10 +68,9 @@ export class CallSuperComponent implements OnInit {
 	
 					
 					// Subscribe to notification topic
-					stompClient.subscribe('/topic/support', (notifications) => {
+					stompClient.subscribe('/topic/mergecall', (notifications) => {
 						console.log(this.router.url);
-						
-					this.mergebutton();
+						this.mergebutton();
 						
 					});
 				});
@@ -197,6 +196,10 @@ export class CallSuperComponent implements OnInit {
 		console.warn('TOOLBAR SUPERVISOR BUTTON CLICKED');
 		this.router.navigate(['/']).then(() => {
 		window.open(`/#/call-super/${sessionID}`, '_self');	
+
+		const session_message = 'callnothold';
+		this.webSocketService.alert(session_message);
+
 		});
 		
 	}

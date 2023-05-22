@@ -32,7 +32,7 @@
 	[activitiesPanelBroadcastingActivity]="false"
 >
 	<div *ovToolbarAdditionalButtons style="text-align: center">
-		<button mat-icon-button  (click)="connectToSupervisor()">
+		<button mat-icon-button *ngIf="isvisible"  (click)="connectToSupervisor()">
 			<mat-icon>supervisor_account</mat-icon>
 		</button>
 

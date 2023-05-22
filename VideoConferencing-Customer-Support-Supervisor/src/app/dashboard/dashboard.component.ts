@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RestService } from '../services/rest.service';
+import { WebSocketService } from '../services/websocket.service';
 
 @Component({
 	selector: 'app-dashboard',
@@ -9,29 +10,30 @@ import { RestService } from '../services/rest.service';
 })
 export class DashboardComponent implements OnInit {
 	title = 'openvidu-angular';
-	name: string ;
-	constructor(private router: Router , private restService: RestService) {}
+	name: string;
+	session_message: string;
 
-	ngOnInit(): void {}
+	constructor(
+		private router: Router, 
+		private restService: RestService, 
+		private webSocketService: WebSocketService) {}
 
-// goTo Function Specifies the page to navigate to which path with the SessionID provided as roomName . The path is mentioned in html file .
-
-	goTo(path: string) {
-		
-
-
-		this.router.navigate([`/${path}`, {roomName: 'daily-call2' , name: this.name}]);
-		
-		// const body = {
-		// 	notifyTo: 'support',
-		// 	sessionId: 'daily-call'
-		// };
-
-		// this.restService.postRequest('daily-call' , body);
-		
+	ngOnInit(): void {
+		let stompClient = this.webSocketService.connect();
+		stompClient.connect({}, (frame) => {
+	});
 	}
 
-	EnterName(value: string){
-		this.name = value;
+	// goTo Function Specifies the page to navigate to which path with the SessionID provided as roomName . The path is mentioned in html file .
+
+	goTo(path: string) {
+
+		this.session_message = this.name;
+		this.webSocketService.sendname(this.session_message);
+
+		this.router.navigate([`/${path}`, { roomName: 'm-call', name: this.name }]);
+		localStorage.removeItem('key');
+
+		
 	}
 }
