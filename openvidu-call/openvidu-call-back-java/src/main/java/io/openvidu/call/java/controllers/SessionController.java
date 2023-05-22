@@ -15,6 +15,7 @@ import com.google.gson.JsonObject;
 import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.services.FetchSession;
 import io.openvidu.call.java.services.VideoPlatformService;
 import io.openvidu.call.java.util.CommonUtil;
 import io.openvidu.call.java.util.SessionUtil;
@@ -62,6 +63,8 @@ public class SessionController {
   private VideoPlatformService videoPlatformService;
 
 	private final int cookieAdminMaxAge = 24 * 60 * 60;
+  @Autowired
+  FetchSession fetchSession;
 
 	@PostMapping("/sessions")
 	public ResponseEntity<Map<String, Object>> createConnection(
@@ -99,7 +102,7 @@ public class SessionController {
         String sessionId=null;
         SessionRequest sessionRequest=null;
         try {
-        sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionIdKey);
+        sessionRequest= fetchSession.getSessionRequest(accountIdToken,userIdToken,sessionIdKey);
         sessionId=sessionRequest.getSessionUniqueId();
         }catch (Exception e){
           logger.error("Getting Exception while fetching record {}",e);
