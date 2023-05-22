@@ -8,14 +8,16 @@ import io.openvidu.call.java.config.SessionApplicationContext;
 import io.openvidu.call.java.models.SessionRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FetchSession {
+  @Autowired
+  VideoPlatformService videoPlatformService;
   private static final Logger logger= LoggerFactory.getLogger(FetchSession.class);
   public SessionRequest getSessionRequest(String accountIdToken, String userIdToken, String sessionIdKey) {
     SessionRequest sessionRequest = new SessionRequest();
-    VideoPlatformService videoPlatformService= SessionApplicationContext.getBean(VideoPlatformService.class);
     try {
 //          String jsonString = "{\"accountId\":\"mcarbon\",\"userId\":\"admin\",\"isRecording\":\"true\",\"isBroadCasting\":\"false\",\"recordingMode\":\"custom\",\"isSessionCreator\":\"true\",\"isScreenSharing\":\"true\",\"isChatEnabled\":\"true\",\"allowTransCoding\":\"false\",\"maxActiveSessions\":\"5\",\"maxParticipants\":\"2\",\"maxDuration\":\"1000\",\"maxUserActiveSessions\":\"2\",\"maxUserParticipants\":\"2\",\"maxUserDuration\":\"1000\"}";
 //          Gson gson=new Gson();

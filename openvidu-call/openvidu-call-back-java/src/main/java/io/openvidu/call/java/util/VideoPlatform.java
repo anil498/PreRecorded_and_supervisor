@@ -77,7 +77,7 @@ public class VideoPlatform {
     this.httpClient = builder.build();
   }
 
-  public String getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey) throws IOException {
+  public String getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey) {
     HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
       public String handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
         int status = response.getCode();
@@ -100,8 +100,6 @@ public class VideoPlatform {
       return this.httpClient.execute(request, responseHandler);
     } catch (IOException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
-    }finally {
-      httpClient.close();
     }
   }
 
@@ -133,7 +131,7 @@ public class VideoPlatform {
     }
   }
 
-  public boolean sendSessionCallback(SessionCallback sessionCallback, int callbackRetryAttempts) throws IOException {
+  public boolean sendSessionCallback(SessionCallback sessionCallback, int callbackRetryAttempts)  {
     StringEntity params = new StringEntity(sessionCallback.toString(), StandardCharsets.UTF_8);
     HttpPost request = new HttpPost(this.hostname + API_PATH + API_CALLBACK);
     request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -152,7 +150,6 @@ public class VideoPlatform {
       if (statusCode == HttpStatus.SC_OK) {
         String responseBody = EntityUtils.toString(response.getEntity());
         logger.info("Response body: {}", responseBody);
-        response.close();
         return true;
       } else {
         logger.error("Getting error {}", statusCode);
@@ -175,8 +172,6 @@ public class VideoPlatform {
       logger.error("Error in calling callback for sessionId [{}]", sessionCallback.getUniqueSessionId(), e);
     } catch (Throwable t) {
       logger.error("Error in calling callback for sessionId [{}]", sessionCallback.getUniqueSessionId(), t);
-    }finally {
-      httpClient.close();
     }
     return true;
   }
