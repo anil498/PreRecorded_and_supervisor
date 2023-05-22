@@ -61,8 +61,8 @@ public class VideoPlatform {
     }
     final HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create().setConnectionTimeToLive(TimeValue.ofSeconds(30)).build();
 
-    RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(30, TimeUnit.SECONDS)
-      .setConnectionRequestTimeout(30, TimeUnit.SECONDS).setResponseTimeout(30, TimeUnit.SECONDS).build();
+    RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(300, TimeUnit.SECONDS)
+      .setConnectionRequestTimeout(300, TimeUnit.SECONDS).setResponseTimeout(300, TimeUnit.SECONDS).build();
 
     this.httpClient = HttpClients.custom().setConnectionManager(connectionManager)
       .setDefaultRequestConfig(requestConfig).build();
@@ -131,7 +131,7 @@ public class VideoPlatform {
     }
   }
 
-  public boolean sendSessionCallback(SessionCallback sessionCallback, int callbackRetryAttempts) {
+  public boolean sendSessionCallback(SessionCallback sessionCallback, int callbackRetryAttempts)  {
     StringEntity params = new StringEntity(sessionCallback.toString(), StandardCharsets.UTF_8);
     HttpPost request = new HttpPost(this.hostname + API_PATH + API_CALLBACK);
     request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -150,7 +150,6 @@ public class VideoPlatform {
       if (statusCode == HttpStatus.SC_OK) {
         String responseBody = EntityUtils.toString(response.getEntity());
         logger.info("Response body: {}", responseBody);
-        response.close();
         return true;
       } else {
         logger.error("Getting error {}", statusCode);

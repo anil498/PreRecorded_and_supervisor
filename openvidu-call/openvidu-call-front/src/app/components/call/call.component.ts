@@ -15,15 +15,15 @@ export class CallComponent implements OnInit {
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
-	recordingEnabled: boolean = true;
+	recordingEnabled1: boolean = true;
 	screenShareEnabled: boolean = true;
 	chatEnabled: boolean = true;
 	showSessionId:boolean=true;
 	broadcastingEnabled: boolean=true;
 	recordingList: RecordingInfo[] = [];
 	recordingError: any;
-	partitcipantName:string;
 	serverError: string = '';
+	participantName1:any
 	loading: boolean = true;
 	private isDebugSession: boolean = false;
 
@@ -61,7 +61,17 @@ export class CallComponent implements OnInit {
 	onLeaveButtonClicked() {
 		this.isSessionAlive = false;
 		this.closeClicked = true;
-		this.router.navigate([`/`]);
+		// this.router.navigate([`/`]);
+		if (this.participantName1 === "Customer") {
+			// Navigate to a specific URL for customers
+			window.location.href = "https://www.axisbank.com/grab-deals/online-offers";
+		  } else {
+			// Close the window
+			window.location.href = "https://www.axisbank.com/grab-deals/online-offers";
+		  }
+	}
+	participantName(){
+		return this.participantName1
 	}
 	async onStartRecordingClicked() {
 		try {
@@ -94,7 +104,7 @@ export class CallComponent implements OnInit {
 			nickname = this.participantService.getLocalParticipant().getNickname();
 		}
 		const response = await this.restService.getTokens(this.sessionId, nickname);
-		this.recordingEnabled = response.isRecording
+		this.recordingEnabled1 = response.recordingEnabled
 		this.broadcastingEnabled=response.isBroadCasting
 		this.recordingList = response.recordings
 		this.tokens = {
@@ -104,7 +114,11 @@ export class CallComponent implements OnInit {
 		this.screenShareEnabled=response.isScreenSharing;
 		this.chatEnabled=response.isChatEnabled;
 		this.showSessionId=response.showSessionId;
-		this.partitcipantName=response.participantName;
-		console.log(this.partitcipantName);
+		this.participantName1=response.participantName;
+		console.log(response);
+		console.log(this.screenShareEnabled);
+	}
+	recordingEnabled(){
+		return this.recordingEnabled1;
 	}
 }

@@ -40,6 +40,7 @@ public class OpenviduClientController {
 
     @PostMapping("/get")
     public ResponseEntity<?> featureList(@RequestBody Map<String,String> params, HttpServletRequest request) throws JsonProcessingException {
+        logger.info("Rest API {} Request {} and Params {}",RequestMappings.APICLIENT,request,params);
         String authKey = request.getHeader("Authorization");
         int check = isValidAuthKey(authKey);
         logger.info("Check val .. " + check);

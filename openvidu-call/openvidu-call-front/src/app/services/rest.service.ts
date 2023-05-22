@@ -25,7 +25,7 @@ export class RestService {
 	async getTokens(
 		sessionId: string,
 		nickname?: string
-	): Promise<sessionResponse> {
+	): Promise<any> {
 		return this.postRequest('sessions', { sessionId, nickname });
 	}
 	adminLogin(password: string): Promise<any[]> {

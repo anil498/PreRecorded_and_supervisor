@@ -7,6 +7,7 @@ import io.openvidu.call.java.threads.NamedThreadPoolFactory;
 //import io.openvidu.call.java.util.HandleTimeoutEvent;
 //import mcarbon.timer.Timer;
 //import mcarbon.util.McQueue;
+import io.openvidu.call.java.threads.SessionCleaner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,7 @@ public class SessionManager {
 
   private static ExecutorService SessionProcessorExecutor = null;
   private long timerTaskInterval=1;
+  private long sessionCleanerInterval=5;
 
   public static void main(String args[]) {
     SessionManager session = new SessionManager();
@@ -34,6 +36,8 @@ public class SessionManager {
 //      logger.info("Time {}",timerTaskInterval);
 //      ScheduledExecutorService timerTaskService = Executors.newSingleThreadScheduledExecutor(new NamedThreadPoolFactory(SessionConstant.TIMER_INVOKER_THREAD));
 //      timerTaskService.scheduleAtFixedRate(new TimerTask(), 0, timerTaskInterval, TimeUnit.MINUTES);
+      ScheduledExecutorService sessionCleanerService = Executors.newSingleThreadScheduledExecutor(new NamedThreadPoolFactory(SessionConstant.SESSION_CLEANER_INVOKER_THREAD));
+      sessionCleanerService.scheduleAtFixedRate(new SessionCleaner(), 0, sessionCleanerInterval, TimeUnit.MINUTES);
     }catch (Exception e){
       logger.error("Getting Exception while starting thread {}",e);
     }
