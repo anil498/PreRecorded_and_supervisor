@@ -27,7 +27,7 @@ public class SessionRequest {
   private String recordingExpiredTime;
   private String sessionExpiredTime;
   private Byte[] sessionLogo;
-  private Boolean showSessionId;
+  private Boolean showSessionId=false;
   private String participantName;
   private String sessionKey;
   private String sessionSupportKey;

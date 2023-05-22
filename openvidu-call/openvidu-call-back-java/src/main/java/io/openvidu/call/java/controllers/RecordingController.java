@@ -8,6 +8,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -39,6 +41,10 @@ public class RecordingController {
 
 	@Value("${OPENVIDU_URL}")
 	private String OPENVIDU_URL;
+  @Value(("${ACCOUNT_AUTH}"))
+  String accountIdToken;
+  @Value(("${USER_AUTH}"))
+  String userIdToken;
 
 	@Autowired
 	private OpenViduService openviduService;
@@ -100,7 +106,9 @@ public class RecordingController {
 			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) {
 
 		try {
-			String sessionId = params.get("sessionId");
+      String sessionKeyId = params.get("sessionId");
+      SessionRequest sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
+      String sessionId=sessionRequest.getSessionUniqueId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					Recording startingRecording = openviduService.startRecording(sessionId);
@@ -141,7 +149,9 @@ public class RecordingController {
 	public ResponseEntity<?> stopRecording(@RequestBody(required = false) Map<String, String> params,
 			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) {
 		try {
-			String sessionId = params.get("sessionId");
+			String sessionKeyId = params.get("sessionId");
+      SessionRequest sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
+      String sessionId=sessionRequest.getSessionUniqueId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					String recordingId = openviduService.moderatorsCookieMap.get(sessionId).getRecordingId();

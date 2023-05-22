@@ -12,7 +12,6 @@
     "@angular/router": "14.2.8",
     "core-js": "^3.26.0",
     "rxjs": "7.5.7",
-    "openvidu-angular": "2.27.0",
     "unique-names-generator": "^4.7.1",
     "zone.js": "0.11.8"
   },
@@ -40,6 +39,7 @@
   "private": true,
   "scripts": {
     "dev:start": "ng serve --configuration development",
+    "lib:build": "ng build openvidu-angular --configuration production && cd ./dist/openvidu-angular && npm pack",
     "dev:build": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/",
     "prod:build": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/dist/public/ --configuration production --base-href=\"${1:-/}\"; }; func",
     "dev:build-java": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back-java/src/main/resources/static/",
