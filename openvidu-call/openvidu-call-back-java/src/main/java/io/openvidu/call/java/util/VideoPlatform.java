@@ -96,12 +96,16 @@ public class VideoPlatform {
     request.setHeader("Authorization", accountIdToken);
     request.setHeader("Token", userIdToken);
     request.setEntity(params);
+    CloseableHttpResponse response = null;
     try {
-      return this.httpClient.execute(request, responseHandler);
-    } catch (IOException e) {
+      response = this.httpClient.execute(request);
+      return responseHandler.handleResponse(response);
+    } catch (IOException | HttpException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
-    }finally {
-      this.httpClient.close();
+    } finally {
+      if (response != null) {
+        response.close();
+      }
     }
   }
 
@@ -126,12 +130,16 @@ public class VideoPlatform {
     HttpPost request = new HttpPost(this.hostname + API_PATH + API_FEATURES);
     request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 //    request.setEntity(params);
+    CloseableHttpResponse response = null;
     try {
-      return this.httpClient.execute(request, responseHandler);
-    } catch (IOException e) {
+      response = this.httpClient.execute(request);
+      return responseHandler.handleResponse(response);
+    } catch (IOException | HttpException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
-    }finally {
-      this.httpClient.close();
+    } finally {
+      if (response != null) {
+        response.close();
+      }
     }
   }
 
@@ -145,8 +153,9 @@ public class VideoPlatform {
 
     RetryConfig retryConfig = RetryConfig.custom().maxAttempts(callbackRetryAttempts).build();
     Retry retry = Retry.of("callbackRetry", retryConfig);
+    CloseableHttpResponse response=null;
     try {
-      CloseableHttpResponse response = retry.executeCallable(() -> httpClient.execute(request));
+      response = retry.executeCallable(() -> httpClient.execute(request));
 
       int statusCode = response.getCode();
       logger.info("Response code: {}", statusCode);
@@ -177,7 +186,9 @@ public class VideoPlatform {
     } catch (Throwable t) {
       logger.error("Error in calling callback for sessionId [{}]", sessionCallback.getUniqueSessionId(), t);
     }finally {
-      this.httpClient.close();
+      if (response != null) {
+        response.close();
+      }
     }
     return true;
   }
