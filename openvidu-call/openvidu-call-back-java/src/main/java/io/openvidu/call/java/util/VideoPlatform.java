@@ -153,10 +153,7 @@ public class VideoPlatform {
 
     RetryConfig retryConfig = RetryConfig.custom().maxAttempts(callbackRetryAttempts).build();
     Retry retry = Retry.of("callbackRetry", retryConfig);
-    CloseableHttpResponse response=null;
-    try {
-      response = retry.executeCallable(() -> httpClient.execute(request));
-
+    try(CloseableHttpResponse response = retry.executeCallable(() -> httpClient.execute(request))) {
       int statusCode = response.getCode();
       logger.info("Response code: {}", statusCode);
 
@@ -185,10 +182,6 @@ public class VideoPlatform {
       logger.error("Error in calling callback for sessionId [{}]", sessionCallback.getUniqueSessionId(), e);
     } catch (Throwable t) {
       logger.error("Error in calling callback for sessionId [{}]", sessionCallback.getUniqueSessionId(), t);
-    }finally {
-      if (response != null) {
-        response.close();
-      }
     }
     return true;
   }
