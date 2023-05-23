@@ -1,0 +1,113 @@
+[
+  {
+    "Name": "Mr. Sanjay Sinha",
+    "Phone No": "9910234718",
+    "Address": "SMS Noida",
+    "Last Interaction Mode": "SMS",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "SMS"
+  },
+
+  {
+    "Name": "Mr. Rajendra Bhandhare",
+    "Phone No": "9833607063",
+    "Address": "WhatsApp Mumbai",
+    "Last Interaction Mode": "SMS",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "WhatsApp"
+  },
+
+  {
+    "Name": "Mr. Narayanan",
+    "Phone No": "9769029125",
+    "Address": "App Mumbai",
+
+    "Last Interaction Mode": "CallToApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "CallToApp"
+  },
+
+  {
+    "Name": "Mr. Narayanan",
+    "Phone No": "9769029125",
+    "Address": "SMS Mumbai",
+    "Last Interaction Mode": "SMS",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "SMS"
+  },
+  {
+    "Name": "Mr. Narayanan",
+    "Phone No": "9769029125",
+    "Address": "WhatsApp Mumbai",
+    "Last Interaction Mode": "WhatsApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "WhatsApp"
+  },
+  {
+    "Name": "Pallavi",
+    "Phone No": "9773603893",
+    "Address": "App Mumbai",
+    "Last Interaction Mode": "CallToApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "CallToApp"
+  },
+  {
+    "Name": "Pallavi",
+    "Phone No": "9773603893",
+    "Address": "SMS Mumbai",
+    "Last Interaction Mode": "SMS",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "SMS"
+  },
+  {
+    "Name": "Pallavi",
+    "Phone No": "9773603893",
+    "Address": "WhatsApp Mumbai",
+    "Last Interaction Mode": "WhatsApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "WhatsApp"
+  },
+  {
+    "Name": "Saheemuddin",
+    "Phone No": "8285955472",
+    "Address": "WhatsApp Noida",
+    "Last Interaction Mode": "WhatsApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "WhatsApp"
+  },
+  {
+    "Name": "Saheemuddin",
+    "Phone No": "8285955472",
+    "Address": "App Noida",
+    "Last Interaction Mode": "CallToApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "CallToApp"
+  },
+  
+  {
+    "Name": "Anil",
+    "Phone No": "9636189023",
+    "Address": "WhatsApp Rajasthan",
+    "Last Interaction Mode": "WhatsApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "WhatsApp"
+  },
+  {
+    "Name": "Anil",
+    "Phone No": "9636189023",
+    "Address": "SMS Rajasthan",
+    "Last Interaction Mode": "SMS",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "SMS"
+  },
+  {
+    "Name": "Anil",
+    "Phone No": "9636189023",
+    "Address": "APP Rajasthan",
+    "Last Interaction Mode": "CallToApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "CallToApp"
+  }
+  
+ 
+]

@@ -12,6 +12,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,6 +26,7 @@ import { FormsModule } from '@angular/forms';
     MatButtonToggleModule,
     MatIconModule,
     HttpClientModule,
+    
     FormsModule
   ],
   providers: [],
