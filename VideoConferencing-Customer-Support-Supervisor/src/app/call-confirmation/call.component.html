@@ -1,13 +1,13 @@
 <ng-container *ngIf="showLoading">
-<div class="loading-container">
-	<div class="spinner"></div>
-	<p>Please wait. We are connecting you with support person on a video call...</p>
-</div>
+	<div class="loading-container">
+		<div class="spinner"></div>
+		<p>Please wait. We are connecting you with support person on a video call...</p>
+	</div>
 </ng-container>
 
 <ng-container *ngIf="!showLoading">
 	<div class="loadfail">
-		<p style="font-size: larger;">No Agents Available Right Now . Please Try After Sometime</p>
-		<button style="height: 30px; width: 80px; font-size: larger;padding-top: 10px;" (click)="exit('')">Exit</button>
+		<p style="font-size: larger">No Agents Available Right Now . Please Try After Sometime</p>
+		<button style="height: 30px; width: 80px; font-size: larger; padding-top: 10px" (click)="exit('')">Exit</button>
 	</div>
 </ng-container>

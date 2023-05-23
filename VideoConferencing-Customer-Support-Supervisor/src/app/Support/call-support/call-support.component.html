@@ -1,4 +1,3 @@
-
 <ov-videoconference
 	[tokens]="tokens"
 	(onJoinButtonClicked)="onJoinClicked()"
@@ -25,14 +24,14 @@
 	[recordingActivityRecordingError]="recordingError"
 	[toolbarSettingsButton]="true"
 	[toolbarCaptionsButton]="false"
-    [toolbarDisplayLogo]="false"
-    [toolbarDisplaySessionName]="false"
+	[toolbarDisplayLogo]="false"
+	[toolbarDisplaySessionName]="false"
 	[toolbarBackgroundEffectsButton]="false"
-    [toolbarBroadcastingButton]="false"
+	[toolbarBroadcastingButton]="false"
 	[activitiesPanelBroadcastingActivity]="false"
 >
 	<div *ovToolbarAdditionalButtons style="text-align: center">
-		<button mat-icon-button *ngIf="isvisible"  (click)="connectToSupervisor()">
+		<button mat-icon-button *ngIf="isvisible" (click)="connectToSupervisor()">
 			<mat-icon>supervisor_account</mat-icon>
 		</button>
 

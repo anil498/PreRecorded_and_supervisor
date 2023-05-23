@@ -1,4 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+
+//All the imports
+
+import { Component,  OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { OpenViduService, ParticipantService, RecordingInfo, RecordingService, TokenModel } from 'openvidu-angular';
 import { RestService } from '../../services/rest.service';
@@ -13,6 +16,7 @@ import { WebSocketService } from 'src/app/services/websocket.service';
 	styleUrls: ['./call-support.component.css']
 })
 export class CallSupportComponent implements OnInit {
+
 	// Objects and Variables declaration
 
 	previousSessionId: string = '';
@@ -29,14 +33,15 @@ export class CallSupportComponent implements OnInit {
 	message: string;
 	subscription: Subscription;
 	mute: string;
-
 	isvisible: boolean = true;
 	merge: boolean = false;
 	openVidu: any;
 	session: Session;
 
 	private publisherlist: Publisher[];
-	private openvidu:  OpenVidu;
+	private openvidu: OpenVidu;
+
+	// Construction to declare objects
 
 	constructor(
 		private restService: RestService,
@@ -49,34 +54,52 @@ export class CallSupportComponent implements OnInit {
 		private webSocketService: WebSocketService,
 		private openViduService: OpenViduService
 	) {
+
+		//Get Key item from local storage to hide merge button and connect to supervisor button
+
 		const value2 = localStorage.getItem('key');
 		if (value2 == 'true') {
 			this.merge = true;
 			this.isvisible = false;
 		}
 
+		//Connecting to websocket service
+
 		let stompClient = this.webSocketService.connect();
 		stompClient.connect({}, (frame) => {
+
+			//Subscribe to topic/hide
 
 			stompClient.subscribe('/topic/hide', (notifications) => {
 				this.isvisible = false;
 			});
-	
 
-		stompClient.subscribe('/topic/unhold', (notifications) => {
-			this.publisherlist[0].publishVideo(false) ;
-			this.publisherlist[0].publishAudio(true) ;
+			//Subscribe to topic/unhold
+
+			stompClient.subscribe('/topic/unhold', (notifications) => {
+				this.publisherlist[0].publishVideo(false);
+				this.publisherlist[0].publishAudio(true);
+				this.merge = false;
+			});
 		});
-	});
 	}
+
+	//Main Function
+
 	async ngOnInit() {
+		
+		//Used for Debug Session
+
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
 		const match = regex.exec(this.sessionId);
 		this.isDebugSession = match && match.length > 0;
 		this.newMessage();
 		console.log(this.message);
+
+		//Get Parameters from previous page
+
 		this.sessionId = this.route.snapshot.paramMap.get('id');
-		console.log(this.sessionId);
+		console.log("SessionId Recieved : "+this.sessionId);
 
 		try {
 			await this.requestForTokens();
@@ -86,13 +109,10 @@ export class CallSupportComponent implements OnInit {
 		} finally {
 			this.loading = false;
 		}
-
-
-		
-	
 	}
 
 	async onNodeCrashed() {
+
 		// Request the tokens again for reconnect to the session
 		await this.requestForTokens();
 	}
@@ -163,7 +183,6 @@ export class CallSupportComponent implements OnInit {
 	async onStopRecordingClicked() {
 		console.warn('STOP RECORDING CLICKED');
 		try {
-			// await this.restService.startRecording(this.sessionId);
 
 			this.recordingList = await this.restService.stopRecording(this.sessionId);
 			console.log('RECORDING LIST ', this.recordingList);
@@ -192,17 +211,24 @@ export class CallSupportComponent implements OnInit {
 
 		console.log('Token requested: ', this.tokens);
 	}
+
 	private async enableWaitingPage() {
 		console.log('waiting for token');
 		await this.sleep(10000);
 	}
+
 	private sleep(ms) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
+
 	newMessage() {}
 
+	//Connect to Supervisor Function
+
 	async connectToSupervisor() {
+
 		console.warn('TOOLBAR SUPERVISOR BUTTON CLICKED');
+
 		localStorage.setItem('key3', 'true');
 
 		const id = this.sessionId + '_2';
@@ -211,28 +237,26 @@ export class CallSupportComponent implements OnInit {
 			sessionId: id
 		};
 
+		//Get Publisher object and Session Object to unpublish audio and video (Call Hold Functionality)
 
 		this.session = this.openViduService.getSession();
-					this.openvidu = this.session.openvidu;
-					this.publisherlist = this.openvidu.publishers;
-					console.log("Publishers are : " + this.publisherlist.length)
-					
-					this.publisherlist[0].publishVideo(false) ;
-					this.publisherlist[0].publishAudio(false) ;
+		this.openvidu = this.session.openvidu;
+		this.publisherlist = this.openvidu.publishers;
+		console.log('Publishers are : ' + this.publisherlist.length);
 
+		this.publisherlist[0].publishVideo(false);
+		this.publisherlist[0].publishAudio(false);
+
+		//Navigate to next page
 		
 		this.router.navigate([]).then(() => {
 			window.open(`/#/confirm?roomName=${this.sessionId}`, '_blank');
 		});
 
-		// this.router.navigate([]).then(() => {
-		// 	window.open(`/#/call-support/${id}`, '_blank');
-		// });
-
-		// this.isvisible = false;
 		localStorage.setItem('key', 'true');
-		// this.restService.postRequest(id, body);
 	}
+
+	//Merge Call Function
 
 	async mergecall() {
 		console.warn('Merge Button Clicked');
@@ -241,8 +265,10 @@ export class CallSupportComponent implements OnInit {
 		this.webSocketService.mergecall(session_message);
 		this.webSocketService.unhold(session_message);
 
+		this.session = this.openViduService.getSession();
+		this.openvidu = this.session.openvidu;
+
+		this.openViduService.disconnect();
 		window.close();
 	}
-
-
 }
