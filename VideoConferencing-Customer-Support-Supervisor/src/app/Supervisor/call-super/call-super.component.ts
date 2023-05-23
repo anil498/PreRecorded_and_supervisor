@@ -1,3 +1,5 @@
+//All the imports
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { RecordingInfo, RecordingService, TokenModel } from 'openvidu-angular';
@@ -12,11 +14,12 @@ import { OpenVidu, Session } from 'openvidu-browser';
 	styleUrls: ['./call-super.component.css']
 })
 export class CallSuperComponent implements OnInit {
-	// sessionId = 'daily-call';
+
+	//All the Variables
+
 	previousSessionId: string = '';
 	sessionId: string;
 	tokens: TokenModel;
-
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
@@ -29,27 +32,34 @@ export class CallSuperComponent implements OnInit {
 	subscription: Subscription;
 	openVidu: any;
 	session: Session;
-	prejoin: boolean=true;
-
+	prejoin: boolean = true;
 	open: boolean;
 	count: boolean;
+
+	//Constructor to declare objects
 
 	constructor(
 		private restService: RestService,
 		private recordingService: RecordingService,
 		private router: Router,
 		private route: ActivatedRoute,
-		private webSocketService: WebSocketService,
+		private webSocketService: WebSocketService
+	) {}
 
-	) {
-	}
+	//Main Function
+
 	async ngOnInit() {
+
+		//For Debug Session
 
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
 		const match = regex.exec(this.sessionId);
 		this.isDebugSession = match && match.length > 0;
 		this.newMessage();
 		console.log(this.message);
+
+		//Get sessionId from previous page
+
 		this.sessionId = this.route.snapshot.paramMap.get('id');
 		console.log(this.sessionId);
 
@@ -62,22 +72,24 @@ export class CallSuperComponent implements OnInit {
 			this.loading = false;
 		}
 
+		//Connecting to websocket service
+
 		let stompClient = this.webSocketService.connect();
-	
-				stompClient.connect({}, (frame) => {
-	
-					
-					// Subscribe to notification topic
-					stompClient.subscribe('/topic/mergecall', (notifications) => {
-						console.log(this.router.url);
-						this.mergebutton();
-						
-					});
-				});
+		stompClient.connect({}, (frame) => {
+
+			// Subscribe to topic/mergecall
+
+			stompClient.subscribe('/topic/mergecall', (notifications) => {
+				console.log(this.router.url);
+				this.mergebutton();
+			});
+		});
 	}
 
 	async onNodeCrashed() {
+
 		// Request the tokens again for reconnect to the session
+
 		await this.requestForTokens();
 	}
 
@@ -147,6 +159,7 @@ export class CallSuperComponent implements OnInit {
 	async onStopRecordingClicked() {
 		console.warn('STOP RECORDING CLICKED');
 		try {
+
 			// await this.restService.startRecording(this.sessionId);
 
 			this.recordingList = await this.restService.stopRecording(this.sessionId);
@@ -157,6 +170,7 @@ export class CallSuperComponent implements OnInit {
 	}
 
 	async onDeleteRecordingClicked(recordingId: string) {
+
 		console.warn('DELETE RECORDING CLICKED');
 
 		try {
@@ -167,7 +181,8 @@ export class CallSuperComponent implements OnInit {
 	}
 
 	private async requestForTokens() {
-		const response = await this.restService.getTokensFromBackend1(this.sessionId,'supervisor');
+
+		const response = await this.restService.getTokensFromBackend1(this.sessionId, 'supervisor');
 		this.recordingList = response.recordings;
 		this.tokens = {
 			webcam: response.cameraToken,
@@ -176,34 +191,32 @@ export class CallSuperComponent implements OnInit {
 
 		console.log('Token requested: ', this.tokens);
 	}
-	
+
 	private async enableWaitingPage() {
+
 		console.log('waiting for token');
 		await this.sleep(10000);
 	}
+
 	private sleep(ms) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
-	newMessage() {
-	}
 
+	newMessage() {}
+
+	//Merge button Function
 
 	async mergebutton() {
 
 		const value = this.sessionId;
-		const sessionID = value.substring(0,value.length-2);
+		const sessionID = value.substring(0, value.length - 2);
 		console.log(sessionID);
 		console.warn('TOOLBAR SUPERVISOR BUTTON CLICKED');
-		this.router.navigate(['/']).then(() => {
-		window.open(`/#/call-super/${sessionID}`, '_self');	
-
-		const session_message = 'callnothold';
-		this.webSocketService.alert(session_message);
-
-		});
 		
+		this.router.navigate(['/']).then(() => {
+			window.open(`/#/call-super/${sessionID}`, '_self');
+			const session_message = 'callnothold';
+			this.webSocketService.alert(session_message);
+		});
 	}
-	
-	
-
 }

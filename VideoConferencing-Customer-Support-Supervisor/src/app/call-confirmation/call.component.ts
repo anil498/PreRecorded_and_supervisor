@@ -1,3 +1,5 @@
+//All the Imports
+
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WebSocketService } from '../services/websocket.service';
@@ -9,6 +11,9 @@ import { RestService } from '../services/rest.service';
 	styleUrls: ['./call.component.scss']
 })
 export class CallComponent implements OnInit {
+	
+	//Variable declaration
+
 	sessionId: string;
 	getName: string;
 	path: string;
@@ -23,6 +28,7 @@ export class CallComponent implements OnInit {
 	) {}
 
 	async ngOnInit() {
+
 		// Recieve Parameters from previous page
 
 		this.sessionId = this.route.snapshot.paramMap.get('roomName');
@@ -44,14 +50,15 @@ export class CallComponent implements OnInit {
 		//connect to Websocket Connection
 
 		let stompClient = this.webSocketService.connect();
-
 		stompClient.connect({}, (frame) => {
 
 			// Subscribe to callconfirmation topic
-			
+
 			stompClient.subscribe('/topic/callconfirmation', (notifications) => {
+
 				this.id = JSON.parse(notifications.body).sessionId;
 				console.warn('Successfully Recieved Notification : ' + this.id);
+				
 				if (this.id == 'confirmed') {
 					console.warn('Call Confirmed');
 					this.router.navigate([`/${this.path}`, { roomName: this.sessionId, name: this.getName }]);
@@ -60,13 +67,14 @@ export class CallComponent implements OnInit {
 					this.showLoading = false;
 				}
 			});
-
 		});
 
 		setTimeout(() => {
 			this.showLoading = false;
 		}, 60000); // 1 minute in milliseconds
 	}
+
+	//Exit function to go to the index page
 
 	exit(path: string) {
 		this.router.navigate([`/${path}`]);
