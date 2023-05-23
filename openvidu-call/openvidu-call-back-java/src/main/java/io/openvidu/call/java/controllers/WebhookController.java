@@ -72,7 +72,7 @@ public class WebhookController {
             case SESSIONDESTROYED:
               logger.info("Session Destroyed {}", sessionContext);
               //Send session Callback
-              executeCallbackAsync(sessionKey, sessionWebhook);
+//              executeCallbackAsync(sessionKey, sessionWebhook);
           }
         }else{
           logger.info("No need of this Webhook event sessionId {}",sessionWebhook.getUniqueSessionId());
