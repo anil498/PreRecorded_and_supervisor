@@ -131,6 +131,7 @@ export class LoginComponent {
     // this.showData();
     this.getData();
     
+    
   }
   ngOnInit(): void {
     
@@ -139,6 +140,9 @@ export class LoginComponent {
     });
     console.log("username in table"+this.username);
   }
+////------------------------------------
+
+
 ///---------------------------------------
 getData() {
   let x=this.getCurrentTime();
