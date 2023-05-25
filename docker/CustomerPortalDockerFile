@@ -4,15 +4,9 @@ WORKDIR /opt/videoplatform
 COPY /axisbankSupport .
 RUN npm install --force
 RUN npm run build
-### STAGE 2: Build ###
-FROM node:16.13-alpine AS customer
-WORKDIR /opt/videoplatform
-COPY /mCarbonCustomerSuppotPortal .
-RUN npm install --force
-RUN npm run build
+
 ### STAGE 3: Run ###
 FROM nginx:1.17.1-alpine
 RUN ls -ltrh
 COPY docker/CustomerNginx.conf /etc/nginx/nginx.conf
-COPY --from=axis /opt/videoplatform/dist /usr/share/nginx/html/axisdemo
-COPY --from=customer /opt/videoplatform/dist /usr/share/nginx/html/customer
+COPY --from=axis /opt/videoplatform/dist /usr/share/nginx/html/
