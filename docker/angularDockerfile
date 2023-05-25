@@ -3,15 +3,13 @@ FROM node:14
 
 # Set the working directory inside the container
 WORKDIR /mcarbonportal
-
-# Copy package.json and package-lock.json to the container
-COPY mcarbonPortal/package*.json ./
-
-# Install dependencies
-RUN npm install
-
-# Copy the rest of the application code to the container
 COPY . .
 
-# Build the Angular application
-RUN npm run build
+RUN npm install --location=global npm
+
+# Build mcarbon portal frontend
+RUN rm mcarbonportal/package-lock.json && \
+    # Install frontend dependencies and build it for production
+    cd mcarbonportal && npm install && \
+    npm run build && \
+    cd ../ && rm -rf mcarbonportal
