@@ -9,13 +9,13 @@ COPY . .
 
 FROM maven
 
-WORKDIR /opt/video-platform
+WORKDIR /opt/videoplatform
 
 COPY --from=video-platform-build /VideoPlatformBackend .
 
 # Install backend dependencies and build it for production
 RUN mvn clean install package
-
+mv  target/*.jar target/openvidu_db-backend.jar
 # Entrypoint
 COPY ./java-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN cat /usr/local/bin/entrypoint.sh

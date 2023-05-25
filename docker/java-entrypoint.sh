@@ -1,4 +1,3 @@
 #!/bin/sh
-cd /opt/video-platform
-mv  target/*.jar target/openvidu_db-backend.jar
-java  -jar target/openvidu_db-backend.jar
+cd /opt/videoplatform
+java  -jar target/openvidu_db-backend.jar --spring.config.location=application.properties
