@@ -1,11 +1,11 @@
 ### STAGE 1: Build ###
-FROM node:16.10-alpine AS axis
+FROM node:16.13-alpine AS axis
 WORKDIR /opt/videoplatform
 COPY /axisbankSupport .
 RUN npm install --force
 RUN npm run build
 ### STAGE 2: Build ###
-FROM node:16.10-alpine AS customer
+FROM node:16.13-alpine AS customer
 WORKDIR /opt/videoplatform
 COPY /mCarbonCustomerSuppotPortal .
 RUN npm install --force
