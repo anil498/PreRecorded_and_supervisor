@@ -9,12 +9,14 @@ export class RestService {
   private dialogClosedSource = new Subject<boolean>();
   public dialogClosed$ = this.dialogClosedSource.asObservable();
 
-  private _token!: string;
-  private _userId!: string;
+ // private _token!: string;
+ // private _userId!: string;
   private baseHref!: string;
   private url: string;
-  private token!: string;
-  private userId!: string;
+  //private token!: string;
+  //private userId!: string;
+  private _token!: string;
+  private _authkey!:string;
 
   constructor(private http: HttpClient) {
     // this.url =
@@ -31,7 +33,27 @@ export class RestService {
     
     //mychnage run sms and chat
     this.url = 'https://demo2.progate.mobi';
+    this.getKeys();
   } //constructur close
+
+  getKeys() {
+    let x = Math.floor((Math.random() * 100) + 1);
+    this.http.get<any[]>('assets/key.json?'+x).subscribe(
+      (response: any[]) => {
+        
+         
+        console.log("token key ->"+response[0]['Token']);
+        console.log("authorization key -->"+response[0]['Authorization']);
+        this._token=response[0]['Token'];
+        this._authkey=response[0]['Authorization'];
+        },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }   
+
+
 
   private callRequest(
     sessionId: string,
@@ -46,9 +68,11 @@ export class RestService {
       //   sessionid: sessionId,
       // };
       const headers = new HttpHeaders({
-        Token: `UR101S3yyOTKf5u`,
+        // Token: `UR101S3yyOTKf5u`,
+        Token:this._token,
+        // Authorization: 'AC101rFSyWDmFBf',
+        Authorization:this._authkey
 
-        Authorization: 'AC101rFSyWDmFBf',
       });
 
       return lastValueFrom(
@@ -138,3 +162,6 @@ export class RestService {
     }
   } //send notify clsoe
 } //class  clsoe
+
+
+
