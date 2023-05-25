@@ -5,7 +5,7 @@
     "dev:start": "ng serve --configuration development",
     "lib:build": "ng build openvidu-angular --configuration production && cd ./dist/openvidu-angular && npm pack",
     "dev:build": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/",
-    "prod:build": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/dist/public/ --configuration production --base-href=\"${1:-/}\"; }; func",
+    "prod:build": "ng build --output-path ../openvidu-call-back/dist/public/ ",
     "dev:build-path": "./node_modules/@angular/cli/bin/ng.js build --output-path /opt/videoplatform/dist/",
     "prod:build-path": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path /opt/videoplatform/dist/ --configuration production --base-href=\"${1:-/}\"; }; func",
     "e2e:basic": "tsc --project ./e2e && npx mocha --recursive --timeout 30000 ./e2e/dist/openvidu-call.test.js",
