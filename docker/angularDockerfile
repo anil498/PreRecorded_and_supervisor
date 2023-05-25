@@ -5,7 +5,7 @@ FROM node:14
 WORKDIR /mcarbonportal
 
 # Copy package.json and package-lock.json to the container
-COPY package*.json ./
+COPY mcarbonPortal/package*.json ./
 
 # Install dependencies
 RUN npm install
