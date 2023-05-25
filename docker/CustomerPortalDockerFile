@@ -2,7 +2,7 @@
 FROM node:lts-alpine3.16 as axis
 WORKDIR /opt/videoplatform
 ARG BASE_HREF=axisdemo
-COPY /axisbankSupport .
+COPY ./axisbankSupport .
 RUN npm install --location=global npm
 
 # Build OpenVidu Call frontend
@@ -14,4 +14,4 @@ RUN npm install --force && \
 FROM nginx:1.17.1-alpine
 RUN ls -ltrh
 COPY docker/CustomerNginx.conf /etc/nginx/nginx.conf
-COPY --from=axis /opt/videoplatform/dist//usr/share/nginx/html/
+COPY --from=axis /opt/videoplatform/dist/ /usr/share/nginx/html/
