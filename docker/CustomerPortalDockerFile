@@ -7,7 +7,7 @@ RUN npm install --location=global npm
 
 # Build OpenVidu Call frontend
 RUN npm install --force && \
-    npm run prod:build-path ${BASE_HREF} && \
+    npm run prod:build-path ${BASE_HREF}
 
 ### STAGE 2: Build ###
 FROM node:lts-alpine3.16 as customer
@@ -18,7 +18,7 @@ RUN npm install --location=global npm
 
 # Build OpenVidu Call frontend
 RUN npm install --force && \
-    npm run prod:build-path ${BASE_HREF} && \  
+    npm run prod:build-path ${BASE_HREF}  
 
 ### STAGE 3: Run ###
 FROM nginx:1.17.1-alpine
