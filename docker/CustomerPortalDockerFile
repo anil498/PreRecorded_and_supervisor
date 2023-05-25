@@ -1,24 +1,22 @@
 ### STAGE 1: Build ###
 FROM node:lts-alpine3.16 as axis
 WORKDIR /opt/videoplatform
-ARG BASE_HREF=
 COPY ./axisbankSupport .
 RUN npm install --location=global npm
 
 # Build OpenVidu Call frontend
 RUN npm install --force && \
-    npm run prod:build-path ${BASE_HREF}
+    npm run prod:build-path
 
 ### STAGE 2: Build ###
 FROM node:lts-alpine3.16 as customer
 WORKDIR /opt/videoplatform
-ARG BASE_HREF=
 COPY ./mCarbonCustomerSuppotPortal .
 RUN npm install --location=global npm
 
 # Build OpenVidu Call frontend
 RUN npm install --force && \
-    npm run prod:build-path ${BASE_HREF}  
+    npm run prod:build-path  
 
 ### STAGE 3: Run ###
 FROM nginx:1.17.1-alpine
