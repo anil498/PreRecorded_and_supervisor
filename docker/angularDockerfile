@@ -8,8 +8,6 @@ COPY . .
 RUN npm install --location=global npm
 
 # Build mcarbon portal frontend
-RUN rm mcarbonportal/package-lock.json && \
-    # Install frontend dependencies and build it for production
-    cd mcarbonportal && npm install && \
+RUN cd mcarbonportal && npm install && \
     npm run build && \
     cd ../ && rm -rf mcarbonportal
