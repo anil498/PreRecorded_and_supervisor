@@ -8,6 +8,4 @@ COPY . .
 RUN npm install --location=global npm
 
 # Build mcarbon portal frontend
-RUN cd mcarbonportal && npm install && \
-    npm run build && \
-    cd ../ && rm -rf mcarbonportal
+RUN npm run build
