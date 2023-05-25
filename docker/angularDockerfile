@@ -4,7 +4,7 @@ FROM node:14
 # Set the working directory inside the container
 WORKDIR /mcarbonportal
 COPY . .
-
+RUN ls
 RUN npm install --location=global npm
 
 # Build mcarbon portal frontend
