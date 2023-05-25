@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 FROM node:lts-alpine3.16 as axis
 WORKDIR /opt/videoplatform
-ARG BASE_HREF=/
+ARG BASE_HREF=
 COPY ./axisbankSupport .
 RUN npm install --location=global npm
 
@@ -12,7 +12,7 @@ RUN npm install --force && \
 ### STAGE 2: Build ###
 FROM node:lts-alpine3.16 as customer
 WORKDIR /opt/videoplatform
-ARG BASE_HREF=/
+ARG BASE_HREF=
 COPY ./mCarbonCustomerSuppotPortal .
 RUN npm install --location=global npm
 
