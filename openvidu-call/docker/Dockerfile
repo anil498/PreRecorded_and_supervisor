@@ -3,7 +3,7 @@ FROM node:lts-alpine3.16 as openvidu-call-build
 
 WORKDIR /openvidu-call
 
-ARG BASE_HREF=/
+ARG BASE_HREF=session
 
 COPY . .
 
