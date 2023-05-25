@@ -1,5 +1,5 @@
 ### STAGE 1: Build ###
-FROM node:lts-alpine3.16 as AS axis
+FROM node:lts-alpine3.16 as axis
 WORKDIR /opt/videoplatform
 ARG BASE_HREF=axisdemo
 COPY /axisbankSupport .
