@@ -4,8 +4,9 @@ FROM node:lts-alpine3.16 as video-platform-build
 # Set the working directory inside the container
 WORKDIR /opt/videoplatform
 
-COPY --from=video-platform-build /mcarbonPortal .
+COPY . .
 RUN npm install --location=global npm
 # Build mcarbon portal frontend
-RUN npm install && \
+RUN ls -ltrh && \
+    npm install && \
     npm run build
