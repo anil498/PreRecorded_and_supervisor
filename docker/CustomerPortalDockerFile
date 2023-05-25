@@ -7,7 +7,7 @@ RUN npm run build --base-href axisdemo
 ### STAGE 2: Build ###
 FROM node:16.10-alpine AS customer
 WORKDIR /opt/videoplatform
-COPY /axisbankSupport .
+COPY /mCarbonCustomerSuppotPortal .
 RUN npm install --force
 RUN npm run build --base-href customer
 ### STAGE 3: Run ###
