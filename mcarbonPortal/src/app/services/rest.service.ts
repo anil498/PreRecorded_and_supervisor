@@ -22,7 +22,7 @@ export class RestService {
 
   constructor(private http: HttpClient, private router: Router) {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
-    this.baseHref = "https://demos.progate.mobi/VPService/v1/";
+    this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
     //this.url1 = "http://172.17.0.122:5000/";
   }
 
