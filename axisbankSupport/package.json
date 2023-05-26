@@ -2,11 +2,17 @@
   "name": "ab-demo",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "dev:start": "ng serve --configuration development",
+    "lib:build": "ng build openvidu-angular --configuration production && cd ./dist/openvidu-angular && npm pack",
+    "dev:build": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/",
+    "prod:build": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/dist/public/ --configuration production --base-href=\"${1:-/}\"; }; func",
+    "dev:build-path": "./node_modules/@angular/cli/bin/ng.js build --output-path /opt/videoplatform/dist/",
+    "prod:build-path": "ng build --output-path /opt/videoplatform/dist/ ",
+    "e2e:basic": "tsc --project ./e2e && npx mocha --recursive --timeout 30000 ./e2e/dist/openvidu-call.test.js",
+    "e2e:auth": "tsc --project ./e2e && npx mocha --recursive --timeout 30000 ./e2e/dist/openvidu-call.auth.test.js",
+    "e2e:basic-ci": "cross-env LAUNCH_MODE=CI npm run e2e:basic",
+    "e2e:auth-ci": "cross-env LAUNCH_MODE=CI npm run e2e:auth",
+    "test": "ng test openvidu-call --watch=false --code-coverage"
   },
   "private": true,
   "dependencies": {
