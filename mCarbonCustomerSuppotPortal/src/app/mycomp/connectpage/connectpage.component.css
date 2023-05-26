@@ -30,7 +30,8 @@ nav {
   
     /* background-image: linear-gradient(to top, #a04141 0%, #1ad12f 50%, #e23e3e 50%, #f1f1f1 100%); */
   .bodydiv{
-    background-color: #FC6A03;
+    /* background-color: #FC6A03; */
+    background-color: #f86323;
     /* background-image: linear-gradient(to top, #f36215 0%, #ffffff 50% ); */
 
     display: flex;

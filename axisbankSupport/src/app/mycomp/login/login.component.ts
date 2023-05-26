@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import * as XLSX from 'xlsx';
 import { RestService } from 'src/app/Services/rest.service';
 import { HttpClient } from '@angular/common/http';
+import { DataService } from 'src/app/Services/Data.service';
 
 @Component({
   selector: 'app-login',
@@ -120,7 +121,7 @@ export class LoginComponent {
     
    
   // ];
-  constructor(private router: Router,private aroute: ActivatedRoute, private restservice: RestService,private http: HttpClient) {
+  constructor(private router: Router,private aroute: ActivatedRoute,private dataService:DataService ,private restservice: RestService,private http: HttpClient) {
    
     //  this.data=this.readJSONData();
     //  console.log("data in constru---"+this.data);
@@ -129,16 +130,18 @@ export class LoginComponent {
     // this.rows = this.data;
     // console.log("ro are in constr-->"+this.rows);
     // this.showData();
+    this.username=this.dataService.shareusername;
+    console.log("username in table"+this.username);
     this.getData();
     
     
   }
   ngOnInit(): void {
     
-    this.aroute.queryParams.subscribe(params => {
-      this.username = params['username'];
-    });
-    console.log("username in table"+this.username);
+    // this.aroute.queryParams.subscribe(params => {
+    //   this.username = params['username'];
+    // });
+    // console.log("username in table"+this.username);
   }
 ////------------------------------------
 

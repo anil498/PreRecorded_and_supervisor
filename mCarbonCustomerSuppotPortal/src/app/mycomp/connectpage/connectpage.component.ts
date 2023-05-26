@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RestService } from 'src/app/Services/rest.service';
 
 import { HttpClient } from '@angular/common/http';
+import { DataService } from 'src/app/Services/Data.service';
 
 @Component({
   selector: 'app-connectpage',
@@ -14,17 +15,15 @@ import { HttpClient } from '@angular/common/http';
 export class ConnectpageComponent {
   username: string='';
   phone: string='';
-  constructor(private router: Router,private aroute: ActivatedRoute,private restService :RestService,private http: HttpClient) {
-     
+  constructor(private router: Router,private aroute: ActivatedRoute,private dataService:DataService,private restService :RestService,private http: HttpClient) {
+      
+      this.username=this.dataService.shareusername;
+      this.phone=this.dataService.sharephone;
   }
 
   ngOnInit(): void {
     
-    this.aroute.queryParams.subscribe(params => {
-      this.username = params['username'];
-      this.phone=params['phone_no'];
-    });
-    console.log("username in table"+this.username);
+    
   }
 
   joinVCCall():void{
