@@ -6,6 +6,11 @@ if [ -z "${DOMAIN_OR_PUBLIC_IP}" ]; then
   printf "\n  Variable 'DOMAIN_OR_PUBLIC_IP' it's necessary\n"
   exit 0
 fi
+if [ -z "${DEV_DOMAIN_OR_PUBLIC_IP}" ]; then
+  printf "\n  =======¡ERROR!======="
+  printf "\n  Variable 'DEV_DOMAIN_OR_PUBLIC_IP' it's necessary\n"
+  exit 0
+fi
 
 if [ -z "${CERTIFICATE_TYPE}" ]; then
   printf "\n  =======¡ERROR!======="
@@ -73,6 +78,7 @@ printf "\n    - Redirect www to non-www: %s" "${REDIRECT_WWW}"
 printf "\n"
 printf "\n  Config Openvidu Application:"
 printf "\n    - Domain name: %s" "${DOMAIN_OR_PUBLIC_IP}"
+printf "\n    - Dev Domain name: %s" "${DEV_DOMAIN_OR_PUBLIC_IP}"
 printf "\n    - Certificated: %s" "${CERTIFICATE_TYPE}"
 printf "\n    - Letsencrypt Email: %s" "${LETSENCRYPT_EMAIL}"
 printf "\n    - Openvidu Application: %s" "${WITH_APP}"
@@ -225,15 +231,21 @@ sed -e '/{proxy_config}/{r default_nginx_conf/global/proxy_config.conf' -e 'd}' 
 sed -e '/{nginx_status}/{r default_nginx_conf/global/nginx_status.conf' -e 'd}' -i /etc/nginx/conf.d/*
 sed -e '/{common_api_ce}/{r default_nginx_conf/global/ce/common_api_ce.conf' -e 'd}' -i /etc/nginx/conf.d/*
 sed -e '/{new_api_ce}/{r default_nginx_conf/global/ce/new_api_ce.conf' -e 'd}' -i /etc/nginx/conf.d/*
+sed -e '/{dev_common_api_ce}/{r default_nginx_conf/global/ce/dev_common_api_ce.conf' -e 'd}' -i /etc/nginx/conf.d/*
+sed -e '/{dev_new_api_ce}/{r default_nginx_conf/global/ce/dev_new_api_ce.conf' -e 'd}' -i /etc/nginx/conf.d/*
 sed -e '/{common_api_pro}/{r default_nginx_conf/global/pro/common_api_pro.conf' -e 'd}' -i /etc/nginx/conf.d/*
 sed -e '/{new_api_pro}/{r default_nginx_conf/global/pro/new_api_pro.conf' -e 'd}' -i /etc/nginx/conf.d/*
 
 if [[ "${WITH_APP}" == "true" ]]; then
   sed -e '/{app_upstream}/{r default_nginx_conf/global/app_upstream.conf' -e 'd}' -i /etc/nginx/conf.d/*
+  sed -e '/{dev_app_upstream}/{r default_nginx_conf/global/dev_app_upstream.conf' -e 'd}' -i /etc/nginx/conf.d/*
   sed -e '/{app_config}/{r default_nginx_conf/global/app_config.conf' -e 'd}' -i /etc/nginx/conf.d/*
+  sed -e '/{dev_app_config}/{r default_nginx_conf/global/dev_app_config.conf' -e 'd}' -i /etc/nginx/conf.d/*
 elif [[ "${WITH_APP}" == "false" ]]; then
   sed -i '/{app_upstream}/d' /etc/nginx/conf.d/*
+  sed -i '/{dev_app_upstream}/d' /etc/nginx/conf.d/*
   sed -e '/{app_config}/{r default_nginx_conf/global/app_config_default.conf' -e 'd}' -i /etc/nginx/conf.d/*
+  sed -e '/{dev_app_config}/{r default_nginx_conf/global/app_config_default.conf' -e 'd}' -i /etc/nginx/conf.d/*
 fi
 
 if [[ "${XFRAME_SAMEORIGIN}" == "true" ]]; then
@@ -244,9 +256,11 @@ fi
 
 if [[ "${SUPPORT_DEPRECATED_API}" == "true" ]]; then
   sed -e '/{deprecated_api_ce}/{r default_nginx_conf/global/ce/deprecated_api_ce.conf' -e 'd}' -i /etc/nginx/conf.d/*
+  sed -e '/{dev_deprecated_api_ce}/{r default_nginx_conf/global/ce/dev_deprecated_api_ce.conf' -e 'd}' -i /etc/nginx/conf.d/*
   sed -e '/{deprecated_api_pro}/{r default_nginx_conf/global/pro/deprecated_api_pro.conf' -e 'd}' -i /etc/nginx/conf.d/*
 elif [[ "${SUPPORT_DEPRECATED_API}" == "false" ]]; then
   sed -i '/{deprecated_api_ce}/d' /etc/nginx/conf.d/*
+  sed -i '/{dev_deprecated_api_ce}/d' /etc/nginx/conf.d/*
   sed -i '/{deprecated_api_pro}/d' /etc/nginx/conf.d/*
 fi
 
@@ -268,6 +282,7 @@ fi
 sed -e '/{ssl_config}/{r default_nginx_conf/global/ssl_config.conf' -e 'd}' -i /etc/nginx/conf.d/*
 sed -e '/{proxy_config}/{r default_nginx_conf/global/proxy_config.conf' -e 'd}' -i /etc/nginx/conf.d/*
 sed -i "s/{domain_name}/${DOMAIN_OR_PUBLIC_IP}/g" /etc/nginx/conf.d/*
+sed -i "s/{dev_domain_name}/${DEV_DOMAIN_OR_PUBLIC_IP}/g" /etc/nginx/conf.d/*
 
 # Read custom locations and apply them in configuration
 if [[ -d /custom-nginx-locations ]]; then
