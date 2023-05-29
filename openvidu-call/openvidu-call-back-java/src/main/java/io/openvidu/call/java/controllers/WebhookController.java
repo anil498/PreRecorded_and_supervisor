@@ -3,26 +3,25 @@ package io.openvidu.call.java.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import io.openvidu.call.java.Constants.CallType;
 import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.Constants.WebhookEvent;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.SessionWebhook;
 import io.openvidu.call.java.services.SessionCallbackSender;
+import io.openvidu.call.java.services.SessionService;
 import io.openvidu.call.java.threads.NamedThreadPoolFactory;
 import io.openvidu.call.java.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,6 +31,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RestController
 public class WebhookController {
   private static final Logger logger= LoggerFactory.getLogger(WebhookController.class);
+  @Autowired
+  SessionService sessionService;
   @Autowired
   SessionCallbackSender sessionCallbackSender;
   private ExecutorService executorService = Executors.newFixedThreadPool(5,new NamedThreadPoolFactory(SessionConstant.CALLBACK_INVOKER_THREAD));
@@ -62,6 +63,15 @@ public class WebhookController {
               sessionContext.setParticipantJoined(participant.get());
               SessionUtil.getInstance().getSessionIdToSessionContextMap().put(sessionKey, sessionContext);
               logger.info("Participant join {}", sessionContext);
+              String callType=sessionContext.getSessionRequest().getCallType().toUpperCase();
+              switch (CallType.getEnumByKey(callType)){
+                case PRERECORDED:
+                  try {
+                    sessionService.autoPlay(sessionContext.getSessionObject(), sessionContext.getSessionRequest().getVideoUri(), callType);
+                  }catch (Exception e){
+                    logger.error("Getting Exception while playing video {}",e);
+                  }
+              }
               break;
             case PARTICIPANTLEFT:
               participant.getAndDecrement();
@@ -72,7 +82,7 @@ public class WebhookController {
             case SESSIONDESTROYED:
               logger.info("Session Destroyed {}", sessionContext);
               //Send session Callback
-              executeCallbackAsync(sessionKey, sessionWebhook);
+//              executeCallbackAsync(sessionKey, sessionWebhook);
           }
         }else{
           logger.info("No need of this Webhook event sessionId {}",sessionWebhook.getUniqueSessionId());

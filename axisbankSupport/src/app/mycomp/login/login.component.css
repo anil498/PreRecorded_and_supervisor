@@ -65,8 +65,9 @@ table, th, td {
     border-collapse: collapse;
   }
 .callbtn
-{
-    width: 50%;
+{   min-width: auto;
+  width: auto;
+    /* width: 50%; */
     height: 80%;
     background-color:#97144d;
     border:none; 

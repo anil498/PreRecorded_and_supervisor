@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.openvidu.call.java.models.SessionRequest;
-import io.openvidu.call.java.util.CommonUtil;
+import io.openvidu.call.java.services.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -45,6 +45,8 @@ public class RecordingController {
   String accountIdToken;
   @Value(("${USER_AUTH}"))
   String userIdToken;
+  @Autowired
+  SessionService sessionService;
 
 	@Autowired
 	private OpenViduService openviduService;
@@ -107,7 +109,7 @@ public class RecordingController {
 
 		try {
       String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
+      SessionRequest sessionRequest= sessionService.getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
       String sessionId=sessionRequest.getSessionUniqueId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
@@ -150,7 +152,7 @@ public class RecordingController {
 			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) {
 		try {
 			String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest= CommonUtil.getInstance().getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
+      SessionRequest sessionRequest= sessionService.getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
       String sessionId=sessionRequest.getSessionUniqueId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {

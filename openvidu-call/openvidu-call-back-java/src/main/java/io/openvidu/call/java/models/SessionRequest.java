@@ -31,6 +31,8 @@ public class SessionRequest {
   private String participantName;
   private String sessionKey;
   private String sessionSupportKey;
+  private String callType;
+  private String videoUri;
 
   public Boolean getRecording() {
     return isRecording;
@@ -224,6 +226,22 @@ public class SessionRequest {
     this.sessionSupportKey = sessionSupportKey;
   }
 
+  public String getCallType() {
+    return callType;
+  }
+
+  public void setCallType(String callType) {
+    this.callType = callType;
+  }
+
+  public String getVideoUri() {
+    return videoUri;
+  }
+
+  public void setVideoUri(String videoUri) {
+    this.videoUri = videoUri;
+  }
+
   @Override
   public String toString() {
     return "SessionRequest{" +
@@ -251,6 +269,8 @@ public class SessionRequest {
       ", participantName='" + participantName + '\'' +
       ", sessionKey='" + sessionKey + '\'' +
       ", sessionSupportKey='" + sessionSupportKey + '\'' +
+      ", callType='" + callType + '\'' +
+      ", videoUri='" + videoUri + '\'' +
       '}';
   }
 }

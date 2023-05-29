@@ -41,7 +41,7 @@ public class OpenviduClientController {
 
     @PostMapping("/get")
     public ResponseEntity<?> featureList(@RequestBody Map<String,String> params, HttpServletRequest request) throws JsonProcessingException {
-        logger.info("API Request {} {}",request,params);
+        logger.info("Rest API {} Request {} and Params {}",RequestMappings.APICLIENT,request,params);
         String authKey = request.getHeader("Authorization");
         int check = isValidAuthKey(authKey);
         logger.info("Check val .. " + check);
@@ -66,8 +66,7 @@ public class OpenviduClientController {
         SessionEntity session = sessionRepository.findBySessionKey(sessionKey);
         SessionEntity sess = sessionRepository.findBySessionSupportKey(sessionKey);
         int userId=0;
-        logger.info(String.valueOf(session));
-        if(session==null){
+        if(session == null){
             userId=sess.getUserId();
             response.put("session",sessionRepository.findBySessionSupportKey(sessionKey));
         }

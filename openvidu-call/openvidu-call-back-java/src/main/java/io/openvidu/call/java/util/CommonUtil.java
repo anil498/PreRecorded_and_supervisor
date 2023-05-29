@@ -63,7 +63,12 @@ public class CommonUtil {
 //          Gson gson=new Gson();
 //          JsonObject jsonObject=gson.fromJson(jsonString.toString(),JsonObject.class);
       Gson gson = new Gson();
-      String jsonString = videoPlatformService.getVideoPlatformProperties(accountIdToken, userIdToken, sessionIdKey);
+      String jsonString=null;
+      try {
+         jsonString = videoPlatformService.getVideoPlatformProperties(accountIdToken, userIdToken, sessionIdKey);
+      }catch (Exception e){
+        logger.error("Getting Exception while fetching details from videoPlatform {}",e);
+      }
       logger.info(jsonString);
       JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
       JsonElement jsonElement = jsonObject.getAsJsonObject("session").get("sessionId");

@@ -1,0 +1,179 @@
+
+
+<ov-videoconference
+	[tokens]="tokens"
+	[minimal]="false"
+	[lang]="'en'"
+	[captionsLang]=""
+	[captionsLangOptions]="[{ name: 'Spanish', ISO: 'es-ES' },{ name: 'English', ISO: 'en-US' }]"
+	[prejoin]="true"
+	[participantName]="'Participant'"
+	[videoMuted]="false"
+	[audioMuted]="false"
+	[toolbarScreenshareButton]="true"
+	[toolbarFullscreenButton]="true"
+	[toolbarCaptionsButton]="true"
+	[toolbarRecordingButton]="true"
+	[toolbarBroadcastingButton]="true"
+	[toolbarBackgroundEffectsButton]="true"
+	[toolbarLeaveButton]="true"
+	[toolbarChatPanelButton]="true"
+	[toolbarParticipantsPanelButton]="true"
+	[toolbarDisplayLogo]="true"
+	[toolbarDisplaySessionName]="true"
+	[streamDisplayParticipantName]="true"
+	[streamDisplayAudioDetection]="true"
+	[streamSettingsButton]="true"
+	[participantPanelItemMuteButton]="true"
+	[activitiesPanelRecordingActivity]="true"
+	[recordingActivityRecordingsList]="recordingList"
+	[recordingActivityRecordingError]="recordingError"
+	[broadcastingActivityBroadcastingError]="broadcastingError"
+	[toolbarSettingsButton]="true"
+	(onJoinButtonClicked)="onJoinClicked()"
+	(onToolbarLeaveButtonClicked)="onToolbarLeaveButtonClicked()"
+	(onToolbarCameraButtonClicked)="onToolbarCameraButtonClicked()"
+	(onToolbarMicrophoneButtonClicked)="onToolbarMicrophoneButtonClicked()"
+	(onToolbarScreenshareButtonClicked)="onToolbarScreenshareButtonClicked()"
+	(onToolbarFullscreenButtonClicked)="onToolbarFullscreenButtonClicked()"
+	(onToolbarParticipantsPanelButtonClicked)="onToolbarParticipantsPanelButtonClicked()"
+	(onToolbarChatPanelButtonClicked)="onToolbarChatPanelButtonClicked()"
+	(onToolbarStartRecordingClicked)="onStartRecordingClicked()"
+	(onToolbarStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelStartRecordingClicked)="onStartRecordingClicked()"
+	(onActivitiesPanelStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelDeleteRecordingClicked)="onDeleteRecordingClicked($event)"
+	(onActivitiesPanelStartBroadcastingClicked)="onStartBroadcastingClicked($event)"
+	(onActivitiesPanelStopBroadcastingClicked)="onStopBroadcastingClicked()"
+	(onToolbarStopBroadcastingClicked)="onStopBroadcastingClicked()"
+	(onNodeCrashed)="onNodeCrashed()"
+	(onSessionCreated)="subscribeToParticipants()"
+>
+
+
+<!-- For Additional Buttons -->
+
+	<div *ovToolbarAdditionalButtons style="text-align: center;">
+		
+		<button
+		mat-icon-button
+		(click)="uploadfile()"
+		class="button"
+		title = "Upload File"
+	>
+	
+		<mat-icon>
+			upload_file
+		</mat-icon>
+		</button>
+
+		<button
+			mat-icon-button
+			(click)="savebutton()"
+			class="button"
+			title = "Save Video"
+		>
+		
+			<mat-icon>
+				save
+			</mat-icon>
+		</button> 
+		<button
+			mat-icon-button
+			(click)="playvideobutton()"
+			class="button"
+			title = "Play Video"
+		>
+		
+			<mat-icon>
+				play_arrow
+			</mat-icon>
+		</button>
+
+		<button
+			mat-icon-button
+			(click)="opendialog()"
+			download
+			class="button"
+			title = "Open Video Controls"
+		>
+		
+			<mat-icon>
+				menu_open
+			</mat-icon>
+		</button>
+
+		<!-- <button
+			mat-icon-button
+			(click)="playPauseButton()"
+			class="button"
+			title = "Play/Pause Video"
+		>
+		
+			<mat-icon>
+				play_circle
+			</mat-icon>
+		</button> -->
+		
+		<!-- <button
+			mat-icon-button
+			(click)="exitbutton()"
+			class="button"
+			title = "Exit  Video"
+		>
+		
+			<mat-icon>
+				close
+			</mat-icon>
+		</button> -->
+
+		<!-- <button
+			mat-icon-button
+			(click)="mutebutton()"
+			class="button"
+			title = "Mute Audio"
+		>
+		
+			<mat-icon>
+				volume_off
+			</mat-icon>
+		</button>  -->
+
+		
+
+
+		
+		
+
+		
+	  </div>
+
+
+	  
+
+    
+
+
+	  
+	  
+	  <!-- <video #video autoplay controls></video> -->
+
+	  <!-- For Custom Layout -->
+
+
+	  <!-- <div *ovLayout>
+		<div class="layout">
+		  <div class="item" *ngFor="let stream of localParticipant | streams">
+			<ov-stream [stream]="stream"></ov-stream>
+		  </div>
+		  <div class="item2" *ngFor="let stream of remoteParticipants | streams">
+			<ov-stream [stream]="stream"></ov-stream>
+		  </div>
+		</div>
+	  </div> -->
+
+	  
+</ov-videoconference>
+
+
+

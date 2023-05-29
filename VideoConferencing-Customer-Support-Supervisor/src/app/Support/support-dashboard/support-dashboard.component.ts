@@ -1,3 +1,6 @@
+
+//All the imports
+
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../services/websocket.service';
@@ -22,68 +25,86 @@ export class SupportDashboardComponent implements OnInit {
 	busy: boolean;
 	open: boolean;
 	count: boolean;
-
+	id: string;
 	count2: any = 0;
 
 	// Constructor for declaring objects
-	 
+
 	constructor(
 		private router: Router,
 		private webSocketService: WebSocketService,
 		private confirmationDialogService: ConfirmationDialogService
 	) {}
 
+	//Main function
+
 	ngOnInit(): void {
 		if (this.webSocketService.status != true) {
-			let stompClient = this.webSocketService.connect();
 
+			let stompClient = this.webSocketService.connect();
 			stompClient.connect({}, (frame) => {
-				// Subscribe to notification topic
+
+				// Subscribe to topic/support
+
 				stompClient.subscribe('/topic/support', (notifications) => {
-					console.log(this.router.url);
+					
+					console.log("Current route : "+this.router.url);
 					this.sessionId1 = JSON.parse(notifications.body).sessionId;
 					this.count = JSON.parse(notifications.body).count;
-					console.log(this.count);
+					console.log("Current Count : "+this.count);
+					
 					if (this.router.url === '/support' && this.open != true) {
+
 						this.sessionId = JSON.parse(notifications.body).sessionId;
 						this.openConfirmationDialog();
 						this.open = true;
 						this.onMessageReceived(notifications.body);
+
 					} else if (this.count != true) {
-						console.log(this.count);
+
+						console.log("Current Count : "+this.count);
 						this.webSocketService.available(this.sessionId1);
 					}
 				});
-				stompClient.subscribe('/topic/support', (notifications) => {
-					this.sessionId = JSON.parse(notifications.body).sessionId;
-					console.log('alert' + this.router.url);
-					if (this.router.url === '/') {
-						this.confirmationDialogService.close(false);
+
+				// Subscribe to topic/sendname
+
+				stompClient.subscribe('/topic/sendname', (notifications) => {
+
+					this.name = JSON.parse(notifications.body).sessionId;
+					console.warn('Name Recieved : ' + this.name);
+
+					if (this.name == undefined) {
+
+						this.name = 'Customer';
+						console.log("Default Name : "+this.name);
 					}
 				});
 			});
 		}
 	}
 
+	//Function to open ConfirmationDialog
+
 	public openConfirmationDialog() {
-		// this.sessionId = 'daily-call';
-		
-		console.log('Notification');
+
+		console.log('COnfirmation Dialog');
+
 		this.confirmationDialogService
-			.confirm('CustomerVideo Call Request..', 'Do you really want to Join ... ?')
+			.confirm(this.name + ' Video Call Request..', 'Do you really want to Join ... ?')
 			.then((confirmed) => {
 				console.log('User confirmed:', confirmed);
 				if (confirmed) {
-					console.warn(this.sessionId);
+					console.warn("SessionId is : "+this.sessionId);
 					this.goTo('call-support');
 
-					this.session_message = 'confirmed'
+					this.session_message = 'confirmed';
 					this.webSocketService.send(this.session_message);
 					this.busy = true;
 					this.open = true;
 				} else {
 					this.session_message = 'notconfirmed';
-					this.webSocketService.available(this.session_message);
+					this.webSocketService.send(this.session_message);
 				}
 
 				if (this.open != true) {
@@ -91,22 +112,27 @@ export class SupportDashboardComponent implements OnInit {
 				}
 				this.open = false;
 			})
-			.catch(() => (
-				this.open = false , this));
+			.catch(() => ((this.open = false), this));
 	}
 
+	//Goto Function to navugate to other component
+
 	goTo(path: string) {
+
 		console.log('Route SessionId' + this.sessionId);
 		this.confirmationDialogService.close(false);
 		this.router.navigate([`/${path}`, this.sessionId]);
 	}
+
 	handleMessage(message) {
 		this.message = JSON.parse(message).sessionId;
 		console.log(this.message);
 	}
+
 	onMessageReceived(message) {
 		console.log('Message Recieved from Server : ' + message);
 		this.handleMessage(message);
 	}
+	
 	hidebyOther() {}
 }

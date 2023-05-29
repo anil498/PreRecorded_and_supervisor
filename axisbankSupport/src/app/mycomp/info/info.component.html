@@ -15,13 +15,13 @@
     <form (submit)="onsubmit()">
       <div class="form-group">
         <label for="username">Username or Customer ID:</label>
-        <input type="text" [(ngModel)]="username" name="username" placeholder="Username">
+        <input type="text" [(ngModel)]="username" name="username" placeholder="Enter your name" required />
 
         <!-- <input type="text" id="username" name="username" /> -->
       </div>
       <div class="form-group">
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password" />
+        <input type="password" id="password" name="password" placeholder="Enter your password" required />
         <a href="#" class="forgot-password">Forgot Password?</a>
       </div>
       <div class="form-group">

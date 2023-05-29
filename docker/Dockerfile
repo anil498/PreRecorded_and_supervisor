@@ -1,4 +1,4 @@
-# Build OpenVidu Call for production
+# Build videoplatform for production
 FROM node:lts-alpine3.16 as video-platform-build
 
 WORKDIR /
@@ -7,24 +7,15 @@ ARG BASE_HREF=/
 
 COPY . .
 
-RUN npm install --location=global npm
-
-# Build OpenVidu Call frontend
-# RUN rm mcarbonPortal/package-lock.json && \
-    # Install frontend dependencies and build it for production
-RUN cd mcarbonPortal && npm install --force && \
-    npm run prod:build-java ${BASE_HREF} && \
-    cd ../ && rm -rf mcarbonPortal
-
 FROM maven
 
-WORKDIR /opt/video-platform
+WORKDIR /opt/videoplatform
 
 COPY --from=video-platform-build /VideoPlatformBackend .
 
 # Install backend dependencies and build it for production
 RUN mvn clean install package
-
+RUN mv  target/*.jar target/openvidu_db-backend.jar
 # Entrypoint
 COPY ./java-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN cat /usr/local/bin/entrypoint.sh

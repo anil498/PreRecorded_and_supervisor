@@ -23,11 +23,37 @@ export class WebSocketService {
     }
     public send(message){
         const body = { "sessionId": message};
-        this.stompClient.send("/topic/support", {}, JSON.stringify(body));       
+        this.stompClient.send("/topic/callconfirmation", {}, JSON.stringify(body));       
+    }
+
+    public sendname(message){
+        const body = { "sessionId": message};
+        this.stompClient.send("/topic/sendname", {}, JSON.stringify(body));       
+    }
+
+    public mergecall(message){
+        const body = { "sessionId": message};
+        this.stompClient.send("/topic/mergecall", {}, JSON.stringify(body));       
+    }
+
+    public confirmation(message){
+        const body = { "sessionId": message};
+        this.stompClient.send("/topic/supercallconfirmation", {}, JSON.stringify(body));       
+    }
+
+    public hide(message){
+        const body = { "sessionId": message};
+        this.stompClient.send("/topic/hide", {}, JSON.stringify(body));       
+    }
+
+    public unhold(message){
+        const body = { "sessionId": message};
+        this.stompClient.send("/topic/unhold", {}, JSON.stringify(body));       
     }
 
     public alert(message){
-        this.stompClient.send("/topic/support", {}, JSON.stringify(message));    
+        const body = { "sessionId": message};
+        this.stompClient.send("/topic/alert", {}, JSON.stringify(body));    
     }
     public available(message){
         const body = { "sessionId": message};

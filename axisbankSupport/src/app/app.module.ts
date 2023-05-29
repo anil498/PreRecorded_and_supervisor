@@ -11,6 +11,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import {MatIconModule} from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { DataService } from './Services/Data.service';
 
 @NgModule({
   declarations: [
@@ -25,9 +26,10 @@ import { FormsModule } from '@angular/forms';
     MatButtonToggleModule,
     MatIconModule,
     HttpClientModule,
+    
     FormsModule
   ],
-  providers: [],
+  providers: [DataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

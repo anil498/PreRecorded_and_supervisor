@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import * as XLSX from 'xlsx';
 import { RestService } from 'src/app/Services/rest.service';
+import { HttpClient } from '@angular/common/http';
+import { DataService } from 'src/app/Services/Data.service';
 
 @Component({
   selector: 'app-login',
@@ -21,109 +23,160 @@ export class LoginComponent {
   // upname:string='anil';
   userinfo:string='';
   dateTimeString :string='';
-  // data!:any;
-  data = [
-    {
-      Name: 'Saheemuddin Khan',
-      'Phone No': '8285955472',
-      Address: 'SMS Noida',
+  data!:any;
+  // data = [
+  //   // Mr. Sanjay Sinha - 9910234718
+  //   {
+  //     Name: 'Mr. Sanjay Sinha',
+  //     'Phone No': '9910234718',
+  //     Address: 'SMS Noida',
       
-      'Last Interaction Mode':'SMS',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'SMS',
+  //     'Last Interaction Mode':'WhatsApp',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'WhatsApp',
+  //   },
+  //   // Mr. Rajendra Bhandhare - 9833607063
+  //   {
+  //     Name: 'Mr. Rajendra Bhandhare',
+  //     'Phone No': '9833607063',
+  //     Address: 'WhatsApp Mumbai',
+      
+  //     'Last Interaction Mode':'SMS',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'SMS',
 
-    },
-    {
-      Name: 'Saheemuddin Khan',
-      'Phone No': '8285955472',
-      Address: 'WhatsApp Noida',
-      
-      'Last Interaction Mode':'WhatsApp',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'WhatsApp',
-    },
-    {
-      Name: 'Saheemuddin Khan',
-      'Phone No': '8285955472',
-      Address: 'App Noida',
-      
-      'Last Interaction Mode':'CallToApp',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'CallToApp',
-    },
-    {
-      Name: 'Pranjal Mishra',
-      'Phone No': '9958333645',
-      Address: 'SMS Chennai',
-      'Last Interaction Mode':'SMS',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'SMS',
-    },
-    {
-      Name: 'Pranjal Mishra',
-      'Phone No': '9958333645',
-      Address: 'WhatsApp Chennai',
-      'Last Interaction Mode':'WhatsApp',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'WhatsApp',
-    },
-    {
-      Name: 'Anil Kumar',
-      'Phone No': '9636189023',
-      Address: 'App Chennai',
-      'Last Interaction Mode':'CallToApp',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'CallToApp',
-    },
-    {
-      Name: 'Anil Kumar',
-      'Phone No': '9636189023',
-      Address: 'SMS Chennai',
-      'Last Interaction Mode':'SMS',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M ',
-      'Send Video Call Link': 'SMS',
-    },
-    {
-      Name: 'Gaurav ',
-      'Phone No': '9560553080',
-      Address: 'WhatsApp Noida',
-      //  
-      'Last Interaction Mode':'WhatsApp',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'WhatsApp',
-    },
-    {
-      Name: 'Prashant',
-      'Phone No': '9639500599',
-      Address: 'APP Rajasthan',
-     
-      'Last Interaction Mode':'CallToApp',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'CallToApp',
-    },
-    {
-      Name: 'Vatsala',
-      'Phone No': '9984392555',
-      Address: 'SMS Noida',
-      
-      'Last Interaction Mode':'SMS',
-      'Last Interaction Time':'5/5/2023, 10:44 A.M',
-      'Send Video Call Link': 'WhatsApp',
-    },
+  //   },
     
    
-  ];
-  constructor(private router: Router,private aroute: ActivatedRoute, private restservice: RestService) {
-    this.headers = Object.keys(this.data[0]);
-    this.rows = this.data;
+  //   //Mr. Narayanan - 9769029125
+  //   {
+  //     Name: 'Mr. Narayanan',
+  //     'Phone No': '9769029125',
+  //     Address: 'App Mumbai',
+      
+  //     'Last Interaction Mode':'CallToApp',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'CallToApp',
+  //   },
+  //   {
+  //     Name: 'Mr. Narayanan',
+  //     'Phone No': '9769029125',
+  //     Address: 'SMS Mumbai',
+  //     'Last Interaction Mode':'SMS',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'SMS',
+  //   },
+  //   {
+  //     Name: 'Mr. Narayanan',
+  //     'Phone No': '9769029125',
+  //     Address: 'WhatsApp Mumbai',
+  //     'Last Interaction Mode':'WhatsApp',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'WhatsApp',
+  //   },
+  //   //Pallavi - 9773603893
+  //   {
+  //     Name: 'Pallavi',
+  //     'Phone No': '9773603893',
+  //     Address: 'App Mumbai',
+  //     'Last Interaction Mode':'CallToApp',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'CallToApp',
+  //   },
+  //   {
+  //     Name: 'Pallavi',
+  //     'Phone No': '9773603893',
+  //     Address: 'SMS Mumbai',
+  //     'Last Interaction Mode':'SMS',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M ',
+  //     'Send Video Call Link': 'SMS',
+  //   },
+  //   {
+  //     Name: 'Pallavi',
+  //     'Phone No': '9773603893',
+  //     Address: 'WhatsApp Mumbai',
+  //     //  
+  //     'Last Interaction Mode':'WhatsApp',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'WhatsApp',
+  //   },
+  //   {
+  //     Name: 'Anil',
+  //     'Phone No': '9636189023',
+  //     Address: 'APP Rajasthan',
+     
+  //     'Last Interaction Mode':'CallToApp',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'CallToApp',
+  //   },
+  //   {
+  //     Name: 'Saheemuddin',
+  //     'Phone No': '8285955472',
+  //     Address: 'SMS Noida',
+      
+  //     'Last Interaction Mode':'SMS',
+  //     'Last Interaction Time':'5/5/2023, 10:44 A.M',
+  //     'Send Video Call Link': 'WhatsApp',
+  //   },
+    
+   
+  // ];
+  constructor(private router: Router,private aroute: ActivatedRoute,private dataService:DataService ,private restservice: RestService,private http: HttpClient) {
+   
+    //  this.data=this.readJSONData();
+    //  console.log("data in constru---"+this.data);
+    // this.headers = Object.keys( this.data[0]);
+    // console.log("headers in constru--"+this.headers);
+    // this.rows = this.data;
+    // console.log("ro are in constr-->"+this.rows);
     // this.showData();
+    this.username=this.dataService.shareusername;
+    console.log("username in table"+this.username);
+    this.getData();
+    
+    
   }
   ngOnInit(): void {
     
-    this.aroute.queryParams.subscribe(params => {
-      this.username = params['username'];
+    // this.aroute.queryParams.subscribe(params => {
+    //   this.username = params['username'];
+    // });
+    // console.log("username in table"+this.username);
+  }
+////------------------------------------
+
+
+///---------------------------------------
+getData() {
+  let x=this.getCurrentTime();
+  this.http.get<any[]>('assets/data.json?'+x).subscribe(
+    (response: any[]) => {
+      const firstObject = response[0];
+      console.log(firstObject);
+      console.log(firstObject['Phone No']);
+      
+      this.headers = Object.keys( response[0]);
+      console.log("headers are in get data -->"+this.headers);
+    this.rows = response;
+    this.data=response;
+    console.log("ro are in get data-->"+this.rows);
+      // Perform additional operations with the data
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
+}  
+///-------------------------------------------
+  readJSONData() {
+    
+    this.http.get('assets/data.json').subscribe((dataa) => {
+      // Process the JSON data here
+      console.log(dataa);
+      this.headers = Object.keys( dataa);
+    this.rows = this.data;
+      return dataa;
     });
-    console.log("username in table"+this.username);
   }
 
   // showData() {
@@ -229,6 +282,7 @@ export class LoginComponent {
 
   ConnectToUserClick(phone_no: string, connecttype: string,index: number): void {
 
+    console.log("ConnectToUserClick run");
     this.userinfo="Name: "+this.data[index].Name+","+" PhoneNo: "+this.data[index]['Phone No']
     +","+" Address: "+this.data[index].Address;
 
@@ -239,14 +293,14 @@ export class LoginComponent {
     
     this.data[index]['Last Interaction Time']=this.getCurrentTime();;
      ///
-       let choice=-1;
-       choice=index%3;
-       if(choice==0)
-       connecttype ='SMS'
-       else if(choice==1)
-       connecttype == 'WhatsApp'
-       else 
-       connecttype == 'CallToApp'
+      //  let choice=-1;
+      //  choice=index%3;
+      //  if(choice==0)
+      //  connecttype ='SMS'
+      //  else if(choice==1)
+      //  connecttype == 'WhatsApp'
+      //  else 
+      //  connecttype == 'CallToApp'
 
      ///
 

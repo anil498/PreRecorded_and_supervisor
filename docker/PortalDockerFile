@@ -1,0 +1,12 @@
+### STAGE 1: Build ###
+FROM node:16.10-alpine AS build
+WORKDIR /opt/videoplatform
+COPY /mcarbonPortal .
+RUN npm install --force
+
+RUN npm run build
+### STAGE 2: Run ###
+FROM nginx:1.17.1-alpine
+RUN ls -ltrh
+COPY docker/PortalNginx.conf /etc/nginx/nginx.conf
+COPY --from=build /opt/videoplatform/dist /usr/share/nginx/html

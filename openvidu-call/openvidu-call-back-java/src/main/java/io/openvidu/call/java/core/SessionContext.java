@@ -15,6 +15,7 @@ public class SessionContext implements Serializable {
   private Connection connectionObject;
   @Id
   private String sessionUniqueId;
+  private String sessionKey;
   private String callType;
   private int participantJoined;
   public static class Builder {
@@ -23,6 +24,7 @@ public class SessionContext implements Serializable {
     private Session sessionObject;
     private Connection connectionObject;
     private String sessionUniqueId;
+    private String sessionKey;
     private String callType;
     private int participantJoined;
     public Builder sessionRequest (SessionRequest sessionRequest){
@@ -53,6 +55,10 @@ public class SessionContext implements Serializable {
       this.participantJoined=participantJoined;
       return this;
     }
+    public Builder sessionKey(String sessionKey){
+      this.sessionKey=sessionKey;
+      return this;
+    }
     public SessionContext build () {
     SessionContext sessionContext = new SessionContext();
     sessionContext.setSessionRequest(this.sessionRequest);
@@ -62,6 +68,7 @@ public class SessionContext implements Serializable {
     sessionContext.setSessionUniqueId(this.sessionUniqueId);
     sessionContext.setCallType(this.callType);
     sessionContext.setParticipantJoined(this.participantJoined);
+    sessionContext.setSessionKey(this.sessionKey);
     return sessionContext;
     }
   }
@@ -123,6 +130,14 @@ public class SessionContext implements Serializable {
     this.participantJoined = participantJoined;
   }
 
+  public String getSessionKey() {
+    return sessionKey;
+  }
+
+  public void setSessionKey(String sessionKey) {
+    this.sessionKey = sessionKey;
+  }
+
   @Override
   public String toString() {
     return "SessionContext{" +
@@ -131,6 +146,7 @@ public class SessionContext implements Serializable {
       ", sessionObject=" + sessionObject +
       ", connectionObject=" + connectionObject +
       ", sessionUniqueId='" + sessionUniqueId + '\'' +
+      ", sessionKey='" + sessionKey + '\'' +
       ", callType='" + callType + '\'' +
       ", participantJoined=" + participantJoined +
       '}';

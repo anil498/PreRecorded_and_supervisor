@@ -61,8 +61,8 @@ public class VideoPlatform {
     }
     final HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create().setConnectionTimeToLive(TimeValue.ofSeconds(30)).build();
 
-    RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(30, TimeUnit.SECONDS)
-      .setConnectionRequestTimeout(30, TimeUnit.SECONDS).setResponseTimeout(30, TimeUnit.SECONDS).build();
+    RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(300, TimeUnit.SECONDS)
+      .setConnectionRequestTimeout(300, TimeUnit.SECONDS).setResponseTimeout(300, TimeUnit.SECONDS).build();
 
     this.httpClient = HttpClients.custom().setConnectionManager(connectionManager)
       .setDefaultRequestConfig(requestConfig).build();
@@ -77,7 +77,7 @@ public class VideoPlatform {
     this.httpClient = builder.build();
   }
 
-  public String getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey) {
+  public String getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey) throws IOException {
     HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
       public String handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
         int status = response.getCode();
@@ -96,14 +96,20 @@ public class VideoPlatform {
     request.setHeader("Authorization", accountIdToken);
     request.setHeader("Token", userIdToken);
     request.setEntity(params);
+    CloseableHttpResponse response = null;
     try {
-      return this.httpClient.execute(request, responseHandler);
-    } catch (IOException e) {
+      response = this.httpClient.execute(request);
+      return responseHandler.handleResponse(response);
+    } catch (IOException | HttpException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
+    } finally {
+      if (response != null) {
+        response.close();
+      }
     }
   }
 
-  public HashMap<String, Integer> getExpiredTimer() {
+  public HashMap<String, Integer> getExpiredTimer() throws IOException {
     HttpClientResponseHandler<HashMap<String, Integer>> responseHandler = new HttpClientResponseHandler<HashMap<String, Integer>>() {
       public HashMap<String, Integer> handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
         int status = response.getCode();
@@ -124,14 +130,20 @@ public class VideoPlatform {
     HttpPost request = new HttpPost(this.hostname + API_PATH + API_FEATURES);
     request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
 //    request.setEntity(params);
+    CloseableHttpResponse response = null;
     try {
-      return this.httpClient.execute(request, responseHandler);
-    } catch (IOException e) {
+      response = this.httpClient.execute(request);
+      return responseHandler.handleResponse(response);
+    } catch (IOException | HttpException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
+    } finally {
+      if (response != null) {
+        response.close();
+      }
     }
   }
 
-  public boolean sendSessionCallback(SessionCallback sessionCallback, int callbackRetryAttempts) {
+  public boolean sendSessionCallback(SessionCallback sessionCallback, int callbackRetryAttempts) throws IOException {
     StringEntity params = new StringEntity(sessionCallback.toString(), StandardCharsets.UTF_8);
     HttpPost request = new HttpPost(this.hostname + API_PATH + API_CALLBACK);
     request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -141,16 +153,13 @@ public class VideoPlatform {
 
     RetryConfig retryConfig = RetryConfig.custom().maxAttempts(callbackRetryAttempts).build();
     Retry retry = Retry.of("callbackRetry", retryConfig);
-    try {
-      CloseableHttpResponse response = retry.executeCallable(() -> httpClient.execute(request));
-
+    try(CloseableHttpResponse response = retry.executeCallable(() -> httpClient.execute(request))) {
       int statusCode = response.getCode();
       logger.info("Response code: {}", statusCode);
 
       if (statusCode == HttpStatus.SC_OK) {
         String responseBody = EntityUtils.toString(response.getEntity());
         logger.info("Response body: {}", responseBody);
-        response.close();
         return true;
       } else {
         logger.error("Getting error {}", statusCode);

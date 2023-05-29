@@ -34,10 +34,11 @@ export class CallComponent implements OnInit {
 
 			const body = {
 				notifyTo: 'support',
-				sessionId: 'daily-call2'
+				sessionId: this.sessionId
 			};
 	
-			this.restService.postRequest('daily-call2' , body);
+			this.restService.postRequest(this.sessionId , body);
+
 
 			let stompClient = this.webSocketService.connect();
 

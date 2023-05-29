@@ -113,17 +113,17 @@ public class MessageApiController {
         if(params.containsKey("userInfo")){
             userInfo= String.valueOf(params.get("userInfo"));
         }
-        String sessionKey = storeSessions(token,authKey,msisdn,userInfo);
-        String callUrl= callPrefix+sessionKey;
+        SessionEntity sessionEntity = storeSessions(token,authKey,msisdn,userInfo);
+        String callUrl= callPrefix+sessionEntity.getSessionKey();
 //        String callUrl = callPrefix+sessionKey;
-        String callUrlSupport = callPrefix+sessionKey+"_1";
+        String callUrlSupport = callPrefix+sessionEntity.getSessionSupportKey();
         logger.info(callUrl);
         SubmitResponse responseSms=messagingService.sendSms(request,response,msisdn,callUrl);
         responseSms.setCallUrl(callUrl);
         HashMap<String,String> res=new HashMap<>();
         res.put("callurl",callUrlSupport);
         logger.info(String.valueOf(responseSms));
-        return ResponseEntity.ok(sessionRepository.findBySessionKey(sessionKey));
+        return ResponseEntity.ok(res);
  //       return responseSms;
     }
     @PostMapping ("/sendWhatsapp")
@@ -152,13 +152,13 @@ public class MessageApiController {
         if(params.containsKey("userInfo")){
             userInfo= String.valueOf(params.get("userInfo"));
         }
-        String sessionKey = storeSessions(token,authKey,to,userInfo);
-        String placeHolder= callPrefix+sessionKey;
-        String callUrlSupport = callPrefix+sessionKey+"_1";
+        SessionEntity sessionEntity = storeSessions(token,authKey,to,userInfo);
+        String placeHolder= callPrefix+sessionEntity.getSessionKey();
+        String callUrlSupport = callPrefix+sessionEntity.getSessionSupportKey();
 //        String placeHolder= "https://demo2.progate.mobi"+(String) params.get("callUrl");
 //        String sessionId =getHeaders(request).get("sessionid");
 
-        String callUrl= callPrefix+sessionKey;
+        String callUrl= callPrefix+sessionEntity.getSessionKey();
 //        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.API, params != null ? params.toString() : "{}",getHeaders(request));
         SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateid);
@@ -166,7 +166,7 @@ public class MessageApiController {
         HashMap<String,String> res=new HashMap<>();
         res.put("callurl",callUrlSupport);
         logger.info("Request response {}",responseSms);
-        return ResponseEntity.ok(sessionRepository.findBySessionKey(sessionKey));
+        return ResponseEntity.ok(res);
 //        return responseSms;
     }
 
@@ -210,30 +210,27 @@ public class MessageApiController {
             if(params.containsKey("userInfo")){
                 userInfo= String.valueOf(params.get("userInfo"));
             }
-            String sessionKey = storeSessions(token,authKey,phoneNumber,userInfo);
-
-            SessionEntity sess = sessionRepository.findBySessionKey(sessionKey);
-            String sessionId = sess.getSessionId();
-
+            SessionEntity sessionEntity = storeSessions(token,authKey,phoneNumber,userInfo);
             HashMap<String,String> res=new HashMap<>();
             HashMap<String, String>map= new HashMap<>();
             map.put("TITLE",title);
-            map.put("SESSION_ID",sessionId);
+            map.put("SESSION_ID",sessionEntity.getSessionId());
             map.put("BODY",body);
+
 
             Message message = Message.builder()
                     .setToken(appNotification.getUsertoken())
                     .putAllData(map)
                     .build();
 
-            String callUrl = callPrefix+sessionKey;
-            String callUrlSupport = callPrefix+sessionKey+"_1";
+            String callUrl = callPrefix+sessionEntity.getSessionKey();
+            String callUrlSupport = callPrefix+sessionEntity.getSessionSupportKey();
             // Send notification message
             String id=firebaseMessaging.send(message);
             res.put("id",id);
 
             res.put("callurl",callUrlSupport);
-            return new ResponseEntity<>(sessionRepository.findBySessionKey(sessionKey), HttpStatus.OK);
+            return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
             //   looger.error("Getting Exception While Submitting the message {}",e.getStackTrace());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -262,7 +259,7 @@ public class MessageApiController {
             return false;
         return true;
     }
-    private String storeSessions(String token,String authKey,String msisdn,String userInfo){
+    private SessionEntity storeSessions(String token,String authKey,String msisdn,String userInfo){
         String creation = LocalDateTime.now().format(formatter);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
@@ -287,7 +284,7 @@ public class MessageApiController {
         session.setExpDate(String.valueOf(newDateTime));
 
         sessionRepository.save(session);
-        return session.getSessionKey();
+        return session;
     }
     private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
 

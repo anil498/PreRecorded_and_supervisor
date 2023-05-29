@@ -168,7 +168,7 @@ public class OpenViduService {
 		return session;
 	}
 
-	public Connection createConnection(Session session, String nickname, OpenViduRole role,String key)
+	public Connection createConnection(Session session, String nickname, OpenViduRole role)
 			throws OpenViduJavaClientException, OpenViduHttpException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		Map<String, Object> connectionData = new HashMap<String, Object>();
@@ -176,7 +176,6 @@ public class OpenViduService {
 		if (!nickname.isEmpty()) {
 			connectionData.put("openviduCustomConnectionId", nickname);
 		}
-    connectionData.put("sessionKey",key);
 		params.put("role", role.name());
 		params.put("data", connectionData.toString());
 		ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
@@ -236,5 +235,8 @@ public class OpenViduService {
 	public void stopBroadcast(String sessionId) throws OpenViduJavaClientException, OpenViduHttpException {
 		this.openvidu.stopBroadcast(sessionId);
 	}
+  public Session getActiveSession(String sessionId) {
+    return openvidu.getActiveSession(sessionId);
+  }
 
 }
