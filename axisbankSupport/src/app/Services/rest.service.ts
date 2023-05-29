@@ -32,7 +32,7 @@ export class RestService {
 
     
     //mychnage run sms and chat
-     //this.url = 'https://demo2.progate.mobi';
+    // this.url = 'https://demo2.progate.mobi';
     this.url='https://demos.progate.mobi';
     this.getKeys();
   } //constructur close
