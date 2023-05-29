@@ -7,7 +7,7 @@
     "dev:build": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/",
     "prod:build": "ng build --output-path ../openvidu-call-back/dist/public/ ",
     "dev:build-path": "./node_modules/@angular/cli/bin/ng.js build --output-path /opt/videoplatform/dist/",
-    "prod:build-path": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path /opt/videoplatform/dist/ --configuration production --base-href=\"${1:-/}\"; }; func",
+    "prod:build-path": "ng build --output-path /opt/videoplatform/dist/ ",
     "e2e:basic": "tsc --project ./e2e && npx mocha --recursive --timeout 30000 ./e2e/dist/openvidu-call.test.js",
     "e2e:auth": "tsc --project ./e2e && npx mocha --recursive --timeout 30000 ./e2e/dist/openvidu-call.auth.test.js",
     "e2e:basic-ci": "cross-env LAUNCH_MODE=CI npm run e2e:basic",
