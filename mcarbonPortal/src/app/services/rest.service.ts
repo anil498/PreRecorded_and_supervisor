@@ -288,11 +288,15 @@ export class RestService {
       maxUser,
       expDate,
 
+      accessId,
       session: {
         maxDuration,
         maxParticipants,
         maxActiveSessions,
       },
+
+      features,
+      featureMeta,
 
       fname,
       lname,

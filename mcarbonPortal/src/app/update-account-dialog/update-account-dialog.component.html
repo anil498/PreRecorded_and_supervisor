@@ -149,14 +149,16 @@
 
         <div class="row">
           <section class="example-section">
-            <mat-checkbox
-              *ngFor="let access of accessData"
-              [value]="access.access_id"
-              class="col-md-3 offset-md-1"
-              (change)="addAccessId(access, $event.checked)"
+            <ng-container *ngFor="let access of accessData">
+              <mat-checkbox
+                [value]="access.accessId"
+                class="col-md-5 offset-md-1"
+                (change)="addAccessId(access, $event.checked)"
+                checked="isCheckAccess(access.accessId)"
+              >
+                {{ access.name }}
+              </mat-checkbox></ng-container
             >
-              {{ access.name }}
-            </mat-checkbox>
           </section>
         </div>
       </div>
@@ -174,11 +176,12 @@
             <div *ngFor="let feature of featuresData" class="row">
               <div class="col-md-4 offset-md-1">
                 <mat-checkbox
-                  [value]="feature.feature_id"
+                  [value]="feature.featureId"
+                  checked="isCheckFeature(feature.featureId)"
                   (change)="
                     showMetaList(feature, $event.checked);
                     updateSelectedFeaturesMeta(
-                      feature.feature_id,
+                      feature.featureId,
                       feature.meta_list
                     )
                   "
@@ -199,7 +202,7 @@
                       #metaValue
                       (change)="
                         setMetaValue(
-                          feature.feature_id,
+                          feature.featureId,
                           meta.key,
                           metaValue.value
                         )

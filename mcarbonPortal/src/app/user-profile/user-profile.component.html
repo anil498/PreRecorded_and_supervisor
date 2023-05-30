@@ -50,7 +50,7 @@
       </div>
 
       <div class="col-md-4 profile">
-        <div class="card card-profile">
+        <div class="card card-profile card-profile-1">
           <div class="card-avatar">
             <a href="javascript:void(0)">
               <img class="img" src="./assets/img/faces/marc.jpg" />
@@ -93,10 +93,17 @@
       <div class="col-md-6">
         <div class="card card-profile">
           <div class="card-body">
-            <h6 class="card-title text-gray">Access List</h6>
+            <div class="row">
+              <div class="col-md-10 offset-md-1">
+                <h4 class="card-title card-title-1">Access List</h4>
+              </div>
+            </div>
             <div *ngFor="let access of accessList">
-              <h4 class="card-category">{{ access.name }}</h4>
-              <div class="card-description"></div>
+              <div class="row">
+                <h6 class="col-md-10 offset-md-1">{{ access.name }}</h6>
+              </div>
+              <!-- <h6 class="card-category">{{ access.name }}</h6>
+              <div class="card-description"></div> -->
             </div>
           </div>
         </div>
@@ -105,10 +112,17 @@
       <div class="col-md-6">
         <div class="card card-profile">
           <div class="card-body">
-            <h6 class="card-title text-gray">Feature List</h6>
+            <div class="row">
+              <div class="col-md-10 offset-md-1">
+                <h4 class="card-title card-title-1">Feature List</h4>
+              </div>
+            </div>
             <div *ngFor="let feature of featureList">
-              <h4 class="card-category">{{ feature.name }}</h4>
-              <p class="card-description"></p>
+              <div class="row">
+                <h6 class="col-md-10 offset-md-1">{{ feature.name }}</h6>
+              </div>
+              <!-- <h6 class="card-category">{{ feature.name }}</h6>
+              <p class="card-description"></p> -->
             </div>
           </div>
         </div>

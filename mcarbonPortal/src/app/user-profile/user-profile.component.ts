@@ -29,6 +29,9 @@ export class UserProfileComponent implements OnInit {
         console.log(error.status);
       }
     );
+    this.active = false;
+    this.deactive = false;
+
     this.accessList = this.restService.getData().Access;
     this.featureList = this.restService.getData().Features;
 

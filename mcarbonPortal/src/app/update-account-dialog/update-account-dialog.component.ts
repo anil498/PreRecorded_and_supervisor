@@ -1,15 +1,15 @@
-import { Component, OnInit, ViewChild,Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatTabGroup } from '@angular/material/tabs';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { RestService } from 'app/services/rest.service';
+import { Component, OnInit, ViewChild, Inject } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MatTabGroup } from "@angular/material/tabs";
+import { DomSanitizer } from "@angular/platform-browser";
+import { Router } from "@angular/router";
+import { RestService } from "app/services/rest.service";
 
 @Component({
-  selector: 'app-update-account-dialog',
-  templateUrl: './update-account-dialog.component.html',
-  styleUrls: ['./update-account-dialog.component.scss']
+  selector: "app-update-account-dialog",
+  templateUrl: "./update-account-dialog.component.html",
+  styleUrls: ["./update-account-dialog.component.scss"],
 })
 export class UpdateAccountDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
@@ -56,67 +56,11 @@ export class UpdateAccountDialogComponent implements OnInit {
   max_active_sessions: number;
   max_participants: number;
 
-  // featuresData: any = this.restService.getData().features;
-  // accessData: any = this.restService.getData().access;
+  featuresData: any = this.restService.getData().Features;
+  accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
-  accessData = [
-    {
-      access_id: 16,
-      name: "Account Creation",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 17,
-      name: "Account Deletion",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 18,
-      name: "Account Updation",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 26,
-      name: "User Creation",
-      order: 1,
-      p_id: 2,
-    },
-    {
-      access_id: 27,
-      name: "User Deletion",
-      order: 1,
-      p_id: 2,
-    },
-  ];
 
   selectedFeatures: number[] = [];
-  featuresData = [
-    {
-      feature_id: 1,
-      name: "Recording",
-      meta_list: {
-        max_time: null,
-        max_dur: null,
-      },
-    },
-    {
-      feature_id: 2,
-      name: "Screen Sharing",
-      meta_list: {
-        refresh_rate: null,
-      },
-    },
-    {
-      feature_id: 3,
-      name: "Live Chat",
-      meta_list: {
-        color: null,
-      },
-    },
-  ];
 
   selectedFeaturesMeta = {};
 
@@ -158,9 +102,9 @@ export class UpdateAccountDialogComponent implements OnInit {
 
   addAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedAccessId.push(access.access_id);
+      this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.access_id);
+      const index = this.selectedAccessId.indexOf(access.accessId);
       this.selectedAccessId.splice(index, 1);
     }
   }
@@ -170,30 +114,41 @@ export class UpdateAccountDialogComponent implements OnInit {
       {
         name: [this.account.name, Validators.required],
         address: [this.account.address, Validators.required],
-        acc_exp_date: [this.account.expdate, Validators.required],
+        acc_exp_date: [new Date(this.account.expDate), Validators.required],
         max_user: [this.account.maxUser, Validators.required],
 
-        user_fname: ["", Validators.required],
-        user_lname: ["", Validators.required],
-        mobile: ["", Validators.required],
-        email: ["", Validators.required],
-        login_id: ["", Validators.required],
+        user_fname: [this.account.fname, Validators.required],
+        user_lname: [this.account.lname, Validators.required],
+        mobile: [this.account.contact, Validators.required],
+        email: [this.account.email, Validators.required],
+        login_id: [this.account.loginId, Validators.required],
 
         password: ["", Validators.required],
         confirm_password: ["", Validators.required],
 
-        accessList: ["", Validators.required],
+        accessList: [this.account.accessId, Validators.required],
 
         max_duration: [this.account.session.max_duration, Validators.required],
-        max_active_sessions: [this.account.session.max_active_sessions, Validators.required],
-        max_participants: [this.account.session.max_participants, Validators.required],
+        max_active_sessions: [
+          this.account.session.max_active_sessions,
+          Validators.required,
+        ],
+        max_participants: [
+          this.account.session.max_participants,
+          Validators.required,
+        ],
 
-        featureList: ["", Validators.required],
+        featureList: [this.account.features, Validators.required],
+        featureMeta: [this.account.featuresMeta, Validators.required],
       },
       {
         validator: this.passwordMatchValidator,
       }
     );
+    this.accessData.forEach((access) => {
+      console.warn(access.accessId);
+    });
+    console.warn(this.userForm.value.accessList);
   }
 
   // onPhotoSelected(event) {
@@ -209,6 +164,20 @@ export class UpdateAccountDialogComponent implements OnInit {
   //     reader.readAsDataURL(file);
   //   }
   // }
+
+  isCheckFeature(featureId: number) {
+    this.userForm.value.featureList.forEach((feature) => {
+      if (feature == featureId) return true;
+    });
+    return false;
+  }
+
+  isCheckAccess(accessId: number) {
+    this.userForm.value.accessList.forEach((access: number) => {
+      if (access == accessId) return true;
+    });
+    return false;
+  }
 
   passwordMatchValidator(formGroup: FormGroup) {
     const password = formGroup.get("password").value;
@@ -356,5 +325,4 @@ export class UpdateAccountDialogComponent implements OnInit {
     }, time);
     console.warn(this.emptyError);
   }
-
 }
