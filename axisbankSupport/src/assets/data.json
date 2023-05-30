@@ -68,6 +68,30 @@
     "Send Video Call Link": "CallToApp"
   },
   {
+    "Name": "karan",
+    "Phone No": "9910647622",
+    "Address": "WhatsApp Mumbai",
+    "Last Interaction Mode": "WhatsApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "WhatsApp"
+  },
+  {
+    "Name": "karan",
+    "Phone No": "9910647622",
+    "Address": "SMS Mumbai",
+    "Last Interaction Mode": "SMS",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "SMS"
+  },
+  {
+    "Name": "karan",
+    "Phone No": "9910647622",
+    "Address": "App Mumbai",
+    "Last Interaction Mode": "CallToApp",
+    "Last Interaction Time": "5/5/2023, 10:44 A.M",
+    "Send Video Call Link": "CallToApp"
+  },
+  {
     "Name": "Gaurav",
     "Phone No": "9582543042",
     "Address": "SMS Noida",
