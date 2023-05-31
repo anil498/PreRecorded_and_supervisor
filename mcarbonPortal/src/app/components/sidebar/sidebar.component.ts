@@ -16,7 +16,7 @@ export const ROUTES: RouteInfo[] = [
     title: "Dashboard",
     icon: "dashboard",
     class: "",
-    apiId: null,
+    apiId: 100,
     show: false,
   },
   {

@@ -27,11 +27,7 @@ export class RestService {
     this.getHeaders();
   }
 
-  getHeaders() {
-    const response = this.http.get<any>("../../assets/json/headers.json");
-    console.log("HEADERS ===== " + response);
-    console.log(header);
-  }
+  getHeaders() {}
   setData(response: any) {
     this._response = response;
   }
@@ -84,7 +80,7 @@ export class RestService {
   }
 
   private postRequest1(path: string, body: any): Promise<any> {
-    console.warn(this.baseHref + "/" + path);
+    console.warn(this.baseHref + "user/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
@@ -107,7 +103,7 @@ export class RestService {
   }
 
   private postRequest2(path: string, body: any): Promise<any> {
-    console.warn(this.baseHref + "/" + path);
+    console.warn(this.baseHref + "account/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
@@ -138,10 +134,6 @@ export class RestService {
   ): Promise<any> {
     console.warn(body);
     try {
-      // const headers = {
-      //   "Content-Type": "application/json",
-      //   sessionid: sessionId,
-      // };
       const headers = new HttpHeaders({
         Token: `${this._token}`,
         Authorization: `${this.authKey}`,
@@ -215,6 +207,48 @@ export class RestService {
     });
   }
 
+  async updateUser(
+    type: string,
+    userId: number,
+    fname: string,
+    lname: string,
+    contact: number,
+    email: string,
+    loginId: string,
+    expDate: string,
+
+    password: string,
+    accessId: number[],
+
+    max_duration: number,
+    max_participants: number,
+    max_active_sessions: number,
+
+    features: number[],
+    featuresMeta: any
+  ) {
+    let path = type+ "/" + userId
+    return this.postRequest1(path, {
+      fname,
+      lname,
+      contact,
+      email,
+      loginId,
+      expDate,
+      password,
+      accessId,
+
+      session: {
+        max_duration,
+        max_participants,
+        max_active_sessions,
+      },
+
+      features,
+      featuresMeta,
+    });
+  }
+
   async createAccountUser(
     type: string,
 
@@ -266,7 +300,7 @@ export class RestService {
 
   async updateAccount(
     type: string,
-
+    accId: string,
     name: string,
     address: string,
     logo: Blob,
@@ -279,16 +313,10 @@ export class RestService {
     accessId: number[],
 
     features: number[],
-    featureMeta: any,
-
-    fname,
-    lname,
-    mobile,
-    email,
-    loginId,
-    password
+    featureMeta: any
   ) {
-    return this.postRequest1(type, {
+    let path = type + "/" + accId;
+    return this.postRequest2(path, {
       name,
       address,
       maxUser,
@@ -303,13 +331,6 @@ export class RestService {
 
       features,
       featureMeta,
-
-      fname,
-      lname,
-      mobile,
-      email,
-      loginId,
-      password,
     });
   }
 

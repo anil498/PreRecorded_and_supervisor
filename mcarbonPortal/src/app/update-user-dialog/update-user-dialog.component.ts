@@ -52,28 +52,32 @@ export class UpdateUserDialogComponent implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
-    @Inject(MAT_DIALOG_DATA) public user : any
+    @Inject(MAT_DIALOG_DATA) public user: any
   ) {}
 
-  updateSelectedFeaturesMeta(featureId, metaValue) {
+  updateSelectedFeaturesMeta(featureId: string | number, metaValue: any) {
     if (!this.selectedFeaturesMeta[featureId]) {
       this.selectedFeaturesMeta[featureId] = {};
     }
     this.selectedFeaturesMeta[featureId] = metaValue;
   }
 
-  setMetaValue(featureId, metaKey, metaValue) {
+  setMetaValue(
+    featureId: string | number,
+    metaKey: string | number,
+    metaValue: any
+  ) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
   }
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedFeatures.push(feature.feature_id);
+      this.selectedFeatures.push(feature.featureId);
       feature.showMetaList = true;
-      feature.selectedMetaList = Object.keys(feature.meta_list).map((key) => {
-        return { key: key, value: feature.meta_list[key] };
+      feature.selectedMetaList = Object.keys(feature.metaList).map((key) => {
+        return { key: key, value: feature.metaList[key] };
       });
     } else {
-      const index = this.selectedFeatures.indexOf(feature.feature_id);
+      const index = this.selectedFeatures.indexOf(feature.featureId);
       this.selectedFeatures.splice(index, 1);
       feature.showMetaList = false;
       feature.selectedMetaList = [];
@@ -82,9 +86,9 @@ export class UpdateUserDialogComponent implements OnInit {
 
   addAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedAccessId.push(access.access_id);
+      this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.access_id);
+      const index = this.selectedAccessId.indexOf(access.accessId);
       this.selectedAccessId.splice(index, 1);
     }
   }
@@ -100,18 +104,72 @@ export class UpdateUserDialogComponent implements OnInit {
 
         password: ["", Validators.required],
         confirm_password: ["", Validators.required],
-        accessList: ["", Validators.required],
+        accessList: [this.user.accessId, Validators.required],
 
         max_duration: [this.user.session.max_duration, Validators.required],
-        max_active_sessions: [this.user.session.max_active_sessions, Validators.required],
-        max_participants: [this.user.session.max_participants, Validators.required],
+        max_active_sessions: [
+          this.user.session.max_active_sessions,
+          Validators.required,
+        ],
+        max_participants: [
+          this.user.session.max_participants,
+          Validators.required,
+        ],
 
-        featureList: [this.user.featureList, Validators.required],
+        featureList: [this.user.features, Validators.required],
+        featureMeta: [this.user.featuresMeta, Validators.required],
       },
       {
         validator: [this.passwordMatchValidator],
       }
     );
+
+    this.selectedAccessId = this.userForm.value.accessList;
+    this.selectedFeatures = this.userForm.value.featureList;
+    this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+    // For diplaying previous checked Access
+    for (let i = 0; i < this.accessData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.accessList.length; j++) {
+        if (this.userForm.value.accessList[j] === this.accessData[i].accessId) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.accessData[i].status = 0;
+    }
+    // for displaying previous checked features
+    for (let i = 0; i < this.featuresData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.featureList.length; j++) {
+        if (
+          this.userForm.value.featureList[j] === this.featuresData[i].featureId
+        ) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.featuresData[i].status = 0;
+    }
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    this.accessData.forEach((access) => {
+      access.status = 1;
+    });
+    this.featuresData.forEach((feature) => {
+      feature.status = 1;
+    });
+  }
+
+  isCheckFeature(feature: any) {
+    if (feature.status == 1) return true;
+    return false;
+  }
+
+  isCheckAccess(access: any) {
+    if (access.status == 1) return true;
+    return false;
   }
 
   passwordMatchValidator(formGroup: FormGroup) {
@@ -212,9 +270,9 @@ export class UpdateUserDialogComponent implements OnInit {
 
     let response: any;
     try {
-      response = await this.restService.createUser(
-        "create",
-
+      response = await this.restService.updateUser(
+        "Update",
+        this.user.userId,
         this.user_fname,
         this.user_lname,
         this.mobile,
