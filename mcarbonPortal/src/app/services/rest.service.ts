@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
+import { response } from "express";
 import { catchError, lastValueFrom, Subject } from "rxjs";
-
+import * as header from "../../assets/json/headers.json";
 @Injectable({
   providedIn: "root",
 })
@@ -23,9 +24,14 @@ export class RestService {
   constructor(private http: HttpClient, private router: Router) {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
     this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
-    //this.url1 = "http://172.17.0.122:5000/";
+    this.getHeaders();
   }
 
+  getHeaders() {
+    const response = this.http.get<any>("../../assets/json/headers.json");
+    console.log("HEADERS ===== " + response);
+    console.log(header);
+  }
   setData(response: any) {
     this._response = response;
   }
@@ -315,7 +321,12 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "user/getById/" + `${this._response.user_data.userId}`, { headers })
+        this.http.get<any>(
+          this.baseHref +
+            "user/getById/" +
+            `${this._response.user_data.userId}`,
+          { headers }
+        )
       );
     } catch (error) {
       if (error.status === 404) {

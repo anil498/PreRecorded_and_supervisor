@@ -85,15 +85,16 @@ export class UpdateAccountDialogComponent implements OnInit {
   setMetaValue(featureId, metaKey, metaValue) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
   }
+
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedFeatures.push(feature.feature_id);
+      this.selectedFeatures.push(feature.featureId);
       feature.showMetaList = true;
       feature.selectedMetaList = Object.keys(feature.meta_list).map((key) => {
         return { key: key, value: feature.meta_list[key] };
       });
     } else {
-      const index = this.selectedFeatures.indexOf(feature.feature_id);
+      const index = this.selectedFeatures.indexOf(feature.featureId);
       this.selectedFeatures.splice(index, 1);
       feature.showMetaList = false;
       feature.selectedMetaList = [];
@@ -107,6 +108,15 @@ export class UpdateAccountDialogComponent implements OnInit {
       const index = this.selectedAccessId.indexOf(access.accessId);
       this.selectedAccessId.splice(index, 1);
     }
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    this.accessData.forEach((access) => {
+      access.status = 1;
+    });
+    this.featuresData.forEach((feature) => {
+      feature.status = 1;
+    });
   }
 
   async ngOnInit(): Promise<void> {
@@ -145,10 +155,34 @@ export class UpdateAccountDialogComponent implements OnInit {
         validator: this.passwordMatchValidator,
       }
     );
-    this.accessData.forEach((access) => {
-      console.warn(access.accessId);
-    });
-    console.warn(this.userForm.value.accessList);
+
+    this.selectedAccessId = this.userForm.value.accessList;
+    this.selectedFeatures = this.userForm.value.featureList;
+    this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+      // For diplaying previous checked Access
+    for (let i = 0; i < this.accessData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.accessList.length; j++) {
+        if (this.userForm.value.accessList[j] === this.accessData[i].accessId) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.accessData[i].status = 0;
+    }
+    // for displaying previous checked features
+    for (let i = 0; i < this.featuresData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.featureList.length; j++) {
+        if (
+          this.userForm.value.featureList[j] === this.featuresData[i].featureId
+        ) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.featuresData[i].status = 0;
+    }
   }
 
   // onPhotoSelected(event) {
@@ -160,22 +194,17 @@ export class UpdateAccountDialogComponent implements OnInit {
   //     this.photoControl = true;
   //   };
 
-  //   if (file) {
+  //   if (file)
   //     reader.readAsDataURL(file);
-  //   }
   // }
 
-  isCheckFeature(featureId: number) {
-    this.userForm.value.featureList.forEach((feature) => {
-      if (feature == featureId) return true;
-    });
+  isCheckFeature(feature: any) {
+    if (feature.status == 1) return true;
     return false;
   }
 
-  isCheckAccess(accessId: number) {
-    this.userForm.value.accessList.forEach((access: number) => {
-      if (access == accessId) return true;
-    });
+  isCheckAccess(access: any) {
+    if (access.status == 1) return true;
     return false;
   }
 
@@ -257,6 +286,7 @@ export class UpdateAccountDialogComponent implements OnInit {
 
     this.password = this.userForm.value.password;
 
+    console.warn(this.userForm);
     if (
       this.name == null ||
       this.max_user == null ||
@@ -273,10 +303,8 @@ export class UpdateAccountDialogComponent implements OnInit {
       this.login_id == null ||
       this.confirm_password == null
     ) {
-      console.warn(this.emptyError);
       this.emptyError = true;
       this.timeOut(3000);
-      console.warn(this.emptyError);
       return;
     }
 
@@ -319,10 +347,8 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   private timeOut(time: number) {
-    console.warn(this.emptyError);
     setTimeout(() => {
       this.emptyError = false;
     }, time);
-    console.warn(this.emptyError);
   }
 }
