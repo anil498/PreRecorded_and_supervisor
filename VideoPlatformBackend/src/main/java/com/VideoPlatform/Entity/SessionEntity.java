@@ -19,7 +19,7 @@ public class SessionEntity {
     @Column(name = "session_name") String sessionName;
     @Column(name = "session_key" ) String sessionKey;
     @Column(name = "session_support_key" ) String sessionSupportKey;
-    @Column(name = "user_info" ) String userInfo;
+    @Column(name = "user_info" ) String userInfo = "";
     @Column(name = "mobile") String mobile;
     @Column(name = "creation_date") String creation;
     @Column(name = "exp_date") LocalDateTime expDate;
