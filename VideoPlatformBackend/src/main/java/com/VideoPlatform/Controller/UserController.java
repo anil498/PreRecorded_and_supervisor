@@ -186,13 +186,13 @@ public class UserController {
         Map<String,String> result = new HashMap<>();
         userService.createUser(user);
         result.put("status_code ","200");
-        result.put("message", "User Created");
+        result.put("msg", "User created!");
         return ok(result);
 
     }
 
     @PutMapping("/Update/{id}")
-    public ResponseEntity<UserEntity> updateUser(@PathVariable Integer id, @RequestBody UserEntity user, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user, HttpServletRequest request) throws JsonProcessingException {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -211,17 +211,8 @@ public class UserController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        return ok(userService.updateUser(user, id));
+        return ok(userService.updateUser(user));
     }
-    @PostMapping("/up")
-    public ResponseEntity<UserEntity> update(@RequestBody Map<String, String> params, HttpServletRequest request) {
-        int loginId = Integer.parseInt(params.get("loginId"));
-        String lastlogin = LocalDateTime.now().format(formatter);
-        userRepository.findByUserId(loginId);
-            userRepository.setLogin(lastlogin,loginId);
-
-            return  null;
-        }
 
     @DeleteMapping("/Delete/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id, @RequestBody UserEntity user, HttpServletRequest request) throws JsonProcessingException {
@@ -243,8 +234,13 @@ public class UserController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        userService.deleteUser(id);
 
-        return ok(userService.deleteUser(id));
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "User deleted!");
+
+        return ok(result);
     }
 
     @PostMapping("/login")

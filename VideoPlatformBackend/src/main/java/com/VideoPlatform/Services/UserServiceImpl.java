@@ -50,12 +50,17 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity updateUser(UserEntity user, Integer id) {
-        UserEntity existing = (UserEntity) userRepository.findByUserId(id);
-        existing.setEmail(user.getEmail());
-        existing.setContact(user.getContact());
+    public UserEntity updateUser(UserEntity user) {
+        UserEntity existing = (UserEntity) userRepository.findByUserId(user.getUserId());
         existing.setFname(user.getFname());
         existing.setLname(user.getLname());
+        existing.setSession(user.getSession());
+        existing.setFeatures(user.getFeatures());
+        existing.setFeaturesMeta(user.getFeaturesMeta());
+        existing.setAccessId(user.getAccessId());
+        existing.setExpDate(user.getExpDate());
+        existing.setContact(user.getContact());
+        existing.setEmail(user.getEmail());
         return userRepository.save(existing);
     }
 

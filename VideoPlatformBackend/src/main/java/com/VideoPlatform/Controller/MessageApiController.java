@@ -79,7 +79,7 @@ public class MessageApiController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     private static final Logger logger= LoggerFactory.getLogger(MessageApiController.class);
-    @PostMapping(value="/sendSms", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendSMS(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException {
 
         String authKey = request.getHeader("Authorization");
@@ -126,7 +126,7 @@ public class MessageApiController {
         return ResponseEntity.ok(res);
  //       return responseSms;
     }
-    @PostMapping ("/sendWhatsapp")
+    @PostMapping ("/WhatsApp")
     public ResponseEntity<?> sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -170,7 +170,7 @@ public class MessageApiController {
 //        return responseSms;
     }
 
-    @PostMapping("/notification")
+    @PostMapping("/AppNotification")
     public ResponseEntity<?> sendNotification(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException {
 
         String authKey = request.getHeader("Authorization");
@@ -281,7 +281,7 @@ public class MessageApiController {
         session.setSessionSupportKey(supportKey);
         session.setCreation(creation);
         session.setUserInfo(userInfo);
-        session.setExpDate(String.valueOf(newDateTime));
+        session.setExpDate(newDateTime);
 
         sessionRepository.save(session);
         return session;
