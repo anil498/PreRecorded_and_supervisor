@@ -6,8 +6,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.VideoPlatform.Constant.RequestMappings;
-import com.VideoPlatform.Entity.*;
-import com.VideoPlatform.Repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +23,9 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(RequestMappings.APICLIENT)
-public class OpenviduClientController {
+public class VPClientController {
 
-    private static Logger logger= LoggerFactory.getLogger(OpenviduClientController.class);
+    private static Logger logger= LoggerFactory.getLogger(VPClientController.class);
     @Autowired
     FeatureRepository featureRepository;
     @Autowired
@@ -70,9 +68,13 @@ public class OpenviduClientController {
             userId=sess.getUserId();
             response.put("session",sessionRepository.findBySessionSupportKey(sessionKey));
         }
-        else{
+        else if(sess == null){
             userId = session.getUserId();
             response.put("session",sessionRepository.findBySessionKey(sessionKey));
+        }
+        else{
+            logger.info("Invalid session key !");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         response.put("user",userRepository.findById(userId));

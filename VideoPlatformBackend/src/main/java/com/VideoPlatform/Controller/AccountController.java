@@ -1,18 +1,14 @@
 package com.VideoPlatform.Controller;
 
-//import com.openvidu_databases.openvidu_dbbackend.Entity.AccountAuthEntity;
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
-import com.VideoPlatform.Services.AccountService;
+import com.VideoPlatform.Services.AccountServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.VideoPlatform.Constant.RequestMappings;
-import com.VideoPlatform.Entity.*;
-//import com.openvidu_databases.openvidu_dbbackend.Repository.AccountAuthRepository;
-import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.UserServiceImpl;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -38,13 +34,10 @@ public class AccountController {
     private static final Logger logger= LoggerFactory.getLogger(AccountController.class);
 
     @Autowired
-    private AccountService accountService;
+    private AccountServiceImpl accountService;
 
     @Autowired
     private AccountRepository accountRepository;
-
-//    @Autowired(required = true)
-//    private AccountAuthEntity accountAuthEntity;
 
     @Autowired
     private AccountAuthRepository accountAuthRepository;
@@ -82,7 +75,7 @@ public class AccountController {
 
         int check = isValidAuthKey(authKey);
         if(check == 0) {
-            logger.info("Unauthorised user, wrong authorization key !");
+            logger.info("Unauthorised user, invalid authorization key !");
             return new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
         if(!isValidToken(token)) {
@@ -131,7 +124,7 @@ public class AccountController {
 
         int check = isValidAuthKey(authKey);
         if(check == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
+            logger.info("Unauthorised user, invalid authorization key !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -156,7 +149,7 @@ public class AccountController {
         int check = isValidAuthKey(authKey);
         logger.info("Auth Id : "+check);
         if(check == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
+            logger.info("Unauthorised user, Invalid authorization key !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!isValidToken(token)) {
@@ -247,7 +240,7 @@ public class AccountController {
 
             Map<String,String> result = new HashMap<>();
             result.put("status_code ","200");
-            result.put("message", "Account Created");
+            result.put("msg", "Account created!");
 
             return new ResponseEntity<>(result,HttpStatus.CREATED);
     }
