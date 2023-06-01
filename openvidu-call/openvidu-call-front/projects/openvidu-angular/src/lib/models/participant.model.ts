@@ -161,6 +161,13 @@ export abstract class ParticipantAbstractModel {
 	/**
 	 * @internal
 	 */
+	public getPublishVideoConnection(): StreamModel {
+		return this.streams.get(VideoType.CUSTOM);
+	}
+
+	/**
+	 * @internal
+	 */
 	getConnectionTypesActive(): VideoType[] {
 		let connType = [];
 		if (this.isCameraActive()) connType.push(VideoType.CAMERA);
@@ -250,6 +257,13 @@ export abstract class ParticipantAbstractModel {
 		const screenConnection = this.getScreenConnection();
 		if (screenConnection) screenConnection.streamManager = publisher;
 	}
+	/**
+	 * @internal
+	 */
+	setVideoPublisher(publisher: Publisher) {
+		const videoConnection = this.getPublishVideoConnection();
+		if (videoConnection) videoConnection.streamManager = publisher;
+	}
 
 	/**
 	 * @internal
@@ -292,6 +306,14 @@ export abstract class ParticipantAbstractModel {
 	}
 
 	/**
+	 * @ignore
+	 */
+	isVideoPublishActive(): boolean {
+		return this.getPublishVideoConnection()?.connected;
+	}
+
+
+	/**
 	 * @internal
 	 */
 	enableScreen() {
@@ -305,6 +327,20 @@ export abstract class ParticipantAbstractModel {
 	disableScreen() {
 		const screenConnection = this.getScreenConnection();
 		if (screenConnection) screenConnection.connected = false;
+	}
+	/**
+	 * @internal
+	 */
+	enablePublishVideo() {
+		const videoConnection = this.getPublishVideoConnection();
+		if (videoConnection) videoConnection.connected = true;
+	}
+	/**
+	 * @internal
+	 */
+	disablePublishVideo() {
+		const videoConnection = this.getPublishVideoConnection();
+		if (videoConnection) videoConnection.connected = false;
 	}
 
 	/**

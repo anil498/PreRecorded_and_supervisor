@@ -85,6 +85,19 @@ export class ParticipantService {
 	setMyScreenPublisher(publisher: Publisher) {
 		this.localParticipant.setScreenPublisher(publisher);
 	}
+	/**
+	 * @internal
+	 */
+	getMyVideoPublisher(): Publisher {
+		return <Publisher>this.localParticipant.getPublishVideoConnection()?.streamManager;
+	}
+
+	/**
+	 * @internal
+	 */
+	setMyvideoPublisher(publisher: Publisher) {
+		this.localParticipant.setVideoPublisher(publisher);
+	}
 
 	/**
 	 * @internal
@@ -128,12 +141,38 @@ export class ParticipantService {
 		this.localParticipant.addConnection(steramModel);
 		this.updateLocalParticipant();
 	}
+	/**
+	 * @internal
+	 */
+	activePublishVideo(videoPublisher: Publisher) {
+		this.log.d('Enabling screen publisher');
+
+		const steramModel: StreamModel = {
+			type: VideoType.CUSTOM,
+			videoEnlarged: true,
+			streamManager: videoPublisher,
+			connected: true,
+			connectionId: ''
+		};
+
+		this.resetRemoteStreamsToNormalSize();
+		this.resetMyStreamsToNormalSize();
+		this.localParticipant.addConnection(steramModel);
+		this.updateLocalParticipant();
+	}
 
 	/**
 	 * @internal
 	 */
 	disableScreenStream() {
 		this.localParticipant.disableScreen();
+		this.updateLocalParticipant();
+	}
+	/**
+	 * @internal
+	 */
+	disablePublishVideoStream() {
+		this.localParticipant.disablePublishVideo();
 		this.updateLocalParticipant();
 	}
 
@@ -204,6 +243,12 @@ export class ParticipantService {
 	isMyScreenActive(): boolean {
 		return this.localParticipant.isScreenActive();
 	}
+	/**
+	 * @internal
+	 */
+	isMyVideoPublishActive(): boolean {
+		return this.localParticipant.isVideoPublishActive();
+	}
 
 	/**
 	 * @internal
@@ -224,6 +269,12 @@ export class ParticipantService {
 	 */
 	haveICameraAndScreenActive(): boolean {
 		return this.isMyCameraActive() && this.isMyScreenActive();
+	}
+	/**
+	 * @internal
+	 */
+	haveICameraAndVideoActive(): boolean {
+		return this.isMyCameraActive() && this.isMyVideoPublishActive();
 	}
 
 	/**

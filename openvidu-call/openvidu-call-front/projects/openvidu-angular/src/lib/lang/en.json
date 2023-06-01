@@ -45,7 +45,11 @@
 		"LEAVE": "Leave the session",
 		"PARTICIPANTS": "Participants",
 		"CHAT": "Chat",
-		"ACTIVITIES": "Activities"
+		"ACTIVITIES": "Activities",
+		"PUBLISH_VIDEO": "Publish video",
+		"STOP_VIDEO":"STOP_VIDEO",
+		"PLAY_VIDEO": "Play video",
+		"PAUSE_VIDEO": "Pause video"
 	},
 	"STREAM": {
 		"SETTINGS": "Settings",

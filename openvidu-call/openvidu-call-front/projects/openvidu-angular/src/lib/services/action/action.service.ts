@@ -17,7 +17,7 @@ import { INotificationOptions } from '../../models/notification-options.model';
 export class ActionService {
 	private dialogRef:
 		| MatDialogRef<DialogTemplateComponent | RecordingDialogComponent | DeleteDialogComponent | ProFeatureDialogTemplateComponent>
-		| undefined;
+		|undefined;
 	private dialogSubscription: Subscription;
 	constructor(private snackBar: MatSnackBar, public dialog: MatDialog) {}
 
@@ -49,8 +49,32 @@ export class ActionService {
 				disableClose: !allowClose
 			};
 			this.dialogRef = this.dialog.open(DialogTemplateComponent, config);
+			
 			this.dialogSubscription = this.dialogRef.afterClosed().subscribe((result) => {
 				this.dialogRef = undefined;
+			});
+		}
+	}
+	openUrlDialog(titleMessage: string, descriptionMessage: string, allowClose = true,redirectUrl:string) {
+		try {
+			this.closeDialog();
+		} catch (error) {
+		} finally {
+			const config: MatDialogConfig = {
+				minWidth: '250px',
+				data: { title: titleMessage, description: descriptionMessage, showActionButtons: allowClose },
+				disableClose: !allowClose
+			};
+			console.log("Result1",config)
+			this.dialogRef = this.dialog.open(DialogTemplateComponent, config);
+			console.log("Result",this.dialogRef)
+			
+			this.dialogSubscription = this.dialogRef.afterClosed().subscribe((result) => {
+				// this.dialogRef = undefined;
+				console.log("Result",result)
+				if(result=='close'){
+					window.location.href=redirectUrl;
+				}
 			});
 		}
 	}

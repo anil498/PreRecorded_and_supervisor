@@ -3,7 +3,8 @@ export enum PanelType {
 	PARTICIPANTS = 'participants',
 	BACKGROUND_EFFECTS = 'background-effects',
 	ACTIVITIES = 'activities',
-	SETTINGS = 'settings'
+	SETTINGS = 'settings',
+	PLAYVIDEO='playvideo'
 
 }
 

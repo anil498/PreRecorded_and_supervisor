@@ -61,6 +61,7 @@ import { CustomBreakPointsProvider, CustomLayoutExtensionDirective } from './con
 import { ApiDirectiveModule } from './directives/api/api.directive.module';
 import { OpenViduAngularDirectiveModule } from './directives/template/openvidu-angular.directive.module';
 import { AppMaterialModule } from './openvidu-angular.material.module';
+import { TranslateService } from './services/translate/translate.service';
 
 const publicComponents = [
 	AdminDashboardComponent,
@@ -121,6 +122,7 @@ const privateComponents = [
     ],
     providers: [
         ActionService,
+        TranslateService,
         CdkOverlayContainer,
         { provide: OverlayContainer, useClass: CdkOverlayContainer },
         CustomBreakPointsProvider,

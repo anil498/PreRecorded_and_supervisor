@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ParticipantService, RecordingInfo, TokenModel } from 'openvidu-angular';
+import { ParticipantService, RecordingInfo, TokenModel,ActionService,TranslateService} from 'openvidu-angular';
 
 import { RestService } from '../../services/rest.service';
+import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-call',
@@ -25,13 +26,16 @@ export class CallComponent implements OnInit {
 	serverError: string = '';
 	participantName1:any
 	loading: boolean = true;
+	redirectUrl:string;
 	private isDebugSession: boolean = false;
 
 	constructor(
 		private restService: RestService,
 		private participantService: ParticipantService,
 		private router: Router,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private actionService:ActionService,
+		private translateService:TranslateService
 	) {}
 
 	async ngOnInit() {
@@ -47,8 +51,7 @@ export class CallComponent implements OnInit {
 		try {
 			await this.initializeTokens();
 		} catch (error) {
-			console.error(error);
-			this.serverError = error?.error?.message || error?.statusText;
+			console.log(error)
 		} finally {
 			this.loading = false;
 		}
@@ -103,6 +106,7 @@ export class CallComponent implements OnInit {
 			console.warn('DEBUGGING SESSION');
 			nickname = this.participantService.getLocalParticipant().getNickname();
 		}
+		try{
 		const response = await this.restService.getTokens(this.sessionId, nickname);
 		this.recordingEnabled1 = response.recordingEnabled
 		this.broadcastingEnabled=response.isBroadCasting
@@ -117,6 +121,13 @@ export class CallComponent implements OnInit {
 		this.participantName1=response.participantName;
 		console.log(response);
 		console.log(this.screenShareEnabled);
+	}catch(error){
+		console.error(error);
+		console.log(this.loading)
+		this.loading = false;
+		this.redirectUrl="https://www.axisbank.com/grab-deals/online-offers"
+		this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error,true,this.redirectUrl)
+	}
 	}
 	recordingEnabled(){
 		return this.recordingEnabled1;

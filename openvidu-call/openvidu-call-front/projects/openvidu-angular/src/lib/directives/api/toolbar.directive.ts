@@ -62,7 +62,187 @@ export class ToolbarScreenshareButtonDirective implements AfterViewInit, OnDestr
 		}
 	}
 }
+/**
+ * The **screenshareButton** directive allows show/hide the screenshare toolbar button.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarScreenshareButton]="false"></ov-videoconference>
+ *
+ * \
+ * And it also can be used in the {@link ToolbarComponent}.
+ * @example
+ * <ov-toolbar [screenshareButton]="false"></ov-toolbar>
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarFullScreenButton], ov-toolbar[fullScreenshareButton]'
+})
+export class ToolbarFullScreenButtonDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 */
+	@Input() set toolbarFullScreenButton(value: boolean) {
+		this.fullScreenValue = value;
+		this.update(this.fullScreenValue);
+	}
 
+	/**
+	 * @ignore
+	 */
+	@Input() set fullScreenButton(value: boolean) {
+		this.fullScreenValue = value;
+		this.update(this.fullScreenValue);
+	}
+
+	private fullScreenValue: boolean = true;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	ngAfterViewInit() {
+		this.update(this.fullScreenValue);
+	}
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	private clear() {
+		this.fullScreenValue = true;
+		this.update(true);
+	}
+
+	private update(value: boolean) {
+		if (this.libService.fullScreenshareButton.getValue() !== value) {
+			this.libService.fullScreenshareButton.next(value);
+		}
+	}
+}
+/**
+ * The **Publish/Sop Button** directive allows show/hide the publish/stop toolbar button.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarPublishVideoButton]="false"></ov-videoconference>
+ *
+ * \
+ * And it also can be used in the {@link ToolbarComponent}.
+ * @example
+ * <ov-toolbar [publishVideoButton]="false"></ov-toolbar>
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarPublishVideoButton], ov-toolbar[publishButton]'
+})
+export class ToolbarPublishVideoButtonDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 */
+	@Input() set toolbarPublishVideoButton(value: boolean) {
+		this.publishVideoValue = value;
+		this.update(this.publishVideoValue);
+	}
+
+	/**
+	 * @ignore
+	 */
+	@Input() set publishVideoButton(value: boolean) {
+		this.publishVideoValue = value;
+		this.update(this.publishVideoValue);
+	}
+	private publishVideoValue: boolean = true;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	ngAfterViewInit() {
+		this.update(this.publishVideoValue);
+	}
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	private clear() {
+		this.publishVideoValue = true;
+		this.update(true);
+	}
+
+	private update(value: boolean) {
+		if (this.libService.publishVideoButton.getValue() !== value) {
+			this.libService.publishVideoButton.next(value);
+		}
+	}
+}
+/**
+ * The **Publish/Sop Button** directive allows show/hide the publish/stop toolbar button.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarPublishVideoButton]="false"></ov-videoconference>
+ *
+ * \
+ * And it also can be used in the {@link ToolbarComponent}.
+ * @example
+ * <ov-toolbar [publishVideoButton]="false"></ov-toolbar>
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarVideoControlButton], ov-toolbar[videoControlButton]'
+})
+export class ToolbarVideoControlButtonDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 */
+	@Input() set toolbarVideoControlButton(value: boolean) {
+		this.videoControlValue = value;
+		this.update(this.videoControlValue);
+	}
+
+	/**
+	 * @ignore
+	 */
+	@Input() set videoControlButton(value: boolean) {
+		this.videoControlValue = value;
+		this.update(this.videoControlValue);
+	}
+	private videoControlValue: boolean = false;
+
+	/**
+	 * @ignores
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	ngAfterViewInit() {
+		this.update(this.videoControlValue);
+	}
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	private clear() {
+		this.videoControlValue = true;
+		this.update(true);
+	}
+
+	private update(value: boolean) {
+		if (this.libService.videoControlButton.getValue() !== value) {
+			this.libService.videoControlButton.next(value);
+		}
+	}
+}
 /**
  * The **recordingButton** directive allows show/hide the start/stop recording toolbar button.
  *

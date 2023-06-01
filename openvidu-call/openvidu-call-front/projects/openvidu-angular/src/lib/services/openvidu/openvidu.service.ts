@@ -42,6 +42,8 @@ export class OpenViduService {
 	private sttReconnectionTimeout: NodeJS.Timeout;
 	private _isSttReady: BehaviorSubject<boolean> = new BehaviorSubject(true);
 	protected log: ILogger;
+	private videoElement:any;
+	private isVideoPlaying:boolean=false;
 
 	/**
 	 * @internal
@@ -267,7 +269,7 @@ export class OpenViduService {
 			audioSource,
 			publishVideo: isVideoActive,
 			publishAudio: isAudioActive,
-			mirror:false
+			mirror: false
 		};
 		if (hasVideoDevices || hasAudioDevices) {
 			this.log.d('Initializing publisher with properties1: ', properties);
@@ -312,7 +314,7 @@ export class OpenViduService {
 	 */
 	private unpublish(publisher: Publisher): void {
 		if (!!publisher) {
-			this.log.d("Publisher",publisher)
+			this.log.d("Publisher", publisher)
 			if (publisher === this.participantService.getMyCameraPublisher()) {
 				this.publishAudioAux(this.participantService.getMyScreenPublisher(), this.participantService.isMyAudioActive());
 				this.webcamSession.unpublish(publisher);
@@ -393,11 +395,11 @@ export class OpenViduService {
 	}
 	async publishScreenAudio(publish: boolean): Promise<void> {
 		if (this.participantService.isMyScreenActive() && !this.participantService.hasScreenAudioActive()) {
-			this.publishAudioAux(this.participantService.getMyScreenPublisher(), publish);	
-	}else{
-		this.publishAudioAux(this.participantService.getMyScreenPublisher(), publish);
+			this.publishAudioAux(this.participantService.getMyScreenPublisher(), publish);
+		} else {
+			this.publishAudioAux(this.participantService.getMyScreenPublisher(), publish);
+		}
 	}
-}
 
 	/**
 	 * Share or unshare the screen.
@@ -411,19 +413,22 @@ export class OpenViduService {
 		} else if (this.participantService.isOnlyMyCameraActive()) {
 			// I only have the camera published
 			const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
-			const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
-			const hasAudio = willWebcamBePresent ? false : hasAudioDevicesAvailable && this.participantService.isMyAudioActive();
-            const displayMediaStream = await navigator.mediaDevices.getDisplayMedia({audio: true, video: true});
+			const userMedia=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
+			console.log(userMedia.getAudioTracks())
+			const displayMediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
+			console.log(displayMediaStream.getAudioTracks().length)
+			const hasAudio = displayMediaStream.getAudioTracks().length==0?false:true;
+			console.log(hasAudio)
 			const properties: PublisherProperties = {
 				videoSource: displayMediaStream.getVideoTracks()[0],
 				audioSource: displayMediaStream.getAudioTracks()[0],
 				publishVideo: true,
-				publishAudio: true,
+				publishAudio: hasAudio,
 				mirror: false,
-				frameRate:60
+				frameRate: 60
 			};
-		    this.log.d('Initializing publisher with properties2: ', displayMediaStream);
-			
+			this.log.d('Initializing publisher with properties2: ', displayMediaStream);
+
 			const screenPublisher = await this.initPublisher(undefined, properties);
 
 			screenPublisher.once('accessAllowed', async () => {
@@ -435,7 +440,7 @@ export class OpenViduService {
 						this.log.d('Clicked native stop button. Stopping screen sharing');
 						await this.toggleScreenshare();
 					});
-				
+
 				// Enabling screenShare
 				this.participantService.activeMyScreenShare(screenPublisher);
 
@@ -443,28 +448,28 @@ export class OpenViduService {
 					await this.connectSession(this.getScreenSession(), this.getScreenToken());
 				}
 				await this.publish(this.participantService.getMyScreenPublisher());
-				
+
 				// This is commented for Publishing screen share and local partitcipant at same time
 				if (!this.participantService.isMyVideoActive()) {
-				// 	// Disabling webcam
-				// 	this.participantService.disableWebcamStream();
-				// 	this.unpublish(this.participantService.getMyCameraPublisher());
-				    this.log.d('Disabling video',this.participantService.isMyVideoActive());
+					// 	// Disabling webcam
+					// 	this.participantService.disableWebcamStream();
+					// 	this.unpublish(this.participantService.getMyCameraPublisher());
+					this.log.d('Disabling video', this.participantService.isMyVideoActive());
 				}
 			});
 
 			screenPublisher.once('accessDenied', (error: any) => {
 				return Promise.reject(error);
 			});
-			
+
 		} else {
 			// I only have my screenshare active and I have no camera or it is muted
 			const hasAudio = this.participantService.hasScreenAudioActive();
-			this.log.d('has audio',hasAudio);
+			this.log.d('has audio', hasAudio);
 
 			// Enable webcam
 			if (!this.isWebcamSessionConnected()) {
-				this.log.d('has webcam',this.isWebcamSessionConnected());
+				this.log.d('has webcam', this.isWebcamSessionConnected());
 				await this.connectSession(this.getWebcamSession(), this.getWebcamToken());
 			}
 			await this.publish(this.participantService.getMyCameraPublisher());
@@ -657,7 +662,7 @@ export class OpenViduService {
 		// Avoid screen connections
 		const remoteCameraConnections: Connection[] = Array.from(this.webcamSession.remoteConnections.values()).filter((conn) => {
 			let type: VideoType;
-			const db=conn.data.split('%/%')[0]
+			const db = conn.data.split('%/%')[0]
 			type = JSON.parse(db).type;
 			return type !== VideoType.SCREEN;
 		});
@@ -667,7 +672,7 @@ export class OpenViduService {
 		// Avoid screen connections
 		const remoteScreenConnections: Connection[] = Array.from(this.webcamSession.remoteConnections.values()).filter((conn) => {
 			let type: VideoType;
-			const db=conn.data.split('%/%')[0]
+			const db = conn.data.split('%/%')[0]
 			type = JSON.parse(db).type;
 			return type == VideoType.SCREEN;
 		});
@@ -685,6 +690,91 @@ export class OpenViduService {
 				this.screenSession?.disconnect();
 				this.screenSession = null;
 			}
+		}
+	}
+	async publishRecordedVideo(): Promise<void> {
+		try {
+			if (this.participantService.isMyVideoPublishActive()) {
+				// Unpublishing video 
+				console.log("unpublish")
+				this.participantService.disablePublishVideoStream();
+				this.unpublish(this.participantService.getMyVideoPublisher());
+			} else {
+				console.log("publish")
+				// Create a custom video element with the video and audio streams
+				this.videoElement = document.createElement('video');
+				// videoElement.src = 'assets/video/music.mp4';
+				this.videoElement.src = './assets/video/1.mp4';
+				console.log('./assets/video/1.mp4');
+				this.videoElement.controls = true;
+				this.videoElement.setAttribute('controls', true.toString()); // or use setAttribute
+
+				// Wait for video to be loaded and start playing
+				this.videoElement.onloadedmetadata = async () => {
+					this.videoElement.play();
+					// Create an AudioContext
+					const audioContext = new AudioContext();
+
+					// Create a MediaElementSourceNode to connect the videoElement to the AudioContext
+					const sourceNode = audioContext.createMediaElementSource(this.videoElement);
+
+					// Create a MediaStreamDestination to capture the audio from the AudioContext
+					const audioDestination = audioContext.createMediaStreamDestination();
+					sourceNode.connect(audioDestination);
+
+					// Create a video stream from the canvas
+					let canvas = document.createElement('canvas');
+					const videoWidth = this.videoElement.videoWidth;
+					const videoHeight = this.videoElement.videoHeight;
+					canvas.width = videoWidth;
+					canvas.height = videoHeight;
+					const canvasContext = canvas.getContext('2d');
+					const videoStream = canvas.captureStream();
+					const audioTrack = audioDestination.stream.getAudioTracks()[0];
+					// this.duration = videoElement.duration;
+
+					console.log("Audio is : " + audioTrack);
+					const properties: PublisherProperties = {
+						videoSource: videoStream.getVideoTracks()[0],
+						audioSource: audioTrack,
+						publishVideo: true,
+						publishAudio: true,
+						mirror: false,
+						frameRate: 60
+					}
+
+					const videoPublisher = await this.initPublisher(undefined, properties);
+					// Draw each frame of the video to the canvas and capture it as an image
+					const drawFrame = () => {
+						if (this.isVideoPlaying) {
+							canvasContext.drawImage(this.videoElement, 0, 0, videoWidth, videoHeight);
+						}
+						setTimeout(drawFrame, 1000 / 30);
+					};
+					drawFrame();
+					this.participantService.activePublishVideo(videoPublisher);
+				}
+			}
+		} catch (error) {
+			this.log.d("Getting error while publishing the video", error);
+		}
+	}
+	playVideo(){
+		try{
+			this.log.d("Playing")
+			console.log(this.videoElement)
+			this.isVideoPlaying=!this.isVideoPlaying
+		}catch(error){
+			this.log.d("Getting error while playing video",error)
+		}
+	}
+	pauseVideo(){
+		try{
+			this.log.d("Pausing")
+			console.log(this.videoElement)
+			this.isVideoPlaying=!this.isVideoPlaying
+		}catch(error){
+			this.log.d("Getting error while pausing video",error)
 		}
 	}
 }
