@@ -158,7 +158,7 @@ export class AccountManagementComponent implements OnInit {
 
   deleteAccount(account: any) {
     //const dialogConfig = new MatDialogConfig();
-    this.restService.deleteAccount(this.token,account.accountId)
+    this.restService.deleteAccount(this.token, account.accountId);
     console.log("Confirm Delete");
 
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);

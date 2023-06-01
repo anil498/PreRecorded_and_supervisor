@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);
       this.restService.setUserId(this.username);
-      this.router.navigate(["/app/dashboard"]);
+      this.router.navigate(["/app/user-profile"]);
     } catch (err) {
       console.log(err);
       if (err.status === 0) {
@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
       } else if (err.status === 401) {
         this.state = "Unauthorized User";
       } else {
-        this.state = err.statusText;
+        this.state = err.error.error;
       }
       this.failedMessage = true;
       this.failedMessageShow = "";

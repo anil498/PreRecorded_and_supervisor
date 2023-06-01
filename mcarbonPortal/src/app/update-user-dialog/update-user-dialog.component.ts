@@ -1,19 +1,18 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { RestService } from 'app/services/rest.service';
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
+import { MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
+import { DomSanitizer } from "@angular/platform-browser";
+import { Router } from "@angular/router";
+import { RestService } from "app/services/rest.service";
 
 @Component({
-  selector: 'app-update-user-dialog',
-  templateUrl: './update-user-dialog.component.html',
-  styleUrls: ['./update-user-dialog.component.scss']
+  selector: "app-update-user-dialog",
+  templateUrl: "./update-user-dialog.component.html",
+  styleUrls: ["./update-user-dialog.component.scss"],
 })
 export class UpdateUserDialogComponent implements OnInit {
-
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
 
   samePassword = false;
@@ -39,67 +38,11 @@ export class UpdateUserDialogComponent implements OnInit {
   max_active_sessions: number;
   max_participants: number;
 
-  // featuresData: any = this.restService.getData().features;
-  // accessData: any = this.restService.getData().access;
+  featuresData: any = this.restService.getData().Features;
+  accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
-  accessData = [
-    {
-      access_id: 16,
-      name: "Account Creation",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 17,
-      name: "Account Deletion",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 18,
-      name: "Account Updation",
-      order: 1,
-      p_id: 1,
-    },
-    {
-      access_id: 26,
-      name: "User Creation",
-      order: 1,
-      p_id: 2,
-    },
-    {
-      access_id: 27,
-      name: "User Deletion",
-      order: 1,
-      p_id: 2,
-    },
-  ];
 
   selectedFeatures: number[] = [];
-  featuresData = [
-    {
-      feature_id: 1,
-      name: "Recording",
-      meta_list: {
-        max_time: null,
-        max_dur: null,
-      },
-    },
-    {
-      feature_id: 2,
-      name: "Screen Sharing",
-      meta_list: {
-        refresh_rate: null,
-      },
-    },
-    {
-      feature_id: 3,
-      name: "Live Chat",
-      meta_list: {
-        color: null,
-      },
-    },
-  ];
 
   selectedFeaturesMeta = {};
   constructor(
@@ -108,28 +51,33 @@ export class UpdateUserDialogComponent implements OnInit {
     private restService: RestService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public user: any
   ) {}
 
-  updateSelectedFeaturesMeta(featureId, metaValue) {
+  updateSelectedFeaturesMeta(featureId: string | number, metaValue: any) {
     if (!this.selectedFeaturesMeta[featureId]) {
       this.selectedFeaturesMeta[featureId] = {};
     }
     this.selectedFeaturesMeta[featureId] = metaValue;
   }
 
-  setMetaValue(featureId, metaKey, metaValue) {
+  setMetaValue(
+    featureId: string | number,
+    metaKey: string | number,
+    metaValue: any
+  ) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
   }
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedFeatures.push(feature.feature_id);
+      this.selectedFeatures.push(feature.featureId);
       feature.showMetaList = true;
-      feature.selectedMetaList = Object.keys(feature.meta_list).map((key) => {
-        return { key: key, value: feature.meta_list[key] };
+      feature.selectedMetaList = Object.keys(feature.metaList).map((key) => {
+        return { key: key, value: feature.metaList[key] };
       });
     } else {
-      const index = this.selectedFeatures.indexOf(feature.feature_id);
+      const index = this.selectedFeatures.indexOf(feature.featureId);
       this.selectedFeatures.splice(index, 1);
       feature.showMetaList = false;
       feature.selectedMetaList = [];
@@ -138,36 +86,90 @@ export class UpdateUserDialogComponent implements OnInit {
 
   addAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedAccessId.push(access.access_id);
+      this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.access_id);
+      const index = this.selectedAccessId.indexOf(access.accessId);
       this.selectedAccessId.splice(index, 1);
     }
   }
   async ngOnInit(): Promise<void> {
     this.userForm = this.fb.group(
       {
-        user_fname: ["", Validators.required],
-        user_lname: ["", Validators.required],
-        mobile: ["", Validators.required],
-        email: ["", Validators.required],
-        login_id: ["", Validators.required],
-        acc_exp_date: ["", Validators.required],
+        user_fname: [this.user.fname, Validators.required],
+        user_lname: [this.user.lname, Validators.required],
+        mobile: [this.user.contact, Validators.required],
+        email: [this.user.email, Validators.required],
+        login_id: [this.user.loginId, Validators.required],
+        acc_exp_date: [new Date(this.user.expDate), Validators.required],
 
         password: ["", Validators.required],
         confirm_password: ["", Validators.required],
-        accessList: ["", Validators.required],
+        accessList: [this.user.accessId, Validators.required],
 
-        max_duration: ["", Validators.required],
-        max_active_sessions: ["", Validators.required],
-        max_participants: ["", Validators.required],
+        max_duration: [this.user.session.max_duration, Validators.required],
+        max_active_sessions: [
+          this.user.session.max_active_sessions,
+          Validators.required,
+        ],
+        max_participants: [
+          this.user.session.max_participants,
+          Validators.required,
+        ],
 
-        featureList: ["", Validators.required],
+        featureList: [this.user.features, Validators.required],
+        featureMeta: [this.user.featuresMeta, Validators.required],
       },
       {
         validator: [this.passwordMatchValidator],
       }
     );
+
+    this.selectedAccessId = this.userForm.value.accessList;
+    this.selectedFeatures = this.userForm.value.featureList;
+    this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+    // For diplaying previous checked Access
+    for (let i = 0; i < this.accessData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.accessList.length; j++) {
+        if (this.userForm.value.accessList[j] === this.accessData[i].accessId) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.accessData[i].status = 0;
+    }
+    // for displaying previous checked features
+    for (let i = 0; i < this.featuresData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.featureList.length; j++) {
+        if (
+          this.userForm.value.featureList[j] === this.featuresData[i].featureId
+        ) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.featuresData[i].status = 0;
+    }
+  }
+
+  async ngOnDestroy(): Promise<void> {
+    this.accessData.forEach((access) => {
+      access.status = 1;
+    });
+    this.featuresData.forEach((feature) => {
+      feature.status = 1;
+    });
+  }
+
+  isCheckFeature(feature: any) {
+    if (feature.status == 1) return true;
+    return false;
+  }
+
+  isCheckAccess(access: any) {
+    if (access.status == 1) return true;
+    return false;
   }
 
   passwordMatchValidator(formGroup: FormGroup) {
@@ -268,9 +270,9 @@ export class UpdateUserDialogComponent implements OnInit {
 
     let response: any;
     try {
-      response = await this.restService.createUser(
-        "create",
-
+      response = await this.restService.updateUser(
+        "Update",
+        this.user.userId,
         this.user_fname,
         this.user_lname,
         this.mobile,
@@ -315,5 +317,4 @@ export class UpdateUserDialogComponent implements OnInit {
     }, time);
     console.warn(this.emptyField);
   }
-
 }

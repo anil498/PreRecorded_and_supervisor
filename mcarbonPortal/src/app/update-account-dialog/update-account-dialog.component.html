@@ -1,7 +1,7 @@
 <div class="card card-1">
   <div class="card-header card-header-danger">
     <h4 class="card-title">
-      Create Account
+      Edit Account Details
       <button mat-icon-button mat-dialog-close class="close-btn">
         <mat-icon aria-label="Close dialog">close</mat-icon>
       </button>
@@ -149,14 +149,16 @@
 
         <div class="row">
           <section class="example-section">
-            <mat-checkbox
-              *ngFor="let access of accessData"
-              [value]="access.access_id"
-              class="col-md-3 offset-md-1"
-              (change)="addAccessId(access, $event.checked)"
+            <ng-container *ngFor="let access of accessData">
+              <mat-checkbox
+                [value]="access.accessId"
+                class="col-md-5 offset-md-1"
+                (change)="addAccessId(access, $event.checked)"
+                [checked]="isCheckAccess(access)"
+              >
+                {{ access.name }}
+              </mat-checkbox></ng-container
             >
-              {{ access.name }}
-            </mat-checkbox>
           </section>
         </div>
       </div>
@@ -174,19 +176,20 @@
             <div *ngFor="let feature of featuresData" class="row">
               <div class="col-md-4 offset-md-1">
                 <mat-checkbox
-                  [value]="feature.feature_id"
+                  [value]="feature.featureId"
+                  [checked]="isCheckFeature(feature)"
                   (change)="
                     showMetaList(feature, $event.checked);
                     updateSelectedFeaturesMeta(
-                      feature.feature_id,
-                      feature.meta_list
+                      feature.featureId,
+                      feature.metaList
                     )
                   "
                 >
                   {{ feature.name }}
                 </mat-checkbox>
               </div>
-              <div class="col-md-6" *ngIf="feature.showMetaList">
+              <div class="col-md-6" *ngIf="isCheckFeature(feature)">
                 <div class="row">
                   <mat-form-field
                     *ngFor="let meta of feature.selectedMetaList"
@@ -199,7 +202,7 @@
                       #metaValue
                       (change)="
                         setMetaValue(
-                          feature.feature_id,
+                          feature.featureId,
                           meta.key,
                           metaValue.value
                         )
@@ -214,7 +217,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="User Information">
+    <!-- <mat-tab label="User Information">
       <div class="container">
         <div class="row">
           <div class="col-md-5 offset-md-1">
@@ -311,7 +314,7 @@
           </div>
         </div>
       </div>
-    </mat-tab>
+    </mat-tab> -->
   </mat-tab-group>
 
   <div mat-dialog-actions align="end" class="actions">

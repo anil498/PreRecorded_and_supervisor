@@ -72,7 +72,6 @@ export class UserManagementComponent implements OnInit {
     this.token = this.restService.getToken();
     this.userId = this.restService.getUserId();
     this.accessList = this.restService.getData().Access;
-
   }
 
   async ngOnInit(): Promise<void> {
@@ -178,10 +177,11 @@ export class UserManagementComponent implements OnInit {
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
   }
 
-  updateDialog(usercode: number) {
+  updateUserDialog(user: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "690px";
     dialogConfig.height = "550px";
+    dialogConfig.data = user;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(UpdateUserDialogComponent, dialogConfig);
 

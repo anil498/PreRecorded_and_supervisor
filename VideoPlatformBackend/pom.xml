@@ -9,10 +9,10 @@
 		<version>2.7.10</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.openvidu_databases</groupId>
-	<artifactId>openvidu_db-backend</artifactId>
+	<groupId>com.VideoPlatform</groupId>
+	<artifactId>VideoPlatform</artifactId>
 	<version>1.0.0</version>
-	<name>openvidu_db-backend</name>
+	<name>VideoPlatform</name>
 	<description>Managing database</description>
 
 	<properties>

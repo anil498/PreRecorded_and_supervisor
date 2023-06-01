@@ -20,8 +20,8 @@ export class InfoComponent {
   {
     console.log("click on login btn by user "+this.username);
     this.dataService.shareusername=this.username;
-    this.router.navigate(['/table']);
-    //this.router.navigate(['/table'], { queryParams: { username: this.username } });
+   this.router.navigate(['/table']);
+   // this.router.navigate(['/table'], { queryParams: { username: this.username } });
 
   }
   
