@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
+import { response } from "express";
 import { catchError, lastValueFrom, Subject } from "rxjs";
-
+import * as header from "../../assets/json/headers.json";
 @Injectable({
   providedIn: "root",
 })
@@ -23,9 +24,10 @@ export class RestService {
   constructor(private http: HttpClient, private router: Router) {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
     this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
-    //this.url1 = "http://172.17.0.122:5000/";
+    this.getHeaders();
   }
 
+  getHeaders() {}
   setData(response: any) {
     this._response = response;
   }
@@ -78,7 +80,7 @@ export class RestService {
   }
 
   private postRequest1(path: string, body: any): Promise<any> {
-    console.warn(this.baseHref + "/" + path);
+    console.warn(this.baseHref + "user/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
@@ -101,7 +103,7 @@ export class RestService {
   }
 
   private postRequest2(path: string, body: any): Promise<any> {
-    console.warn(this.baseHref + "/" + path);
+    console.warn(this.baseHref + "account/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
@@ -132,10 +134,6 @@ export class RestService {
   ): Promise<any> {
     console.warn(body);
     try {
-      // const headers = {
-      //   "Content-Type": "application/json",
-      //   sessionid: sessionId,
-      // };
       const headers = new HttpHeaders({
         Token: `${this._token}`,
         Authorization: `${this.authKey}`,
@@ -209,6 +207,48 @@ export class RestService {
     });
   }
 
+  async updateUser(
+    type: string,
+    userId: number,
+    fname: string,
+    lname: string,
+    contact: number,
+    email: string,
+    loginId: string,
+    expDate: string,
+
+    password: string,
+    accessId: number[],
+
+    max_duration: number,
+    max_participants: number,
+    max_active_sessions: number,
+
+    features: number[],
+    featuresMeta: any
+  ) {
+    let path = type+ "/" + userId
+    return this.postRequest1(path, {
+      fname,
+      lname,
+      contact,
+      email,
+      loginId,
+      expDate,
+      password,
+      accessId,
+
+      session: {
+        max_duration,
+        max_participants,
+        max_active_sessions,
+      },
+
+      features,
+      featuresMeta,
+    });
+  }
+
   async createAccountUser(
     type: string,
 
@@ -260,7 +300,7 @@ export class RestService {
 
   async updateAccount(
     type: string,
-
+    accId: string,
     name: string,
     address: string,
     logo: Blob,
@@ -273,16 +313,10 @@ export class RestService {
     accessId: number[],
 
     features: number[],
-    featureMeta: any,
-
-    fname,
-    lname,
-    mobile,
-    email,
-    loginId,
-    password
+    featureMeta: any
   ) {
-    return this.postRequest1(type, {
+    let path = type + "/" + accId;
+    return this.postRequest2(path, {
       name,
       address,
       maxUser,
@@ -297,13 +331,6 @@ export class RestService {
 
       features,
       featureMeta,
-
-      fname,
-      lname,
-      mobile,
-      email,
-      loginId,
-      password,
     });
   }
 
@@ -315,7 +342,12 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "user/getById/" + `${this._response.user_data.userId}`, { headers })
+        this.http.get<any>(
+          this.baseHref +
+            "user/getById/" +
+            `${this._response.user_data.userId}`,
+          { headers }
+        )
       );
     } catch (error) {
       if (error.status === 404) {

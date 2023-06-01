@@ -34,8 +34,6 @@ export class UpdateAccountDialogComponent implements OnInit {
   contactError: boolean;
   emailError: boolean;
   loginIdError: boolean;
-  passwordError: boolean;
-  confirmPasswordError: boolean;
 
   name: string;
   address: string;
@@ -44,14 +42,6 @@ export class UpdateAccountDialogComponent implements OnInit {
   exp_date: string;
   max_user: number;
 
-  user_fname: string;
-  user_lname: string;
-  mobile: number;
-  email: string;
-  login_id: string;
-
-  password: string;
-  confirm_password: string;
   max_duration: number;
   max_active_sessions: number;
   max_participants: number;
@@ -85,15 +75,16 @@ export class UpdateAccountDialogComponent implements OnInit {
   setMetaValue(featureId, metaKey, metaValue) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
   }
+
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedFeatures.push(feature.feature_id);
+      this.selectedFeatures.push(feature.featureId);
       feature.showMetaList = true;
-      feature.selectedMetaList = Object.keys(feature.meta_list).map((key) => {
-        return { key: key, value: feature.meta_list[key] };
+      feature.selectedMetaList = Object.keys(feature.metaList).map((key) => {
+        return { key: key, value: feature.metaList[key] };
       });
     } else {
-      const index = this.selectedFeatures.indexOf(feature.feature_id);
+      const index = this.selectedFeatures.indexOf(feature.featureId);
       this.selectedFeatures.splice(index, 1);
       feature.showMetaList = false;
       feature.selectedMetaList = [];
@@ -109,6 +100,15 @@ export class UpdateAccountDialogComponent implements OnInit {
     }
   }
 
+  async ngOnDestroy(): Promise<void> {
+    this.accessData.forEach((access) => {
+      access.status = 1;
+    });
+    this.featuresData.forEach((feature) => {
+      feature.status = 1;
+    });
+  }
+
   async ngOnInit(): Promise<void> {
     this.userForm = this.fb.group(
       {
@@ -116,15 +116,6 @@ export class UpdateAccountDialogComponent implements OnInit {
         address: [this.account.address, Validators.required],
         acc_exp_date: [new Date(this.account.expDate), Validators.required],
         max_user: [this.account.maxUser, Validators.required],
-
-        user_fname: [this.account.fname, Validators.required],
-        user_lname: [this.account.lname, Validators.required],
-        mobile: [this.account.contact, Validators.required],
-        email: [this.account.email, Validators.required],
-        login_id: [this.account.loginId, Validators.required],
-
-        password: ["", Validators.required],
-        confirm_password: ["", Validators.required],
 
         accessList: [this.account.accessId, Validators.required],
 
@@ -141,14 +132,35 @@ export class UpdateAccountDialogComponent implements OnInit {
         featureList: [this.account.features, Validators.required],
         featureMeta: [this.account.featuresMeta, Validators.required],
       },
-      {
-        validator: this.passwordMatchValidator,
-      }
     );
-    this.accessData.forEach((access) => {
-      console.warn(access.accessId);
-    });
-    console.warn(this.userForm.value.accessList);
+
+    this.selectedAccessId = this.userForm.value.accessList;
+    this.selectedFeatures = this.userForm.value.featureList;
+    this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+    // For diplaying previous checked Access
+    for (let i = 0; i < this.accessData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.accessList.length; j++) {
+        if (this.userForm.value.accessList[j] === this.accessData[i].accessId) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.accessData[i].status = 0;
+    }
+    // for displaying previous checked features
+    for (let i = 0; i < this.featuresData.length; i++) {
+      var flag = true;
+      for (let j = 0; j < this.userForm.value.featureList.length; j++) {
+        if (
+          this.userForm.value.featureList[j] === this.featuresData[i].featureId
+        ) {
+          flag = false;
+          break;
+        }
+      }
+      if (flag === true) this.featuresData[i].status = 0;
+    }
   }
 
   // onPhotoSelected(event) {
@@ -160,34 +172,18 @@ export class UpdateAccountDialogComponent implements OnInit {
   //     this.photoControl = true;
   //   };
 
-  //   if (file) {
+  //   if (file)
   //     reader.readAsDataURL(file);
-  //   }
   // }
 
-  isCheckFeature(featureId: number) {
-    this.userForm.value.featureList.forEach((feature) => {
-      if (feature == featureId) return true;
-    });
+  isCheckFeature(feature: any) {
+    if (feature.status == 1) return true;
     return false;
   }
 
-  isCheckAccess(accessId: number) {
-    this.userForm.value.accessList.forEach((access: number) => {
-      if (access == accessId) return true;
-    });
+  isCheckAccess(access: any) {
+    if (access.status == 1) return true;
     return false;
-  }
-
-  passwordMatchValidator(formGroup: FormGroup) {
-    const password = formGroup.get("password").value;
-    const confirm_password = formGroup.get("confirm_password").value;
-
-    if (password !== confirm_password) {
-      formGroup.get("confirm_password").setErrors({ mismatch: true });
-    } else {
-      formGroup.get("confirm_password").setErrors(null);
-    }
   }
 
   dateValidator(formGroup: FormGroup) {
@@ -249,14 +245,7 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
 
-    this.user_fname = this.userForm.value.user_fname;
-    this.user_lname = this.userForm.value.user_lname;
-    this.mobile = this.userForm.value.mobile;
-    this.email = this.userForm.value.email;
-    this.login_id = this.userForm.value.login_id;
-
-    this.password = this.userForm.value.password;
-
+    console.warn(this.userForm.value);
     if (
       this.name == null ||
       this.max_user == null ||
@@ -264,19 +253,10 @@ export class UpdateAccountDialogComponent implements OnInit {
       this.address == null ||
       this.max_active_sessions == null ||
       this.max_duration == null ||
-      this.max_participants == null ||
-      this.password == null ||
-      this.user_fname == null ||
-      this.user_lname == null ||
-      this.mobile == null ||
-      this.email == null ||
-      this.login_id == null ||
-      this.confirm_password == null
+      this.max_participants == null
     ) {
-      console.warn(this.emptyError);
       this.emptyError = true;
       this.timeOut(3000);
-      console.warn(this.emptyError);
       return;
     }
 
@@ -285,6 +265,7 @@ export class UpdateAccountDialogComponent implements OnInit {
     try {
       response = await this.restService.updateAccount(
         "update",
+        this.account.accountId,
         this.name,
         this.address,
         this.logo,
@@ -297,13 +278,7 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.selectedAccessId.sort(),
 
         this.selectedFeatures.sort(),
-        this.selectedFeaturesMeta,
-        this.user_fname,
-        this.user_lname,
-        this.mobile,
-        this.email,
-        this.login_id,
-        this.password
+        this.selectedFeaturesMeta
       );
       console.warn(response);
       if (response.statusCode === 200) {
@@ -319,10 +294,8 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   private timeOut(time: number) {
-    console.warn(this.emptyError);
     setTimeout(() => {
       this.emptyError = false;
     }, time);
-    console.warn(this.emptyError);
   }
 }

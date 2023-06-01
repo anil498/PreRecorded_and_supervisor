@@ -154,7 +154,7 @@
                 [value]="access.accessId"
                 class="col-md-5 offset-md-1"
                 (change)="addAccessId(access, $event.checked)"
-                checked="isCheckAccess(access.accessId)"
+                [checked]="isCheckAccess(access)"
               >
                 {{ access.name }}
               </mat-checkbox></ng-container
@@ -177,19 +177,19 @@
               <div class="col-md-4 offset-md-1">
                 <mat-checkbox
                   [value]="feature.featureId"
-                  checked="isCheckFeature(feature.featureId)"
+                  [checked]="isCheckFeature(feature)"
                   (change)="
                     showMetaList(feature, $event.checked);
                     updateSelectedFeaturesMeta(
                       feature.featureId,
-                      feature.meta_list
+                      feature.metaList
                     )
                   "
                 >
                   {{ feature.name }}
                 </mat-checkbox>
               </div>
-              <div class="col-md-6" *ngIf="feature.showMetaList">
+              <div class="col-md-6" *ngIf="isCheckFeature(feature)">
                 <div class="row">
                   <mat-form-field
                     *ngFor="let meta of feature.selectedMetaList"
@@ -217,7 +217,7 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="User Information">
+    <!-- <mat-tab label="User Information">
       <div class="container">
         <div class="row">
           <div class="col-md-5 offset-md-1">
@@ -314,7 +314,7 @@
           </div>
         </div>
       </div>
-    </mat-tab>
+    </mat-tab> -->
   </mat-tab-group>
 
   <div mat-dialog-actions align="end" class="actions">

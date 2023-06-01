@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
       } else if (err.status === 401) {
         this.state = "Unauthorized User";
       } else {
-        this.state = err.statusText;
+        this.state = err.error.error;
       }
       this.failedMessage = true;
       this.failedMessageShow = "";
