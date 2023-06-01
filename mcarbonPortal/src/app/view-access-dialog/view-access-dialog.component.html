@@ -1,0 +1,17 @@
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      Access Details
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+  <div class="row">
+    <ng-container *ngFor="let access of accessName">
+      <div class="col-md-10 offset-md-1 justify-content-center">
+        <h4>{{ access }}</h4>
+      </div>
+    </ng-container>
+  </div>
+</div>

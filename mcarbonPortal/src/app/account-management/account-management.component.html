@@ -82,14 +82,34 @@
                 <ng-container matColumnDef="access">
                   <th mat-header-cell *matHeaderCellDef>Access Details</th>
                   <td mat-cell *matCellDef="let account">
-                    {{ account.accessId }}
+                    <button
+                      class=""
+                      matTooltip="Show access of {{ account.name }} account"
+                      (click)="viewAccess(account)"
+                      style="
+                        background-color: transparent;
+                        border-color: transparent;
+                      "
+                    >
+                      <mat-icon style="color: #009688">remove_red_eye</mat-icon>
+                    </button>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="features">
                   <th mat-header-cell *matHeaderCellDef>Feature Details</th>
                   <td mat-cell *matCellDef="let account">
-                    {{ account.features }}
+                    <button
+                      class=""
+                      matTooltip="Show feature of {{ account.name }} account"
+                      (click)="viewFeature(account)"
+                      style="
+                        background-color: transparent;
+                        border-color: transparent;
+                      "
+                    >
+                      <mat-icon style="color: #009688">remove_red_eye</mat-icon>
+                    </button>
                   </td>
                 </ng-container>
 
@@ -131,7 +151,7 @@
                       <button
                         class="btn-action"
                         mat-menu-item
-                        (click)="viewDialog()"
+                        (click)="viewDialog(account)"
                       >
                         <mat-icon style="color: #009688"
                           >remove_red_eye</mat-icon
