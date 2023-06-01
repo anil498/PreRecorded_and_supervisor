@@ -31,7 +31,7 @@ export class AccountManagementComponent implements OnInit {
   private updateSubscription: Subscription;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  pageSizes = [5, 10, 25, 50, 100, 500];
+  pageSizes = [10, 25, 50, 100, 500];
   displayedColumns: any[] = [
     "name",
     // "contact",
@@ -170,7 +170,7 @@ export class AccountManagementComponent implements OnInit {
 
   viewAccess(account: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "25%";
+    dialogConfig.width = "50%";
     dialogConfig.height = "50%";
     dialogConfig.data = account.accessId;
     console.log("Dialog Form Opened");
@@ -185,7 +185,7 @@ export class AccountManagementComponent implements OnInit {
   }
   viewFeature(account: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "25%";
+    dialogConfig.width = "50%";
     dialogConfig.height = "50%";
     dialogConfig.data = account.features;
     console.log("Dialog Form Opened");

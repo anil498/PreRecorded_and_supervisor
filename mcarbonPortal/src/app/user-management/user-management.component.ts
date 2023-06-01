@@ -35,7 +35,7 @@ export class UserManagementComponent implements OnInit {
   private updateSubscription: Subscription;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  pageSizes = [5, 10, 25, 50, 100, 500];
+  pageSizes = [10, 25, 50, 100, 500];
 
   displayedColumns: string[] = [
     "userFname",
@@ -177,14 +177,11 @@ export class UserManagementComponent implements OnInit {
 
   viewAccess(user: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "25%";
+    dialogConfig.width = "50%";
     dialogConfig.height = "50%";
     dialogConfig.data = user.accessId;
     console.log("Dialog Form Opened");
-    const dialogRef = this.dialog.open(
-      ViewAccessDialogComponent,
-      dialogConfig
-    );
+    const dialogRef = this.dialog.open(ViewAccessDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
@@ -192,7 +189,7 @@ export class UserManagementComponent implements OnInit {
   }
   viewFeature(user: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "25%";
+    dialogConfig.width = "50%";
     dialogConfig.height = "50%";
     dialogConfig.data = user.features;
     console.log("Dialog Form Opened");
