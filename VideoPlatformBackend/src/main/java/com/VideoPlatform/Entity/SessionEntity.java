@@ -22,7 +22,7 @@ public class SessionEntity {
     @Column(name = "user_info" ) String userInfo = "";
     @Column(name = "mobile") String mobile;
     @Column(name = "creation_date") String creation;
-    @Column(name = "exp_date") LocalDateTime expDate;
+    @Column(nullable = false,name = "exp_date") LocalDateTime expDate;
     @Column(name = "status") String status;
 
     public String getSessionId() {

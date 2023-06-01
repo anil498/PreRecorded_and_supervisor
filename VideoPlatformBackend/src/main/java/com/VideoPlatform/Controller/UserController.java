@@ -90,7 +90,7 @@ public class UserController {
         }
 
         if(!(byAccess(2000,token))){
-            logger.info("for 1001 : "+byAccess(2000,token));
+            logger.info("for 2000 : "+byAccess(2000,token));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -98,7 +98,7 @@ public class UserController {
         return ok(userService.getAllUsers());
     }
 
-    @GetMapping("/child")
+    @GetMapping("/Child")
     public ResponseEntity<List<UserEntity>> getAllChild(HttpServletRequest request) throws JsonProcessingException {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -115,15 +115,15 @@ public class UserController {
         }
 
         if(!(byAccess(2000,token))){
-            logger.info("for 1001 : "+byAccess(2000,token));
+            logger.info("for 2000 : "+byAccess(2000,token));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
         UserAuthEntity user = userAuthRepository.findByToken(token);
-            return ResponseEntity.ok(userService.getAllChild(user.getUserId()));
+        return ResponseEntity.ok(userService.getAllChild(user.getUserId()));
     }
 
-    @GetMapping("/getById/{id}")
+    @GetMapping("/GetById/{id}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id, HttpServletRequest request) throws JsonProcessingException {
 
         String authKey = request.getHeader("Authorization");
@@ -164,7 +164,7 @@ public class UserController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!(byAccess(2001,token))){
-            logger.info("for 1006 : "+byAccess(2001,token));
+            logger.info("for 2001 : "+byAccess(2001,token));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -207,7 +207,7 @@ public class UserController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!(byAccess(2002,token))){
-            logger.info("for 1001 : "+byAccess(2002,token));
+            logger.info("for 2002 : "+byAccess(2002,token));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -230,7 +230,7 @@ public class UserController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!(byAccess(2003,token))){
-            logger.info("for 1006 : "+byAccess(1006,token));
+            logger.info("for 2003 : "+byAccess(2003,token));
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }

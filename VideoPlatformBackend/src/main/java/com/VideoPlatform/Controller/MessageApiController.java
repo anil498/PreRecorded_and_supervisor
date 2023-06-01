@@ -43,7 +43,7 @@ import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping(RequestMappings.API)
+@RequestMapping(RequestMappings.APICALLSESSION)
 public class MessageApiController {
 
     @Autowired
@@ -79,7 +79,7 @@ public class MessageApiController {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     private static final Logger logger= LoggerFactory.getLogger(MessageApiController.class);
-    @PostMapping(value="/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="Send/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendSMS(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException {
 
         String authKey = request.getHeader("Authorization");
@@ -106,7 +106,7 @@ public class MessageApiController {
 
 //        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
 //        String sessionId =getHeaders(request).get("sessionid");
-        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.API, params != null ? params.toString() : "{}",getHeaders(request));
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",getHeaders(request));
 
 //        logger.info("Request response {}",responseSms);
         String userInfo=null;
@@ -126,7 +126,7 @@ public class MessageApiController {
         return ResponseEntity.ok(res);
  //       return responseSms;
     }
-    @PostMapping ("/WhatsApp")
+    @PostMapping ("Send/WhatsApp")
     public ResponseEntity<?> sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -160,7 +160,7 @@ public class MessageApiController {
 
         String callUrl= callPrefix+sessionEntity.getSessionKey();
 //        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
-        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.API, params != null ? params.toString() : "{}",getHeaders(request));
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",getHeaders(request));
         SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateid);
         responseSms.setCallUrl(callUrl);
         HashMap<String,String> res=new HashMap<>();
@@ -170,7 +170,7 @@ public class MessageApiController {
 //        return responseSms;
     }
 
-    @PostMapping("/AppNotification")
+    @PostMapping("Send/AppNotification")
     public ResponseEntity<?> sendNotification(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException {
 
         String authKey = request.getHeader("Authorization");
@@ -239,9 +239,11 @@ public class MessageApiController {
 
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
+        if(sessionRepository.findBySessionKey(generatedString) == null)
+            return generatedString;
+        else givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
         logger.info(generatedString);
-        System.out.println(generatedString);
-        return generatedString;
+        return null;
     }
     public int isValidAuthKey(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);

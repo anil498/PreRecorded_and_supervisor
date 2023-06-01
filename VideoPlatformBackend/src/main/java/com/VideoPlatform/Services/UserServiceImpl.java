@@ -25,6 +25,7 @@ public class UserServiceImpl implements UserService{
     private SessionRepository sessionRepository;
 
     private static final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
+    @Override
     public List<UserEntity> getAllUsers() {
         //logger.info(String.valueOf(userRepository.findAll()));
         return userRepository.findAll();
