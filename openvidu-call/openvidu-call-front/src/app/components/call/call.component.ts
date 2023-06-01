@@ -122,11 +122,11 @@ export class CallComponent implements OnInit {
 		console.log(response);
 		console.log(this.screenShareEnabled);
 	}catch(error){
-		console.error(error);
-		console.log(this.loading)
-		this.loading = false;
-		this.redirectUrl="https://www.axisbank.com/grab-deals/online-offers"
-		this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error,true,this.redirectUrl)
+		// console.error(error);
+		// console.log(this.loading)
+		// this.loading = false;
+		// this.redirectUrl="https://www.axisbank.com/grab-deals/online-offers"
+		// this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error,true,this.redirectUrl)
 	}
 	}
 	recordingEnabled(){
