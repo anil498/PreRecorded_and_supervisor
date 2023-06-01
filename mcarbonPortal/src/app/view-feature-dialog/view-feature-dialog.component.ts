@@ -32,8 +32,8 @@ export class ViewFeatureDialogComponent implements OnInit {
   }
 
   showFeatureName(featureId: number) {
-    this.featureData.forEach((access) => {
-      if (featureId == access.accessId) this.featureName.push(access.name);
+    this.featureData.forEach((feature) => {
+      if (featureId == feature.featureId) this.featureName.push(feature.name);
     });
   }
 }

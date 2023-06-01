@@ -177,8 +177,8 @@ export class UserManagementComponent implements OnInit {
 
   viewAccess(user: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "300px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "25%";
+    dialogConfig.height = "50%";
     dialogConfig.data = user.accessId;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(
@@ -192,7 +192,7 @@ export class UserManagementComponent implements OnInit {
   }
   viewFeature(user: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "50%";
+    dialogConfig.width = "25%";
     dialogConfig.height = "50%";
     dialogConfig.data = user.features;
     console.log("Dialog Form Opened");
