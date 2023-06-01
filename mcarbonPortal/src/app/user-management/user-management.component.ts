@@ -16,6 +16,8 @@ import { Router } from "@angular/router";
 import { Users } from "../model/users";
 import { MatSort, Sort } from "@angular/material/sort";
 import { UpdateUserDialogComponent } from "app/update-user-dialog/update-user-dialog.component";
+import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
+import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-dialog.component";
 
 @Component({
   selector: "app-user-management",
@@ -171,7 +173,40 @@ export class UserManagementComponent implements OnInit {
     this.dataSourceWithPageSize.filter = filterValue.trim().toLowerCase();
   }
 
-  deleteData(usercode: number) {
+  viewAccount(account: any) {}
+
+  viewAccess(user: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "300px";
+    dialogConfig.height = "550px";
+    dialogConfig.data = user.accessId;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(
+      ViewAccessDialogComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
+  }
+  viewFeature(user: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "50%";
+    dialogConfig.height = "50%";
+    dialogConfig.data = user.features;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(
+      ViewFeatureDialogComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
+  }
+
+  deleteData(userId: number) {
     const dialogConfig = new MatDialogConfig();
     console.log("Confirm Delete");
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
