@@ -5,6 +5,7 @@ import com.VideoPlatform.Repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +45,9 @@ public class SessionServiceImpl implements SessionService{
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @Override
-    public SessionEntity createSession(SessionEntity session, String authKey, String token) {
-        logger.info("User details {}",session.toString());
+    public SessionEntity createSession(SessionEntity session,String authKey, String token) {
+        //logger.info("User details {}",session.toString());
+        SessionEntity sess = new SessionEntity();
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
         logger.info("Session Localdatetime = {}",newDateTime);
@@ -53,23 +55,31 @@ public class SessionServiceImpl implements SessionService{
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
         UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
-        session.setSessionName(account.getName());
-        session.setUserId(userAuth.getUserId());
-        session.setMobile(userEntity.getContact());
-        session.setAccountId(acc.getAccountId());
-        session.setStatus("1");
-        String sessionId=acc.getAccountId()+"_"+userAuth.getUserId()+"_"+System.currentTimeMillis();
-        session.setSessionId(sessionId);
-        String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-        session.setSessionKey(sessionKey);
-        String supportKey = sessionKey+"_1";
-        session.setSessionSupportKey(supportKey);
-        session.setUserInfo(session.getUserInfo());
-        session.setExpDate(newDateTime);
-        String creation = LocalDateTime.now().format(formatter);
-        session.setCreation(creation);
+        Map<String,String> userData=new HashMap<>();
+        userData.put("user_id",String.valueOf(userAuth.getUserId()));
+        userData.put("max_active_sessions", userEntity.getSession().get("max_duration").toString());
+        Gson gson=new Gson();
+        String userJson =gson.toJson(userData);
+        logger.info(userJson);
 
-        return sessionRepository.save(session);
+        Map<String,String> accountData=new HashMap<>();
+        accountData.put("account_id",String.valueOf(account.getAccountId()));
+        accountData.put("max_active_sessions", account.getSession().get("max_active_sessions").toString());
+        String accountJson =gson.toJson(accountData);
+        logger.info(accountJson);
+
+        sess.setSessionId(session.getSessionId());
+        sess.setSessionName(session.getSessionName());
+        sess.setUserI(userJson);
+        sess.setAccountI(accountJson);
+        sess.setParticipantName(session.getParticipantName());
+        sess.setParticipants(session.getParticipants());
+
+        SettingsEntity settingsEntity = new SettingsEntity();
+        settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+        //settingsEntity.setModerators(userEntity.getFeaturesMeta().get("1"));
+
+        return sessionRepository.save(sess);
     }
 
     @Override
@@ -77,36 +87,36 @@ public class SessionServiceImpl implements SessionService{
         return sessionRepository.findAll();
     }
 
-    @Override
-    public Map<String,Object> getByKey(String key, UserAuthEntity user) {
-        //logger.info(String.valueOf(userRepository.findById(id)));
-        HashMap<String,Object> response=new HashMap<>();
-
-        SessionEntity session = sessionRepository.findBySessionKey(key);
-        SessionEntity sess = sessionRepository.findBySessionSupportKey(key);
-        int userId=0;
-        if(sess == null) {
-            userId = session.getUserId();
-            response.put("session",sessionRepository.findBySessionKey(key));
-        }
-        else if(session == null) {
-            userId = sess.getUserId();
-            response.put("session",sessionRepository.findBySessionSupportKey(key));
-        }
-        else{
-            logger.info("Invalid session key !");
-            return null;
-        }
-
-        response.put("user",userRepository.findById(userId));
-        try {
-            response.put("feature",featureData(userId));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-
-        return response;
-    }
+//    @Override
+//    public Map<String,Object> getByKey(String key, UserAuthEntity user) {
+//        //logger.info(String.valueOf(userRepository.findById(id)));
+//        HashMap<String,Object> response=new HashMap<>();
+//
+//        SessionEntity session = sessionRepository.findBySessionKey(key);
+//        SessionEntity sess = sessionRepository.findBySessionSupportKey(key);
+//        int userId=0;
+//        if(sess == null) {
+//            userId = session.getUserId();
+//            response.put("session",sessionRepository.findBySessionKey(key));
+//        }
+//        else if(session == null) {
+//            userId = sess.getUserId();
+//            response.put("session",sessionRepository.findBySessionSupportKey(key));
+//        }
+//        else{
+//            logger.info("Invalid session key !");
+//            return null;
+//        }
+//
+//        response.put("user",userRepository.findById(userId));
+//        try {
+//            response.put("feature",featureData(userId));
+//        } catch (JsonProcessingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return response;
+//    }
     private Object featureData(Integer userId) throws JsonProcessingException {
         UserEntity user = userRepository.findByUserId(userId);
         Integer[] featuresId = user.getFeatures();

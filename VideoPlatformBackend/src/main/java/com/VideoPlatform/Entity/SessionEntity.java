@@ -1,10 +1,13 @@
 package com.VideoPlatform.Entity;
 
+import com.google.gson.JsonObject;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @Entity
 @EntityScan
@@ -13,17 +16,14 @@ import java.time.LocalDateTime;
 public class SessionEntity {
 
     @Id
-    @Column(name = "session_id" ) String sessionId;
-    @Column(name = "account_id" ) Integer accountId;
-    @Column(name = "user_id" ) Integer userId;
-    @Column(name = "session_name") String sessionName;
-    @Column(name = "session_key" ) String sessionKey;
-    @Column(name = "session_support_key" ) String sessionSupportKey;
-    @Column(name = "user_info" ) String userInfo = "";
-    @Column(name = "mobile") String mobile;
-    @Column(name = "creation_date") String creation;
-    @Column(nullable = false,name = "exp_date") LocalDateTime expDate;
-    @Column(name = "status") String status;
+    @Column(name = "session_id" )
+    private String sessionId;
+    @Column(name = "session_name") private String sessionName;
+    @Column(name = "users" ) private String userI;
+    @Column(name = "account" ) private String accountI;
+    @Column(name = "participant_name") private String participantName;
+    @Column(name = "participants") private String participants;
+    @Column(name = "settings") private String settings;
 
     public String getSessionId() {
         return sessionId;
@@ -31,22 +31,6 @@ public class SessionEntity {
 
     public void setSessionId(String sessionId) {
         this.sessionId = sessionId;
-    }
-
-    public Integer getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(Integer accountId) {
-        this.accountId = accountId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public String getSessionName() {
@@ -57,76 +41,56 @@ public class SessionEntity {
         this.sessionName = sessionName;
     }
 
-    public String getSessionKey() {
-        return sessionKey;
+    public String getUserI() {
+        return userI;
     }
 
-    public void setSessionKey(String sessionKey) {
-        this.sessionKey = sessionKey;
+    public void setUserI(String user) {
+        this.userI = user;
     }
 
-    public String getMobile() {
-        return mobile;
+    public String getAccountI() {
+        return accountI;
     }
 
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
+    public void setAccountI(String account) {
+        this.accountI = account;
     }
 
-    public String getCreation() {
-        return creation;
+    public String getParticipantName() {
+        return participantName;
     }
 
-    public void setCreation(String creation) {
-        this.creation = creation;
+    public void setParticipantName(String participantName) {
+        this.participantName = participantName;
     }
 
-    public LocalDateTime getExpDate() {
-        return expDate;
+    public String getParticipants() {
+        return participants;
     }
 
-    public void setExpDate(LocalDateTime expDate) {
-        this.expDate = expDate;
+    public void setParticipants(String participants) {
+        this.participants = participants;
     }
 
-    public String getStatus() {
-        return status;
+    public String getSettings() {
+        return settings;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getSessionSupportKey() {
-        return sessionSupportKey;
-    }
-
-    public void setSessionSupportKey(String sessionSupportKey) {
-        this.sessionSupportKey = sessionSupportKey;
-    }
-
-    public String getUserInfo() {
-        return userInfo;
-    }
-
-    public void setUserInfo(String userInfo) {
-        this.userInfo = userInfo;
+    public void setSettings(String settings) {
+        this.settings = settings;
     }
 
     @Override
     public String toString() {
         return "SessionEntity{" +
                 "sessionId='" + sessionId + '\'' +
-                ", accountId=" + accountId +
-                ", userId=" + userId +
                 ", sessionName='" + sessionName + '\'' +
-                ", sessionKey='" + sessionKey + '\'' +
-                ", sessionSupportKey='" + sessionSupportKey + '\'' +
-                ", userInfo='" + userInfo + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", creation='" + creation + '\'' +
-                ", expDate=" + expDate +
-                ", status='" + status + '\'' +
+                ", userI='" + userI + '\'' +
+                ", accountI='" + accountI + '\'' +
+                ", participantName='" + participantName + '\'' +
+                ", participants='" + participants + '\'' +
+                ", settings=" + settings +
                 '}';
     }
 }

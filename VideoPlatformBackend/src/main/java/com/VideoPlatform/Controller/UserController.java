@@ -139,9 +139,9 @@ public class UserController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!(byAccess(2000,token))){
-            logger.info("for 1001 : "+byAccess(2000,token));
+            logger.info("for 2000 : "+byAccess(2000,token));
             logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+            return  new ResponseEntity<UserEntity>(HttpStatus.FORBIDDEN);
         }
 
             return ok(userService.getUserById(id));
@@ -265,7 +265,7 @@ public class UserController {
         logger.info("user1.getLoginId() {}",user1.getLoginId());
         logger.info("user1.getPassword() {}",user1.getPassword());
         if (!(user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId))) {
-            logger.info("Inside loginid pass check !");
+            logger.info("Inside loginid password check !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -280,8 +280,10 @@ public class UserController {
                 response.put("status_message","Login Successful");
                 response.put("Features", featureData(user1.getUserId()));
                 response.put("Access", accessData(user1.getUserId()));
-                String lastlogin = LocalDateTime.now().format(formatter);
-                user1.setLastLogin(lastlogin);
+                String lastLogin = LocalDateTime.now().format(formatter);
+                logger.info("LastLogin1 : {}",lastLogin);
+                user1.setLastLogin(lastLogin);
+                userRepository.setLogin(lastLogin,userId);
                 return  ResponseEntity.ok(response);
             }
             else {
@@ -291,8 +293,10 @@ public class UserController {
                     LocalDateTime now = LocalDateTime.now();
                     LocalDateTime newDateTime = now.plus(accessTime, ChronoUnit.HOURS);
                     UserAuthEntity ua = userAuthRepository.findByUId(userId);
-                    String lastlogin = LocalDateTime.now().format(formatter);
-                    user1.setLastLogin(lastlogin);
+                    String lastLogin = LocalDateTime.now().format(formatter);
+                    logger.info("LastLogin2 : {}",lastLogin);
+                    user1.setLastLogin(lastLogin);
+                    userRepository.setLogin(lastLogin,userId);
 
                     if(ua != null){
                         ua.setToken(token1);
@@ -355,9 +359,8 @@ public class UserController {
         UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
         logger.info("Data by authId.."+user);
-        //logger.info(user.getToken());
-        String t = (user.getToken());
-        if(user.getExpDate().isBefore(LocalDateTime.now()) || !(t.equals(token)))
+
+        if(user.getExpDate().isBefore(LocalDateTime.now()))
             return false;
         return true;
     }

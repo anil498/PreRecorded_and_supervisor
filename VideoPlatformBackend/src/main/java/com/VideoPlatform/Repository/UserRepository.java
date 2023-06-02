@@ -1,6 +1,7 @@
 package com.VideoPlatform.Repository;
 
 import com.VideoPlatform.Entity.UserEntity;
+import com.google.gson.JsonObject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,5 +41,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Transactional
     @Query(nativeQuery=true, value = "UPDATE user_data SET sataus = 0 where user_id = :userId ")
     void deleteUser(@Param("userId") Integer userId);
+
+    @Query(nativeQuery=true, value = "select session from user_data where user_id = :userId ")
+    JsonObject getSession(@Param("userId") Integer userId);
+
 
 }
