@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { response } from "express";
 import { catchError, lastValueFrom, Subject } from "rxjs";
-import * as header from "../../assets/json/headers.json";
+
 @Injectable({
   providedIn: "root",
 })

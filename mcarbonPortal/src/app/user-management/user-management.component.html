@@ -97,14 +97,34 @@
                 <ng-container matColumnDef="access">
                   <th mat-header-cell *matHeaderCellDef>Access Details</th>
                   <td mat-cell *matCellDef="let user">
-                    {{ user.accessId }}
+                    <button
+                      class=""
+                      matTooltip="Show access of {{ user.loginId }} user"
+                      (click)="viewAccess(user)"
+                      style="
+                        background-color: transparent;
+                        border-color: transparent;
+                      "
+                    >
+                      <mat-icon style="color: #009688">remove_red_eye</mat-icon>
+                    </button>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="features">
                   <th mat-header-cell *matHeaderCellDef>Feature Details</th>
                   <td mat-cell *matCellDef="let user">
-                    {{ user.features }}
+                    <button
+                      class=""
+                      matTooltip="Show features of {{ user.loginId }} user"
+                      (click)="viewFeature(user)"
+                      style="
+                        background-color: transparent;
+                        border-color: transparent;
+                      "
+                    >
+                      <mat-icon style="color: #009688">remove_red_eye</mat-icon>
+                    </button>
                   </td>
                 </ng-container>
 

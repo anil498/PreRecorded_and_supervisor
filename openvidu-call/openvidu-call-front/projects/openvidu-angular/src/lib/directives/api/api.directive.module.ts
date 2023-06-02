@@ -21,13 +21,17 @@ import {
 	ToolbarParticipantsPanelButtonDirective,
 	ToolbarRecordingButtonDirective,
 	ToolbarScreenshareButtonDirective,
-	ToolbarSettingsButtonDirective
+	ToolbarFullScreenButtonDirective,
+	ToolbarSettingsButtonDirective,
+	ToolbarPublishVideoButtonDirective,
+	ToolbarVideoControlButtonDirective
 } from './toolbar.directive';
 import {
 	AudioMutedDirective,
 	CaptionsLangDirective, CaptionsLangOptionsDirective, LangDirective, MinimalDirective,
 	ParticipantNameDirective,
 	PrejoinDirective,
+	ShowFullScreenButtonDirective,
 	VideoMutedDirective,
 	PrefullscreenDirective
 } from './videoconference.directive';
@@ -39,10 +43,14 @@ import {
 		CaptionsLangOptionsDirective,
 		CaptionsLangDirective,
 		PrejoinDirective,
+		ShowFullScreenButtonDirective,
 		PrefullscreenDirective,
 		VideoMutedDirective,
 		AudioMutedDirective,
 		ToolbarScreenshareButtonDirective,
+		ToolbarFullScreenButtonDirective,
+		ToolbarPublishVideoButtonDirective,
+		ToolbarVideoControlButtonDirective,
 		ToolbarFullscreenButtonDirective,
 		ToolbarBackgroundEffectsButtonDirective,
 		ToolbarCaptionsButtonDirective,
@@ -72,10 +80,14 @@ import {
 		CaptionsLangOptionsDirective,
 		CaptionsLangDirective,
 		PrejoinDirective,
+		ShowFullScreenButtonDirective,
 		PrefullscreenDirective,
 		VideoMutedDirective,
 		AudioMutedDirective,
 		ToolbarScreenshareButtonDirective,
+		ToolbarFullScreenButtonDirective,
+		ToolbarPublishVideoButtonDirective,
+		ToolbarVideoControlButtonDirective,
 		ToolbarFullscreenButtonDirective,
 		ToolbarBackgroundEffectsButtonDirective,
 		ToolbarCaptionsButtonDirective,

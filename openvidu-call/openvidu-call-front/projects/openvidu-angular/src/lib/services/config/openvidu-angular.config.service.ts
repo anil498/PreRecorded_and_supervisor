@@ -11,21 +11,34 @@ import { RecordingInfo } from '../../models/recording.model';
 @Injectable()
 export class OpenViduAngularConfigService {
 	private configuration: OpenViduAngularConfig;
+
 	minimal = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 	minimalObs: Observable<boolean>;
+
 	participantName = <BehaviorSubject<string>>new BehaviorSubject('');
 	participantNameObs: Observable<string>;
+
 	prejoin = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	prejoinObs: Observable<boolean>;
+
 	prefullscreen = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	prefullscreenObs: Observable<boolean>;
 
 	videoMuted = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 	videoMutedObs: Observable<boolean>;
+
 	audioMuted = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 	audioMutedObs: Observable<boolean>;
+
 	screenshareButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	screenshareButtonObs: Observable<boolean>;
+
+	publishVideoButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	publishVideoeButtonObs: Observable<boolean>;
+
+	videoControlButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	videoControlButtonObs: Observable<boolean>;
+
 	fullScreenshareButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	fullScreenshareButtonObs: Observable<boolean>;
 
@@ -46,6 +59,8 @@ export class OpenViduAngularConfigService {
 
 	chatPanelButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	chatPanelButtonObs: Observable<boolean>;
+	playvideoButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	playvideoButtonObs: Observable<boolean>;
 
 	activitiesPanelButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	activitiesPanelButtonObs: Observable<boolean>;
@@ -90,12 +105,15 @@ export class OpenViduAngularConfigService {
 		this.audioMutedObs = this.audioMuted.asObservable();
 		//Toolbar observables
 		this.screenshareButtonObs = this.screenshareButton.asObservable();
+		this.publishVideoeButtonObs = this.publishVideoButton.asObservable();
+		this.videoControlButtonObs = this.videoControlButton.asObservable();
 		this.fullScreenshareButtonObs=this.fullScreenshareButton.asObservable();
 		this.fullscreenButtonObs = this.fullscreenButton.asObservable();
 		this.backgroundEffectsButtonObs = this.backgroundEffectsButton.asObservable();
 		this.leaveButtonObs = this.leaveButton.asObservable();
 		this.participantsPanelButtonObs = this.participantsPanelButton.asObservable();
 		this.chatPanelButtonObs = this.chatPanelButton.asObservable();
+		this.playvideoButtonObs = this.playvideoButton.asObservable();
 		this.activitiesPanelButtonObs = this.activitiesPanelButton.asObservable();
 		this.displaySessionNameObs = this.displaySessionName.asObservable();
 		this.displayLogoObs = this.displayLogo.asObservable();

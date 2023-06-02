@@ -20,6 +20,7 @@ export class DialogTemplateComponent {
 	constructor(public dialogRef: MatDialogRef<DialogTemplateComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {}
 
 	close() {
-		this.dialogRef.close();
+		console.log('Close button clicked');
+		this.dialogRef.close('close');
 	}
 }

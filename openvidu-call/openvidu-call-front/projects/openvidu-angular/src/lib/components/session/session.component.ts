@@ -274,7 +274,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 		} catch (error) {
 			// this._error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
 			this.log.e('There was an error connecting to the session:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error,true);
 		}
 	}
 

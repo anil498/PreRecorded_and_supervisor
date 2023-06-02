@@ -33,7 +33,10 @@ import { AccountManagementComponent } from "app/account-management/account-manag
 import { CreateAccountComponent } from "app/create-account/create-account.component";
 import { UpdateAccountDialogComponent } from "app/update-account-dialog/update-account-dialog.component";
 import { UpdateUserDialogComponent } from "app/update-user-dialog/update-user-dialog.component";
-
+import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-dialog.component";
+import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
+import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account-dialog.component";
+import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.component";
 
 @NgModule({
   imports: [
@@ -73,6 +76,10 @@ import { UpdateUserDialogComponent } from "app/update-user-dialog/update-user-di
     CreateAccountComponent,
     DeleteDialogComponent,
     DynamicSupportComponent,
+    ViewAccountDialogComponent,
+    ViewUserDialogComponent,
+    ViewAccessDialogComponent,
+    ViewFeatureDialogComponent,
   ],
   entryComponents: [FormDialogComponent],
 })

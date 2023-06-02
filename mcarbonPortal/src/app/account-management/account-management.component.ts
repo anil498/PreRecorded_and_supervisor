@@ -16,6 +16,8 @@ import { Accounts } from "../model/accounts";
 import { MatSort, Sort } from "@angular/material/sort";
 import { CreateAccountComponent } from "app/create-account/create-account.component";
 import { UpdateAccountDialogComponent } from "app/update-account-dialog/update-account-dialog.component";
+import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-dialog.component";
+import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
 
 @Component({
   selector: "app-account-management",
@@ -29,7 +31,7 @@ export class AccountManagementComponent implements OnInit {
   private updateSubscription: Subscription;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
-  pageSizes = [5, 10, 25, 50, 100, 500];
+  pageSizes = [10, 25, 50, 100, 500];
   displayedColumns: any[] = [
     "name",
     // "contact",
@@ -162,6 +164,39 @@ export class AccountManagementComponent implements OnInit {
     console.log("Confirm Delete");
 
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
+  }
+
+  viewAccount(account: any) {}
+
+  viewAccess(account: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "50%";
+    dialogConfig.height = "50%";
+    dialogConfig.data = account.accessId;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(
+      ViewAccessDialogComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
+  }
+  viewFeature(account: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "50%";
+    dialogConfig.height = "50%";
+    dialogConfig.data = account.features;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(
+      ViewFeatureDialogComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
   }
 
   updateAccountDialog(account: any) {

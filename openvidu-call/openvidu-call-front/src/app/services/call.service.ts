@@ -14,9 +14,9 @@ export class CallService {
 		if (this.initialized) {
 			return;
 		}
-		const config = await this.restService.getConfig();
-		this.privateAccess = config.isPrivate;
-		this.initialized = true;
+		// const config = await this.restService.getConfig();
+		// this.privateAccess = config.isPrivate;
+		// this.initialized = true;
 	}
 
 	isPrivateAccess(): boolean {

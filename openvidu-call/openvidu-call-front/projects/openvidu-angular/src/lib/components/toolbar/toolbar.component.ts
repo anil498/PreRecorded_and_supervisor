@@ -148,6 +148,15 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * Provides event notifications that fire when camera toolbar button has been clicked.
 	 */
 	@Output() onCameraButtonClicked: EventEmitter<void> = new EventEmitter<any>();
+	/**
+	 * Provides event notifications that fire when publish video toolbar button has been clicked.
+	 */
+	@Output() onPublishVideoButtonClicked: EventEmitter<void> = new EventEmitter<any>();
+
+	/**
+	 * Provides event notifications that fire when publish video toolbar button has been clicked.
+	 */
+	@Output() onVideoControlButtonClicked: EventEmitter<void> = new EventEmitter<any>();
 
 	/**
 	 * Provides event notifications that fire when microphone toolbar button has been clicked.
@@ -243,6 +252,14 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	isPublishVideoActive: boolean=false;
+	/**
+	 * @ignore
+	 */
+	isVideoControlActive: boolean=false;
+	/**
+	 * @ignore
+	 */
 	isShareFullscreenActive: boolean = false;
 	/**
 	 * @ignore
@@ -265,15 +282,23 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	showScreenshareButton = true;
+	showScreenshareButton: boolean= true;
 	/**
 	 * @ignore
 	 */
-	showShareFullScreenButton:boolean=false;
+	showPublishVideoButton: boolean = true;
 	/**
 	 * @ignore
 	 */
-	showFullscreenButton: boolean = true;
+	showVideoControlButton: boolean= false;
+	/**
+	 * @ignore
+	 */
+	showShareFullScreenButton: boolean=false;
+	/**
+	 * @ignore
+	 */
+	showFullscreenButton: boolean = false;
 
 	/**
 	 * @ignore
@@ -371,6 +396,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private chatMessagesSubscription: Subscription;
 	private localParticipantSubscription: Subscription;
 	private screenshareButtonSub: Subscription;
+	private publishVideoButtonSub: Subscription;
+	private videoControlButtonSub: Subscription;
 	private fullScreenshareButtonSub: Subscription;
 	private fullscreenButtonSub: Subscription;
 	private backgroundEffectsButtonSub: Subscription;
@@ -495,7 +522,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.e('There was an error toggling microphone:', error.code, error.message);
 			this.actionService.openDialog(
 				this.translateService.translate('ERRORS.TOGGLE_MICROPHONE'),
-				error?.error || error?.message || error
+				error?.error || error?.message || error,true
 			);
 		}
 	}
@@ -514,7 +541,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			await this.openviduService.publishVideo(publishVideo);
 		} catch (error) {
 			this.log.e('There was an error toggling camera:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_CAMERA'), error?.error || error?.message || error);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_CAMERA'), error?.error || error?.message || error,true);
 		}
 		this.videoMuteChanging = false;
 	}
@@ -538,7 +565,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
 				this.actionService.openDialog(
 					this.translateService.translate('ERRORS.SCREEN_SHARING'),
-					this.translateService.translate('ERRORS.SCREEN_SUPPORT')
+					this.translateService.translate('ERRORS.SCREEN_SUPPORT'),true
 				);
 			}
 		}
@@ -621,7 +648,22 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.onChatPanelButtonClicked.emit();
 		this.panelService.togglePanel(PanelType.CHAT);
 	}
-
+	/**
+	 * @ignore
+	 */
+	togglePublishVideo() {
+		this.onPublishVideoButtonClicked.emit();
+		try {
+			this.showVideoControlButton=!this.showVideoControlButton
+			console.log("Publishing video")
+			this.openviduService.publishRecordedVideo()
+			this.isPublishVideoActive=!this.isPublishVideoActive;
+		} catch (error) {
+			this.log.e('There was an error toggling Publish video:', error.code, error.message);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error,true);
+		}
+	}
+	
 	/**
 	 * @ignore
 	 */
@@ -629,6 +671,26 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.isFullscreenActive = !this.isFullscreenActive;
 		this.documentService.toggleFullscreen('session-container');
 		this.onFullscreenButtonClicked.emit();
+	}
+	/**
+	 * @ignore
+	 */
+	toggleVideoPlay(){
+		this.onVideoControlButtonClicked.emit();
+		try {
+			if(!this.isVideoControlActive){
+				console.log("Playig video")
+				this.openviduService.playVideo();
+				this.isVideoControlActive=!this.isVideoControlActive;
+			}else{
+				console.log("Pausing video")
+				this.openviduService.pauseVideo();
+				this.isVideoControlActive=!this.isVideoControlActive;
+			}
+		} catch (error) {
+			this.log.e('There was an error toggling Publish video:', error.code, error.message);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error,true);
+		}
 	}
 
 	/**
@@ -652,7 +714,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		
 		console.log(screenPublisher.videos[0].video);
 		const screenVideoElement=screenPublisher.videos[0].video;
-		if(!this.isShareFullscreenActive){
+		if(!this.isShareFullscreenActive && !this.showFullscreenButton){
 			this.documentService.toggleFullscreenByVideo(screenVideoElement);
 			this.isShareFullscreenActive=true;
 		}else{
@@ -732,6 +794,14 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 		this.screenshareButtonSub = this.libService.screenshareButtonObs.subscribe((value: boolean) => {
 			this.showScreenshareButton = value && !this.platformService.isMobile();
+			this.cd.markForCheck();
+		});
+		this.publishVideoButtonSub = this.libService.publishVideoeButtonObs.subscribe((value: boolean) => {
+			this.showPublishVideoButton = value
+			this.cd.markForCheck();
+		});
+		this.videoControlButtonSub = this.libService.videoControlButtonObs.subscribe((value: boolean) => {
+			this.showVideoControlButton = value
 			this.cd.markForCheck();
 		});
 		this.fullScreenshareButtonSub = this.libService.fullScreenshareButtonObs.subscribe((value: boolean) => {
@@ -819,7 +889,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.showFullscreenButton = value;
 				// this.cd.markForCheck();
 			});
-			if(this.autoFullScreen && !this.isShareFullscreenActive){
+			if(this.autoFullScreen && !this.isShareFullscreenActive && !this.showFullscreenButton){
 			   console.log("Full screen")
 			   this.toggleShareFullscreen();
 			}else if(this.showShareFullScreenButton){

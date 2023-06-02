@@ -100,6 +100,32 @@
 			<mat-icon *ngIf="isScreenShareActive" matTooltip="{{ 'TOOLBAR.DISABLE_SCREEN' | translate }}">screen_share</mat-icon>
 		</button>
 
+		<!-- VideoPublish button -->
+		<button
+			mat-icon-button
+			*ngIf="!isMinimal && showPublishVideoButton"
+			id="videopublish-btn"
+			(click)="togglePublishVideo()"
+			[disabled]="isConnectionLost"
+			[class.active-btn]="isPublishVideoActive"
+		>
+			<mat-icon *ngIf="!isPublishVideoActive" matTooltip="{{ 'TOOLBAR.PUBLISH_VIDEO' | translate }}">publish</mat-icon>
+			<mat-icon *ngIf="isPublishVideoActive" matTooltip="{{ 'TOOLBAR.STOP_VIDEO' | translate }}">stop</mat-icon>
+		</button>
+
+		<!-- VideoPlay button -->
+		<button
+			mat-icon-button
+			*ngIf="!isMinimal && showVideoControlButton"
+			id="videoplay-btn"
+			(click)="toggleVideoPlay()"
+			[disabled]="isConnectionLost"
+			[class.active-btn]="isVideoControlActive"
+		>
+			<mat-icon *ngIf="!isVideoControlActive" matTooltip="{{ 'TOOLBAR.PLAY_VIDEO' | translate }}">play_circle_filled</mat-icon>
+			<mat-icon *ngIf="isVideoControlActive" matTooltip="{{ 'TOOLBAR.PAUSE_VIDEO' | translate }}">pause_circle_filled</mat-icon>
+		</button>
+
 		<!-- More options button -->
 		<button
 			mat-icon-button
