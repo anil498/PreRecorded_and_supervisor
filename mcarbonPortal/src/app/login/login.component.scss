@@ -3,12 +3,16 @@
   justify-content: right;
   align-items: start;
   height: 100vh;
-  margin-left: 200px;
+}
+
+.container-1{
+  min-width: 100%;
 }
 
 .card {
-  width: 350px;
-  margin-top: 110px;
+  width: 26%;
+  margin-top: 8%;
+  margin-right: 5%;
 }
 
 .form {

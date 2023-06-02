@@ -18,6 +18,7 @@ import { CreateAccountComponent } from "app/create-account/create-account.compon
 import { UpdateAccountDialogComponent } from "app/update-account-dialog/update-account-dialog.component";
 import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-dialog.component";
 import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
+import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account-dialog.component";
 
 @Component({
   selector: "app-account-management",
@@ -143,8 +144,8 @@ export class AccountManagementComponent implements OnInit {
 
   createDialog() {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(CreateAccountComponent, dialogConfig);
 
@@ -166,7 +167,21 @@ export class AccountManagementComponent implements OnInit {
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
   }
 
-  viewAccount(account: any) {}
+  viewAccountDialog(account: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
+    dialogConfig.data = account;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(
+      ViewAccountDialogComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
+  }
 
   viewAccess(account: any) {
     const dialogConfig = new MatDialogConfig();
@@ -201,8 +216,8 @@ export class AccountManagementComponent implements OnInit {
 
   updateAccountDialog(account: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     dialogConfig.data = account;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(

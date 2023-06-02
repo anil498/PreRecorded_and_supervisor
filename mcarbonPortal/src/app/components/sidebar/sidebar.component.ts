@@ -25,7 +25,7 @@ export const ROUTES: RouteInfo[] = [
     icon: "person",
     class: "",
     apiId: null,
-    show: true,
+    show: false,
   },
   {
     path: "/app/account-management",

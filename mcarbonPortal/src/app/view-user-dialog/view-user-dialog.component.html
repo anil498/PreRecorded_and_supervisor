@@ -1,1 +1,273 @@
-<p>view-user-dialog works!</p>
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      User Details
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+
+  <mat-tab-group
+    #tabGroup
+    [formGroup]="userForm"
+    *ngIf="userForm"
+    [dynamicHeight]="false"
+  >
+    <mat-tab label="Basic Information">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="First Name"
+                formControlName="user_fname"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="Last Name"
+                formControlName="user_lname"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="tel"
+                placeholder="Mobile Number"
+                formControlName="mobile"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="email"
+                placeholder="Email"
+                formControlName="email"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="Login ID"
+                formControlName="login_id"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <mat-label>Account Expiry Date</mat-label>
+              <input
+                matInput
+                [matDatepicker]="picker"
+                formControlName="acc_exp_date"
+              />
+              <mat-hint>MM/DD/YYYY</mat-hint>
+              <mat-datepicker-toggle
+                matIconSuffix
+                [for]="picker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Security">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="password"
+                placeholder="Password"
+                formControlName="password"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="password"
+                placeholder="Confirm Password"
+                formControlName="confirm_password"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-10 offset-md-1">
+            <mat-label>Select the Access you want:</mat-label>
+          </div>
+        </div>
+
+        <div class="row">
+          <section class="example-section">
+            <ng-container *ngFor="let access of accessData">
+              <mat-checkbox
+                [value]="access.accessId"
+                class="col-md-5 offset-md-1"
+                (change)="addAccessId(access, $event.checked)"
+                [checked]="isCheckAccess(access)"
+                disabled
+              >
+                {{ access.name }}
+              </mat-checkbox></ng-container
+            >
+          </section>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Settings">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Number of Active Sessions"
+                formControlName="max_active_sessions"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Duration of Sessions(in Minutes)"
+                formControlName="max_duration"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-5 offset-md-1">
+            <mat-form-field>
+              <input
+                matInput
+                type="number"
+                placeholder="Maximum Number of Participants"
+                formControlName="max_participants"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Feature List">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-10 offset-md-1">
+            <mat-label>Select the features you want:</mat-label>
+          </div>
+        </div>
+
+        <div class="row">
+          <section class="example-section">
+            <div *ngFor="let feature of featuresData" class="row">
+              <div class="col-md-4 offset-md-1">
+                <mat-checkbox
+                  [value]="feature.featureId"
+                  [checked]="isCheckFeature(feature)"
+                  (change)="
+                    showMetaList(feature, $event.checked);
+                    updateSelectedFeaturesMeta(
+                      feature.featureId,
+                      feature.metaList
+                    )
+                  "
+                  disabled
+                >
+                  {{ feature.name }}
+                </mat-checkbox>
+              </div>
+              <div class="col-md-6" *ngIf="isCheckFeature(feature)">
+                <div class="row">
+                  <mat-form-field
+                    *ngFor="let meta of feature.selectedMetaList"
+                    class="col-md-6"
+                  >
+                    <input
+                      matInput
+                      value="{{ meta.value }}"
+                      placeholder="{{ meta.key }}"
+                      #metaValue
+                      (change)="
+                        setMetaValue(
+                          feature.featureId,
+                          meta.key,
+                          metaValue.value
+                        )
+                      "
+                    />
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="row" *ngIf="emptyField">
+          <div class="col-md-6 offset-md-3 text-center">
+            <p class="alert alert-danger">
+              <strong>All fields are mandatory</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div mat-dialog-actions align="end" class="actions">
+    <button
+      *ngIf="!isFirstTab()"
+      class="prev-btn"
+      mat-raised-button
+      (click)="previous()"
+    >
+      <mat-icon>navigate_before</mat-icon> Previous
+    </button>
+    <button
+      *ngIf="!isLastTab()"
+      class="btn-1"
+      mat-raised-button
+      (click)="next()"
+    >
+      Next<mat-icon>navigate_next</mat-icon>
+    </button>
+    <button
+      *ngIf="isLastTab()"
+      mat-raised-button
+      class="submit-btn"
+      mat-dialog-close
+    >
+      Close
+    </button>
+  </div>
+</div>

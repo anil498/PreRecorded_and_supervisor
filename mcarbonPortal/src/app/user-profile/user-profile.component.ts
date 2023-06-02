@@ -10,6 +10,7 @@ import { User } from "../model/user";
 export class UserProfileComponent implements OnInit {
   token: string;
   userId: string;
+  userData: any;
   user: User;
   active: boolean = false;
   deactive: boolean = false;
@@ -21,22 +22,10 @@ export class UserProfileComponent implements OnInit {
     this.active = false;
     this.deactive = false;
     this.token = this.restService.getToken();
-    this.restService.getUserById(this.token).then(
-      (response) => {
-        console.warn(response);
-        this.user = response;
-        this.user.expDate = this.user.expDate.substring(0, 10);
-        console.log(this.user);
+    this.user = this.restService.getData().user_data;
 
-        if (this.user.status == 1) this.active = true;
-        else {
-          this.deactive = true;
-        }
-      },
-      (error) => {
-        console.log(error.status);
-      }
-    );
+    this.user.expDate = this.user.expDate.substring(0, 10);
+    console.log(this.user);
 
     this.accessList = this.restService.getData().Access;
     this.featureList = this.restService.getData().Features;

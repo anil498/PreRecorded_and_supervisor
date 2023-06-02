@@ -138,7 +138,22 @@
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     Status
                   </th>
-                  <td mat-cell *matCellDef="let user">{{ user.status }}</td>
+                  <td mat-cell *matCellDef="let user">
+                    <ng-container [ngSwitch]="user.status">
+                      <button class="btn btn-success btn-sm" *ngSwitchCase="1">
+                        Active
+                      </button>
+                      <button class="btn btn-danger btn-sm" *ngSwitchCase="0">
+                        Deactive
+                      </button>
+                      <button
+                        class="btn btn-secondary btn-sm"
+                        *ngSwitchCase="3"
+                      >
+                        Suspended
+                      </button>
+                    </ng-container>
+                  </td>
                 </ng-container>
 
                 <ng-container matColumnDef="Action">
@@ -161,7 +176,7 @@
                       <button
                         class="btn-action"
                         mat-menu-item
-                        (click)="viewDialog()"
+                        (click)="viewUserDialog(user)"
                       >
                         <mat-icon style="color: #009688"
                           >remove_red_eye</mat-icon
@@ -180,7 +195,7 @@
                       <button
                         class="btn-action"
                         mat-menu-item
-                        (click)="deleteData(user.userCode)"
+                        (click)="deleteUser(user.userCode)"
                         *ngIf="showDelete"
                       >
                         <mat-icon style="color: #009688"
