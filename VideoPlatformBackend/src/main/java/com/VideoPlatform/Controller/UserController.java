@@ -172,26 +172,20 @@ public class UserController {
         int maxUsers = a.getMaxUser();
 
         if(maxUsers == 0){
+            logger.info("No more users are allowed, max limit exceed..!");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        UserAuthEntity u = userAuthRepository.findByToken(token);
-        String creation = LocalDateTime.now().format(formatter);
-        user.setAccountId(acc.getAccountId());
-        user.setCreationDate(creation);
-        user.setParentId(u.getUserId());
-        String mypass = passwordEncoder.encode(user.getPassword());
-        user.setPassword(mypass);
+        userService.createUser(user,authKey,token);
+
         Map<String,String> result = new HashMap<>();
-        userService.createUser(user);
         result.put("status_code ","200");
         result.put("msg", "User created!");
         return ok(result);
 
     }
 
-    @PutMapping("/Update/{id}")
+    @PutMapping("/Update")
     public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user, HttpServletRequest request) throws JsonProcessingException {
 
         String authKey = request.getHeader("Authorization");
@@ -265,9 +259,13 @@ public class UserController {
 
         logger.info("userId "+userId);
         UserAuthEntity user = userAuthRepository.findByUId(userId);
-        logger.info("userId"+userId);
+        logger.info("userId "+userId);
 
+        logger.info("user1 {}",user1);
+        logger.info("user1.getLoginId() {}",user1.getLoginId());
+        logger.info("user1.getPassword() {}",user1.getPassword());
         if (!(user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId))) {
+            logger.info("Inside loginid pass check !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -325,6 +323,7 @@ public class UserController {
                     return new ResponseEntity<>(res, HttpStatus.OK);
                 }
         }
+            logger.info("Last login return invoked !");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
@@ -344,9 +343,9 @@ public class UserController {
 
     public int isValidAuthKey(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        if(acc == null)return 0;
+        if(acc == null) return 0;
         String key = (acc.getAuthKey());
-        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
+        if(acc.getExpDate().isBefore(LocalDateTime.now())){
             return 0;
         }
         int authId = acc.getAuthId();

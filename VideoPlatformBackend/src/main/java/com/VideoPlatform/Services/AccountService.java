@@ -8,4 +8,5 @@ public interface AccountService {
     List<AccountEntity> getAllAccounts();
     List<AccountEntity> getAccountById(int id);
     AccountEntity createAccount(AccountEntity account);
+    AccountEntity updateAccount(AccountEntity account);
 }

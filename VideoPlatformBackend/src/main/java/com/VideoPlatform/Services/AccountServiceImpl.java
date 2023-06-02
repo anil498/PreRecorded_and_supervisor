@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 public class AccountServiceImpl implements AccountService {
+
     @Autowired
     AccountRepository accountRepository;
 
@@ -18,19 +19,36 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public List<AccountEntity> getAllAccounts() {
-        //logger.info(String.valueOf(userRepository.findAll()));
         return accountRepository.findAll();
     }
+
     @Override
     public List<AccountEntity> getAccountById(int id) {
-        //logger.info(String.valueOf(userRepository.findById(id)));
         return accountRepository.findById(id);
     }
+
     @Override
     public AccountEntity createAccount(AccountEntity account) {
-        //logger.info("User details {}",account.toString());
-        // user.setUserPassword(user.getUserPassword());
 
         return accountRepository.save(account);
+    }
+
+    @Override
+    public AccountEntity updateAccount(AccountEntity account) {
+        logger.info("Account details for update : {} ",account);
+        AccountEntity existing = accountRepository.findByAccountId(account.getAccountId());
+        logger.info("existing : {}",existing);
+        existing.setSession(account.getSession());
+        existing.setFeatures(account.getFeatures());
+        existing.setFeaturesMeta(account.getFeaturesMeta());
+        existing.setAccessId(account.getAccessId());
+        existing.setExpDate(account.getExpDate());
+        existing.setAddress(account.getAddress());
+        existing.setName(account.getName());
+        existing.setAccountId(account.getAccountId());
+        existing.setCreationDate(account.getCreationDate());
+        existing.setMaxUser(account.getMaxUser());
+        existing.setExpDate(account.getExpDate());
+        return accountRepository.save(existing);
     }
 }

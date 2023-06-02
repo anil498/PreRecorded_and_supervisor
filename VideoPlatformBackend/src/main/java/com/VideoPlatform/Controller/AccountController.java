@@ -27,6 +27,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static org.springframework.http.ResponseEntity.ok;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(RequestMappings.APICALLACCOUNT)
@@ -203,7 +205,7 @@ public class AccountController {
 
             accountService.createAccount(acc);
             user.setAccountId(acc.getAccountId());
-            userService.createUser(user);
+            userService.createUser(user,authKey,token);
 
             AccountAuthEntity auth = accountAuthRepository.findById(acc.getAccountId());
             if(auth != null){
@@ -244,6 +246,30 @@ public class AccountController {
 
             return new ResponseEntity<>(result,HttpStatus.CREATED);
     }
+
+    @PutMapping("/Update")
+    public ResponseEntity<AccountEntity> updateAccount(@RequestBody AccountEntity account, HttpServletRequest request) throws JsonProcessingException {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!isValidToken(token)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(byAccess(1002,token))){
+            logger.info("for 2002 : "+byAccess(1002,token));
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        return ok(accountService.updateAccount(account));
+    }
+
 
     private String generatedKey(int accountId){
         String key = generateKey(accountId,"AC");

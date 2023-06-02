@@ -1,15 +1,18 @@
 package com.VideoPlatform.Services;
 
+import com.VideoPlatform.Entity.AccountAuthEntity;
+import com.VideoPlatform.Entity.UserAuthEntity;
 import com.VideoPlatform.Entity.UserEntity;
-import com.VideoPlatform.Repository.UserRepository;
-import com.VideoPlatform.Repository.AccountRepository;
-import com.VideoPlatform.Repository.SessionRepository;
-import com.VideoPlatform.Repository.UserAuthRepository;
+import com.VideoPlatform.Repository.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -23,6 +26,13 @@ public class UserServiceImpl implements UserService{
     private AccountRepository accountRepository;
     @Autowired
     private SessionRepository sessionRepository;
+    @Autowired
+    private AccountAuthRepository accountAuthRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     private static final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
     @Override
@@ -43,9 +53,16 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity createUser(UserEntity user) {
+    public UserEntity createUser(UserEntity user,String authKey,String token) {
         logger.info("User details {}",user.toString());
-       // user.setUserPassword(user.getUserPassword());
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+        UserAuthEntity u = userAuthRepository.findByToken(token);
+        String creation = LocalDateTime.now().format(formatter);
+        user.setAccountId(acc.getAccountId());
+        user.setCreationDate(creation);
+        user.setParentId(u.getUserId());
+        String mypass = passwordEncoder.encode(user.getPassword());
+        user.setPassword(mypass);
 
         return userRepository.save(user);
     }
@@ -62,6 +79,14 @@ public class UserServiceImpl implements UserService{
         existing.setExpDate(user.getExpDate());
         existing.setContact(user.getContact());
         existing.setEmail(user.getEmail());
+        existing.setParentId(user.getParentId());
+        existing.setPassword(user.getPassword());
+        existing.setUserId(user.getUserId());
+        existing.setAccountId(user.getAccountId());
+        existing.setLoginId(user.getLoginId());
+        existing.setLastLogin(user.getLastLogin());
+        existing.setCreationDate(user.getCreationDate());
+
         return userRepository.save(existing);
     }
 

@@ -32,8 +32,6 @@ import static org.springframework.http.ResponseEntity.ok;
 public class SessionController {
     private static final Logger logger= LoggerFactory.getLogger(SessionController.class);
 
-    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @Autowired
     AccountAuthRepository accountAuthRepository;
@@ -74,36 +72,13 @@ public class SessionController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
-        logger.info("Session Localdatetime = {}",newDateTime);
-        UserAuthEntity userAuth = userAuthRepository.findByToken(token);
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
-        UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
-        session.setSessionName(account.getName());
-        session.setUserId(userAuth.getUserId());
-        session.setMobile(userEntity.getContact());
-        session.setAccountId(acc.getAccountId());
-        session.setStatus("1");
-        String sessionId=acc.getAccountId()+"_"+userAuth.getUserId()+"_"+System.currentTimeMillis();
-        session.setSessionId(sessionId);
-        String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-        session.setSessionKey(sessionKey);
-        String supportKey = sessionKey+"_1";
-        session.setSessionSupportKey(supportKey);
-        session.setUserInfo(session.getUserInfo());
-        session.setExpDate(newDateTime);
-        String creation = LocalDateTime.now().format(formatter);
-        session.setCreation(creation);
-
-        sessionService.createSession(session);
-
+        sessionService.createSession(session,authKey,token);
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "Session created!");
         return ok(result);
     }
+
     @GetMapping("/GetAll")
     public ResponseEntity<List<SessionEntity>> getAllSessions(HttpServletRequest request) throws JsonProcessingException {
 
@@ -115,12 +90,10 @@ public class SessionController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
         if(!isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
         if(!(byAccess(4000,token))){
             logger.info("for 4000 : "+byAccess(4000,token));
             logger.info("Permission Denied. Don't have access for this service!");
@@ -129,6 +102,7 @@ public class SessionController {
 
         return ok(sessionService.getAllSessions());
     }
+
     @GetMapping("/GetByKey/{key}")
     public ResponseEntity<?> getSessionByKey(@PathVariable String key, HttpServletRequest request) throws JsonProcessingException {
 
@@ -154,9 +128,7 @@ public class SessionController {
         if(s == null){
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
-
         return ok(s);
-
     }
 
     public int isValidAuthKey(String authKey){
@@ -169,6 +141,7 @@ public class SessionController {
         int authId = acc.getAuthId();
         return authId;
     }
+
     public Boolean isValidToken(String token){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
@@ -225,12 +198,7 @@ public class SessionController {
         logger.info("TocheckVal is : "+toCheckValue);
         return IntStream.of(arr).anyMatch(x -> x == toCheckValue);
     }
-    public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
-        String generatedString = RandomStringUtils.randomAlphanumeric(10);
-        logger.info(generatedString);
-        System.out.println(generatedString);
-        return generatedString;
-    }
+
 
 
 }

@@ -1,23 +1,20 @@
 package com.VideoPlatform.Services;
 
-import com.VideoPlatform.Entity.FeatureEntity;
-import com.VideoPlatform.Entity.SessionEntity;
-import com.VideoPlatform.Entity.UserAuthEntity;
-import com.VideoPlatform.Entity.UserEntity;
-import com.VideoPlatform.Repository.FeatureRepository;
-import com.VideoPlatform.Repository.SessionRepository;
-import com.VideoPlatform.Repository.UserAuthRepository;
-import com.VideoPlatform.Repository.UserRepository;
+import com.VideoPlatform.Entity.*;
+import com.VideoPlatform.Repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,17 +26,49 @@ public class SessionServiceImpl implements SessionService{
     private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
-    UserAuthRepository userAuthRepository;
+    private UserAuthRepository userAuthRepository;
     @Autowired
-    SessionRepository sessionRepository;
+    private SessionRepository sessionRepository;
     @Autowired
-    FeatureRepository featureRepository;
+    private FeatureRepository featureRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+    @Autowired
+    private AccountAuthRepository accountAuthRepository;
+    @Value(("${call.access.time}"))
+    private int callAccessTime;
+
+    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @Override
-    public SessionEntity createSession(SessionEntity session) {
+    public SessionEntity createSession(SessionEntity session, String authKey, String token) {
         logger.info("User details {}",session.toString());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
+        logger.info("Session Localdatetime = {}",newDateTime);
+        UserAuthEntity userAuth = userAuthRepository.findByToken(token);
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+        AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
+        UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
+        session.setSessionName(account.getName());
+        session.setUserId(userAuth.getUserId());
+        session.setMobile(userEntity.getContact());
+        session.setAccountId(acc.getAccountId());
+        session.setStatus("1");
+        String sessionId=acc.getAccountId()+"_"+userAuth.getUserId()+"_"+System.currentTimeMillis();
+        session.setSessionId(sessionId);
+        String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+        session.setSessionKey(sessionKey);
+        String supportKey = sessionKey+"_1";
+        session.setSessionSupportKey(supportKey);
+        session.setUserInfo(session.getUserInfo());
+        session.setExpDate(newDateTime);
+        String creation = LocalDateTime.now().format(formatter);
+        session.setCreation(creation);
+
         return sessionRepository.save(session);
     }
 
@@ -89,5 +118,11 @@ public class SessionServiceImpl implements SessionService{
             featureEntities.add(featureEntity);
         }
         return objectMapper.convertValue(featureEntities, JsonNode.class);
+    }
+    public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
+        String generatedString = RandomStringUtils.randomAlphanumeric(10);
+        logger.info(generatedString);
+        System.out.println(generatedString);
+        return generatedString;
     }
 }
