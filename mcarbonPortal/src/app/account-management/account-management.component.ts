@@ -144,8 +144,8 @@ export class AccountManagementComponent implements OnInit {
 
   createDialog() {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(CreateAccountComponent, dialogConfig);
 
@@ -169,8 +169,8 @@ export class AccountManagementComponent implements OnInit {
 
   viewAccountDialog(account: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     dialogConfig.data = account;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(
@@ -216,8 +216,8 @@ export class AccountManagementComponent implements OnInit {
 
   updateAccountDialog(account: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     dialogConfig.data = account;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(

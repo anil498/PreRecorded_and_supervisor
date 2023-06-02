@@ -32,7 +32,6 @@ export class ViewAccessDialogComponent implements OnInit {
 
   showAccessName(accessId: number) {
     this.accessData.forEach((access) => {
-      console.log(access.accessId);
       if (accessId == access.accessId) this.accessName.push(access.name);
     });
   }
