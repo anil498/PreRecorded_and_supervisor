@@ -18,6 +18,7 @@ import { MatSort, Sort } from "@angular/material/sort";
 import { UpdateUserDialogComponent } from "app/update-user-dialog/update-user-dialog.component";
 import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
 import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-dialog.component";
+import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.component";
 
 @Component({
   selector: "app-user-management",
@@ -173,7 +174,18 @@ export class UserManagementComponent implements OnInit {
     this.dataSourceWithPageSize.filter = filterValue.trim().toLowerCase();
   }
 
-  viewAccount(account: any) {}
+  viewUserDialog(user: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "690px";
+    dialogConfig.height = "550px";
+    dialogConfig.data = user;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(ViewUserDialogComponent, dialogConfig);
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
+  }
 
   viewAccess(user: any) {
     const dialogConfig = new MatDialogConfig();
@@ -203,7 +215,7 @@ export class UserManagementComponent implements OnInit {
     });
   }
 
-  deleteData(userId: number) {
+  deleteUser(userId: number) {
     const dialogConfig = new MatDialogConfig();
     console.log("Confirm Delete");
     // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);

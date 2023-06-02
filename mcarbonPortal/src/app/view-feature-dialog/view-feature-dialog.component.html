@@ -10,7 +10,9 @@
   <div class="row">
     <ng-container *ngFor="let feature of featureName">
       <div class="col-md-10 offset-md-1 justify-content-center">
-        <h4>{{ feature }}</h4>
+        <mat-checkbox checked disabled>
+          {{ feature }}
+        </mat-checkbox>
       </div>
     </ng-container>
   </div>

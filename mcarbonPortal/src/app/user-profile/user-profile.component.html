@@ -69,15 +69,26 @@
                 </div>
                 <div class="col-md-5">{{ user.expDate }}</div>
               </div>
-              <div class="row" style="padding-top: 15px">
+              <div class="row">
                 <div
                   class="col-md-5 offset-md-1"
-                  style="font-weight: bold; font-size: 1rem;"
+                  style="font-weight: bold; font-size: 1rem; padding-top:2.5%"
                 >
                   Status:
                 </div>
-                <div class="col-md-5" *ngIf="active">Active</div>
-                <div class="col-md-5" *ngIf="deactive">Not Active</div>
+                <div class="col-md-5">
+                  <ng-container [ngSwitch]="user.status">
+                    <button class="btn btn-success btn-sm" *ngSwitchCase="1">
+                      Active
+                    </button>
+                    <button class="btn btn-danger btn-sm" *ngSwitchCase="0">
+                      Deactive
+                    </button>
+                    <button class="btn btn-secondary btn-sm" *ngSwitchCase="3">
+                      Suspended
+                    </button>
+                  </ng-container>
+                </div>
               </div>
             </div>
           </div>
@@ -95,15 +106,12 @@
               </div>
             </div>
             <div class="row">
-              <div
+              <h6
                 *ngFor="let access of accessList"
-                class="col-md-5 offset-md-1 list"
+                class="col-md-5 offset-md-1"
               >
-                {{ access.name }}
-              </div>
-
-              <!-- <h6 class="card-category">{{ access.name }}</h6>
-              <div class="card-description"></div> -->
+                <li>{{ access.name }}</li>
+              </h6>
             </div>
           </div>
         </div>
@@ -117,12 +125,13 @@
                 <h4 class="card-title card-title-1">Feature List</h4>
               </div>
             </div>
-            <div *ngFor="let feature of featureList">
-              <div class="row">
-                <h6 class="col-md-10 offset-md-1">{{ feature.name }}</h6>
-              </div>
-              <!-- <h6 class="card-category">{{ feature.name }}</h6>
-              <p class="card-description"></p> -->
+            <div class="row">
+              <h6
+                *ngFor="let feature of featureList"
+                class="col-md-5 offset-md-1"
+              >
+                <li>{{ feature.name }}</li>
+              </h6>
             </div>
           </div>
         </div>

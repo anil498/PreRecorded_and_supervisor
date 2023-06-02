@@ -5,7 +5,6 @@ import { Router } from "@angular/router";
 import { response } from "express";
 import { error } from "console";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
-
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
@@ -87,7 +86,10 @@ export class LoginComponent implements OnInit {
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);
       this.restService.setUserId(this.username);
-      this.router.navigate(["/app/user-profile"]);
+      let accessList = loginResponse.Access;
+      // const defaultLabel = this.getLabel(accessList);
+      // console.log(defaultLabel);
+      this.router.navigate(["/app/" + "dashboard"]);
     } catch (err) {
       console.log(err);
       if (err.status === 0) {
@@ -124,4 +126,15 @@ export class LoginComponent implements OnInit {
       this.emptyPass = false;
     }, time);
   }
+  // private getLabel(accessList: any[]) {
+  //   accessList.forEach((access) => {
+  //     if (access.pId != 0) {
+  //       const index = accessList.indexOf(access.accessId);
+  //       accessList.splice(index, 1);
+  //     }
+  //   });
+  //   accessList.sort((a, b) => a.seq - b.seq);
+  //   console.warn(accessList);
+  //   return accessList[0].apiId;
+  // }
 }
