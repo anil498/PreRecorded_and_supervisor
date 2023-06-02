@@ -19,14 +19,14 @@ export const ROUTES: RouteInfo[] = [
     apiId: 100,
     show: false,
   },
-  // {
-  //   path: "/app/user-profile",
-  //   title: "User Profile",
-  //   icon: "person",
-  //   class: "",
-  //   apiId: null,
-  //   show: true,
-  // },
+  {
+    path: "/app/user-profile",
+    title: "User Profile",
+    icon: "person",
+    class: "",
+    apiId: null,
+    show: false,
+  },
   {
     path: "/app/account-management",
     title: "Account Management",
