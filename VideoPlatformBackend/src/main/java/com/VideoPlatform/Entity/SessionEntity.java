@@ -23,7 +23,11 @@ public class SessionEntity {
     @Column(name = "account" ) private String accountI;
     @Column(name = "participant_name") private String participantName;
     @Column(name = "participants") private String participants;
-    @Column(name = "settings") private String settings;
+    @Column(name = "settings",columnDefinition = "text") private String settings;
+    @Column(name = "sessionKey") private String sessionKey;
+    @Column(name = "creation_date") private String creationDate;
+    @Column(name = "exp_date") private LocalDateTime expDate;
+    @Column(name = "status") private Integer status = 1;
 
     public String getSessionId() {
         return sessionId;
@@ -81,6 +85,38 @@ public class SessionEntity {
         this.settings = settings;
     }
 
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getExpDate() {
+        return expDate;
+    }
+
+    public void setExpDate(LocalDateTime expDate) {
+        this.expDate = expDate;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "SessionEntity{" +
@@ -90,7 +126,11 @@ public class SessionEntity {
                 ", accountI='" + accountI + '\'' +
                 ", participantName='" + participantName + '\'' +
                 ", participants='" + participants + '\'' +
-                ", settings=" + settings +
+                ", settings='" + settings + '\'' +
+                ", sessionKey='" + sessionKey + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", expDate='" + expDate + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 }
