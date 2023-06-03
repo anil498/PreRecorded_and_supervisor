@@ -1,11 +1,13 @@
 package com.VideoPlatform.Entity;
 
+import com.VideoPlatform.Utils.UnixTimestampConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @EntityScan
@@ -27,11 +29,13 @@ public class AccountAuthEntity {
     @Column(nullable = false, name="auth_key")
     private String authKey;
 
-    @Column(nullable = false,name="creation_date")
-    private LocalDateTime creationDate;
+    @Column(nullable = false,name="creation_date",columnDefinition = "TIMESTAMP")
+ //   @Convert(converter = UnixTimestampConverter.class)
+    private Date creationDate;
 
-    @Column(nullable = false,name="exp_date")
-    private LocalDateTime expDate;
+    @Column(nullable = false,name="exp_date",columnDefinition = "TIMESTAMP")
+//    @Convert(converter = UnixTimestampConverter.class)
+    private Date expDate;
 
     public int getAuthId() {
         return authId;
@@ -65,19 +69,19 @@ public class AccountAuthEntity {
         this.authKey = authKey;
     }
 
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getExpDate() {
+    public Date getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(LocalDateTime expDate) {
+    public void setExpDate(Date expDate) {
         this.expDate = expDate;
     }
 

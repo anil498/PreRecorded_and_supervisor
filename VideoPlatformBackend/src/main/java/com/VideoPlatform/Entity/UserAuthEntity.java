@@ -1,10 +1,12 @@
 package com.VideoPlatform.Entity;
 
+import com.VideoPlatform.Utils.UnixTimestampConverter;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 
 @Entity
 @Table(name = "user_auth")
@@ -24,10 +26,12 @@ public class UserAuthEntity {
     private String token;
 
     @Column(nullable = false,name="creation_date")
-    private LocalDateTime creationDate;
+    //@Convert(converter = UnixTimestampConverter.class)
+    private Date creationDate;
 
     @Column(nullable = false,name="exp_date")
-    private LocalDateTime expDate;
+    //@Convert(converter = UnixTimestampConverter.class)
+    private Date expDate;
 
 //    @Column(name = "access_id",columnDefinition = "integer[]")
 //    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
@@ -49,19 +53,19 @@ public class UserAuthEntity {
         this.token = token;
     }
 
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getExpDate() {
+    public Date getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(LocalDateTime expDate) {
+    public void setExpDate(Date expDate) {
         this.expDate = expDate;
     }
 

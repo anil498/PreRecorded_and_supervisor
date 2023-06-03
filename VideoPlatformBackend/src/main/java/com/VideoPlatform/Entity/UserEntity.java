@@ -2,6 +2,8 @@ package com.VideoPlatform.Entity;
 
 import java.io.Serializable;
 import java.util.*;
+
+import com.VideoPlatform.Utils.UnixTimestampConverter;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -40,14 +42,16 @@ public class UserEntity implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @Column(name = "creation_date")
-    private String creationDate;
+    @Column(name = "creation_date",columnDefinition = "TIMESTAMP")
+//    @Convert(converter = UnixTimestampConverter.class)
+    private Date creationDate;
 
     @Column(name = "last_login")
     private String lastLogin;
 
-    @Column(name = "exp_date")
-    private String expDate;
+    @Column(name = "exp_date",columnDefinition = "TIMESTAMP")
+ //   @Convert(converter = UnixTimestampConverter.class)
+    private Date expDate;
 
     @Column(name = "parent_id")
     private int parentId;
@@ -135,11 +139,11 @@ public class UserEntity implements Serializable {
         this.email = email;
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -184,11 +188,11 @@ public class UserEntity implements Serializable {
         this.featuresMeta = featuresMeta;
     }
 
-    public String getExpDate() {
+    public Date getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(String expDate) {
+    public void setExpDate(Date expDate) {
         this.expDate = expDate;
     }
 

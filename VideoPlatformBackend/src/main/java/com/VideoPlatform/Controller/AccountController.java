@@ -3,6 +3,7 @@ package com.VideoPlatform.Controller;
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.AccountServiceImpl;
+import com.VideoPlatform.Utils.CommonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -34,6 +36,8 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping(RequestMappings.APICALLACCOUNT)
 public class AccountController {
     private static final Logger logger= LoggerFactory.getLogger(AccountController.class);
+
+
 
     @Autowired
     private AccountServiceImpl accountService;
@@ -170,7 +174,7 @@ public class AccountController {
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-            String creation = LocalDateTime.now().format(formatter);
+            Date creation = CommonUtils.getDate();
             AccountEntity acc = new AccountEntity();
             UserEntity user = new UserEntity();
             logger.info(String.valueOf(params));
@@ -183,13 +187,15 @@ public class AccountController {
             acc.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
             acc.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
             acc.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-            acc.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+            Date expDate = CommonUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
+            acc.setExpDate(expDate);
 
             UserAuthEntity u = userAuthRepository.findByToken(token);
             logger.info("User Data : "+u);
             user.setFname(params.get("fname").getAsString());
             user.setLname(params.get("lname").getAsString());
-            user.setExpDate(params.get("expDate").getAsString());
+            user.setExpDate(expDate);
             user.setLoginId(params.get("loginId").getAsString());
             String pass = params.get("password").getAsString();
             String mypass = passwordEncoder.encode(pass);
@@ -210,16 +216,16 @@ public class AccountController {
             AccountAuthEntity auth = accountAuthRepository.findById(acc.getAccountId());
             if(auth != null){
                 auth.setAuthKey(generatedKey(acc.getAccountId()));
-                auth.setCreationDate(LocalDateTime.now());
-                auth.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                auth.setCreationDate(creation);
+                auth.setExpDate(expDate);
             }
             else{
                 auth = new AccountAuthEntity();
                 auth.setAccountId(acc.getAccountId());
                 auth.setName(acc.getName());
                 auth.setAuthKey(generatedKey(acc.getAccountId()));
-                auth.setCreationDate(LocalDateTime.now());
-                auth.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                auth.setCreationDate(creation);
+                auth.setExpDate(expDate);
             }
 
             accountAuthRepository.save(auth);
@@ -235,8 +241,8 @@ public class AccountController {
                 ua.setToken(token1);
  //               ua.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
                 ua.setAuthId(authId1);
-                ua.setCreationDate(LocalDateTime.now());
-                ua.setExpDate(LocalDateTime.parse(objectMapper.readValue(params.get("expDate").toString(),String.class),DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                ua.setCreationDate(creation);
+                ua.setExpDate(expDate);
                 userAuthRepository.save(ua);
             }
 
@@ -300,7 +306,7 @@ public class AccountController {
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
 
         if(acc == null)return 0;
-        if(acc.getExpDate().isBefore(LocalDateTime.now())){
+        if(CommonUtils.isExpire(acc.getExpDate())){
             return 0;
         }
         return 1;
@@ -308,7 +314,7 @@ public class AccountController {
     public Boolean isValidToken(String token){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
-        if(user.getExpDate().isBefore(LocalDateTime.now()))
+        if(CommonUtils.isExpire(user.getExpDate()))
             return false;
         return true;
     }

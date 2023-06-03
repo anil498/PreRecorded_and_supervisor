@@ -6,12 +6,12 @@ public class SettingsEntity {
 
     private Integer duration;
     private byte logo;
-    private Boolean moderators;
+    private Boolean moderators = false;
     private String description;
     private Boolean displayTicker;
     private Boolean displayTimer;
     private Boolean recording;
-    private String recordingDetails;
+    private Object recordingDetails;
     private Boolean screenShare;
     private Boolean waitForModerator;
     private Boolean chat;
@@ -78,11 +78,11 @@ public class SettingsEntity {
         this.recording = recording;
     }
 
-    public String getRecordingDetails() {
+    public Object getRecordingDetails() {
         return recordingDetails;
     }
 
-    public void setRecordingDetails(String recordingDetails) {
+    public void setRecordingDetails(Object recordingDetails) {
         this.recordingDetails = recordingDetails;
     }
 

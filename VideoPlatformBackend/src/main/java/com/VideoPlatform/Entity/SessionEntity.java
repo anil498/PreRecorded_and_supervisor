@@ -1,5 +1,6 @@
 package com.VideoPlatform.Entity;
 
+import com.VideoPlatform.Utils.UnixTimestampConverter;
 import com.google.gson.JsonObject;
 import lombok.Data;
 import org.hibernate.annotations.Type;
@@ -7,6 +8,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 
 @Entity
@@ -25,8 +27,11 @@ public class SessionEntity {
     @Column(name = "participants") private String participants;
     @Column(name = "settings",columnDefinition = "text") private String settings;
     @Column(name = "sessionKey") private String sessionKey;
-    @Column(name = "creation_date") private String creationDate;
-    @Column(name = "exp_date") private LocalDateTime expDate;
+ //   @Convert(converter = UnixTimestampConverter.class)
+    @Column(name = "creation_date") private Date creationDate;
+    @Column(name = "exp_date")
+ //   @Convert(converter = UnixTimestampConverter.class)
+    private Date expDate;
     @Column(name = "status") private Integer status = 1;
 
     public String getSessionId() {
@@ -93,19 +98,19 @@ public class SessionEntity {
         this.sessionKey = sessionKey;
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getExpDate() {
+    public Date getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(LocalDateTime expDate) {
+    public void setExpDate(Date expDate) {
         this.expDate = expDate;
     }
 

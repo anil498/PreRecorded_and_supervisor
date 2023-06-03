@@ -4,6 +4,7 @@ import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.SessionService;
+import com.VideoPlatform.Utils.CommonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -52,7 +53,7 @@ public class SessionController {
     private int callAccessTime;
 
     @PostMapping("/Create")
-    public ResponseEntity<?> createSession(@RequestBody SessionEntity sess, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<?> createSession(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -72,7 +73,7 @@ public class SessionController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        sessionService.createSession(sess,authKey,token);
+        sessionService.createSession(authKey,token,null);
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "Session created!");
@@ -135,7 +136,7 @@ public class SessionController {
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         if(acc == null)return 0;
         String key = (acc.getAuthKey());
-        if(acc == null || acc.getExpDate().isBefore(LocalDateTime.now()) || authKey == null || !(key.equals(authKey))){
+        if(CommonUtils.isExpire(acc.getExpDate())){
             return 0;
         }
         int authId = acc.getAuthId();
@@ -148,7 +149,7 @@ public class SessionController {
         logger.info("Data by authId.."+user);
         //logger.info(user.getToken());
         String t = (user.getToken());
-        if(user.getExpDate().isBefore(LocalDateTime.now()) || !(t.equals(token)))
+        if(CommonUtils.isExpire(user.getExpDate()) || !(t.equals(token)))
             return false;
         return true;
     }

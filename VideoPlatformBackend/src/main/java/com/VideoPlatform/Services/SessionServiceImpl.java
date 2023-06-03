@@ -2,6 +2,7 @@ package com.VideoPlatform.Services;
 
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
+import com.VideoPlatform.Utils.CommonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,10 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SessionServiceImpl implements SessionService{
@@ -45,13 +43,12 @@ public class SessionServiceImpl implements SessionService{
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @Override
-    public SessionEntity createSession(SessionEntity sess,String authKey, String token) {
+    public SessionEntity createSession(String authKey, String token,String userType) {
         //logger.info("User details {}",session.toString());
         SessionEntity session = new SessionEntity();
 
-        String creation = LocalDateTime.now().format(formatter);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
+        Date creation = CommonUtils.getDate();
+        Date newDateTime = CommonUtils.increaseDateTime(creation);
         logger.info("Session Localdatetime = {}",newDateTime);
 
         UserAuthEntity userAuth = userAuthRepository.findByToken(token);
@@ -80,8 +77,8 @@ public class SessionServiceImpl implements SessionService{
         session.setSessionName(account.getName());
         session.setUserI(userJson);
         session.setAccountI(accountJson);
-        session.setParticipantName(sess.getParticipantName());
-        session.setParticipants(sess.getParticipants());
+//        session.setParticipantName(sess.getParticipantName());
+//        session.setParticipants(sess.getParticipants());
         session.setCreationDate(creation);
         session.setExpDate(newDateTime);
 
@@ -92,8 +89,8 @@ public class SessionServiceImpl implements SessionService{
         for (Integer featureId:userEntity.getFeatures()){
             if(1 == featureId){
                 settingsEntity.setRecording(true);
-                String recordingJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                settingsEntity.setRecordingDetails(recordingJson);
+//                String recordingJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+                settingsEntity.setRecordingDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
             }
             if(2 == featureId){
                 settingsEntity.setScreenShare(true);
@@ -106,30 +103,30 @@ public class SessionServiceImpl implements SessionService{
                 String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
                 settingsEntity.setPreRecordedDetails(prdJson);
             }
-            if(6 == featureId) {
-            }
-            if(7 == featureId) {
-            }
             if(8 == featureId) {
                 settingsEntity.setFloatingLayout(true);
             }
             if(9 == featureId) {
                 settingsEntity.setSupervisor(true);
             }
-            if(10 == featureId) {
-            }
             if(11 == featureId) {
                 settingsEntity.setDisplayTimer(true);
             }
-            if(12 == featureId) {
+            if(14 == featureId) {
+                settingsEntity.setActivitiesButton(true);
             }
-            if(13 == featureId) {
+            if(15 == featureId) {
+                settingsEntity.setParticipantsButton(true);
             }
+            if("Support".equals(userType)) {
+                settingsEntity.setModerators(true);
 
+            }
         }
 
         //settingsEntity.setRecording(userEntity.getFeatures()[0].);
-        session.setSettings(String.valueOf(settingsEntity));
+        String settingsJson = gson.toJson(settingsEntity);
+        session.setSettings(settingsJson);
         logger.info("Session : {}",session);
         return sessionRepository.save(session);
     }

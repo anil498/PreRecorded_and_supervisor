@@ -5,6 +5,7 @@ import com.VideoPlatform.Entity.UserAuthEntity;
 import com.VideoPlatform.Entity.UserEntity;
 import com.VideoPlatform.Repository.*;
 
+import com.VideoPlatform.Utils.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+
+import static com.VideoPlatform.Constant.AllConstants.DATE_FORMATTER;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -31,7 +35,6 @@ public class UserServiceImpl implements UserService{
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     private static final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
@@ -57,7 +60,7 @@ public class UserServiceImpl implements UserService{
         logger.info("User details {}",user.toString());
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         UserAuthEntity u = userAuthRepository.findByToken(token);
-        String creation = LocalDateTime.now().format(formatter);
+        Date creation = CommonUtils.getDate();
         user.setAccountId(acc.getAccountId());
         user.setCreationDate(creation);
         user.setParentId(u.getUserId());

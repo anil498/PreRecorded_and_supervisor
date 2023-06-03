@@ -2,6 +2,7 @@ package com.VideoPlatform.Controller;
 
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
+import com.VideoPlatform.Utils.CommonUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,8 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 import static org.springframework.http.ResponseEntity.ok;
+import static com.VideoPlatform.Constant.AllConstants.DATE_FORMATTER;
+import static com.VideoPlatform.Constant.AllConstants.formatter;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -69,8 +72,8 @@ public class UserController {
     @Value("${access.time}")
     private int accessTime;
 
-    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
+//    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
+//    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @GetMapping("/GetAll")
     public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request) throws JsonProcessingException {
@@ -290,8 +293,8 @@ public class UserController {
 
                 if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
                     String token1 = generateToken(userId,"UR");
-                    LocalDateTime now = LocalDateTime.now();
-                    LocalDateTime newDateTime = now.plus(accessTime, ChronoUnit.HOURS);
+                    Date now = CommonUtils.getDate();
+                    Date newDateTime = CommonUtils.increaseDateTime(now);
                     UserAuthEntity ua = userAuthRepository.findByUId(userId);
                     String lastLogin = LocalDateTime.now().format(formatter);
                     logger.info("LastLogin2 : {}",lastLogin);
@@ -349,7 +352,7 @@ public class UserController {
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         if(acc == null) return 0;
         String key = (acc.getAuthKey());
-        if(acc.getExpDate().isBefore(LocalDateTime.now())){
+        if(CommonUtils.isExpire(acc.getExpDate())){
             return 0;
         }
         int authId = acc.getAuthId();
@@ -360,14 +363,16 @@ public class UserController {
         if(user == null)return false;
         logger.info("Data by authId.."+user);
 
-        if(user.getExpDate().isBefore(LocalDateTime.now()))
+        if(CommonUtils.isExpire(user.getExpDate()))
             return false;
+//        if(user.getExpDate().isBefore(LocalDateTime.now()))
+//            return false;
         return true;
     }
     public Boolean isValidTokenLogin(int id){
 
         UserAuthEntity user = userAuthRepository.findByUId(id);
-        if(user == null || user.getExpDate().isBefore(LocalDateTime.now()) ) {
+        if(user == null || CommonUtils.isExpire(user.getExpDate()) ) {
             return false;
         }
         return true;

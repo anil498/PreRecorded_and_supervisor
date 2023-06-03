@@ -1,5 +1,6 @@
 package com.VideoPlatform.Entity;
 
+import com.VideoPlatform.Utils.UnixTimestampConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.Type;
@@ -9,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 
 @Entity
@@ -33,7 +35,8 @@ public class AccountEntity {
     private byte[] logo;
 
     @Column(name = "creation_date")
-    private String creationDate;
+//    @Convert(converter = UnixTimestampConverter.class)
+    private Date creationDate;
 
     @Column(name = "max_user")
     private int maxUser;
@@ -60,7 +63,8 @@ public class AccountEntity {
     @Column(name = "exp_date")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime expDate;
+//    @Convert(converter = UnixTimestampConverter.class)
+    private Date expDate;
 
     public int getAccountId() {
         return accountId;
@@ -94,11 +98,11 @@ public class AccountEntity {
         this.logo = logo;
     }
 
-    public String getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -150,11 +154,11 @@ public class AccountEntity {
         this.status = status;
     }
 
-    public LocalDateTime getExpDate() {
+    public Date getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(LocalDateTime expDate) {
+    public void setExpDate(Date expDate) {
         this.expDate = expDate;
     }
 

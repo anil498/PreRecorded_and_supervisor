@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface SessionService {
-    SessionEntity createSession(SessionEntity sess,String authKey,String token);
+    SessionEntity createSession(String authKey,String token,String userType);
     List<SessionEntity> getAllSessions();
 //    Map<String,Object> getByKey(String key, UserAuthEntity user);
 }
