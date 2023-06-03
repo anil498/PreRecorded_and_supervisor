@@ -30,11 +30,11 @@ public class AccountAuthEntity {
     private String authKey;
 
     @Column(nullable = false,name="creation_date",columnDefinition = "TIMESTAMP")
- //   @Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date creationDate;
 
     @Column(nullable = false,name="exp_date",columnDefinition = "TIMESTAMP")
-//    @Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date expDate;
 
     public int getAuthId() {

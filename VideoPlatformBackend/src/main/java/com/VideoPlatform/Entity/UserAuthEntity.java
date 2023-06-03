@@ -1,11 +1,8 @@
 package com.VideoPlatform.Entity;
 
-import com.VideoPlatform.Utils.UnixTimestampConverter;
-import org.hibernate.annotations.Type;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Date;
 
 @Entity
@@ -26,16 +23,12 @@ public class UserAuthEntity {
     private String token;
 
     @Column(nullable = false,name="creation_date")
-    //@Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date creationDate;
 
     @Column(nullable = false,name="exp_date")
-    //@Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date expDate;
-
-//    @Column(name = "access_id",columnDefinition = "integer[]")
-//    @Type(type="com.openvidu_databases.openvidu_dbbackend.Utils.GenericArrayUserType")
-//    private Integer[] accessId;
 
     public int getUserId() { return userId; }
 
@@ -76,10 +69,6 @@ public class UserAuthEntity {
     public void setAuthId(int authId) {
         this.authId = authId;
     }
-
-//    public Integer[] getAccessId() { return accessId; }
-//
-//    public void setAccessId(Integer[] accessId) { this.accessId = accessId; }
 
     @Override
     public String toString() {

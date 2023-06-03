@@ -198,8 +198,8 @@ public class AccountController {
             user.setExpDate(expDate);
             user.setLoginId(params.get("loginId").getAsString());
             String pass = params.get("password").getAsString();
-            String mypass = passwordEncoder.encode(pass);
-            user.setPassword(mypass);
+            String myPass = passwordEncoder.encode(pass);
+            user.setPassword(myPass);
             user.setContact(params.get("contact").getAsString());
             user.setEmail(params.get("email").getAsString());
             user.setCreationDate(creation);

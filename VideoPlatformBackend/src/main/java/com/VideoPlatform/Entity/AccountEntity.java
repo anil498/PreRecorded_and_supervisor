@@ -1,14 +1,11 @@
 package com.VideoPlatform.Entity;
 
-import com.VideoPlatform.Utils.UnixTimestampConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,7 +32,7 @@ public class AccountEntity {
     private byte[] logo;
 
     @Column(name = "creation_date")
-//    @Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date creationDate;
 
     @Column(name = "max_user")
@@ -61,9 +58,7 @@ public class AccountEntity {
     private int status=1;
 
     @Column(name = "exp_date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = DateTimeFormat.ISO.DATE_TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
-//    @Convert(converter = UnixTimestampConverter.class)
     private Date expDate;
 
     public int getAccountId() {

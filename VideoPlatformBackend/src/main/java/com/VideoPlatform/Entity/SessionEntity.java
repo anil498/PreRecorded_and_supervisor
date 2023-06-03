@@ -1,15 +1,11 @@
 package com.VideoPlatform.Entity;
 
-import com.VideoPlatform.Utils.UnixTimestampConverter;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
 
 @Entity
 @EntityScan
@@ -20,18 +16,32 @@ public class SessionEntity {
     @Id
     @Column(name = "session_id" )
     private String sessionId;
+
     @Column(name = "session_name") private String sessionName;
-    @Column(name = "users" ) private String userI;
-    @Column(name = "account" ) private String accountI;
+
+    @Column(name = "user_id" ) private Integer userId;
+
+    @Column(name = "account_id" ) private Integer accountId;
+
+    @Column(name = "max_active_sessions_u") Integer userMaxActiveSessions;
+
+    @Column(name = "max_active_sessions_a") Integer accountMaxActiveSessions;
+
     @Column(name = "participant_name") private String participantName;
+
     @Column(name = "participants") private String participants;
+
     @Column(name = "settings",columnDefinition = "text") private String settings;
+
     @Column(name = "sessionKey") private String sessionKey;
- //   @Convert(converter = UnixTimestampConverter.class)
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     @Column(name = "creation_date") private Date creationDate;
+
     @Column(name = "exp_date")
- //   @Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date expDate;
+
     @Column(name = "status") private Integer status = 1;
 
     public String getSessionId() {
@@ -50,20 +60,36 @@ public class SessionEntity {
         this.sessionName = sessionName;
     }
 
-    public String getUserI() {
-        return userI;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setUserI(String user) {
-        this.userI = user;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public String getAccountI() {
-        return accountI;
+    public Integer getAccountId() {
+        return accountId;
     }
 
-    public void setAccountI(String account) {
-        this.accountI = account;
+    public void setAccountId(Integer accountId) {
+        this.accountId = accountId;
+    }
+
+    public Integer getUserMaxActiveSessions() {
+        return userMaxActiveSessions;
+    }
+
+    public void setUserMaxActiveSessions(Integer userMaxActiveSessions) {
+        this.userMaxActiveSessions = userMaxActiveSessions;
+    }
+
+    public Integer getAccountMaxActiveSessions() {
+        return accountMaxActiveSessions;
+    }
+
+    public void setAccountMaxActiveSessions(Integer accountMaxActiveSessions) {
+        this.accountMaxActiveSessions = accountMaxActiveSessions;
     }
 
     public String getParticipantName() {
@@ -127,15 +153,17 @@ public class SessionEntity {
         return "SessionEntity{" +
                 "sessionId='" + sessionId + '\'' +
                 ", sessionName='" + sessionName + '\'' +
-                ", userI='" + userI + '\'' +
-                ", accountI='" + accountI + '\'' +
+                ", userId=" + userId +
+                ", accountId=" + accountId +
+                ", userMaxActiveSessions=" + userMaxActiveSessions +
+                ", accountMaxActiveSessions=" + accountMaxActiveSessions +
                 ", participantName='" + participantName + '\'' +
                 ", participants='" + participants + '\'' +
                 ", settings='" + settings + '\'' +
                 ", sessionKey='" + sessionKey + '\'' +
-                ", creationDate='" + creationDate + '\'' +
-                ", expDate='" + expDate + '\'' +
-                ", status='" + status + '\'' +
+                ", creationDate=" + creationDate +
+                ", expDate=" + expDate +
+                ", status=" + status +
                 '}';
     }
 }

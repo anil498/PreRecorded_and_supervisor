@@ -257,6 +257,11 @@ public class UserController {
 
         UserEntity user1 = userRepository.findByLoginId(loginId);
 
+        if(user1 == null){
+            logger.info("No user present with given login id !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+
         logger.info("user "+user1);
         int userId = user1.getUserId();
 
@@ -267,12 +272,11 @@ public class UserController {
         logger.info("user1 {}",user1);
         logger.info("user1.getLoginId() {}",user1.getLoginId());
         logger.info("user1.getPassword() {}",user1.getPassword());
-        if (!(user1 != null && passwordEncoder.matches(password,user1.getPassword()) && user1.getLoginId().equals(loginId))) {
+        if (!(passwordEncoder.matches(password,user1.getPassword()))) {
             logger.info("Inside loginid password check !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
-            logger.info("Inside first if ...");
             if(isValidTokenLogin(userId)){
                 logger.info("Inside second if ...");
                 ObjectMapper obj = new ObjectMapper();

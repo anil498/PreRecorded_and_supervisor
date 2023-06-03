@@ -10,7 +10,4 @@ import org.springframework.stereotype.Repository;
 public interface SessionRepository extends JpaRepository<SessionEntity,String> {
     @Query(nativeQuery = true,value = "select * from sessions where session_key=:sessionKey")
     SessionEntity findBySessionKey(@Param("sessionKey") String sessionKey);
-    @Query(nativeQuery = true,value = "select * from sessions where session_support_key=:sessionKey")
-    SessionEntity findBySessionSupportKey(@Param("sessionKey") String sessionKey);
-
 }

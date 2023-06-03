@@ -3,7 +3,7 @@ package com.VideoPlatform.Entity;
 import java.io.Serializable;
 import java.util.*;
 
-import com.VideoPlatform.Utils.UnixTimestampConverter;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -43,14 +43,14 @@ public class UserEntity implements Serializable {
     private String email;
 
     @Column(name = "creation_date",columnDefinition = "TIMESTAMP")
-//    @Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date creationDate;
 
     @Column(name = "last_login")
     private String lastLogin;
 
     @Column(name = "exp_date",columnDefinition = "TIMESTAMP")
- //   @Convert(converter = UnixTimestampConverter.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     private Date expDate;
 
     @Column(name = "parent_id")
