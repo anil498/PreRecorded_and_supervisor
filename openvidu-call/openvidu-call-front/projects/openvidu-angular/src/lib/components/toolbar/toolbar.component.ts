@@ -554,11 +554,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
 		try {
 			await this.openviduService.toggleScreenshare();
-			if(this.isScreenShareActive)
+			if(this.isScreenShareActive && this.showShareFullScreenButton)
 			{
 				this.showShareFullScreenButton=true;
-			}else{
-				this.showShareFullScreenButton=false;
 			}
 		} catch (error) {
 			this.log.e('There was an error toggling screen share', error.code, error.message);
@@ -722,6 +720,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 		this.onShareFullScreenClicked.emit();
 		
+	}
+	getLogoPath():string{
+		return "assets/images/"+this.session.sessionId+".png"
 	}
 
 	private toggleActivitiesPanel(expandPanel: string) {

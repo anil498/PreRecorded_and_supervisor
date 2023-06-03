@@ -1,7 +1,7 @@
 <mat-toolbar id="toolbar" role="heading" fxLayout fxLayoutAlign="center" fxLayoutGap="40px">
 	<div fxFlex="20%" fxLayoutAlign="start center" id="info-container" *ngIf="screenSize !== 'xs'">
 		<div>
-			<img *ngIf="!isMinimal && showLogo" id="branding-logo" src="assets/images/logo.png" ovLogo />
+			<img *ngIf="!isMinimal && showLogo" id="branding-logo" [src]="getLogoPath()" ovLogo />
 			<div id="session-info-container" [class.colapsed]="recordingStatus === _recordingStatus.STARTED">
 				<span id="session-name" *ngIf="!isMinimal && session && session.sessionId && showSessionName">{{ session.sessionId }}</span>
 				<div *ngIf="recordingStatus === _recordingStatus.STARTED" id="recording-tag" class="recording-tag">
@@ -137,7 +137,7 @@
 			<mat-icon matTooltip="{{ 'TOOLBAR.MORE_OPTIONS' | translate }}">more_vert</mat-icon>
 		</button>
 		<mat-menu #menu="matMenu" id="more-options-menu">
-			<!-- Fullscreen button -->
+			<!-- show Fullscreen button -->
 			<button *ngIf="showFullscreenButton" mat-menu-item id="fullscreen-btn" (click)="toggleFullscreen()">
 				<mat-icon *ngIf="!isFullscreenActive">fullscreen</mat-icon>
 				<span *ngIf="!isFullscreenActive">{{ 'TOOLBAR.FULLSCREEN' | translate }}</span>

@@ -9,4 +9,5 @@ export interface sessionResponse{
     isChatEnabled:boolean;
     showSessionId:boolean;
     participantName:string;
+    redirectUrl:string;
 }
