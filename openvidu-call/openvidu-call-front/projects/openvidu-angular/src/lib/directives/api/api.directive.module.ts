@@ -21,7 +21,6 @@ import {
 	ToolbarParticipantsPanelButtonDirective,
 	ToolbarRecordingButtonDirective,
 	ToolbarScreenshareButtonDirective,
-	ToolbarFullScreenButtonDirective,
 	ToolbarSettingsButtonDirective,
 	ToolbarPublishVideoButtonDirective,
 	ToolbarVideoControlButtonDirective
@@ -33,7 +32,6 @@ import {
 	PrejoinDirective,
 	ShowFullScreenButtonDirective,
 	VideoMutedDirective,
-	PrefullscreenDirective
 } from './videoconference.directive';
 
 @NgModule({
@@ -44,11 +42,9 @@ import {
 		CaptionsLangDirective,
 		PrejoinDirective,
 		ShowFullScreenButtonDirective,
-		PrefullscreenDirective,
 		VideoMutedDirective,
 		AudioMutedDirective,
 		ToolbarScreenshareButtonDirective,
-		ToolbarFullScreenButtonDirective,
 		ToolbarPublishVideoButtonDirective,
 		ToolbarVideoControlButtonDirective,
 		ToolbarFullscreenButtonDirective,
@@ -81,11 +77,9 @@ import {
 		CaptionsLangDirective,
 		PrejoinDirective,
 		ShowFullScreenButtonDirective,
-		PrefullscreenDirective,
 		VideoMutedDirective,
 		AudioMutedDirective,
 		ToolbarScreenshareButtonDirective,
-		ToolbarFullScreenButtonDirective,
 		ToolbarPublishVideoButtonDirective,
 		ToolbarVideoControlButtonDirective,
 		ToolbarFullscreenButtonDirective,

@@ -392,55 +392,6 @@ export class ShowFullScreenButtonDirective implements OnDestroy {
 		}
 	}
 }
-/**
- * The **FullScreenView** directive allows auto full screenshare for selecting media devices.
- *
- * It is only available for {@link VideoconferenceComponent}.
- *
- * Default: `flase`
- *
- * @example
- * <ov-videoconference [prefullscreen]="false"></ov-videoconference>
- */
-@Directive({
-	selector: 'ov-videoconference[prefullscreen]'
-})
-export class PrefullscreenDirective implements OnDestroy {
-	/**
-	 * @ignore
-	 */
-	@Input() set prefullscreen(value: boolean) {
-		this.update(value);
-	}
-
-	/**
-	 * @ignore
-	 */
-	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
-
-	/**
-	 * @ignore
-	 */
-	ngOnDestroy(): void {
-		this.clear();
-	}
-
-	/**
-	 * @ignore
-	 */
-	clear() {
-		this.update(true);
-	}
-
-	/**
-	 * @ignore
-	 */
-	update(value: boolean) {
-		if (this.libService.prefullscreen.getValue() !== value) {
-			this.libService.prefullscreen.next(value);
-		}
-	}
-}
 
 /**
  * The **videoMuted** directive allows to join the session with camera muted/unmuted.

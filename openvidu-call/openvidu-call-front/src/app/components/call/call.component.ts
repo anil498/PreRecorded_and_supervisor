@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ParticipantService, RecordingInfo, TokenModel,ActionService,TranslateService} from 'openvidu-angular';
-
+import { ParticipantService, RecordingInfo, TokenModel } from 'openvidu-angular';
+import { saveAs } from 'file-saver';
 import { RestService } from '../../services/rest.service';
-import { Subscription } from 'rxjs';
 
 @Component({
 	selector: 'app-call',
@@ -16,7 +15,7 @@ export class CallComponent implements OnInit {
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
-	recordingEnabled1: boolean = true;
+	isRecording: boolean = true;
 	screenShareEnabled: boolean = true;
 	chatEnabled: boolean = true;
 	showSessionId:boolean=true;
@@ -24,7 +23,7 @@ export class CallComponent implements OnInit {
 	recordingList: RecordingInfo[] = [];
 	recordingError: any;
 	serverError: string = '';
-	participantName1:any
+	participantNameValue:string
 	loading: boolean = true;
 	redirectUrl:string;
 	private isDebugSession: boolean = false;
@@ -33,9 +32,7 @@ export class CallComponent implements OnInit {
 		private restService: RestService,
 		private participantService: ParticipantService,
 		private router: Router,
-		private route: ActivatedRoute,
-		private actionService:ActionService,
-		private translateService:TranslateService
+		private route: ActivatedRoute
 	) {}
 
 	async ngOnInit() {
@@ -51,7 +48,8 @@ export class CallComponent implements OnInit {
 		try {
 			await this.initializeTokens();
 		} catch (error) {
-			console.log(error)
+			console.error(error);
+			this.serverError = error?.error?.message || error?.statusText;
 		} finally {
 			this.loading = false;
 		}
@@ -65,16 +63,17 @@ export class CallComponent implements OnInit {
 		this.isSessionAlive = false;
 		this.closeClicked = true;
 		// this.router.navigate([`/`]);
-		if (this.participantName1 === "Customer") {
+		if (this.participantNameValue === "Customer") {
 			// Navigate to a specific URL for customers
-			window.location.href = "https://www.axisbank.com/grab-deals/online-offers";
+			window.location.replace("https://www.axisbank.com/grab-deals/online-offers");
 		  } else {
 			// Close the window
-			window.location.href = "https://www.axisbank.com/grab-deals/online-offers";
+			window.location.replace("https://www.axisbank.com/grab-deals/online-offers");
+			this.restService.removeSession(this.sessionId);
 		  }
 	}
 	participantName(){
-		return this.participantName1
+		return this.participantNameValue
 	}
 	async onStartRecordingClicked() {
 		try {
@@ -106,9 +105,8 @@ export class CallComponent implements OnInit {
 			console.warn('DEBUGGING SESSION');
 			nickname = this.participantService.getLocalParticipant().getNickname();
 		}
-		try{
 		const response = await this.restService.getTokens(this.sessionId, nickname);
-		this.recordingEnabled1 = response.recordingEnabled
+		this.isRecording = response.isRecording
 		this.broadcastingEnabled=response.isBroadCasting
 		this.recordingList = response.recordings
 		this.tokens = {
@@ -118,18 +116,13 @@ export class CallComponent implements OnInit {
 		this.screenShareEnabled=response.isScreenSharing;
 		this.chatEnabled=response.isChatEnabled;
 		this.showSessionId=response.showSessionId;
-		this.participantName1=response.participantName;
+		this.participantNameValue=response.participantName;
+		this.redirectUrl=response.redirectUrl;
 		console.log(response);
 		console.log(this.screenShareEnabled);
-	}catch(error){
-		// console.error(error);
-		// console.log(this.loading)
-		// this.loading = false;
-		// this.redirectUrl="https://www.axisbank.com/grab-deals/online-offers"
-		// this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error,true,this.redirectUrl)
-	}
 	}
 	recordingEnabled(){
-		return this.recordingEnabled1;
+		return this.isRecording;
 	}
+
 }

@@ -73,7 +73,7 @@ export class ActionService {
 				// this.dialogRef = undefined;
 				console.log("Result",result)
 				if(result=='close'){
-					window.location.href=redirectUrl;
+					window.location.replace(redirectUrl);
 				}
 			});
 		}

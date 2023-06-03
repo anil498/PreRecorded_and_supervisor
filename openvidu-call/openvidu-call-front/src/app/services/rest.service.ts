@@ -25,8 +25,13 @@ export class RestService {
 	async getTokens(
 		sessionId: string,
 		nickname?: string
-	): Promise<any> {
+	): Promise<sessionResponse> {
 		return this.postRequest('sessions', { sessionId, nickname });
+	}
+	async removeSession(
+		sessionId: string
+	): Promise<any> {
+		return this.deleteRequest('sessions/'+{sessionId});
 	}
 	adminLogin(password: string): Promise<any[]> {
 		return this.postRequest('auth/admin/login', { password });
