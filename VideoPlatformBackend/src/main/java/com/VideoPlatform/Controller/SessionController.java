@@ -5,9 +5,7 @@ import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.SessionService;
 import com.VideoPlatform.Utils.CommonUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.RandomStringUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -53,7 +49,7 @@ public class SessionController {
     private int callAccessTime;
 
     @PostMapping("/Create")
-    public ResponseEntity<?> createSession(HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+    public ResponseEntity<?> createSession(HttpServletRequest request, HttpServletResponse response) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -67,8 +63,7 @@ public class SessionController {
             logger.info("Invalid Token !");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if (!(byAccess(4000, token))) {
-            logger.info("for 4000 : " + byAccess(4000, token));
+        if (!(checkAccess("my_sessions", token))) {
             logger.info("Permission Denied. Don't have access for this service!");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -82,7 +77,7 @@ public class SessionController {
     }
 
     @GetMapping("/GetAll")
-    public ResponseEntity<List<SessionEntity>> getAllSessions(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<List<SessionEntity>> getAllSessions(HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -96,8 +91,7 @@ public class SessionController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(4000,token))){
-            logger.info("for 4000 : "+byAccess(4000,token));
+        if(!(checkAccess("session_details",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -106,7 +100,7 @@ public class SessionController {
     }
 
     @GetMapping("/GetByKey/{key}")
-    public ResponseEntity<?> getSessionByKey(@PathVariable String key, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<?> getSessionByKey(@PathVariable String key, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -120,8 +114,7 @@ public class SessionController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(4000,token))){
-            logger.info("for 1001 : "+byAccess(4000,token));
+        if(!(checkAccess("session_details",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -154,53 +147,18 @@ public class SessionController {
             return false;
         return true;
     }
-//    public Boolean isValidSessionKey(String sessionKey){
-//        SessionEntity session = sessionRepository.findBySessionKey(sessionKey);
-//        SessionEntity sess = sessionRepository.findBySessionSupportKey(sessionKey);
-//        if(session == null && sess == null) return false;
-//        if(sess == null) {
-//            if (session.getExpDate().isBefore(LocalDateTime.now()))
-//                return false;
-//        }
-//        else if(session == null) {
-//            if (sess.getExpDate().isBefore(LocalDateTime.now()))
-//                return false;
-//        }
-//        return true;
-//    }
-    private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
-
+    private boolean checkAccess(String systemName,String token){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         int userId = user.getUserId();
         UserEntity u = userRepository.findByUserId(userId);
-        if(user == null) return false;
-        ObjectMapper obj = new ObjectMapper();
-        String str = obj.writeValueAsString(u.getAccessId());
-        logger.info("Val : "+str);
-        String[] string = str.replaceAll("\\[", "")
-                .replaceAll("]", "")
-                .split(",");
-        int[] arr = new int[string.length];
-        int[] apiArr = new int[string.length];
-        for (int i = 0; i < string.length; i++) {
-            arr[i] = Integer.valueOf(string[i]);
+        Integer[] accessId = u.getAccessId();
+        List<String> accessEntities = new ArrayList<>();
+        for (int i = 0; i < accessId.length; i++) {
+            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
+            accessEntities.add(accessEntity.getSystemName());
         }
-        int size = arr.length;
-        for (int i = 0; i < arr.length; i++) {
-            AccessEntity access = accessRepository.findByAccessId(arr[i]);
-            int apiId = access.getApiId();
-            apiArr[i] = apiId;
-        }
-        boolean apiPresent  = ifExistInApiArray(apiArr,toCheckValue);
-        return apiPresent;
-
+        if(accessEntities.contains(systemName))
+            return true;
+        return false;
     }
-    private boolean ifExistInApiArray(int[] arr,int toCheckValue){
-        logger.info("ToCheck Array is : "+arr);
-        logger.info("TocheckVal is : "+toCheckValue);
-        return IntStream.of(arr).anyMatch(x -> x == toCheckValue);
-    }
-
-
-
 }

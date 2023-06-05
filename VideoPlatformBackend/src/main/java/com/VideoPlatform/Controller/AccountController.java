@@ -23,11 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
-import java.util.stream.IntStream;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -36,8 +33,6 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping(RequestMappings.APICALLACCOUNT)
 public class AccountController {
     private static final Logger logger= LoggerFactory.getLogger(AccountController.class);
-
-
 
     @Autowired
     private AccountServiceImpl accountService;
@@ -69,11 +64,8 @@ public class AccountController {
     @Value("${access.time}")
     private int accessTime;
 
-    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
-
     @GetMapping("/GetAll")
-    public ResponseEntity<List<AccountEntity>> getAllAccounts(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<List<AccountEntity>> getAllAccounts(HttpServletRequest request) {
         logger.info(getHeaders(request).toString());
 
         String authKey = request.getHeader("Authorization");
@@ -88,42 +80,16 @@ public class AccountController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(1000,token))){
-            logger.info("for 1000 : "+byAccess(1000,token));
+        if(!(checkAccess("customer_management",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
-/*    @GetMapping("/getAll")
-    public ResponseEntity<List<AccountEntity>> getAllUsersFromAccount(HttpServletRequest request) throws JsonProcessingException {
-        logger.info(getHeaders(request).toString());
 
-        String authKey = request.getHeader("Authorization");
-        String token = request.getHeader("Token");
-
-        int authId = isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!(byAccess(authId,1000))){
-            logger.info("for 1000 : "+byAccess(authId,1000));
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!isValidToken(authId,token)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-
-        return ResponseEntity.ok(accountService.getAllAccounts());
-    }
-
- */
     @GetMapping("/getById/{id}")
-    public ResponseEntity<List<AccountEntity>> getAccountById(@PathVariable int id, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<List<AccountEntity>> getAccountById(@PathVariable int id, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -138,8 +104,7 @@ public class AccountController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(1000,token))){
-            logger.info("for 1000 : "+byAccess(1000,token));
+        if(!(checkAccess("customer_management",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -162,8 +127,7 @@ public class AccountController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(1001,token))){
-            logger.info("for 1001 : "+byAccess(1001,token));
+        if(!(checkAccess("customer_creation",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -241,7 +205,6 @@ public class AccountController {
                 ua.setLoginId(user.getLoginId());
                 ua.setUserId(user.getUserId());
                 ua.setToken(token1);
- //               ua.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
                 ua.setAuthId(authId1);
                 ua.setCreationDate(creation);
                 ua.setExpDate(expDate);
@@ -256,7 +219,7 @@ public class AccountController {
     }
 
     @PutMapping("/Update")
-    public ResponseEntity<AccountEntity> updateAccount(@RequestBody AccountEntity account, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<AccountEntity> updateAccount(@RequestBody AccountEntity account, HttpServletRequest request){
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -270,8 +233,7 @@ public class AccountController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(1002,token))){
-            logger.info("for 2002 : "+byAccess(1002,token));
+        if(!(checkAccess("customer_update",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -320,47 +282,19 @@ public class AccountController {
             return false;
         return true;
     }
-
-    private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
-
+    private boolean checkAccess(String systemName,String token){
         UserAuthEntity user = userAuthRepository.findByToken(token);
-        logger.info("User auth data by Auth Id :"+user);
-        Integer userId = user.getUserId();
-        logger.info("User ID is : "+userId);
+        int userId = user.getUserId();
         UserEntity u = userRepository.findByUserId(userId);
-        logger.info("User data by User Id :"+u);
-        if(user == null) return false;
-        ObjectMapper obj = new ObjectMapper();
-        String str = obj.writeValueAsString(u.getAccessId());
-        logger.info("Val : "+str);
-        String[] string = str.replaceAll("\\[", "")
-                .replaceAll("]", "")
-                .split(",");
-        int[] arr = new int[string.length];
-        int[] apiArr = new int[string.length];
-        for (int i = 0; i < string.length; i++) {
-            arr[i] = Integer.valueOf(string[i]);
+        Integer[] accessId = u.getAccessId();
+        List<String> accessEntities = new ArrayList<>();
+        for (int i = 0; i < accessId.length; i++) {
+            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
+            accessEntities.add(accessEntity.getSystemName());
         }
-        int size = arr.length;
-        for (int i = 0; i < arr.length; i++) {
-            AccessEntity access = accessRepository.findByAccessId(arr[i]);
-            int apiId = access.getApiId();
-            apiArr[i] = apiId;
-        }
-
-        boolean apiPresent  = ifExistInApiArray(apiArr,toCheckValue);
-        logger.info("IfAPIPresent.... : "+apiPresent);
-        logger.info("String : " + str);
-        logger.info("Integer array : " + Arrays.toString(arr));
-        logger.info("API array : " + Arrays.toString(apiArr));
-        return apiPresent;
-
-    }
-
-    private boolean ifExistInApiArray(int[] arr,int toCheckValue){
-        logger.info("ToCheck Array is : "+arr);
-        logger.info("TocheckVal is : "+toCheckValue);
-        return IntStream.of(arr).anyMatch(x -> x == toCheckValue);
+        if(accessEntities.contains(systemName))
+            return true;
+        return false;
     }
     private Map<String, String> getHeaders(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaderNames();

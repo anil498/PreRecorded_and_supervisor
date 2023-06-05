@@ -21,4 +21,5 @@ public interface FeatureRepository extends JpaRepository<FeatureEntity, Integer>
 
     @Query(nativeQuery=true, value = "select * from platform_features where feature_id = :featureId ")
     FeatureEntity findByFeatureId(@Param("featureId") int featureId);
+
 }

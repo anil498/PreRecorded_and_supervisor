@@ -20,14 +20,14 @@ public class AccessEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "system_name")
+    private String systemName;
+
     @Column(name = "seq")
     private int seq;
 
     @Column(name = "p_id")
     private int pId;
-
-    @Column(name = "api_id")
-    private int apiId;
 
     @Column(name = "status")
     private int status;
@@ -64,14 +64,6 @@ public class AccessEntity {
         this.pId = pId;
     }
 
-    public int getApiId() {
-        return apiId;
-    }
-
-    public void setApiId(int apiId) {
-        this.apiId = apiId;
-    }
-
     public int getStatus() {
         return status;
     }
@@ -80,14 +72,18 @@ public class AccessEntity {
         this.status = status;
     }
 
+    public String getSystemName() { return systemName; }
+
+    public void setSystemName(String systemName) { this.systemName = systemName; }
+
     @Override
     public String toString() {
         return "AccessEntity{" +
                 "accessId=" + accessId +
                 ", name='" + name + '\'' +
+                ", systemName='" + systemName + '\'' +
                 ", seq=" + seq +
                 ", pId=" + pId +
-                ", apiId=" + apiId +
                 ", status=" + status +
                 '}';
     }

@@ -35,9 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @RestController
@@ -95,7 +93,7 @@ public class MessageApiController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(5001,token))){
+        if(!(checkAccess("sms",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -150,7 +148,7 @@ public class MessageApiController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(5002,token))){
+        if(!(checkAccess("whatsapp",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -210,7 +208,7 @@ public class MessageApiController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(byAccess(5003,token))){
+        if(!(checkAccess("app_notification",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -308,38 +306,19 @@ public class MessageApiController {
         return true;
     }
 
-    private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
-
+    private boolean checkAccess(String systemName,String token){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         int userId = user.getUserId();
         UserEntity u = userRepository.findByUserId(userId);
-        if(user == null) return false;
-        ObjectMapper obj = new ObjectMapper();
-        String str = obj.writeValueAsString(u.getAccessId());
-        logger.info("Val : "+str);
-        String[] string = str.replaceAll("\\[", "")
-                .replaceAll("]", "")
-                .split(",");
-        int[] arr = new int[string.length];
-        int[] apiArr = new int[string.length];
-        for (int i = 0; i < string.length; i++) {
-            arr[i] = Integer.valueOf(string[i]);
+        Integer[] accessId = u.getAccessId();
+        List<String> accessEntities = new ArrayList<>();
+        for (int i = 0; i < accessId.length; i++) {
+            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
+            accessEntities.add(accessEntity.getSystemName());
         }
-        int size = arr.length;
-        for (int i = 0; i < arr.length; i++) {
-            AccessEntity access = accessRepository.findByAccessId(arr[i]);
-            int apiId = access.getApiId();
-            apiArr[i] = apiId;
-        }
-        boolean apiPresent  = ifExistInApiArray(apiArr,toCheckValue);
-        return apiPresent;
-
-    }
-
-    private boolean ifExistInApiArray(int[] arr,int toCheckValue){
-        logger.info("ToCheck Array is : "+arr);
-        logger.info("TocheckVal is : "+toCheckValue);
-        return IntStream.of(arr).anyMatch(x -> x == toCheckValue);
+        if(accessEntities.contains(systemName))
+            return true;
+        return false;
     }
     private Map<String, String> getHeaders(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaderNames();
