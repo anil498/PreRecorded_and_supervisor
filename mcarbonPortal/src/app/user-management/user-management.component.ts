@@ -137,8 +137,8 @@ export class UserManagementComponent implements OnInit {
 
   createDialog() {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(FormDialogComponent, dialogConfig);
 
@@ -176,8 +176,8 @@ export class UserManagementComponent implements OnInit {
 
   viewUserDialog(user: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     dialogConfig.data = user;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(ViewUserDialogComponent, dialogConfig);
@@ -223,8 +223,8 @@ export class UserManagementComponent implements OnInit {
 
   updateUserDialog(user: any) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "77%";
     dialogConfig.data = user;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(UpdateUserDialogComponent, dialogConfig);

@@ -425,7 +425,8 @@ export class OpenViduService {
 				publishVideo: true,
 				publishAudio: hasAudio,
 				mirror: false,
-				frameRate: 60
+				frameRate: 25,
+				resolution: "1920x1080"
 			};
 			this.log.d('Initializing publisher with properties2: ', displayMediaStream);
 
