@@ -9,6 +9,7 @@ public interface UserService {
     List<UserEntity> getAllChild(Integer id);
     UserEntity getUserById(Integer id);
     UserEntity createUser(UserEntity user,String authKey,String token);
+    UserEntity createUserZero(UserEntity user);
     UserEntity updateUser(UserEntity user);
     String deleteUser(Integer userId);
 }

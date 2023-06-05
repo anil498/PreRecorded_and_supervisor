@@ -73,8 +73,8 @@ public class SessionController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        sessionService.createSession(authKey,token,null);
-        sessionService.createSession(authKey,token,"Support");
+        sessionService.createSession(authKey,token,true);
+        sessionService.createSession(authKey,token,false);
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "Session created!");

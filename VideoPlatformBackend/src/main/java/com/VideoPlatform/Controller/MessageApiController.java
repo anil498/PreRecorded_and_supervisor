@@ -35,9 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,16 +45,18 @@ import java.util.stream.IntStream;
 @RequestMapping(RequestMappings.APICALLSESSION)
 public class MessageApiController {
 
-    @Autowired
-    MessagingService messagingService;
-
     @Value("${firebase.collection}")
     private String firebaseCollection;
     @Value("${call.prefix}")
     private String callPrefix;
-
     @Value(("${call.access.time}"))
     private int callAccessTime;
+    @Value(("${support.suffix}"))
+    private String supportSuffix;
+
+
+    @Autowired
+    MessagingService messagingService;
     @Autowired
     FirebaseMessaging firebaseMessaging;
     @Autowired
@@ -78,9 +77,6 @@ public class MessageApiController {
     UserRepository userRepository;
     @Autowired
     SessionService sessionService;
-
-    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     private static final Logger logger= LoggerFactory.getLogger(MessageApiController.class);
     @PostMapping(value="/Send/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,36 +101,46 @@ public class MessageApiController {
         }
 
         String msisdn= (String) params.get("msisdn");
-        //logger.info("getHeaders(request) = "+getHeaders(request));
-        //logger.info("getHeaders(request).get(\"origin\") = "+getHeaders(request).get("origin"));
+//        logger.info("getHeaders(request) = "+getHeaders(request));
+//        logger.info("getHeaders(request).get(\"origin\") = "+getHeaders(request).get("origin"));
 
 //        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",getHeaders(request));
 
-//        logger.info("Request response {}",responseSms);
-        String userInfo=null;
-        if(params.containsKey("userInfo")){
-            userInfo= String.valueOf(params.get("userInfo"));
-        }
-//        SessionEntity sessionEntity= storeSessions(token,authKey,msisdn,userInfo);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,true);
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,false);
+        String callUrl= callPrefix+sessionEntityCustomer.getSessionId();
+        logger.info("callUrlCustomer : {}",callUrl);
 
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,null);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,"Support");
-        String callUrlCustomer= callPrefix+sessionEntityCustomer.getSessionKey();
-        String callUrlSupport = callPrefix+sessionEntitySupport.getSessionKey();
-        logger.info("callUrlCustomer : {}",callUrlCustomer);
-        logger.info("callUrlSupport : {}",callUrlSupport);
-
-        SubmitResponse responseSms=messagingService.sendSms(request,response,msisdn,callUrlCustomer);
-        responseSms.setCallUrl(callUrlCustomer);
+        SubmitResponse responseSms=messagingService.sendSms(request,response,msisdn,callUrl);
+        responseSms.setCallUrl(callUrl);
 
         HashMap<String,String> res=new HashMap<>();
-        res.put("callUrlSupport",callUrlSupport);
+        String returnUrl = callUrl+supportSuffix;
+        if(params.containsKey("getLink")){
+            String getLink = String.valueOf(params.get("getLink"));
+            if(getLink.equals("0")){
+                res.put("status_code","200");
+                res.put("msg","Video link send successfully!");
+            }
+            else if(getLink.equals("1")){
+                res.put("status_code","200");
+                res.put("msg","Video link send successfully!");
+                res.put("link",returnUrl);
+            }
+            else if(getLink.equals("2")){
+                res.put("status_code","200");
+                res.put("msg","Video link send successfully!");
+                res.put("link",returnUrl);
+                res.put("customer_link",callUrl);
+            }
+        }
+
         logger.info(String.valueOf(responseSms));
         return ResponseEntity.ok(res);
     }
 
-/*    @PostMapping ("/Send/WhatsApp")
+    @PostMapping ("/Send/WhatsApp")
     public ResponseEntity<?> sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -156,34 +162,41 @@ public class MessageApiController {
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
         String templateid= (String) params.get("templateId");
-        String userInfo=null;
-        if(params.containsKey("userInfo")){
-            userInfo= String.valueOf(params.get("userInfo"));
-        }
+//        String userInfo=null;
+//        if(params.containsKey("userInfo")){
+//            userInfo= String.valueOf(params.get("userInfo"));
+//        }
 
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,null);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,"Support");
-        String callUrlCustomer= callPrefix+sessionEntityCustomer.getSessionKey();
-        String callUrlSupport = callPrefix+sessionEntitySupport.getSessionKey();
-        logger.info("callUrlCustomer : {}",callUrlCustomer);
-        logger.info("callUrlSupport : {}",callUrlSupport);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,true);
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,false);
+        String placeHolder= callPrefix+sessionEntityCustomer.getSessionId();
+        logger.info("callUrlCustomer : {}",placeHolder);
 
-        SessionEntity sessionEntity = storeSessions(token,authKey,to,userInfo);
-        String placeHolder= callPrefix+sessionEntity.getSessionKey();
-        String callUrlSupport = callPrefix+sessionEntity.getSessionSupportKey();
-//        String placeHolder= "https://demo2.progate.mobi"+(String) params.get("callUrl");
-//        String sessionId =getHeaders(request).get("sessionid");
-
-        String callUrl= callPrefix+sessionEntity.getSessionKey();
-//        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",getHeaders(request));
         SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateid);
-        responseSms.setCallUrl(callUrl);
+        responseSms.setCallUrl(placeHolder);
         HashMap<String,String> res=new HashMap<>();
-        res.put("callurl",callUrlSupport);
+        String returnUrl = placeHolder+supportSuffix;
+        if(params.containsKey("getLink")){
+            String getLink = String.valueOf(params.get("getLink"));
+            if(getLink.equals("0")){
+                res.put("status_code","200");
+                res.put("msg","Video link send successfully!");
+            }
+            else if(getLink.equals("1")){
+                res.put("status_code","200");
+                res.put("msg","Video link send successfully!");
+                res.put("link",returnUrl);
+            }
+            else if(getLink.equals("2")){
+                res.put("status_code","200");
+                res.put("msg","Video link send successfully!");
+                res.put("link",returnUrl);
+                res.put("customer_link",placeHolder);
+            }
+        }
         logger.info("Request response {}",responseSms);
         return ResponseEntity.ok(res);
-//        return responseSms;
     }
 
     @PostMapping("/Send/AppNotification")
@@ -208,7 +221,6 @@ public class MessageApiController {
         }
 
         String phoneNumber= (String) params.get("msisdn");
-//        String sessionId = (String) params.get("sessionId");
         String title = (String) params.get("title");
         String body = (String) params.get("body");
 
@@ -226,34 +238,50 @@ public class MessageApiController {
             if(params.containsKey("userInfo")){
                 userInfo= String.valueOf(params.get("userInfo"));
             }
-            SessionEntity sessionEntity = storeSessions(token,authKey,phoneNumber,userInfo);
-            HashMap<String,String> res=new HashMap<>();
+            SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,true);
+            SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,false);
+            String callUrl= callPrefix+sessionEntityCustomer.getSessionId();
+            logger.info("callUrl : {}",callUrl);
+
+//            SessionEntity sessionEntity = storeSessions(token,authKey,phoneNumber,userInfo);
+
             HashMap<String, String>map= new HashMap<>();
             map.put("TITLE",title);
-            map.put("SESSION_ID",sessionEntity.getSessionId());
+            map.put("SESSION_ID",sessionEntityCustomer.getSessionId());
             map.put("BODY",body);
-
 
             Message message = Message.builder()
                     .setToken(appNotification.getUsertoken())
                     .putAllData(map)
                     .build();
 
-            String callUrl = callPrefix+sessionEntity.getSessionKey();
-            String callUrlSupport = callPrefix+sessionEntity.getSessionSupportKey();
             // Send notification message
-            String id=firebaseMessaging.send(message);
-            res.put("id",id);
-
-            res.put("callurl",callUrlSupport);
+            HashMap<String,String> res=new HashMap<>();
+            String returnUrl = callUrl+supportSuffix;
+            if(params.containsKey("getLink")){
+                String getLink = String.valueOf(params.get("getLink"));
+                if(getLink.equals("0")){
+                    res.put("status_code","200");
+                    res.put("msg","Video link send successfully!");
+                }
+                else if(getLink.equals("1")){
+                    res.put("status_code","200");
+                    res.put("msg","Video link send successfully!");
+                    res.put("link",returnUrl);
+                }
+                else if(getLink.equals("2")){
+                    res.put("status_code","200");
+                    res.put("msg","Video link send successfully!");
+                    res.put("link",returnUrl);
+                    res.put("customer_link",callUrl);
+                }
+            }
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
-            //   looger.error("Getting Exception While Submitting the message {}",e.getStackTrace());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
- */
 
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
@@ -279,35 +307,7 @@ public class MessageApiController {
             return false;
         return true;
     }
- /*   private SessionEntity storeSessions(String token,String authKey,String msisdn,String userInfo){
-        String creation = LocalDateTime.now().format(formatter);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime newDateTime = now.plus(callAccessTime, ChronoUnit.HOURS);
-        SessionEntity session = new SessionEntity();
 
-        UserAuthEntity userAuth = userAuthRepository.findByToken(token);
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
-        session.setSessionName(account.getName());
-        session.setUserId(userAuth.getUserId());
-        session.setMobile(msisdn);
-        session.setAccountId(acc.getAccountId());
-        session.setStatus("1");
-        String sessionId=acc.getAccountId()+"_"+userAuth.getUserId()+"_"+System.currentTimeMillis();
-        session.setSessionId(sessionId);
-        String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-        session.setSessionKey(sessionKey);
-        String supportKey = sessionKey+"_1";
-        session.setSessionSupportKey(supportKey);
-        session.setCreation(creation);
-        session.setUserInfo(userInfo);
-        session.setExpDate(newDateTime);
-
-        sessionRepository.save(session);
-        return session;
-    }
-
-  */
     private boolean byAccess(int toCheckValue,String token) throws JsonProcessingException {
 
         UserAuthEntity user = userAuthRepository.findByToken(token);

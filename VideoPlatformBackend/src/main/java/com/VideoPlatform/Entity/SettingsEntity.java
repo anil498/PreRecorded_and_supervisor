@@ -6,7 +6,6 @@ public class SettingsEntity {
 
     private Integer duration;
     private byte logo;
-    private Boolean moderators = false;
     private String description;
     private Boolean displayTicker;
     private Boolean displayTimer;
@@ -36,14 +35,6 @@ public class SettingsEntity {
 
     public void setLogo(byte logo) {
         this.logo = logo;
-    }
-
-    public Boolean getModerators() {
-        return moderators;
-    }
-
-    public void setModerators(Boolean moderators) {
-        this.moderators = moderators;
     }
 
     public String getDescription() {
@@ -163,7 +154,6 @@ public class SettingsEntity {
         return "SettingsEntity{" +
                 "duration=" + duration +
                 ", logo=" + logo +
-                ", moderators=" + moderators +
                 ", description='" + description + '\'' +
                 ", displayTicker=" + displayTicker +
                 ", displayTimer=" + displayTimer +

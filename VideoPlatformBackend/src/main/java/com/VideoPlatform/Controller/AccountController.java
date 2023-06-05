@@ -198,7 +198,9 @@ public class AccountController {
             user.setExpDate(expDate);
             user.setLoginId(params.get("loginId").getAsString());
             String pass = params.get("password").getAsString();
+            logger.info("PAssword Check !!! {}",pass);
             String myPass = passwordEncoder.encode(pass);
+            logger.info("Encoded Pass : {}",myPass);
             user.setPassword(myPass);
             user.setContact(params.get("contact").getAsString());
             user.setEmail(params.get("email").getAsString());
@@ -211,7 +213,7 @@ public class AccountController {
 
             accountService.createAccount(acc);
             user.setAccountId(acc.getAccountId());
-            userService.createUser(user,authKey,token);
+            userService.createUserZero(user);
 
             AccountAuthEntity auth = accountAuthRepository.findById(acc.getAccountId());
             if(auth != null){

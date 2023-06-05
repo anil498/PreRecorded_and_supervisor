@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -69,6 +68,10 @@ public class UserServiceImpl implements UserService{
 
         return userRepository.save(user);
     }
+    @Override
+    public UserEntity createUserZero(UserEntity user) {
+        return userRepository.save(user);
+    }
 
     @Override
     public UserEntity updateUser(UserEntity user) {
@@ -98,8 +101,5 @@ public class UserServiceImpl implements UserService{
         userRepository.deleteUser(userId);
         return "User successfully deleted.";
     }
-
-
-
 }
 

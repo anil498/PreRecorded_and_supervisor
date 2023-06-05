@@ -39,7 +39,7 @@ public class SessionServiceImpl implements SessionService{
     private int callAccessTime;
 
     @Override
-    public SessionEntity createSession(String authKey, String token,String userType) {
+    public SessionEntity createSession(String authKey, String token,Boolean moderator) {
         //logger.info("User details {}",session.toString());
         SessionEntity session = new SessionEntity();
 
@@ -66,16 +66,22 @@ public class SessionServiceImpl implements SessionService{
 //        String accountJson =gson.toJson(accountData);
 //        logger.info(accountJson);
 
-        String sessionId=account.getAccountId()+"_"+userAuth.getUserId()+"_"+System.currentTimeMillis();
         String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-
+        String sessionId =null;
+        if(moderator == true) {
+            session.setType("Support");
+            sessionId=account.getAccountId()+"_"+userAuth.getUserId()+"_"+sessionKey;
+        }
+        else {
+            session.setType("Customer");
+        }
         session.setSessionId(sessionId);
         session.setSessionKey(sessionKey);
         session.setSessionName(account.getName());
         session.setUserId(userAuth.getUserId());
         session.setAccountId(account.getAccountId());
-        session.setUserMaxActiveSessions(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
-        session.setAccountMaxActiveSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
+        session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+        session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
         session.setCreationDate(creation);
         session.setExpDate(newDateTime);
 
@@ -113,10 +119,6 @@ public class SessionServiceImpl implements SessionService{
             }
             if(15 == featureId) {
                 settingsEntity.setParticipantsButton(true);
-            }
-            if("Support".equals(userType)) {
-                settingsEntity.setModerators(true);
-
             }
         }
         String settingsJson = gson.toJson(settingsEntity);

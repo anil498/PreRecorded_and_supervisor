@@ -14,8 +14,9 @@ import java.util.Date;
 public class SessionEntity {
 
     @Id
-    @Column(name = "session_id" )
-    private String sessionId;
+    @Column(name = "sessionKey") private String sessionKey;
+
+    @Column(name = "session_id" ) private String sessionId;
 
     @Column(name = "session_name") private String sessionName;
 
@@ -23,17 +24,17 @@ public class SessionEntity {
 
     @Column(name = "account_id" ) private Integer accountId;
 
-    @Column(name = "max_active_sessions_u") Integer userMaxActiveSessions;
+    @Column(name = "max_sessions_u") Integer userMaxSessions;
 
-    @Column(name = "max_active_sessions_a") Integer accountMaxActiveSessions;
+    @Column(name = "max_sessions_a") Integer accountMaxSessions;
 
     @Column(name = "participant_name") private String participantName;
 
-    @Column(name = "participants") private String participants;
+    @Column(name = "total_participants") private String totalParticipants;
 
     @Column(name = "settings",columnDefinition = "text") private String settings;
 
-    @Column(name = "sessionKey") private String sessionKey;
+    @Column(name = "type") private String type;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     @Column(name = "creation_date") private Date creationDate;
@@ -43,6 +44,14 @@ public class SessionEntity {
     private Date expDate;
 
     @Column(name = "status") private Integer status = 1;
+
+    public String getSessionKey() {
+        return sessionKey;
+    }
+
+    public void setSessionKey(String sessionKey) {
+        this.sessionKey = sessionKey;
+    }
 
     public String getSessionId() {
         return sessionId;
@@ -76,20 +85,20 @@ public class SessionEntity {
         this.accountId = accountId;
     }
 
-    public Integer getUserMaxActiveSessions() {
-        return userMaxActiveSessions;
+    public Integer getUserMaxSessions() {
+        return userMaxSessions;
     }
 
-    public void setUserMaxActiveSessions(Integer userMaxActiveSessions) {
-        this.userMaxActiveSessions = userMaxActiveSessions;
+    public void setUserMaxSessions(Integer userMaxSessions) {
+        this.userMaxSessions = userMaxSessions;
     }
 
-    public Integer getAccountMaxActiveSessions() {
-        return accountMaxActiveSessions;
+    public Integer getAccountMaxSessions() {
+        return accountMaxSessions;
     }
 
-    public void setAccountMaxActiveSessions(Integer accountMaxActiveSessions) {
-        this.accountMaxActiveSessions = accountMaxActiveSessions;
+    public void setAccountMaxSessions(Integer accountMaxSessions) {
+        this.accountMaxSessions = accountMaxSessions;
     }
 
     public String getParticipantName() {
@@ -100,12 +109,12 @@ public class SessionEntity {
         this.participantName = participantName;
     }
 
-    public String getParticipants() {
-        return participants;
+    public String getTotalParticipants() {
+        return totalParticipants;
     }
 
-    public void setParticipants(String participants) {
-        this.participants = participants;
+    public void setTotalParticipants(String totalParticipants) {
+        this.totalParticipants = totalParticipants;
     }
 
     public String getSettings() {
@@ -116,12 +125,12 @@ public class SessionEntity {
         this.settings = settings;
     }
 
-    public String getSessionKey() {
-        return sessionKey;
+    public String getType() {
+        return type;
     }
 
-    public void setSessionKey(String sessionKey) {
-        this.sessionKey = sessionKey;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Date getCreationDate() {
@@ -151,16 +160,17 @@ public class SessionEntity {
     @Override
     public String toString() {
         return "SessionEntity{" +
-                "sessionId='" + sessionId + '\'' +
+                "sessionKey='" + sessionKey + '\'' +
+                ", sessionId='" + sessionId + '\'' +
                 ", sessionName='" + sessionName + '\'' +
                 ", userId=" + userId +
                 ", accountId=" + accountId +
-                ", userMaxActiveSessions=" + userMaxActiveSessions +
-                ", accountMaxActiveSessions=" + accountMaxActiveSessions +
+                ", userMaxSessions=" + userMaxSessions +
+                ", accountMaxSessions=" + accountMaxSessions +
                 ", participantName='" + participantName + '\'' +
-                ", participants='" + participants + '\'' +
+                ", totalParticipants='" + totalParticipants + '\'' +
                 ", settings='" + settings + '\'' +
-                ", sessionKey='" + sessionKey + '\'' +
+                ", type='" + type + '\'' +
                 ", creationDate=" + creationDate +
                 ", expDate=" + expDate +
                 ", status=" + status +

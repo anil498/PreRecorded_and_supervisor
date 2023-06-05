@@ -7,9 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.VideoPlatform.Constant.RequestMappings;
-import com.VideoPlatform.Entity.*;
-import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.UserServiceImpl;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,13 +22,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+
 import java.util.*;
 import java.util.stream.IntStream;
 
 import static org.springframework.http.ResponseEntity.ok;
-import static com.VideoPlatform.Constant.AllConstants.DATE_FORMATTER;
 import static com.VideoPlatform.Constant.AllConstants.formatter;
 
 @RestController
@@ -71,9 +68,6 @@ public class UserController {
 
     @Value("${access.time}")
     private int accessTime;
-
-//    private static final String DATE_FORMATTER= "yyyy-MM-dd HH:mm:ss";
-//    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
     @GetMapping("/GetAll")
     public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request) throws JsonProcessingException {
@@ -369,8 +363,6 @@ public class UserController {
 
         if(CommonUtils.isExpire(user.getExpDate()))
             return false;
-//        if(user.getExpDate().isBefore(LocalDateTime.now()))
-//            return false;
         return true;
     }
     public Boolean isValidTokenLogin(int id){
