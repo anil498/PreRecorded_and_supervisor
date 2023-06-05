@@ -270,7 +270,7 @@ export class CreateAccountComponent implements OnInit {
 
     try {
       response = await this.restService.createAccountUser(
-        "create",
+        "Create",
         this.name,
         this.address,
         this.logo,

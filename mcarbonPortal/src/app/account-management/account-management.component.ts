@@ -19,6 +19,7 @@ import { UpdateAccountDialogComponent } from "app/update-account-dialog/update-a
 import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-dialog.component";
 import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
 import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account-dialog.component";
+import { DeleteDialogComponent } from "app/delete-dialog/delete-dialog.component";
 
 @Component({
   selector: "app-account-management",
@@ -111,18 +112,16 @@ export class AccountManagementComponent implements OnInit {
 
   show() {
     this.accessList.forEach((access) => {
-      if (access.pId == 1000) {
-        if (access.apiId == 1001) {
-          this.showCreateButton = true;
-        }
+      if (access.systemName == "customer_creation") {
+        this.showCreateButton = true;
+      }
 
-        if (access.apiId == 1002) {
-          this.showEdit = true;
-        }
+      if (access.systemName == "customer_update") {
+        this.showEdit = true;
+      }
 
-        if (access.apiId == 1003) {
-          this.showDelete = true;
-        }
+      if (access.systemName == "customer_delete") {
+        this.showDelete = true;
       }
     });
   }
@@ -160,11 +159,24 @@ export class AccountManagementComponent implements OnInit {
   }
 
   deleteAccount(account: any) {
-    //const dialogConfig = new MatDialogConfig();
-    this.restService.deleteAccount(this.token, account.accountId);
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "25%";
+    dialogConfig.height = "20%";
+    //this.restService.deleteAccount(this.token, account.accountId);
     console.log("Confirm Delete");
 
-    // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
+    const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
+    dialogRef.beforeClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.restService.deleteAccount(account.accountId);
+        console.log("accoutn Deleted");
+      } else {
+        console.log("account not deleted");
+      }
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
   }
 
   viewAccountDialog(account: any) {
@@ -189,10 +201,7 @@ export class AccountManagementComponent implements OnInit {
     dialogConfig.height = "50%";
     dialogConfig.data = account.accessId;
     console.log("Dialog Form Opened");
-    const dialogRef = this.dialog.open(
-      ViewAccessDialogComponent,
-      dialogConfig
-    );
+    const dialogRef = this.dialog.open(ViewAccessDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();

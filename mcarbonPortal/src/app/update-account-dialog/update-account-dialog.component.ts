@@ -264,7 +264,7 @@ export class UpdateAccountDialogComponent implements OnInit {
 
     try {
       response = await this.restService.updateAccount(
-        "update",
+        "Update",
         this.account.accountId,
         this.name,
         this.address,

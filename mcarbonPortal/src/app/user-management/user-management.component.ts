@@ -105,15 +105,15 @@ export class UserManagementComponent implements OnInit {
     if (this.accessList.length > 0) {
       this.accessList.forEach((access) => {
         if (access.pId == 2000) {
-          if (access.apiId == 2001) {
+          if (access.system_name == "user_creation") {
             this.showCreateButton = true;
           }
 
-          if (access.apiId == 2002) {
+          if (access.system_name == "user_update") {
             this.showEdit = true;
           }
 
-          if (access.apiId == 2003) {
+          if (access.system_name == "user_delete") {
             this.showDelete = true;
           }
         }
