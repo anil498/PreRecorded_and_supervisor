@@ -27,7 +27,12 @@ export class RestService {
     this.getHeaders();
   }
 
-  getHeaders() {}
+  getHeaders() {
+    if (this._response == null) {
+      this.router.navigate([""]);
+    }
+  }
+  
   setData(response: any) {
     this._response = response;
   }
@@ -162,7 +167,7 @@ export class RestService {
     this.setData(null);
     this.setToken(null);
     this.setUserId(null);
-
+    window.localStorage.clear();
     this.router.navigate([""]);
   }
 
@@ -227,7 +232,7 @@ export class RestService {
     features: number[],
     featuresMeta: any
   ) {
-    let path = type+ "/" + userId
+    let path = type + "/" + userId;
     return this.postRequest1(path, {
       fname,
       lname,
