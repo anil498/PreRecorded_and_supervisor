@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { response } from "express";
 import { catchError, lastValueFrom, Subject } from "rxjs";
-
+import { environment } from "environments/environment.prod";
 @Injectable({
   providedIn: "root",
 })
@@ -23,7 +23,8 @@ export class RestService {
 
   constructor(private http: HttpClient, private router: Router) {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
-    this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
+    //this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
+    this.baseHref = environment.url;
     this.getHeaders();
   }
 
@@ -32,7 +33,7 @@ export class RestService {
       this.router.navigate([""]);
     }
   }
-  
+
   setData(response: any) {
     this._response = response;
   }
@@ -70,7 +71,7 @@ export class RestService {
         "Content-Type": "application/json",
       };
       return lastValueFrom(
-        this.http.post<any>(this.baseHref + "user/" + path, body, { headers })
+        this.http.post<any>(this.baseHref + "User/" + path, body, { headers })
       );
     } catch (error) {
       console.warn(error);
@@ -85,7 +86,7 @@ export class RestService {
   }
 
   private postRequest1(path: string, body: any): Promise<any> {
-    console.warn(this.baseHref + "user/" + path);
+    console.warn(this.baseHref + "User/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
@@ -93,7 +94,7 @@ export class RestService {
         Token: `${this._token}`,
       });
       return lastValueFrom(
-        this.http.post<any>(this.baseHref + "user/" + path, body, { headers })
+        this.http.post<any>(this.baseHref + "User/" + path, body, { headers })
       );
     } catch (error) {
       console.warn(error);
@@ -108,7 +109,7 @@ export class RestService {
   }
 
   private postRequest2(path: string, body: any): Promise<any> {
-    console.warn(this.baseHref + "account/" + path);
+    console.warn(this.baseHref + "Account/" + path);
     console.warn(body);
     try {
       const headers = new HttpHeaders({
@@ -116,7 +117,7 @@ export class RestService {
         Token: `${this._token}`,
       });
       return lastValueFrom(
-        this.http.post<any>(this.baseHref + "account/" + path, body, {
+        this.http.post<any>(this.baseHref + "Account/" + path, body, {
           headers,
         })
       );
@@ -167,7 +168,9 @@ export class RestService {
     this.setData(null);
     this.setToken(null);
     this.setUserId(null);
-    window.localStorage.clear();
+    localStorage.clear();
+    sessionStorage.clear();
+    location.reload();
     this.router.navigate([""]);
   }
 
@@ -339,30 +342,30 @@ export class RestService {
     });
   }
 
-  async getUserById(token: string) {
-    console.warn(token + "\n");
-    const headers = new HttpHeaders({
-      Token: `${token}`,
-      Authorization: `${this.authKey}`,
-    });
-    try {
-      return lastValueFrom(
-        this.http.get<any>(
-          this.baseHref +
-            "user/getById/" +
-            `${this._response.user_data.userId}`,
-          { headers }
-        )
-      );
-    } catch (error) {
-      if (error.status === 404) {
-        throw {
-          status: error.status,
-          message: "Cannot connect with backend. " + error.url + " not found",
-        };
-      }
-    }
-  }
+  // async getUserById(token: string) {
+  //   console.warn(token + "\n");
+  //   const headers = new HttpHeaders({
+  //     Token: `${token}`,
+  //     Authorization: `${this.authKey}`,
+  //   });
+  //   try {
+  //     return lastValueFrom(
+  //       this.http.get<any>(
+  //         this.baseHref +
+  //           "User/getById/" +
+  //           `${this._response.user_data.userId}`,
+  //         { headers }
+  //       )
+  //     );
+  //   } catch (error) {
+  //     if (error.status === 404) {
+  //       throw {
+  //         status: error.status,
+  //         message: "Cannot connect with backend. " + error.url + " not found",
+  //       };
+  //     }
+  //   }
+  // }
 
   async getUserList(token: string, id: string) {
     console.warn(token + "\n" + id);
@@ -372,7 +375,7 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "user/child/", { headers })
+        this.http.get<any>(this.baseHref + "User/Child/", { headers })
       );
     } catch (error) {
       if (error.status === 404) {
@@ -392,7 +395,7 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "account/getAll", { headers })
+        this.http.get<any>(this.baseHref + "Account/GetAll", { headers })
       );
     } catch (error) {
       if (error.status === 404) {
@@ -405,19 +408,19 @@ export class RestService {
     }
   }
 
-  async deleteAccount(token: string, id: string) {
+  async deleteAccount(id: string) {
     const headers = new HttpHeaders({
-      Token: `${token}`,
+      Token: `${this._token}`,
       Authorization: `${this.authKey}`,
     });
 
-    this.postRequest2(`delete/${id}`, {});
+    this.postRequest2(`Delete/${id}`, {});
   }
 
   async sendSMS(sessionId: string, msisdn: string, callUrl: string) {
     console.log("sms Sent");
     try {
-      return this.callRequest(sessionId, "video/api/sendSms", {
+      return this.callRequest(sessionId, "session/Send/SMS", {
         msisdn,
       });
     } catch (error) {
@@ -434,7 +437,7 @@ export class RestService {
   ) {
     console.warn("Whatsapp Message Sent");
     try {
-      return this.callRequest(sessionId, "video/api/sendWhatsapp", {
+      return this.callRequest(sessionId, "session/Send/Whatsapp", {
         msisdn,
         from,
         type,
@@ -453,7 +456,7 @@ export class RestService {
   ) {
     console.warn("Notification Sent");
     try {
-      return this.callRequest(sessionId, "video/api/notification", {
+      return this.callRequest(sessionId, "session/Send/AppNotification", {
         msisdn,
         title,
         body,

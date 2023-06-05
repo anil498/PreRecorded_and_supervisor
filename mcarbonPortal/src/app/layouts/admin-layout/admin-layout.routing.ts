@@ -9,9 +9,9 @@ import { AccountManagementComponent } from "app/account-management/account-manag
 
 export const AdminLayoutRoutes: Routes = [
   { path: "dashboard", component: DashboardComponent },
-  { path: "user-profile", component: UserProfileComponent },
-  { path: "account-management", component: AccountManagementComponent },
-  { path: "user-management", component: UserManagementComponent },
-  { path: "session-management", component: SessionManagementComponent },
-  { path: "dynamic-support", component: DynamicSupportComponent },
+  { path: "user_profile", component: UserProfileComponent },
+  { path: "customer_management", component: AccountManagementComponent },
+  { path: "my_user", component: UserManagementComponent },
+  { path: "my_sessions", component: SessionManagementComponent },
+  { path: "dynamic_links", component: DynamicSupportComponent },
 ];

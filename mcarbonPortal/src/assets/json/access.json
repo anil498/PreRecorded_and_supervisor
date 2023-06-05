@@ -1,0 +1,58 @@
+[
+    {
+      "path": "/app/dashboard",
+      "title": "Dashboard",
+      "icon": "dashboard",
+      "class": "",
+      "show": false,
+      "systemName": "dashboard"
+    },
+    {
+      "path": "/app/user_profile",
+      "title": "User Profile",
+      "icon": "person",
+      "class": "",
+      "show": false,
+      "systemName": "user_profile"
+    },
+    {
+      "path": "/app/customer_management",
+      "title": "Customer Management",
+      "icon": "supervisor_account",
+      "class": "",
+      "show": false,
+      "systemName": "customer_management"
+    },
+    {
+      "path": "/app/my_user",
+      "title": "My Users",
+      "icon": "person",
+      "class": "",
+      "show": false,
+      "systemName": "my_user"
+    },
+    {
+      "path": "/app/my_session",
+      "title": "My Session",
+      "icon": "videocam",
+      "class": "",
+      "show": false,
+      "systemName": "my_sessions"
+    },
+    {
+      "path": "/app/dynamic_links",
+      "title": "Dynamic Links",
+      "icon": "headset_mic",
+      "class": "",
+      "show": false,
+      "systemName": "dynamic_links"
+    },
+    {
+        "path": "/app/my_reports",
+        "title": "My Reports",
+        "icon": "library_book",
+        "class": "",
+        "show": false,
+        "systemName": "my_reports"
+      }
+  ]

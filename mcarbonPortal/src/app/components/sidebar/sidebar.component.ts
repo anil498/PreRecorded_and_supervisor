@@ -1,4 +1,6 @@
+import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
+import { Route } from "@angular/router";
 import { RestService } from "app/services/rest.service";
 declare const $: any;
 declare interface RouteInfo {
@@ -6,60 +8,61 @@ declare interface RouteInfo {
   title: string;
   icon: string;
   class: string;
-  apiId: number;
   show: boolean;
+  systemName: string;
 }
 
-export const ROUTES: RouteInfo[] = [
-  {
-    path: "/app/dashboard",
-    title: "Dashboard",
-    icon: "dashboard",
-    class: "",
-    apiId: 100,
-    show: false,
-  },
-  {
-    path: "/app/user-profile",
-    title: "User Profile",
-    icon: "person",
-    class: "",
-    apiId: null,
-    show: false,
-  },
-  {
-    path: "/app/account-management",
-    title: "Account Management",
-    icon: "supervisor_account",
-    class: "",
-    apiId: 1000,
-    show: false,
-  },
-  {
-    path: "/app/user-management",
-    title: "User Management",
-    icon: "people",
-    class: "",
-    apiId: 2000,
-    show: false,
-  },
-  {
-    path: "/app/session-management",
-    title: "Session Management",
-    icon: "videocam",
-    class: "",
-    apiId: 4000,
-    show: false,
-  },
-  {
-    path: "/app/dynamic-support",
-    title: "Dynamic Support",
-    icon: "headset_mic",
-    class: "",
-    apiId: 5000,
-    show: false,
-  },
-];
+export var ROUTE: RouteInfo[];
+// export const ROUTES: RouteInfo[] = [
+//   {
+//     path: "/app/dashboard",
+//     title: "Dashboard",
+//     icon: "dashboard",
+//     class: "",
+//     show: false,
+//     systemName: ""
+//   },
+//   {
+//     path: "/app/user-profile",
+//     title: "User Profile",
+//     icon: "person",
+//     class: "",
+//     show: false,
+//     systemName: ""
+//   },
+//   {
+//     path: "/app/account-management",
+//     title: "Account Management",
+//     icon: "supervisor_account",
+//     class: "",
+//     show: false,
+//     systemName: ""
+//   },
+//   {
+//     path: "/app/user-management",
+//     title: "User Management",
+//     icon: "people",
+//     class: "",
+//     show: false,
+//     systemName: ""
+//   },
+//   {
+//     path: "/app/session-management",
+//     title: "Session Management",
+//     icon: "videocam",
+//     class: "",
+//     show: false,
+//     systemName: ""
+//   },
+//   {
+//     path: "/app/dynamic-support",
+//     title: "Dynamic Support",
+//     icon: "headset_mic",
+//     class: "",
+//     show: false,
+//     systemName: ""
+//   },
+// ];
 
 @Component({
   selector: "app-sidebar",
@@ -69,24 +72,28 @@ export const ROUTES: RouteInfo[] = [
 export class SidebarComponent implements OnInit {
   menuItems: any[];
   accessList: any[];
-  constructor(private restService: RestService) {}
+  constructor(private restService: RestService, private http: HttpClient) {}
 
   ngOnInit() {
-    this.menuItems = ROUTES.filter((menuItem) => menuItem);
+    this.http
+      .get<RouteInfo[]>("assets/json/access.json")
+      .subscribe((response: RouteInfo[]) => {
+        console.warn(response);
+        ROUTE = response;
+      });
+    this.menuItems = ROUTE.filter((menuItem) => menuItem);
     this.accessList = this.restService.getData().Access;
-
     this.showSideNav();
   }
 
   showSideNav() {
     this.accessList.forEach((access) => {
-      if (access.pId == 0) {
-        this.menuItems.forEach((menuItem) => {
-          if (access.apiId === menuItem.apiId) {
-            menuItem.show = true;
-          }
-        });
-      }
+      this.menuItems.forEach((menuItem) => {
+        if (access.apiId === menuItem.apiId) {
+          menuItem.show = true;
+          menuItem.title = access.name;
+        }
+      });
     });
   }
 
