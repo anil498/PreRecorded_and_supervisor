@@ -67,18 +67,16 @@ export class DynamicSupportComponent implements OnInit {
 
   show() {
     this.accessList.forEach((access) => {
-      if (access.pId == 5000) {
-        if (access.apiId == 5001) {
-          this.showSMSTab = true;
-        }
+      if (access.systemName == "sms") {
+        this.showSMSTab = true;
+      }
 
-        if (access.apiId == 5002) {
-          this.showWhatsappTab = true;
-        }
+      if (access.systemName == "whatsapp") {
+        this.showWhatsappTab = true;
+      }
 
-        if (access.apiId == 5003) {
-          this.showAppTab = true;
-        }
+      if (access.systemName == "send_notification") {
+        this.showAppTab = true;
       }
     });
   }

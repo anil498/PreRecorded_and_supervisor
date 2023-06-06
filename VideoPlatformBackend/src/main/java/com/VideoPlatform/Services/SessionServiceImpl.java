@@ -81,6 +81,8 @@ public class SessionServiceImpl implements SessionService{
             session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
             session.setCreationDate(creation);
             session.setExpDate(newDateTime);
+            session.setParticipantName(userEntity.getFname());
+            session.setTotalParticipants(Integer.valueOf(account.getSession().get("max_participants").toString()));
 
 
             SettingsEntity settingsEntity = new SettingsEntity();
@@ -141,21 +143,10 @@ public class SessionServiceImpl implements SessionService{
     }
 
     @Override
-    public Map<String,Object> getByKey(String key, UserAuthEntity user) {
-        HashMap<String,Object> response=new HashMap<>();
-
-        SessionEntity session = sessionRepository.findBySessionKey(key);
-        int userId = session.getUserId();
-            response.put("session",sessionRepository.findBySessionKey(key));
-
-        response.put("user",userRepository.findById(userId));
-        try {
-            response.put("feature",featureData(userId));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return response;
+    public SessionEntity getByKey(String key) {
+        return sessionRepository.findBySessionKey(key);
     }
+
     private Object featureData(Integer userId) throws JsonProcessingException {
         UserEntity user = userRepository.findByUserId(userId);
         Integer[] featuresId = user.getFeatures();

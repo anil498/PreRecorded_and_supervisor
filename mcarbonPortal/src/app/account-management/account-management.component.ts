@@ -158,18 +158,18 @@ export class AccountManagementComponent implements OnInit {
     this.dataSourceWithPageSize.filter = filterValue.trim().toLowerCase();
   }
 
-  deleteAccount(account: any) {
+  deleteAccount(accountId: number) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "25%";
     dialogConfig.height = "20%";
-    //this.restService.deleteAccount(this.token, account.accountId);
     console.log("Confirm Delete");
 
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
-    dialogRef.beforeClosed().subscribe((confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      console.log(confirmed);
       if (confirmed) {
-        this.restService.deleteAccount(account.accountId);
-        console.log("accoutn Deleted");
+        this.restService.deleteAccount(accountId);
+        console.log("account Deleted");
       } else {
         console.log("account not deleted");
       }

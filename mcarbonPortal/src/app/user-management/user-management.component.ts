@@ -19,6 +19,7 @@ import { UpdateUserDialogComponent } from "app/update-user-dialog/update-user-di
 import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
 import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-dialog.component";
 import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.component";
+import { DeleteDialogComponent } from "app/delete-dialog/delete-dialog.component";
 
 @Component({
   selector: "app-user-management",
@@ -104,18 +105,16 @@ export class UserManagementComponent implements OnInit {
   show() {
     if (this.accessList.length > 0) {
       this.accessList.forEach((access) => {
-        if (access.pId == 2000) {
-          if (access.system_name == "user_creation") {
-            this.showCreateButton = true;
-          }
+        if (access.systemName == "user_creation") {
+          this.showCreateButton = true;
+        }
 
-          if (access.system_name == "user_update") {
-            this.showEdit = true;
-          }
+        if (access.systemName == "user_update") {
+          this.showEdit = true;
+        }
 
-          if (access.system_name == "user_delete") {
-            this.showDelete = true;
-          }
+        if (access.systemName == "user_delete") {
+          this.showDelete = true;
         }
       });
     }
@@ -217,8 +216,23 @@ export class UserManagementComponent implements OnInit {
 
   deleteUser(userId: number) {
     const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "25%";
+    dialogConfig.height = "20%";
     console.log("Confirm Delete");
-    // const dialogref = this.dialog.open(DeleteDialog,dialogConfig);
+
+    const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      console.log(confirmed);
+      if (confirmed) {
+        this.restService.deleteUser(userId);
+        console.log("user Deleted");
+      } else {
+        console.log("user not deleted");
+      }
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+    });
   }
 
   updateUserDialog(user: any) {

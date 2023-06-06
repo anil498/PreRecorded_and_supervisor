@@ -38,7 +38,6 @@ public class UserServiceImpl implements UserService{
     private PasswordEncoder passwordEncoder;
     @Autowired
     private FeatureRepository featureRepository;
-
     @Autowired
     private AccessRepository accessRepository;
 
@@ -57,7 +56,6 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public UserEntity getUserById(Integer id) {
-        //logger.info(String.valueOf(userRepository.findById(id)));
         return (UserEntity) userRepository.findByUserId(id);
     }
 
@@ -70,8 +68,8 @@ public class UserServiceImpl implements UserService{
         user.setAccountId(acc.getAccountId());
         user.setCreationDate(creation);
         user.setParentId(u.getUserId());
-        String mypass = passwordEncoder.encode(user.getPassword());
-        user.setPassword(mypass);
+        String myPass = passwordEncoder.encode(user.getPassword());
+        user.setPassword(myPass);
 
         return userRepository.save(user);
     }
@@ -88,17 +86,11 @@ public class UserServiceImpl implements UserService{
         existing.setSession(user.getSession());
         existing.setFeatures(user.getFeatures());
         existing.setFeaturesMeta(user.getFeaturesMeta());
+        logger.info("AccessId val : {}",user.getAccessId());
         existing.setAccessId(user.getAccessId());
         existing.setExpDate(user.getExpDate());
         existing.setContact(user.getContact());
         existing.setEmail(user.getEmail());
-        existing.setParentId(user.getParentId());
-        existing.setPassword(user.getPassword());
-        existing.setUserId(user.getUserId());
-        existing.setAccountId(user.getAccountId());
-        existing.setLoginId(user.getLoginId());
-        existing.setLastLogin(user.getLastLogin());
-        existing.setCreationDate(user.getCreationDate());
 
         return userRepository.save(existing);
     }

@@ -125,8 +125,9 @@ public class SessionController {
 //        return ok(s);
 //    }
 
-    @GetMapping("/GetByKey/{key}")
-    public ResponseEntity<SessionEntity> getSessionByKey(@PathVariable String key, HttpServletRequest request) {
+    @PostMapping("/GetByKey")
+    public ResponseEntity<SessionEntity> getSessionByKey(@RequestBody Map<String, String> params, HttpServletRequest request) {
+
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -144,8 +145,8 @@ public class SessionController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
-
-            return  new ResponseEntity<SessionEntity>(sessionRepository.findBySessionKey(key),HttpStatus.OK);
+        String sessionKey = params.get("sessionKey");
+            return new ResponseEntity<>(sessionService.getByKey(sessionKey), HttpStatus.OK);
 
     }
 

@@ -5,7 +5,7 @@ package com.VideoPlatform.Entity;
 public class SettingsEntity {
 
     private Integer duration;
-    private byte logo;
+    private Boolean logo;
     private String description;
     private Boolean displayTicker;
     private Boolean displayTimer;
@@ -29,11 +29,11 @@ public class SettingsEntity {
         this.duration = duration;
     }
 
-    public byte getLogo() {
+    public Boolean getLogo() {
         return logo;
     }
 
-    public void setLogo(byte logo) {
+    public void setLogo(Boolean logo) {
         this.logo = logo;
     }
 

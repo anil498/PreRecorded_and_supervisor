@@ -72,7 +72,7 @@
               <div class="row">
                 <div
                   class="col-md-5 offset-md-1"
-                  style="font-weight: bold; font-size: 1rem; padding-top:2.5%"
+                  style="font-weight: bold; font-size: 1rem; padding-top: 2.5%"
                 >
                   Status:
                 </div>
@@ -110,7 +110,7 @@
                 *ngFor="let access of accessList"
                 class="col-md-5 offset-md-1"
               >
-                <li>{{ access.name }}</li>
+                <li *ngIf="access">{{ access.name }}</li>
               </h6>
             </div>
           </div>
@@ -130,7 +130,7 @@
                 *ngFor="let feature of featureList"
                 class="col-md-5 offset-md-1"
               >
-                <li>{{ feature.name }}</li>
+                <li *ngIf="feature">{{ feature.name }}</li>
               </h6>
             </div>
           </div>

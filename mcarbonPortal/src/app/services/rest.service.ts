@@ -25,6 +25,7 @@ export class RestService {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
     //this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
     this.baseHref = environment.url;
+    //this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
     this.getHeaders();
   }
 
@@ -120,6 +121,76 @@ export class RestService {
         this.http.post<any>(this.baseHref + "Account/" + path, body, {
           headers,
         })
+      );
+    } catch (error) {
+      console.warn(error);
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
+
+  private putRequest1(path: string, body: any): Promise<any> {
+    console.warn(this.baseHref + "User/" + path);
+    console.warn(body);
+    try {
+      const headers = new HttpHeaders({
+        Authorization: `${this.authKey}`,
+        Token: `${this._token}`,
+      });
+      return lastValueFrom(
+        this.http.put<any>(this.baseHref + "User/" + path, body, { headers })
+      );
+    } catch (error) {
+      console.warn(error);
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
+
+  private putRequest2(path: string, body: any): Promise<any> {
+    console.warn(this.baseHref + "Account/" + path);
+    console.warn(body);
+    try {
+      const headers = new HttpHeaders({
+        Authorization: `${this.authKey}`,
+        Token: `${this._token}`,
+      });
+      return lastValueFrom(
+        this.http.put<any>(this.baseHref + "Account/" + path, body, {
+          headers,
+        })
+      );
+    } catch (error) {
+      console.warn(error);
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
+
+  private deleteRequest(path: string): Promise<any> {
+    console.warn(this.baseHref + path);
+    try {
+      const headers = new HttpHeaders({
+        Authorization: `${this.authKey}`,
+        Token: `${this._token}`,
+      });
+      return lastValueFrom(
+        this.http.delete<any>(this.baseHref + path, { headers })
       );
     } catch (error) {
       console.warn(error);
@@ -236,7 +307,7 @@ export class RestService {
     featuresMeta: any
   ) {
     let path = type + "/" + userId;
-    return this.postRequest1(path, {
+    return this.putRequest1(type, {
       fname,
       lname,
       contact,
@@ -308,13 +379,13 @@ export class RestService {
 
   async updateAccount(
     type: string,
-    accId: string,
+    accountId: string,
     name: string,
     address: string,
     logo: Blob,
     maxUser: number,
     expDate: string,
-
+    creationDate: string,
     maxDuration: number,
     maxParticipants: number,
     maxActiveSessions: number,
@@ -323,12 +394,14 @@ export class RestService {
     features: number[],
     featureMeta: any
   ) {
-    let path = type + "/" + accId;
-    return this.postRequest2(path, {
+    let path = type + "/" + accountId;
+    return this.putRequest2(type, {
+      accountId,
       name,
       address,
       maxUser,
       expDate,
+      creationDate,
 
       accessId,
       session: {
@@ -408,13 +481,12 @@ export class RestService {
     }
   }
 
-  async deleteAccount(id: string) {
-    const headers = new HttpHeaders({
-      Token: `${this._token}`,
-      Authorization: `${this.authKey}`,
-    });
+  async deleteAccount(id: number) {
+    this.deleteRequest(`Account/Delete/${id}`);
+  }
 
-    this.postRequest2(`Delete/${id}`, {});
+  async deleteUser(id: number) {
+    this.deleteRequest(`User/Delete/${id}`);
   }
 
   async sendSMS(sessionId: string, msisdn: string, callUrl: string) {

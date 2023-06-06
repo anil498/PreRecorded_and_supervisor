@@ -37,10 +37,11 @@ export class UpdateAccountDialogComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: Blob;
+  logo: Blob = null;
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
+  creationDate: string;
 
   max_duration: number;
   max_active_sessions: number;
@@ -110,56 +111,63 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.userForm = this.fb.group(
-      {
-        name: [this.account.name, Validators.required],
-        address: [this.account.address, Validators.required],
-        acc_exp_date: [new Date(this.account.expDate), Validators.required],
-        max_user: [this.account.maxUser, Validators.required],
+    this.userForm = this.fb.group({
+      name: [this.account.name, Validators.required],
+      address: [this.account.address, Validators.required],
+      acc_exp_date: [new Date(this.account.expDate), Validators.required],
+      max_user: [this.account.maxUser, Validators.required],
+      logo: [this.account.logo],
 
-        accessList: [this.account.accessId, Validators.required],
+      accessList: [this.account.accessId, Validators.required],
 
-        max_duration: [this.account.session.max_duration, Validators.required],
-        max_active_sessions: [
-          this.account.session.max_active_sessions,
-          Validators.required,
-        ],
-        max_participants: [
-          this.account.session.max_participants,
-          Validators.required,
-        ],
+      max_duration: [this.account.session.max_duration, Validators.required],
+      max_active_sessions: [
+        this.account.session.max_active_sessions,
+        Validators.required,
+      ],
+      max_participants: [
+        this.account.session.max_participants,
+        Validators.required,
+      ],
 
-        featureList: [this.account.features, Validators.required],
-        featureMeta: [this.account.featuresMeta, Validators.required],
-      },
-    );
+      featureList: [this.account.features, Validators.required],
+      featureMeta: [this.account.featuresMeta, Validators.required],
+    });
 
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
     // For diplaying previous checked Access
-    for (let i = 0; i < this.accessData.length; i++) {
-      var flag = true;
-      for (let j = 0; j < this.userForm.value.accessList.length; j++) {
-        if (this.userForm.value.accessList[j] === this.accessData[i].accessId) {
-          flag = false;
-          break;
+    if (
+      this.accessData.length !== 0 &&
+      this.userForm.value.accessList.length !== 0
+    ) {
+      for (let i = 0; i < this.accessData.length; i++) {
+        var flag = true;
+        for (let j = 0; j < this.userForm.value.accessList.length; j++) {
+          if (
+            this.userForm.value.accessList[j] === this.accessData[i].accessId
+          ) {
+            flag = false;
+            break;
+          }
         }
+        if (flag === true) this.accessData[i].status = 0;
       }
-      if (flag === true) this.accessData[i].status = 0;
-    }
-    // for displaying previous checked features
-    for (let i = 0; i < this.featuresData.length; i++) {
-      var flag = true;
-      for (let j = 0; j < this.userForm.value.featureList.length; j++) {
-        if (
-          this.userForm.value.featureList[j] === this.featuresData[i].featureId
-        ) {
-          flag = false;
-          break;
+      // for displaying previous checked features
+      for (let i = 0; i < this.featuresData.length; i++) {
+        var flag = true;
+        for (let j = 0; j < this.userForm.value.featureList.length; j++) {
+          if (
+            this.userForm.value.featureList[j] ===
+            this.featuresData[i].featureId
+          ) {
+            flag = false;
+            break;
+          }
         }
+        if (flag === true) this.featuresData[i].status = 0;
       }
-      if (flag === true) this.featuresData[i].status = 0;
     }
   }
 
@@ -241,9 +249,13 @@ export class UpdateAccountDialogComponent implements OnInit {
       " " +
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
 
+    this.creationDate = this.account.creationDate;
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
+    this.selectedAccessId = this.userForm.value.accessList;
+    this.selectedFeatures = this.userForm.value.featureList;
+    this.selectedFeaturesMeta = this.userForm.value.featureMeta;
 
     console.warn(this.userForm.value);
     if (
@@ -271,7 +283,7 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.logo,
         this.max_user,
         this.exp_date,
-
+        this.creationDate,
         this.max_active_sessions,
         this.max_duration,
         this.max_participants,
