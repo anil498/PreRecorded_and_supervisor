@@ -61,6 +61,7 @@ import { VirtualBackgroundService } from '../../services/virtual-background/virt
 })
 export class SessionComponent implements OnInit, OnDestroy {
 	@ContentChild('toolbar', { read: TemplateRef }) toolbarTemplate: TemplateRef<any>;
+	@ContentChild('header', { read: TemplateRef }) headerTemplate: TemplateRef<any>;
 	@ContentChild('panel', { read: TemplateRef }) panelTemplate: TemplateRef<any>;
 	@ContentChild('layout', { read: TemplateRef }) layoutTemplate: TemplateRef<any>;
 
@@ -78,6 +79,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 	settingsPanelOpened: boolean;
 	drawer: MatDrawerContainer;
 	preparing: boolean = true;
+	displayTickerValue:string;
+	displayTicker:boolean=true;
 
 	protected readonly SIDENAV_WIDTH_LIMIT_MODE = 790;
 
@@ -87,6 +90,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 	protected updateLayoutInterval: NodeJS.Timer;
 	// private sttReconnectionInterval: NodeJS.Timer;
 	private captionLanguageSubscription: Subscription;
+	private displayTickerValueSub: Subscription;
+	private displayTickerSub: Subscription;
 
 	protected log: ILogger;
 
@@ -183,6 +188,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.subscribeToNicknameChanged();
 			this.chatService.subscribeToChat();
 			this.subscribeToReconnection();
+			this.subscribeToDisplayTrickerDirectives();
 			const recordingEnabled = this.libService.recordingButton.getValue() && this.libService.recordingActivity.getValue();
 			if (recordingEnabled) {
 				this.subscribeToRecordingEvents();
@@ -456,5 +462,13 @@ export class SessionComponent implements OnInit, OnDestroy {
 		if (this.updateLayoutInterval) {
 			clearInterval(this.updateLayoutInterval);
 		}
+	}
+	private subscribeToDisplayTrickerDirectives() {
+		this.displayTickerValueSub = this.libService.displayTickerValue.subscribe((displayTickerValue: string) => {
+			this.displayTickerValue = displayTickerValue;
+		});
+		this.displayTickerSub = this.libService.displayTicker.subscribe((displayTicker: boolean) => {
+			this.displayTicker = displayTicker;
+		});
 	}
 }

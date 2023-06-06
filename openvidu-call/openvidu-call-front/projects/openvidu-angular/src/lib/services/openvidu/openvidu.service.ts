@@ -44,6 +44,11 @@ export class OpenViduService {
 	protected log: ILogger;
 	private videoElement:any;
 	private isVideoPlaying:boolean=false;
+	sessionTimerObs: Observable<{time?: Date }>;
+	private sessionTimerStatus = <BehaviorSubject<{time?: Date }>>new BehaviorSubject(null);
+
+	private sessionTime: Date;
+	private sessionTimeInterval: NodeJS.Timer;
 
 	/**
 	 * @internal
@@ -57,6 +62,7 @@ export class OpenViduService {
 	) {
 		this.log = this.loggerSrv.get('OpenViduService');
 		this.isSttReadyObs = this._isSttReady.asObservable();
+		this.sessionTimerObs = this.sessionTimerStatus.asObservable();
 	}
 
 	/**
@@ -213,6 +219,7 @@ export class OpenViduService {
 					type: VideoType.CAMERA
 				});
 				this.participantService.setMyCameraConnectionId(this.webcamSession.connection.connectionId);
+				this.startSessionTime();
 			} else if (session === this.screenSession) {
 				this.log.d('Connecting screen session');
 				await this.screenSession.connect(token, {
@@ -425,7 +432,7 @@ export class OpenViduService {
 				publishVideo: true,
 				publishAudio: hasAudio,
 				mirror: false,
-				frameRate: 25,
+				frameRate: 30,
 				resolution: "1920x1080"
 			};
 			this.log.d('Initializing publisher with properties2: ', displayMediaStream);
@@ -777,5 +784,18 @@ export class OpenViduService {
 		}catch(error){
 			this.log.d("Getting error while pausing video",error)
 		}
+	}
+	startSessionTimer() {
+		this.startSessionTime();
+		this.sessionTimerStatus.next({time: this.sessionTime });
+	}
+	private startSessionTime() {
+		this.sessionTime = new Date();
+		this.sessionTime.setHours(0, 0, 0, 0);
+		this.sessionTimeInterval = setInterval(() => {
+			this.sessionTime.setSeconds(this.sessionTime.getSeconds() + 60);
+			this.sessionTime = new Date(this.sessionTime.getTime());
+			this.sessionTimerStatus.next({ time: this.sessionTime });
+		}, 1000);
 	}
 }

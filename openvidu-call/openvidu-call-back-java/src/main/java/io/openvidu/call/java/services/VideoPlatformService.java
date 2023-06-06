@@ -25,8 +25,8 @@ public class VideoPlatformService {
   public void init() {
     this.videoPlatform = new VideoPlatform(VIDEOPLATFORM_URL);
   }
-  public String getVideoPlatformProperties(String accountIdToken, String userIdToken, String sessionKey) throws IOException {
-    return videoPlatform.getVideoPlatformProperties(accountIdToken,userIdToken,sessionKey);
+  public SessionRequest getVideoPlatformProperties(String authorization, String token, String sessionKey) throws IOException {
+    return videoPlatform.getVideoPlatformProperties(authorization,token,sessionKey);
   }
   public HashMap<String,Integer> getExpiredSession(){
 //    return videoPlatform.getExpiredTimer();

@@ -15,15 +15,11 @@ public class SessionUtil {
 
   private SessionUtil(){
     sessionIdToSessionContextMap=new ConcurrentHashMap<>();
-    sessionKeyMap=new ConcurrentHashMap<>();
   }
   public static SessionUtil getInstance(){
     return instance;
   }
   public ConcurrentMap<String, SessionContext> getSessionIdToSessionContextMap() {
     return sessionIdToSessionContextMap;
-  }
-  public ConcurrentMap<String,String> getSessionKeyMap(){
-    return sessionKeyMap;
   }
 }

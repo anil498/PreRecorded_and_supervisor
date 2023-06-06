@@ -18,6 +18,9 @@ export class OpenViduAngularConfigService {
 	participantName = <BehaviorSubject<string>>new BehaviorSubject('');
 	participantNameObs: Observable<string>;
 
+	displayTickerValue = <BehaviorSubject<string>>new BehaviorSubject('');
+	displayTickerValueObs: Observable<string>;
+
 	prejoin = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	prejoinObs: Observable<boolean>;
 
@@ -68,6 +71,9 @@ export class OpenViduAngularConfigService {
 	displaySessionName = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displaySessionNameObs: Observable<boolean>;
 
+	displayTicker = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	displayTickerObs: Observable<boolean>;
+
 	displayLogo = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayLogoObs: Observable<boolean>;
 	displayParticipantName = <BehaviorSubject<boolean>>new BehaviorSubject(true);
@@ -99,6 +105,7 @@ export class OpenViduAngularConfigService {
 		if (this.isProduction()) console.log('OpenVidu Angular Production Mode');
 		this.minimalObs = this.minimal.asObservable();
 		this.participantNameObs = this.participantName.asObservable();
+		this.displayTickerValueObs = this.displayTickerValue.asObservable();
 		this.prejoinObs = this.prejoin.asObservable();
 		this.prefullscreenObs = this.prefullscreen.asObservable();
 		this.videoMutedObs = this.videoMuted.asObservable();
@@ -116,6 +123,7 @@ export class OpenViduAngularConfigService {
 		this.playvideoButtonObs = this.playvideoButton.asObservable();
 		this.activitiesPanelButtonObs = this.activitiesPanelButton.asObservable();
 		this.displaySessionNameObs = this.displaySessionName.asObservable();
+		this.displayTickerObs = this.displayTicker.asObservable();
 		this.displayLogoObs = this.displayLogo.asObservable();
 		this.recordingButtonObs = this.recordingButton.asObservable();
 		this.toolbarSettingsButtonObs = this.toolbarSettingsButton.asObservable();
