@@ -44,8 +44,8 @@ public class VideoPlatform {
   private static final Logger logger = LoggerFactory.getLogger(VideoPlatform.class);
   protected String hostname;
   protected CloseableHttpClient httpClient;
-  protected static final String API_PATH = "VPService/v1";
-  protected static final String API_FEATURES = "/client/get";
+  protected static final String API_PATH = "VPService/v1/Session";
+  protected static final String API_FEATURES = "/GetByKey";
   protected static final String API_SESSION = "/sessionDetails";
   protected static final String API_CALLBACK = "/sessionCallback";
 
