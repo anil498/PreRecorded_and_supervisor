@@ -63,6 +63,7 @@ public class FeatureEntity {
     public void setName(String name) {
         this.name = name;
     }
+
     public JsonNode getMetaList() {
         ObjectMapper mapper = new ObjectMapper();
         try {

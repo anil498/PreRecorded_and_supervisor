@@ -45,10 +45,12 @@ public class AccountServiceImpl implements AccountService {
         existing.setExpDate(account.getExpDate());
         existing.setAddress(account.getAddress());
         existing.setName(account.getName());
-        existing.setAccountId(account.getAccountId());
-        existing.setCreationDate(account.getCreationDate());
         existing.setMaxUser(account.getMaxUser());
-        existing.setExpDate(account.getExpDate());
         return accountRepository.save(existing);
+    }
+    @Override
+    public String deleteAccount(Integer accountId) {
+        accountRepository.deleteAccount(accountId);
+        return "Account successfully deleted.";
     }
 }
