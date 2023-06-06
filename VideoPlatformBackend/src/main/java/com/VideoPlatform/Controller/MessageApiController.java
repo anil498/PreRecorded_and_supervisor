@@ -104,9 +104,9 @@ public class MessageApiController {
 
 //        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",getHeaders(request));
+        SessionEntity sessionEntitySupport = sessionService.createSession(null,authKey,token,true);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
 
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,true);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,false);
         String callUrl= callPrefix+sessionEntityCustomer.getSessionId();
         logger.info("callUrlCustomer : {}",callUrl);
 
@@ -140,6 +140,7 @@ public class MessageApiController {
 
     @PostMapping ("/Send/WhatsApp")
     public ResponseEntity<?> sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
+        logger.info("Rest API {} request {}",params,request);
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -164,9 +165,8 @@ public class MessageApiController {
 //        if(params.containsKey("userInfo")){
 //            userInfo= String.valueOf(params.get("userInfo"));
 //        }
-
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,true);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,false);
+        SessionEntity sessionEntitySupport = sessionService.createSession(null,authKey,token,true);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
         String placeHolder= callPrefix+sessionEntityCustomer.getSessionId();
         logger.info("callUrlCustomer : {}",placeHolder);
 
@@ -199,7 +199,7 @@ public class MessageApiController {
 
     @PostMapping("/Send/AppNotification")
     public ResponseEntity<?> sendNotification(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException {
-
+        logger.info("Rest API {}",params);
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -236,8 +236,8 @@ public class MessageApiController {
             if(params.containsKey("userInfo")){
                 userInfo= String.valueOf(params.get("userInfo"));
             }
-            SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,true);
-            SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,false);
+            SessionEntity sessionEntitySupport = sessionService.createSession(null,authKey,token,true);
+            SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
             String callUrl= callPrefix+sessionEntityCustomer.getSessionId();
             logger.info("callUrl : {}",callUrl);
 

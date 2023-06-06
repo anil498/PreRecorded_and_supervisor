@@ -20,7 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.VideoPlatform.Constant.AllConstants.DATE_FORMATTER;
-import static com.VideoPlatform.Constant.AllConstants.formatter;
 
 @Service
 public class UserServiceImpl implements UserService{

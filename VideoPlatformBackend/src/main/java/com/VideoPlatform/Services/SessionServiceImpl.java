@@ -39,20 +39,20 @@ public class SessionServiceImpl implements SessionService{
     private int callAccessTime;
 
     @Override
-    public SessionEntity createSession(String authKey, String token,Boolean moderator) {
+    public SessionEntity createSession(SessionEntity session,String authKey, String token,Boolean moderator) {
         //logger.info("User details {}",session.toString());
-        SessionEntity session = new SessionEntity();
+        if(session==null) {
+            session=new SessionEntity();
+            Date creation = CommonUtils.getDate();
+            Date newDateTime = CommonUtils.increaseDateTime(creation);
+            logger.info("Session Localdatetime = {}", newDateTime);
 
-        Date creation = CommonUtils.getDate();
-        Date newDateTime = CommonUtils.increaseDateTime(creation);
-        logger.info("Session Localdatetime = {}",newDateTime);
+            UserAuthEntity userAuth = userAuthRepository.findByToken(token);
+            AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+            AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
+            UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
 
-        UserAuthEntity userAuth = userAuthRepository.findByToken(token);
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
-        UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
-
-        Gson gson=new Gson();
+            Gson gson = new Gson();
 //        Map<String,String> userData=new HashMap<>();
 //        userData.put("user_id",String.valueOf(userAuth.getUserId()));
 //        userData.put("max_active_sessions", userEntity.getSession().get("max_duration").toString());
@@ -65,66 +65,74 @@ public class SessionServiceImpl implements SessionService{
 //        accountData.put("max_active_sessions", account.getSession().get("max_active_sessions").toString());
 //        String accountJson =gson.toJson(accountData);
 //        logger.info(accountJson);
+            String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+            String sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
+            if(moderator==false){
+                session.setType("Customer");
+            }else{
+                session.setType("Support");
+            }
+            session.setSessionId(sessionId);
+            session.setSessionKey(sessionKey);
+            session.setSessionName(account.getName());
+            session.setUserId(userAuth.getUserId());
+            session.setAccountId(account.getAccountId());
+            session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+            session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
+            session.setCreationDate(creation);
+            session.setExpDate(newDateTime);
 
-        String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-        String sessionId =null;
-        if(moderator == true) {
-            session.setType("Support");
-            sessionId=account.getAccountId()+"_"+userAuth.getUserId()+"_"+sessionKey;
+
+            SettingsEntity settingsEntity = new SettingsEntity();
+
+            settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+            for (Integer featureId : userEntity.getFeatures()) {
+                if (1 == featureId) {
+                    settingsEntity.setRecording(true);
+                    settingsEntity.setRecordingDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+                }
+                if (2 == featureId) {
+                    settingsEntity.setScreenShare(true);
+                }
+                if (3 == featureId) {
+                    settingsEntity.setChat(true);
+                }
+                if (4 == featureId) {
+                    settingsEntity.setPreRecorded(true);
+                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setPreRecordedDetails(prdJson);
+                }
+                if (8 == featureId) {
+                    settingsEntity.setFloatingLayout(true);
+                }
+                if (9 == featureId) {
+                    settingsEntity.setSupervisor(true);
+                }
+                if (11 == featureId) {
+                    settingsEntity.setDisplayTimer(true);
+                }
+                if (14 == featureId) {
+                    settingsEntity.setActivitiesButton(true);
+                }
+                if (15 == featureId) {
+                    settingsEntity.setParticipantsButton(true);
+                }
+            }
+            String settingsJson = gson.toJson(settingsEntity);
+            session.setSettings(settingsJson);
+        }else {
+            String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+            session.setSessionKey(sessionKey);
+            if(moderator==false){
+                session.setType("Customer");
+            }else{
+                session.setType("Support");
+            }
+
         }
-        else {
-            session.setType("Customer");
-        }
-        session.setSessionId(sessionId);
-        session.setSessionKey(sessionKey);
-        session.setSessionName(account.getName());
-        session.setUserId(userAuth.getUserId());
-        session.setAccountId(account.getAccountId());
-        session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
-        session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
-        session.setCreationDate(creation);
-        session.setExpDate(newDateTime);
-
-
-        SettingsEntity settingsEntity = new SettingsEntity();
-
-        settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
-        for (Integer featureId:userEntity.getFeatures()){
-            if(1 == featureId){
-                settingsEntity.setRecording(true);
-                settingsEntity.setRecordingDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
-            }
-            if(2 == featureId){
-                settingsEntity.setScreenShare(true);
-            }
-            if(3 == featureId){
-                settingsEntity.setChat(true);
-            }
-            if(4 == featureId) {
-                settingsEntity.setPreRecorded(true);
-                String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                settingsEntity.setPreRecordedDetails(prdJson);
-            }
-            if(8 == featureId) {
-                settingsEntity.setFloatingLayout(true);
-            }
-            if(9 == featureId) {
-                settingsEntity.setSupervisor(true);
-            }
-            if(11 == featureId) {
-                settingsEntity.setDisplayTimer(true);
-            }
-            if(14 == featureId) {
-                settingsEntity.setActivitiesButton(true);
-            }
-            if(15 == featureId) {
-                settingsEntity.setParticipantsButton(true);
-            }
-        }
-        String settingsJson = gson.toJson(settingsEntity);
-        session.setSettings(settingsJson);
         logger.info("Session : {}",session);
-        return sessionRepository.save(session);
+        sessionRepository.save(session);
+        return session;
     }
 
     @Override

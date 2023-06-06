@@ -1,10 +1,14 @@
 package com.VideoPlatform.Entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
+import java.io.IOException;
 import java.util.Date;
 
 @Entity
@@ -117,8 +121,14 @@ public class SessionEntity {
         this.totalParticipants = totalParticipants;
     }
 
-    public String getSettings() {
-        return settings;
+    public JsonNode getSettings(){
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readTree(settings);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void setSettings(String settings) {
