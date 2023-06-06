@@ -25,24 +25,6 @@ public class Settings {
   private Boolean preRecorded;
   private String preRecordedDetails;
   private Boolean broadcast=false;
-
-  public Settings(String settingsJson) {
-    ObjectMapper mapper = new ObjectMapper();
-    try {
-      JsonNode jsonNode = mapper.readTree(settingsJson);
-      this.duration = jsonNode.get("duration").asInt();
-//      this.showLogo = jsonNode.get("showLogo").asBoolean();
-      this.logo=jsonNode.get("logo");
-      this.chat=jsonNode.get("chat").asBoolean();
-      this.recording=jsonNode.get("recording").asBoolean();
-      this.recordingDetails=jsonNode.get("recordingDetails");
-      this.screenShare=jsonNode.get("screenShare").asBoolean();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
   public Integer getDuration() {
     return duration;
   }
@@ -193,5 +175,30 @@ public class Settings {
 
   public void setShowLogo(boolean showLogo) {
     this.showLogo = showLogo;
+  }
+
+  @Override
+  public String toString() {
+    return "Settings{" +
+      "duration=" + duration +
+      ", showLogo=" + showLogo +
+      ", logo=" + logo +
+      ", moderators=" + moderators +
+      ", description='" + description + '\'' +
+      ", displayTicker=" + displayTicker +
+      ", displayTimer=" + displayTimer +
+      ", recording=" + recording +
+      ", recordingDetails=" + recordingDetails +
+      ", screenShare=" + screenShare +
+      ", waitForModerator=" + waitForModerator +
+      ", chat=" + chat +
+      ", activitiesButton=" + activitiesButton +
+      ", participantsButton=" + participantsButton +
+      ", floatingLayout=" + floatingLayout +
+      ", supervisor=" + supervisor +
+      ", preRecorded=" + preRecorded +
+      ", preRecordedDetails='" + preRecordedDetails + '\'' +
+      ", broadcast=" + broadcast +
+      '}';
   }
 }

@@ -1,7 +1,9 @@
 package io.openvidu.call.java.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.gson.JsonObject;
+import io.openvidu.call.java.util.CustomDateDeserializer;
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.Recording;
 import org.apache.hc.core5.http.HttpEntity;
@@ -13,7 +15,6 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SessionRequest {
-  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   private String sessionId;
   private String sessionName;
   private String userId;
@@ -24,33 +25,14 @@ public class SessionRequest {
   private String totalParticipants="5";
   private Settings settings;
   private String sessionKey;
+  @JsonDeserialize(using = CustomDateDeserializer.class)
   private Date creationDate;
+  @JsonDeserialize(using = CustomDateDeserializer.class)
   private Date expDate;
   private Connection cameraToken;
   private Connection screenToken;
   private List<Recording> recordings;
   private String type;
-
-  public SessionRequest(JsonObject json) throws ParseException {
-    this.sessionKey=json.get("sessionKey").getAsString();
-    this.sessionId=json.get("sessionId").getAsString();
-    this.sessionName=json.get("sessionName").getAsString();
-    this.userId=json.get("userId").getAsString();
-    this.accountId=json.get("accountId").getAsString();
-    this.userMaxSession=json.get("userMaxSessions").getAsInt();
-    this.accountMaxSession=json.get("accountMaxSessions").getAsInt();
-    this.participantName=json.get("participantName").getAsString();
-    this.totalParticipants=json.get("totalParticipants").getAsString();
-    String settingsJson=json.get("settings").toString();
-    this.settings= new Settings(settingsJson);
-    this.type=json.get("type").toString();
-    String creationDateStr = json.get("creationDate").getAsString();
-    this.creationDate = DATE_FORMAT.parse(creationDateStr);
-    String expDateStr = json.get("expDate").getAsString();
-    this.expDate = DATE_FORMAT.parse(expDateStr);
-
-  }
-
 
   public String getSessionId() {
     return sessionId;
