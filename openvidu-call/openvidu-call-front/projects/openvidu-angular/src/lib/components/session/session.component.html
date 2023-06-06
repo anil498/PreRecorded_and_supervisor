@@ -1,20 +1,21 @@
 <div id="session-container" *ngIf="!preparing" @sessionAnimation>
 	<mat-sidenav-container #container #videoContainer class="sidenav-container">
-		<mat-sidenav
-			#sidenav
-			mode="{{ sidenavMode }}"
-			position="end"
-			class="sidenav-menu"
-			[ngClass]="{big: settingsPanelOpened}"
-			fixedInViewport="true"
-			fixedTopGap="0"
-			fixedBottomGap="0"
-		>
+		<mat-sidenav #sidenav mode="{{ sidenavMode }}" position="end" class="sidenav-menu"
+			[ngClass]="{big: settingsPanelOpened}" fixedInViewport="true" fixedTopGap="0" fixedBottomGap="0">
 			<ng-container *ngTemplateOutlet="panelTemplate"></ng-container>
 		</mat-sidenav>
 
 		<mat-sidenav-content class="sidenav-main">
-			<div id="layout-container"  #layoutContainer>
+			<div id="layout-container" #layoutContainer>
+				<div [hidden]="!displayTicker || usedInPrejoinPage" class="container">
+					<div class="ticker">
+						<div class="news">
+							<marquee class="news-content" direction="left" onmouseover="this.stop();" onmouseout="this.start();">
+								<span>{{displayTickerValue}}</span>
+							</marquee>
+						</div>
+					</div>
+				</div>
 				<ng-container *ngTemplateOutlet="layoutTemplate"></ng-container>
 			</div>
 		</mat-sidenav-content>

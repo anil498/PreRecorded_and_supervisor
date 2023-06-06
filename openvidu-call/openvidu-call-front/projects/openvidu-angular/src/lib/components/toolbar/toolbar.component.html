@@ -10,6 +10,7 @@
 					<span> | {{ recordingTime | date: 'H:mm:ss' }}</span>
 				</div>
 			</div>
+			
 		</div>
 	</div>
 	<div fxFlex="60%" fxFlexOrder="2" fxLayoutAlign="center center" id="media-buttons-container">
@@ -210,6 +211,9 @@
 		</button>
 	</div>
 	<div fxFlex="20%" fxFlexOrder="3" fxLayoutAlign="end center" id="menu-buttons-container">
+		<div *ngIf="showSessionTimer" id="recording-tag" class="recording-tag">
+			{{ sessionTime.getTime() < 3600000 ? (sessionTime | date: 'mm:ss') : (sessionTime | date: 'H:mm:ss') }}
+		</div>
 		<!-- Default activities button -->
 		<button
 			mat-icon-button

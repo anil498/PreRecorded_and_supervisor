@@ -29,9 +29,11 @@ import {
 	AudioMutedDirective,
 	CaptionsLangDirective, CaptionsLangOptionsDirective, LangDirective, MinimalDirective,
 	ParticipantNameDirective,
+	displayTickerDirective,
 	PrejoinDirective,
 	ShowFullScreenButtonDirective,
 	VideoMutedDirective,
+	DisplayTickerDirective
 } from './videoconference.directive';
 
 @NgModule({
@@ -64,6 +66,8 @@ import {
 		LogoDirective,
 		ParticipantPanelItemMuteButtonDirective,
 		ParticipantNameDirective,
+		DisplayTickerDirective,
+		displayTickerDirective,
 		ActivitiesPanelRecordingActivityDirective,
 		RecordingActivityRecordingsListDirective,
 		RecordingActivityRecordingErrorDirective,
@@ -99,6 +103,8 @@ import {
 		LogoDirective,
 		ParticipantPanelItemMuteButtonDirective,
 		ParticipantNameDirective,
+		DisplayTickerDirective,
+		displayTickerDirective,
 		ActivitiesPanelRecordingActivityDirective,
 		RecordingActivityRecordingsListDirective,
 		RecordingActivityRecordingErrorDirective,

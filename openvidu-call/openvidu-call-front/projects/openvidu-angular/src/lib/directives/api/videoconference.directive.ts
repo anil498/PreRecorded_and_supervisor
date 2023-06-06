@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { CaptionsLangOption } from '../../models/caption.model';
 import { CaptionService } from '../../services/caption/caption.service';
 import { OpenViduAngularConfigService } from '../../services/config/openvidu-angular.config.service';
@@ -293,7 +293,107 @@ export class ParticipantNameDirective implements OnInit {
 		this.libService.participantName.next(value);
 	}
 }
+/**
+ * The **displayTicker** directive allows show/hide the tricker.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [displayTickerValue]="false"></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[displayTickerName]'
+})
+export class DisplayTickerDirective implements OnInit {
+	/**
+	 * @ignore
+	 */
+	@Input() displayTickerName: string;
 
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+	 * @ignore
+	 */
+	ngOnInit(): void {
+		this.update(this.displayTickerName);
+	}
+
+	/**
+	 * @ignore
+	 */
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+	 * @ignore
+	 */
+	clear() {
+		this.update('');
+	}
+
+	/**
+	 * @ignore
+	 */
+	update(value: string) {
+		this.libService.displayTickerValue.next(value);
+	}
+}
+/**
+ * The **displayTicker** directive allows show/hide the tricker.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [displayTicker]="false"></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[displayTicker]'
+})
+export class displayTickerDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 */
+	@Input() set displayTicker(value: boolean) {
+		this.displayTickerValue = value;
+		this.update(this.displayTickerValue);
+	}
+
+	private displayTickerValue: boolean = true;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	ngAfterViewInit() {
+		this.update(this.displayTickerValue);
+	}
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+	private clear() {
+		this.displayTickerValue = true;
+		this.update(true);
+	}
+
+	private update(value: boolean) {
+		if (this.libService.displayTicker.getValue() !== value) {
+			this.libService.displayTicker.next(value);
+		}
+	}
+}
 /**
  * The **prejoin** directive allows show/hide the prejoin page for selecting media devices.
  *

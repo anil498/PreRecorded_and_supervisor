@@ -12,7 +12,7 @@ import {
 	TemplateRef,
 	ViewChild
 } from '@angular/core';
-import { skip, Subscription } from 'rxjs';
+import { interval, skip, Subscription } from 'rxjs';
 import { ChatService } from '../../services/chat/chat.service';
 import { DocumentService } from '../../services/document/document.service';
 import { PanelEvent, PanelService } from '../../services/panel/panel.service';
@@ -346,6 +346,18 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	showSessionName: boolean = true;
+	/**
+	 * @ignore
+	 */
+	showSessionTimer: boolean = true;
+	/**
+	 * @ignore
+	 */
+	sessionDuration=30;
+	/**
+	 * @ignore
+	 */
+	sessionTime:Date;
 
 	/**
 	 * @ignore
@@ -404,6 +416,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private leaveButtonSub: Subscription;
 	private recordingButtonSub: Subscription;
 	private recordingSubscription: Subscription;
+	private sessionTimerSubscription: Subscription;
 	private activitiesPanelButtonSub: Subscription;
 	private participantsPanelButtonSub: Subscription;
 	private chatPanelButtonSub: Subscription;
@@ -480,6 +493,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.subscribeToScreenSize();
 		this.subscribeToCaptionsToggling();
 		this.subscribeToScreenActive();
+		this.subscribeToSessionTimergStatus();
 	}
 
 	ngAfterViewInit() {
@@ -506,6 +520,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.minimalSub) this.minimalSub.unsubscribe();
 		if (this.activitiesPanelButtonSub) this.activitiesPanelButtonSub.unsubscribe();
 		if (this.recordingSubscription) this.recordingSubscription.unsubscribe();
+		if (this.sessionTimerSubscription) this.sessionTimerSubscription.unsubscribe();
 		if (this.screenSizeSub) this.screenSizeSub.unsubscribe();
 		if (this.settingsButtonSub) this.settingsButtonSub.unsubscribe();
 		if (this.captionsSubs) this.captionsSubs.unsubscribe();
@@ -787,6 +802,18 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.cd.markForCheck();
 			});
 	}
+
+	private subscribeToSessionTimergStatus() {
+		this.sessionTimerSubscription = this.openviduService.sessionTimerObs
+		.pipe(skip(1))
+		.subscribe((ev: {time?: Date }) => {
+			console.log(this.sessionTime.getTime())
+			if (ev.time) {
+				this.sessionTime = ev.time;
+			}
+			this.cd.markForCheck();
+		});
+	  }
 
 	private subscribeToToolbarDirectives() {
 		this.minimalSub = this.libService.minimalObs.subscribe((value: boolean) => {
