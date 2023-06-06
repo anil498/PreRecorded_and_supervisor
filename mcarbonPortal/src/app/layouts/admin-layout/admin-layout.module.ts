@@ -81,6 +81,6 @@ import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.c
     ViewAccessDialogComponent,
     ViewFeatureDialogComponent,
   ],
-  entryComponents: [FormDialogComponent],
+  entryComponents: [FormDialogComponent,DeleteDialogComponent],
 })
 export class AdminLayoutModule {}

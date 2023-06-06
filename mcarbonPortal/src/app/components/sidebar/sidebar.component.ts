@@ -2,17 +2,10 @@ import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { Route } from "@angular/router";
 import { RestService } from "app/services/rest.service";
+import { RouteInfo } from "../../model/ROUTE";
+import { ROUTE } from "app/login/login.component";
 declare const $: any;
-declare interface RouteInfo {
-  path: string;
-  title: string;
-  icon: string;
-  class: string;
-  show: boolean;
-  systemName: string;
-}
 
-export var ROUTE: RouteInfo[];
 // export const ROUTES: RouteInfo[] = [
 //   {
 //     path: "/app/dashboard",
@@ -74,22 +67,19 @@ export class SidebarComponent implements OnInit {
   accessList: any[];
   constructor(private restService: RestService, private http: HttpClient) {}
 
-  ngOnInit() {
-    this.http
-      .get<RouteInfo[]>("assets/json/access.json")
-      .subscribe((response: RouteInfo[]) => {
-        console.warn(response);
-        ROUTE = response;
-      });
+  async ngOnInit() {
     this.menuItems = ROUTE.filter((menuItem) => menuItem);
     this.accessList = this.restService.getData().Access;
     this.showSideNav();
   }
 
   showSideNav() {
+    console.log(this.accessList);
+    console.log(this.menuItems);
+
     this.accessList.forEach((access) => {
       this.menuItems.forEach((menuItem) => {
-        if (access.apiId === menuItem.apiId) {
+        if (access.systemName === menuItem.systemName) {
           menuItem.show = true;
           menuItem.title = access.name;
         }

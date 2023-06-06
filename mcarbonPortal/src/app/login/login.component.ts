@@ -3,7 +3,10 @@ import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { RestService } from "../services/rest.service";
 import { Router } from "@angular/router";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
-import { ROUTE } from "app/components/sidebar/sidebar.component";
+import { RouteInfo } from "app/model/ROUTE";
+import { HttpClient } from "@angular/common/http";
+
+export var ROUTE : RouteInfo[] = [];
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
@@ -28,7 +31,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private restService: RestService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private http: HttpClient
   ) {
     this.loginForm = this.fb.group({
       username: ["", Validators.required],
@@ -36,7 +40,14 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.http
+    .get<RouteInfo[]>("assets/json/access.json")
+    .subscribe((response: RouteInfo[]) => {
+      console.warn(response);
+      ROUTE = response;
+    });
+  }
 
   async login() {
     this.showDescription = false;
@@ -87,6 +98,7 @@ export class LoginComponent implements OnInit {
       this.restService.setUserId(this.username);
       const defaultLabel = loginResponse.Access[0].systemName;
       this.router.navigate(["/app/" + `${defaultLabel}`]);
+      // this.router.navigate(["/app/dashboard"]);
     } catch (err) {
       console.log(err);
       if (err.status === 0) {

@@ -11,7 +11,7 @@ export const AdminLayoutRoutes: Routes = [
   { path: "dashboard", component: DashboardComponent },
   { path: "user_profile", component: UserProfileComponent },
   { path: "customer_management", component: AccountManagementComponent },
-  { path: "my_user", component: UserManagementComponent },
+  { path: "my_users", component: UserManagementComponent },
   { path: "my_sessions", component: SessionManagementComponent },
   { path: "dynamic_links", component: DynamicSupportComponent },
 ];
