@@ -82,7 +82,12 @@ public class VideoPlatform {
       public SessionRequest handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
         int status = response.getCode();
         if (status == 200) {
-          return new SessionRequest(response.getEntity());
+          JsonObject json = httpResponseEntityToJson(response.getEntity());
+          try {
+            return new SessionRequest(json);
+          } catch (java.text.ParseException e) {
+            throw new RuntimeException(e);
+          }
         } else {
           throw HttpException(status);
         }

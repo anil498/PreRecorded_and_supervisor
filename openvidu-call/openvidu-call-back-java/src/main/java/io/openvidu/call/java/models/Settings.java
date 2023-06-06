@@ -1,9 +1,14 @@
 package io.openvidu.call.java.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings {
   private Integer duration;
   private boolean showLogo;
-  private byte[] logo;
+  private Object logo;
   private Boolean moderators = false;
   private String description;
   private Boolean displayTicker;
@@ -19,7 +24,24 @@ public class Settings {
   private Boolean supervisor;
   private Boolean preRecorded;
   private String preRecordedDetails;
-  private Boolean broadcast;
+  private Boolean broadcast=false;
+
+  public Settings(String settingsJson) {
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      JsonNode jsonNode = mapper.readTree(settingsJson);
+      this.duration = jsonNode.get("duration").asInt();
+//      this.showLogo = jsonNode.get("showLogo").asBoolean();
+      this.logo=jsonNode.get("logo");
+      this.chat=jsonNode.get("chat").asBoolean();
+      this.recording=jsonNode.get("recording").asBoolean();
+      this.recordingDetails=jsonNode.get("recordingDetails");
+      this.screenShare=jsonNode.get("screenShare").asBoolean();
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
   public Integer getDuration() {
     return duration;
@@ -29,11 +51,11 @@ public class Settings {
     this.duration = duration;
   }
 
-  public byte[] getLogo() {
+  public Object getLogo() {
     return logo;
   }
 
-  public void setLogo(byte[] logo) {
+  public void setLogo(Object logo) {
     this.logo = logo;
   }
 

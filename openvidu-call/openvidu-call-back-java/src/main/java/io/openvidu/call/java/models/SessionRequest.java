@@ -1,20 +1,27 @@
 package io.openvidu.call.java.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.google.gson.JsonObject;
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.Recording;
+import org.apache.hc.core5.http.HttpEntity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SessionRequest {
+  private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
   private String sessionId;
   private String sessionName;
   private String userId;
-  private Integer max_user_session;
+  private Integer userMaxSession;
   private String accountId;
-  private Integer max_account_session;
+  private Integer accountMaxSession;
   private String participantName;
-  private String participants;
+  private String totalParticipants="5";
   private Settings settings;
   private String sessionKey;
   private Date creationDate;
@@ -22,10 +29,28 @@ public class SessionRequest {
   private Connection cameraToken;
   private Connection screenToken;
   private List<Recording> recordings;
+  private String type;
 
-  public SessionRequest(Object entity) {
+  public SessionRequest(JsonObject json) throws ParseException {
+    this.sessionKey=json.get("sessionKey").getAsString();
+    this.sessionId=json.get("sessionId").getAsString();
+    this.sessionName=json.get("sessionName").getAsString();
+    this.userId=json.get("userId").getAsString();
+    this.accountId=json.get("accountId").getAsString();
+    this.userMaxSession=json.get("userMaxSessions").getAsInt();
+    this.accountMaxSession=json.get("accountMaxSessions").getAsInt();
+    this.participantName=json.get("participantName").getAsString();
+    this.totalParticipants=json.get("totalParticipants").getAsString();
+    String settingsJson=json.get("settings").toString();
+    this.settings= new Settings(settingsJson);
+    this.type=json.get("type").toString();
+    String creationDateStr = json.get("creationDate").getAsString();
+    this.creationDate = DATE_FORMAT.parse(creationDateStr);
+    String expDateStr = json.get("expDate").getAsString();
+    this.expDate = DATE_FORMAT.parse(expDateStr);
 
   }
+
 
   public String getSessionId() {
     return sessionId;
@@ -51,12 +76,28 @@ public class SessionRequest {
     this.userId = userId;
   }
 
+  public Integer getUserMaxSession() {
+    return userMaxSession;
+  }
+
+  public void setUserMaxSession(Integer userMaxSession) {
+    this.userMaxSession = userMaxSession;
+  }
+
   public String getAccountId() {
     return accountId;
   }
 
   public void setAccountId(String accountId) {
     this.accountId = accountId;
+  }
+
+  public Integer getAccountMaxSession() {
+    return accountMaxSession;
+  }
+
+  public void setAccountMaxSession(Integer accountMaxSession) {
+    this.accountMaxSession = accountMaxSession;
   }
 
   public String getParticipantName() {
@@ -67,12 +108,12 @@ public class SessionRequest {
     this.participantName = participantName;
   }
 
-  public String getParticipants() {
-    return participants;
+  public String getTotalParticipants() {
+    return totalParticipants;
   }
 
-  public void setParticipants(String participants) {
-    this.participants = participants;
+  public void setTotalParticipants(String totalParticipants) {
+    this.totalParticipants = totalParticipants;
   }
 
   public Settings getSettings() {
@@ -131,19 +172,33 @@ public class SessionRequest {
     this.recordings = recordings;
   }
 
-  public Integer getMax_user_session() {
-    return max_user_session;
+  public String getType() {
+    return type;
   }
 
-  public void setMax_user_session(Integer max_user_session) {
-    this.max_user_session = max_user_session;
+  public void setType(String type) {
+    this.type = type;
   }
 
-  public Integer getMax_account_session() {
-    return max_account_session;
-  }
-
-  public void setMax_account_session(Integer max_account_session) {
-    this.max_account_session = max_account_session;
+  @Override
+  public String toString() {
+    return "SessionRequest{" +
+      "sessionId='" + sessionId + '\'' +
+      ", sessionName='" + sessionName + '\'' +
+      ", userId='" + userId + '\'' +
+      ", userMaxSession=" + userMaxSession +
+      ", accountId='" + accountId + '\'' +
+      ", accountMaxSession=" + accountMaxSession +
+      ", participantName='" + participantName + '\'' +
+      ", totalParticipants='" + totalParticipants + '\'' +
+      ", settings=" + settings +
+      ", sessionKey='" + sessionKey + '\'' +
+      ", creationDate=" + creationDate +
+      ", expDate=" + expDate +
+      ", cameraToken=" + cameraToken +
+      ", screenToken=" + screenToken +
+      ", recordings=" + recordings +
+      ", type='" + type + '\'' +
+      '}';
   }
 }

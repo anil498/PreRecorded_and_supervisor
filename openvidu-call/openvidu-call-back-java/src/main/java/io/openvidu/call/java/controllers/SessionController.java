@@ -85,6 +85,7 @@ public class SessionController {
         String sessionIdKey = params.get("sessionId").toString();
         try {
              sessionRequest = videoPlatformService.getVideoPlatformProperties(authorization, token, sessionIdKey);
+             logger.info("Session Request: {}",sessionRequest);
              sessionId=sessionRequest.getSessionId();
         }catch (Exception e){
           logger.error("Getting Exception while fetching record {}",e);
@@ -123,7 +124,7 @@ public class SessionController {
           return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Max participant joined");
         }
         if(sessionRequest.getSettings().isShowLogo()){
-          byte[] file=sessionRequest.getSettings().getLogo();
+          byte[] file= (byte[]) sessionRequest.getSettings().getLogo();
           String fileName=sessionId+fileExtension;
           if(file!=null){
             sessionService.writeLogoFile(file,fileName,logoFilPath);
@@ -243,9 +244,9 @@ public class SessionController {
           activeUserSession += 1;
         }
       }
-      logger.info("Active session for this account {} is {} and max active allowed is {} ", sessionRequest.getAccountId(), activeSession, sessionRequest.getMax_account_session());
-      logger.info("Active session for this user {} is {} and max active allowed is {} ", sessionRequest.getUserId(), activeUserSession, sessionRequest.getMax_user_session());
-        if (activeSession < sessionRequest.getMax_account_session() && activeUserSession < sessionRequest.getMax_user_session())
+      logger.info("Active session for this account {} is {} and max active allowed is {} ", sessionRequest.getAccountId(), activeSession, sessionRequest.getAccountMaxSession());
+      logger.info("Active session for this user {} is {} and max active allowed is {} ", sessionRequest.getUserId(), activeUserSession, sessionRequest.getUserMaxSession());
+        if (activeSession < sessionRequest.getAccountMaxSession() && activeUserSession < sessionRequest.getUserMaxSession())
           return true;
         else if(sessionContextConcurrentMap.containsKey(sessionKey))
           return true;
@@ -256,8 +257,8 @@ public class SessionController {
   private boolean validateParticipantJoined(SessionRequest sessionRequest,Session session,ConcurrentMap<String,SessionContext> sessionContextConcurrentMap){
     if(session!=null) {
       List<Connection> connectionList=session.getActiveConnections();
-          if (connectionList.size() < Integer.parseInt(sessionRequest.getParticipants())) {
-            logger.info("Active Participant for sessionId is {} and max Participant allowed for this session is {} ", connectionList.size(), sessionRequest.getParticipants());
+          if (connectionList.size() < Integer.parseInt(sessionRequest.getTotalParticipants())) {
+            logger.info("Active Participant for sessionId is {} and max Participant allowed for this session is {} ", connectionList.size(), sessionRequest.getTotalParticipants());
             return true;
         } else {
           return false;
