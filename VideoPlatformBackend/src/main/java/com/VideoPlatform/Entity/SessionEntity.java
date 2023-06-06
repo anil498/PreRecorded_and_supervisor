@@ -34,7 +34,7 @@ public class SessionEntity {
 
     @Column(name = "participant_name") private String participantName;
 
-    @Column(name = "total_participants") private String totalParticipants;
+    @Column(name = "total_participants") private Integer totalParticipants;
 
     @Column(name = "settings",columnDefinition = "text") private String settings;
 
@@ -113,11 +113,11 @@ public class SessionEntity {
         this.participantName = participantName;
     }
 
-    public String getTotalParticipants() {
+    public Integer getTotalParticipants() {
         return totalParticipants;
     }
 
-    public void setTotalParticipants(String totalParticipants) {
+    public void setTotalParticipants(Integer totalParticipants) {
         this.totalParticipants = totalParticipants;
     }
 
@@ -178,7 +178,7 @@ public class SessionEntity {
                 ", userMaxSessions=" + userMaxSessions +
                 ", accountMaxSessions=" + accountMaxSessions +
                 ", participantName='" + participantName + '\'' +
-                ", totalParticipants='" + totalParticipants + '\'' +
+                ", totalParticipants='" + totalParticipants  +
                 ", settings='" + settings + '\'' +
                 ", type='" + type + '\'' +
                 ", creationDate=" + creationDate +

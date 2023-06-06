@@ -146,7 +146,7 @@ public class SessionController {
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
         String sessionKey = params.get("sessionKey");
-            return  new ResponseEntity<SessionEntity>(sessionRepository.findBySessionKey(sessionKey),HttpStatus.OK);
+            return new ResponseEntity<>(sessionService.getByKey(sessionKey), HttpStatus.OK);
 
     }
 
