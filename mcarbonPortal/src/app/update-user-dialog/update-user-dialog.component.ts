@@ -106,13 +106,13 @@ export class UpdateUserDialogComponent implements OnInit {
         confirm_password: ["", Validators.required],
         accessList: [this.user.accessId, Validators.required],
 
-        max_duration: [this.user.session.max_duration, Validators.required],
+        max_duration: [this.user.session.maxDuration, Validators.required],
         max_active_sessions: [
-          this.user.session.max_active_sessions,
+          this.user.session.maxActiveSessions,
           Validators.required,
         ],
         max_participants: [
-          this.user.session.max_participants,
+          this.user.session.maxParticipants,
           Validators.required,
         ],
 

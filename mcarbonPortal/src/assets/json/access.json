@@ -24,15 +24,15 @@
       "systemName": "customer_management"
     },
     {
-      "path": "/app/my_user",
+      "path": "/app/my_users",
       "title": "My Users",
       "icon": "person",
       "class": "",
       "show": false,
-      "systemName": "my_user"
+      "systemName": "my_users"
     },
     {
-      "path": "/app/my_session",
+      "path": "/app/my_sessions",
       "title": "My Session",
       "icon": "videocam",
       "class": "",
@@ -50,7 +50,7 @@
     {
         "path": "/app/my_reports",
         "title": "My Reports",
-        "icon": "library_book",
+        "icon": "library_books",
         "class": "",
         "show": false,
         "systemName": "my_reports"

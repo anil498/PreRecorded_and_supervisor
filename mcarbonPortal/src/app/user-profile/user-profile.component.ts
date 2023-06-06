@@ -26,8 +26,8 @@ export class UserProfileComponent implements OnInit {
 
     this.user.expDate = this.user.expDate.substring(0, 10);
     console.log(this.user);
-
     this.accessList = this.restService.getData().Access;
     this.featureList = this.restService.getData().Features;
+    console.log(this.featureList);
   }
 }
