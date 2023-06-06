@@ -3,7 +3,6 @@ package io.openvidu.call.java.services;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.SessionCallback;
 import io.openvidu.call.java.models.SessionWebhook;
-import io.openvidu.call.java.util.CommonUtil;
 import io.openvidu.call.java.util.SessionUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

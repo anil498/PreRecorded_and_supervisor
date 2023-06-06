@@ -1,5 +1,6 @@
 package io.openvidu.call.java.controllers;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import io.openvidu.call.java.models.SessionRequest;
-import io.openvidu.call.java.services.SessionService;
+import io.openvidu.call.java.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -24,9 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.openvidu.call.java.services.AuthService;
-import io.openvidu.call.java.services.OpenViduService;
-import io.openvidu.call.java.services.ProxyService;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Recording;
@@ -41,12 +39,12 @@ public class RecordingController {
 
 	@Value("${OPENVIDU_URL}")
 	private String OPENVIDU_URL;
-  @Value(("${ACCOUNT_AUTH}"))
-  String accountIdToken;
-  @Value(("${USER_AUTH}"))
-  String userIdToken;
+  @Value(("${Authorization}"))
+  String authorization;
+  @Value(("${Token}"))
+  String token;
   @Autowired
-  SessionService sessionService;
+  VideoPlatformService videoPlatformService;
 
 	@Autowired
 	private OpenViduService openviduService;
@@ -105,12 +103,12 @@ public class RecordingController {
 
 	@PostMapping("/start")
 	public ResponseEntity<?> startRecording(@RequestBody(required = false) Map<String, String> params,
-			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) {
+			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) throws IOException {
 
 		try {
       String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest= sessionService.getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
-      String sessionId=sessionRequest.getSessionUniqueId();
+      SessionRequest sessionRequest=videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
+      String sessionId=sessionRequest.getSessionId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					Recording startingRecording = openviduService.startRecording(sessionId);
@@ -149,11 +147,11 @@ public class RecordingController {
 
 	@PostMapping("/stop")
 	public ResponseEntity<?> stopRecording(@RequestBody(required = false) Map<String, String> params,
-			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) {
+			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) throws IOException {
 		try {
 			String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest= sessionService.getSessionRequest(accountIdToken,userIdToken,sessionKeyId);
-      String sessionId=sessionRequest.getSessionUniqueId();
+      SessionRequest sessionRequest=videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
+      String sessionId=sessionRequest.getSessionId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					String recordingId = openviduService.moderatorsCookieMap.get(sessionId).getRecordingId();

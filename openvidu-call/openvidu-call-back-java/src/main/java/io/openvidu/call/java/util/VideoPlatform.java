@@ -77,12 +77,12 @@ public class VideoPlatform {
     this.httpClient = builder.build();
   }
 
-  public String getVideoPlatformProperties(String accountIdToken, String userIdToken,String sessionKey) throws IOException {
-    HttpClientResponseHandler<String> responseHandler = new HttpClientResponseHandler<String>() {
-      public String handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
+  public SessionRequest getVideoPlatformProperties(String authorization, String token,String sessionKey) throws IOException {
+    HttpClientResponseHandler<SessionRequest> responseHandler = new HttpClientResponseHandler<SessionRequest>() {
+      public SessionRequest handleResponse(ClassicHttpResponse response) throws IOException, HttpException {
         int status = response.getCode();
         if (status == 200) {
-          return httpResponseEntityToJson(response.getEntity()).toString();
+          return new SessionRequest(response.getEntity());
         } else {
           throw HttpException(status);
         }
@@ -93,8 +93,8 @@ public class VideoPlatform {
     StringEntity params = new StringEntity(json.toString(), StandardCharsets.UTF_8);
     HttpPost request = new HttpPost(this.hostname + API_PATH + API_FEATURES);
     request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-    request.setHeader("Authorization", accountIdToken);
-    request.setHeader("Token", userIdToken);
+    request.setHeader("Authorization", authorization);
+    request.setHeader("Token", token);
     request.setEntity(params);
     CloseableHttpResponse response = null;
     try {
