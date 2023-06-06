@@ -419,7 +419,7 @@ export class ParticipantService {
 			return JSON.parse(db).clientData;
 		} catch (error) {
 			console.log(error)
-			return 'OpenVidu_User';
+			return 'mCarbon_User';
 		}
 	}
 

@@ -16,14 +16,17 @@ import {
 	ToolbarChatPanelButtonDirective,
 	ToolbarDisplayLogoDirective,
 	ToolbarDisplaySessionNameDirective,
-	ToolbarFullscreenButtonDirective,
+	ToolbarFullScreenButtonDirective,
 	ToolbarLeaveButtonDirective,
 	ToolbarParticipantsPanelButtonDirective,
 	ToolbarRecordingButtonDirective,
 	ToolbarScreenshareButtonDirective,
 	ToolbarSettingsButtonDirective,
 	ToolbarPublishVideoButtonDirective,
-	ToolbarVideoControlButtonDirective
+	ToolbarVideoControlButtonDirective,
+	ToolbarDisplayTimereDirective,
+	SessionDurationDirective,
+	SessionNameDirective
 } from './toolbar.directive';
 import {
 	AudioMutedDirective,
@@ -49,7 +52,7 @@ import {
 		ToolbarScreenshareButtonDirective,
 		ToolbarPublishVideoButtonDirective,
 		ToolbarVideoControlButtonDirective,
-		ToolbarFullscreenButtonDirective,
+		ToolbarFullScreenButtonDirective,
 		ToolbarBackgroundEffectsButtonDirective,
 		ToolbarCaptionsButtonDirective,
 		ToolbarLeaveButtonDirective,
@@ -72,7 +75,10 @@ import {
 		RecordingActivityRecordingsListDirective,
 		RecordingActivityRecordingErrorDirective,
 		AdminRecordingsListDirective,
-		AdminLoginDirective
+		AdminLoginDirective,
+		SessionDurationDirective,
+		SessionNameDirective,
+		ToolbarDisplayTimereDirective
 	],
 	exports: [
 		MinimalDirective,
@@ -86,7 +92,7 @@ import {
 		ToolbarScreenshareButtonDirective,
 		ToolbarPublishVideoButtonDirective,
 		ToolbarVideoControlButtonDirective,
-		ToolbarFullscreenButtonDirective,
+		ToolbarFullScreenButtonDirective,
 		ToolbarBackgroundEffectsButtonDirective,
 		ToolbarCaptionsButtonDirective,
 		ToolbarLeaveButtonDirective,
@@ -109,7 +115,10 @@ import {
 		RecordingActivityRecordingsListDirective,
 		RecordingActivityRecordingErrorDirective,
 		AdminRecordingsListDirective,
-		AdminLoginDirective
+		AdminLoginDirective,
+		SessionDurationDirective,
+		SessionNameDirective,
+		ToolbarDisplayTimereDirective
 	]
 })
 export class ApiDirectiveModule {}

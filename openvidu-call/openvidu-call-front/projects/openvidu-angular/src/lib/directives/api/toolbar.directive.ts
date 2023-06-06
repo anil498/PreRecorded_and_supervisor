@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, ElementRef, Input, OnDestroy } from '@angular/core';
+import { AfterViewInit, Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import { OpenViduAngularConfigService } from '../../services/config/openvidu-angular.config.service';
 
 /**
@@ -60,6 +60,108 @@ export class ToolbarScreenshareButtonDirective implements AfterViewInit, OnDestr
 		if (this.libService.screenshareButton.getValue() !== value) {
 			this.libService.screenshareButton.next(value);
 		}
+	}
+}
+/**
+ * The **sessionName** directive sets the session name.
+ *
+ * It is only available for {@link VideoconferenceComponent}.
+ *
+ * @example
+ * <ov-videoconference [sessionName]="'OpenVidu'"></ov-videoconference>
+ */
+@Directive({
+	selector: 'ov-videoconference[sessionName]'
+})
+export class SessionNameDirective implements OnInit {
+	// Avoiding update sessionName dynamically.
+	// The sessionName must be updated from UI
+	/**
+	 * @ignore
+	 */
+	@Input() sessionName: string;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+	 * @ignore
+	 */
+	ngOnInit(): void {
+		this.update(this.sessionName);
+	}
+
+	/**
+	 * @ignore
+	 */
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+	 * @ignore
+	 */
+	clear() {
+		this.update('');
+	}
+
+	/**
+	 * @ignore
+	 */
+	update(value: string) {
+		this.libService.sessionName.next(value);
+	}
+}
+/**
+ * The **sessionDuration** directive sets the session name.
+ *
+ * It is only available for {@link VideoconferenceComponent}.
+ *
+ * @example
+ * <ov-videoconference [sessionDuration]="0"></ov-videoconference>
+ */
+@Directive({
+	selector: 'ov-videoconference[sessionDuration]'
+})
+export class SessionDurationDirective implements OnInit {
+	/**
+	 * @ignore
+	 */
+	@Input() sessionDuration: number;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+	 * @ignore
+	 */
+	ngOnInit(): void {
+		this.update(this.sessionDuration);
+	}
+
+	/**
+	 * @ignore
+	 */
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+	 * @ignore
+	 */
+	clear() {
+		this.update(0);
+	}
+
+	/**
+	 * @ignore
+	 */
+	update(value: number) {
+		this.libService.sessionDuration.next(value);
 	}
 }
 /**
@@ -300,65 +402,6 @@ export class ToolbarRecordingButtonDirective implements AfterViewInit, OnDestroy
 	private update(value: boolean) {
 		if (this.libService.recordingButton.getValue() !== value) {
 			this.libService.recordingButton.next(value);
-		}
-	}
-}
-
-/**
- * The **fullscreenButton** directive allows show/hide the fullscreen toolbar button.
- *
- * Default: `true`
- *
- * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
- *
- * @example
- * <ov-videoconference [toolbarFullscreenButton]="false"></ov-videoconference>
- *
- * \
- * And it also can be used in the {@link ToolbarComponent}.
- * @example
- * <ov-toolbar [fullscreenButton]="false"></ov-toolbar>
- */
-@Directive({
-	selector: 'ov-videoconference[toolbarFullscreenButton], ov-toolbar[fullscreenButton]'
-})
-export class ToolbarFullscreenButtonDirective implements AfterViewInit, OnDestroy {
-	/**
-	 * @ignore
-	 */
-	@Input() set toolbarFullscreenButton(value: boolean) {
-		this.fullscreenValue = value;
-		this.update(this.fullscreenValue);
-	}
-	/**
-	 * @ignore
-	 */
-	@Input() set fullscreenButton(value: boolean) {
-		this.fullscreenValue = value;
-		this.update(this.fullscreenValue);
-	}
-
-	private fullscreenValue: boolean = true;
-
-	/**
-	 * @ignore
-	 */
-	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
-
-	ngAfterViewInit() {
-		this.update(this.fullscreenValue);
-	}
-	ngOnDestroy(): void {
-		this.clear();
-	}
-	private clear() {
-		this.fullscreenValue = true;
-		this.update(true);
-	}
-
-	private update(value: boolean) {
-		if (this.libService.fullscreenButton.getValue() !== value) {
-			this.libService.fullscreenButton.next(value);
 		}
 	}
 }
@@ -841,6 +884,74 @@ export class ToolbarDisplaySessionNameDirective implements AfterViewInit, OnDest
 		}
 	}
 }
+/**
+ * The **displayTimer** directive allows show/hide the session name.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarDisplayTimer]="false"></ov-videoconference>
+ *
+ * \
+ * And it also can be used in the {@link ToolbarComponent}.
+ * @example
+ * <ov-toolbar [displayTimer]="false"></ov-toolbar>
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarDisplayTimer]'
+})
+export class ToolbarDisplayTimereDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 */
+	@Input() set toolbarDisplayTimer(value: boolean) {
+		this.displayTimer = value;
+		this.update(this.displayTimer);
+	}
+
+	private displayTimer: boolean = true;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	ngAfterViewInit() {
+		this.update(this.displayTimer);
+	}
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+	private clear() {
+		this.displayTimer = true;
+		this.update(true);
+	}
+
+	private update(value: boolean) {
+		if (this.libService.displayTimer.getValue() !== value) {
+			this.libService.displayTimer.next(value);
+		}
+	}
+}
+
+/**
+ * The **displayLogo** directive allows show/hide the branding logo.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarDisplayLogo]="false"></ov-videoconference>
+ *
+ * \
+ * And it also can be used in the {@link ToolbarComponent}.
+ * @example
+ * <ov-toolbar [displayLogo]="false"></ov-toolbar>
+ */
 
 /**
  * The **displayLogo** directive allows show/hide the branding logo.

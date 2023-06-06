@@ -3,7 +3,7 @@
 		<div>
 			<img *ngIf="!isMinimal && showLogo" id="branding-logo" [src]="getLogoPath()" ovLogo />
 			<div id="session-info-container" [class.colapsed]="recordingStatus === _recordingStatus.STARTED">
-				<span id="session-name" *ngIf="!isMinimal && session && session.sessionId && showSessionName">{{ session.sessionId }}</span>
+				<span id="session-name" *ngIf="!isMinimal && session && session.sessionId && showSessionName">{{ sessionName }}</span>
 				<div *ngIf="recordingStatus === _recordingStatus.STARTED" id="recording-tag" class="recording-tag">
 					<mat-icon class="blink">radio_button_checked</mat-icon>
 					<span class="blink">REC</span>
@@ -212,7 +212,7 @@
 	</div>
 	<div fxFlex="20%" fxFlexOrder="3" fxLayoutAlign="end center" id="menu-buttons-container">
 		<div *ngIf="showSessionTimer" id="recording-tag" class="recording-tag">
-			{{ sessionTime.getTime() < 3600000 ? (sessionTime | date: 'mm:ss') : (sessionTime | date: 'H:mm:ss') }}
+			{{ sessionTime | date: 'H:mm:ss' }}
 		</div>
 		<!-- Default activities button -->
 		<button

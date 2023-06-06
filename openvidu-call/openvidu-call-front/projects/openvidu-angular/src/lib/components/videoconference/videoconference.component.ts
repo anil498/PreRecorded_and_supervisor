@@ -552,7 +552,7 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 
 	private async start() {
 		await this.deviceSrv.forceInitDevices();
-		const nickname = this.externalParticipantName || this.storageSrv.getNickname() || `OpenVidu_User${Math.floor(Math.random() * 100)}`;
+		const nickname = this.externalParticipantName || this.storageSrv.getNickname() || `mCarbon_User${Math.floor(Math.random() * 100)}`;
 		this.participantService.initLocalParticipant({ local: true, nickname });
 		this.openviduService.initialize();
 		if (this.deviceSrv.hasVideoDeviceAvailable() || this.deviceSrv.hasAudioDeviceAvailable()) {

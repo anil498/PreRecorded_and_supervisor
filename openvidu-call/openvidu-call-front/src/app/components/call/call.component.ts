@@ -10,7 +10,7 @@ import { RestService } from '../../services/rest.service';
 	styleUrls: ['./call.component.scss']
 })
 export class CallComponent implements OnInit {
-	sessionId = '';
+	sessionKey = '';
 	tokens: TokenModel;
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
@@ -26,6 +26,15 @@ export class CallComponent implements OnInit {
 	participantNameValue:string
 	loading: boolean = true;
 	redirectUrl:string;
+	sessionName:string;
+	showLogo:Boolean;
+	logo:string;
+	activitiesButton:Boolean;
+	displayTicker:Boolean;
+	displayTimer:Boolean;
+	description:string;
+	participantsButton:Boolean;
+	sessionDuration:number;
 	private isDebugSession: boolean = false;
 
 	constructor(
@@ -37,12 +46,12 @@ export class CallComponent implements OnInit {
 
 	async ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
-			this.sessionId = params.roomName;
+			this.sessionKey = params.roomName;
 		});
 
 		// Just for debugging purposes
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
-		const match = regex.exec(this.sessionId);
+		const match = regex.exec(this.sessionKey);
 		this.isDebugSession = match && match.length > 0;
 
 		try {
@@ -69,7 +78,7 @@ export class CallComponent implements OnInit {
 		  } else {
 			// Close the window
 			window.location.replace("https://www.axisbank.com/grab-deals/online-offers");
-			this.restService.removeSession(this.sessionId);
+			this.restService.removeSession(this.sessionKey);
 		  }
 	}
 	participantName(){
@@ -77,7 +86,7 @@ export class CallComponent implements OnInit {
 	}
 	async onStartRecordingClicked() {
 		try {
-			await this.restService.startRecording(this.sessionId);
+			await this.restService.startRecording(this.sessionKey);
 		} catch (error) {
 			this.recordingError = error;
 		}
@@ -85,7 +94,7 @@ export class CallComponent implements OnInit {
 
 	async onStopRecordingClicked() {
 		try {
-			this.recordingList = await this.restService.stopRecording(this.sessionId);
+			this.recordingList = await this.restService.stopRecording(this.sessionKey);
 		} catch (error) {
 			this.recordingError = error;
 		}
@@ -105,21 +114,33 @@ export class CallComponent implements OnInit {
 			console.warn('DEBUGGING SESSION');
 			nickname = this.participantService.getLocalParticipant().getNickname();
 		}
-		const response = await this.restService.getTokens(this.sessionId, nickname);
-		this.isRecording = response.isRecording
-		this.broadcastingEnabled=response.isBroadCasting
+		try{
+			const response = await this.restService.getTokens(this.sessionKey, nickname);
+		this.isRecording = response.settings.recording;
+		this.broadcastingEnabled=response.settings.broadcast;
 		this.recordingList = response.recordings
 		this.tokens = {
 			webcam: response.cameraToken,
 			screen: response.screenToken
 		};
-		this.screenShareEnabled=response.isScreenSharing;
-		this.chatEnabled=response.isChatEnabled;
-		this.showSessionId=response.showSessionId;
+		this.screenShareEnabled=response.settings.screenShare;
+		this.chatEnabled=response.settings.chat;
+		this.showSessionId=true;
 		this.participantNameValue=response.participantName;
 		this.redirectUrl=response.redirectUrl;
-		console.log(response);
-		console.log(this.screenShareEnabled);
+		this.sessionName=response.sessionName;
+		this.showLogo=response.settings.showLogo;
+		this.logo=response.settings.logo;
+		this.activitiesButton=response.settings.activitiesButton;
+		this.displayTicker=response.settings.displayTicker;
+		this.displayTimer=response.settings.displayTimer;
+		this.description=response.settings.description;
+		this.sessionDuration=response.settings.duration;
+		this.participantsButton=response.settings.participantsButton;
+	}catch(error){
+		console.log(error)
+	}
+
 	}
 	recordingEnabled(){
 		return this.isRecording;
