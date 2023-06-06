@@ -9,7 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.call.java.services.*;
 import org.apache.hc.core5.http.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,8 +108,8 @@ public class RecordingController {
 
 		try {
       String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest=videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
-      String sessionId=sessionRequest.getSessionId();
+      SessionProperty sessionPropertyRequest =videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
+      String sessionId= sessionPropertyRequest.getSessionId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					Recording startingRecording = openviduService.startRecording(sessionId);
@@ -153,8 +153,8 @@ public class RecordingController {
 			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) throws IOException {
 		try {
 			String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest=videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
-      String sessionId=sessionRequest.getSessionId();
+      SessionProperty sessionPropertyRequest =videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
+      String sessionId= sessionPropertyRequest.getSessionId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					String recordingId = openviduService.moderatorsCookieMap.get(sessionId).getRecordingId();

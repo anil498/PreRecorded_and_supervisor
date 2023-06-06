@@ -2,37 +2,34 @@ package io.openvidu.call.java.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.google.gson.JsonObject;
 import io.openvidu.call.java.util.CustomDateDeserializer;
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.Recording;
-import org.apache.hc.core5.http.HttpEntity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SessionRequest {
+public class SessionProperty {
   private String sessionId;
   private String sessionName;
   private String userId;
-  private Integer userMaxSession;
+  private int userMaxSessions;
   private String accountId;
-  private Integer accountMaxSession;
+  private int accountMaxSessions;
   private String participantName;
-  private String totalParticipants="5";
+  private int totalParticipants;
   private Settings settings;
   private String sessionKey;
   @JsonDeserialize(using = CustomDateDeserializer.class)
   private Date creationDate;
   @JsonDeserialize(using = CustomDateDeserializer.class)
   private Date expDate;
-  private Connection cameraToken;
-  private Connection screenToken;
+  private String cameraToken;
+  private String screenToken;
   private List<Recording> recordings;
   private String type;
+  private String recordingMode="MANUAL"; // for auto recording need to set {ALWAYS}
 
   public String getSessionId() {
     return sessionId;
@@ -58,12 +55,12 @@ public class SessionRequest {
     this.userId = userId;
   }
 
-  public Integer getUserMaxSession() {
-    return userMaxSession;
+  public int getUserMaxSessions() {
+    return userMaxSessions;
   }
 
-  public void setUserMaxSession(Integer userMaxSession) {
-    this.userMaxSession = userMaxSession;
+  public void setUserMaxSessions(int userMaxSessions) {
+    this.userMaxSessions = userMaxSessions;
   }
 
   public String getAccountId() {
@@ -74,12 +71,12 @@ public class SessionRequest {
     this.accountId = accountId;
   }
 
-  public Integer getAccountMaxSession() {
-    return accountMaxSession;
+  public int getAccountMaxSessions() {
+    return accountMaxSessions;
   }
 
-  public void setAccountMaxSession(Integer accountMaxSession) {
-    this.accountMaxSession = accountMaxSession;
+  public void setAccountMaxSessions(int accountMaxSessions) {
+    this.accountMaxSessions = accountMaxSessions;
   }
 
   public String getParticipantName() {
@@ -90,11 +87,11 @@ public class SessionRequest {
     this.participantName = participantName;
   }
 
-  public String getTotalParticipants() {
+  public int getTotalParticipants() {
     return totalParticipants;
   }
 
-  public void setTotalParticipants(String totalParticipants) {
+  public void setTotalParticipants(int totalParticipants) {
     this.totalParticipants = totalParticipants;
   }
 
@@ -130,19 +127,19 @@ public class SessionRequest {
     this.expDate = expDate;
   }
 
-  public Connection getCameraToken() {
+  public String getCameraToken() {
     return cameraToken;
   }
 
-  public void setCameraToken(Connection cameraToken) {
+  public void setCameraToken(String cameraToken) {
     this.cameraToken = cameraToken;
   }
 
-  public Connection getScreenToken() {
+  public String getScreenToken() {
     return screenToken;
   }
 
-  public void setScreenToken(Connection screenToken) {
+  public void setScreenToken(String screenToken) {
     this.screenToken = screenToken;
   }
 
@@ -162,17 +159,25 @@ public class SessionRequest {
     this.type = type;
   }
 
+  public String getRecordingMode() {
+    return recordingMode;
+  }
+
+  public void setRecordingMode(String recordingMode) {
+    this.recordingMode = recordingMode;
+  }
+
   @Override
   public String toString() {
-    return "SessionRequest{" +
+    return "SessionProperty{" +
       "sessionId='" + sessionId + '\'' +
       ", sessionName='" + sessionName + '\'' +
       ", userId='" + userId + '\'' +
-      ", userMaxSession=" + userMaxSession +
+      ", userMaxSessions=" + userMaxSessions +
       ", accountId='" + accountId + '\'' +
-      ", accountMaxSession=" + accountMaxSession +
+      ", accountMaxSessions=" + accountMaxSessions +
       ", participantName='" + participantName + '\'' +
-      ", totalParticipants='" + totalParticipants + '\'' +
+      ", totalParticipants=" + totalParticipants +
       ", settings=" + settings +
       ", sessionKey='" + sessionKey + '\'' +
       ", creationDate=" + creationDate +
@@ -181,6 +186,7 @@ public class SessionRequest {
       ", screenToken=" + screenToken +
       ", recordings=" + recordings +
       ", type='" + type + '\'' +
+      ", recordingMode='" + recordingMode + '\'' +
       '}';
   }
 }

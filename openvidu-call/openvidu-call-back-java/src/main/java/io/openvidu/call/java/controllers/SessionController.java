@@ -11,7 +11,7 @@ import java.util.List;
 
 import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
-import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.call.java.services.SessionService;
 import io.openvidu.call.java.services.VideoPlatformService;
 import io.openvidu.call.java.util.SessionUtil;
@@ -63,12 +63,11 @@ public class SessionController {
 			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorCookie,
 			@CookieValue(name = OpenViduService.PARTICIPANT_TOKEN_NAME, defaultValue = "") String participantCookie,HttpServletRequest request,
 			HttpServletResponse res) {
-//    Map<String, Object> response = new HashMap<String, Object>();
     Map<String,String> headers=getHeaders(request);
     ConcurrentMap<String,SessionContext> sessionIdToSessionContextMap=SessionUtil.getInstance().getSessionIdToSessionContextMap();
-    logger.info("Request Headers {} and Parameters {}",headers,params);
+    logger.info("Request API /sessions Headers {} and Parameters {}",headers,params);
     String sessionId=null;
-    SessionRequest sessionRequest=null;
+    SessionProperty sessionProperty =null;
     try {
       if (validateRequest(params)) {
         long date = -1;
@@ -78,61 +77,58 @@ public class SessionController {
           nickname = params.get("nickname").toString();
         }
         if(authorization==null){
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Authorization not found");
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Authorization Key not found");
         } else if (token==null) {
           return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Token not found");
         }
-        String sessionIdKey = params.get("sessionId").toString();
+        String sessionKey = params.get("sessionKey").toString();
         try {
-             sessionRequest = videoPlatformService.getVideoPlatformProperties(authorization, token, sessionIdKey);
-             logger.info("Session Request: {}",sessionRequest);
-             sessionId=sessionRequest.getSessionId();
+             sessionProperty = videoPlatformService.getVideoPlatformProperties(authorization, token, sessionKey);
+             logger.info("Session Property: {}", sessionProperty);
+             sessionId= sessionProperty.getSessionId();
         }catch (Exception e){
-          logger.error("Getting Exception while fetching record {}",e);
+          logger.error("Getting Exception while fetching Session property from videoplatform {}",e);
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("INTERVAL_SERVER_ERROR");
         }
         Session sessionCreated = null;
-        if (validateSession(sessionRequest, sessionIdKey,sessionIdToSessionContextMap)) {
-          sessionCreated = this.openviduService.createSession(sessionId, sessionRequest.getSettings().getRecordingDetails().toString());
+        if (validateSession(sessionProperty, sessionKey,sessionIdToSessionContextMap)) {
+          logger.info("Going to Create session {} with recordingMode {}",sessionProperty.getSessionId(),sessionProperty.getRecordingMode());
+          sessionCreated = this.openviduService.createSession(sessionId, sessionProperty.getRecordingMode());
         } else {
           ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Session limit exceed");
         }
         String MODERATOR_TOKEN_NAME = OpenViduService.MODERATOR_TOKEN_NAME;
         String PARTICIPANT_TOKEN_NAME = OpenViduService.PARTICIPANT_TOKEN_NAME;
-        boolean IS_RECORDING_ENABLED = sessionRequest.getSettings().getRecording();
-        boolean IS_BROADCAST_ENABLED = sessionRequest.getSettings().getBroadcast();
+        boolean IS_RECORDING_ENABLED = sessionProperty.getSettings().getRecording();
+        boolean IS_BROADCAST_ENABLED = sessionProperty.getSettings().getBroadcast();
         boolean PRIVATE_FEATURES_ENABLED = IS_RECORDING_ENABLED || IS_BROADCAST_ENABLED;
 
         boolean hasModeratorValidToken = this.openviduService.isModeratorSessionValid(sessionId, moderatorCookie);
         boolean hasParticipantValidToken = this.openviduService.isParticipantSessionValid(sessionId,
           participantCookie);
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
-        boolean iAmSessionCreator=sessionRequest.getSettings().getModerators();
+        boolean iAmSessionCreator= sessionProperty.getSettings().getModerators();
         boolean isSessionCreator = hasModeratorValidToken || iAmSessionCreator;
 
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
 
 
         Connection cameraConnection = null;
-        if (validateParticipantJoined(sessionRequest, sessionCreated,sessionIdToSessionContextMap)) {
-          cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
-          sessionRequest.setCameraToken(cameraConnection);
-          if(sessionRequest.getSettings().getScreenShare()) {
-            Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
-            sessionRequest.setScreenToken(screenConnection);
+        if (validateParticipantJoined(sessionProperty, sessionCreated,sessionIdToSessionContextMap)) {
+          if(sessionCreated!=null) {
+            cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
+            sessionProperty.setCameraToken(cameraConnection.getToken());
+            if (sessionProperty.getSettings().getScreenShare()) {
+              Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
+              sessionProperty.setScreenToken(screenConnection.getToken());
+            }
           }
         } else {
           return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Max participant joined");
         }
-        if(sessionRequest.getSettings().isShowLogo()){
-          byte[] file= (byte[]) sessionRequest.getSettings().getLogo();
-          String fileName=sessionId+fileExtension;
-          if(file!=null){
-            sessionService.writeLogoFile(file,fileName,logoFilPath);
-          }
-        }
         if(!sessionIdToSessionContextMap.containsKey(sessionId)) {
-          SessionContext sessionContext = new SessionContext.Builder().sessionObject(sessionCreated).connectionObject(cameraConnection).sessionRequest(sessionRequest).sessionKey(sessionIdKey).sessionUniqueID(sessionId).build();
-          sessionIdToSessionContextMap.put(sessionIdKey, sessionContext);
+          SessionContext sessionContext = new SessionContext.Builder().sessionObject(sessionCreated).connectionObject(cameraConnection).sessionRequest(sessionProperty).sessionKey(sessionKey).sessionUniqueID(sessionId).build();
+          sessionIdToSessionContextMap.put(sessionKey, sessionContext);
         }
         if (!hasValidToken && PRIVATE_FEATURES_ENABLED) {
           /**
@@ -192,9 +188,9 @@ public class SessionController {
             date = openviduService.getDateFromCookie(moderatorCookie);
           }
           List<Recording> recordings = openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
-          sessionRequest.setRecordings(recordings);
+          sessionProperty.setRecordings(recordings);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(sessionRequest);
+        return ResponseEntity.status(HttpStatus.OK).body(sessionProperty);
       }else {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("SessionId not found");
       }
@@ -203,14 +199,14 @@ public class SessionController {
 
         if (e.getMessage() != null && Integer.parseInt(e.getMessage()) == 501) {
           System.err.println("OpenVidu Server recording module is disabled");
-          return ResponseEntity.status(HttpStatus.OK).body(sessionRequest);
+          return ResponseEntity.status(HttpStatus.OK).body(sessionProperty);
         } else if (e.getMessage() != null && Integer.parseInt(e.getMessage()) == 401) {
           System.err.println("OpenVidu credentials are wrong.");
           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         } else {
           e.printStackTrace();
           System.err.println(e.getMessage());
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(sessionRequest);
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(sessionProperty);
         }
       }
   }
@@ -232,33 +228,33 @@ public class SessionController {
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-  private boolean validateSession(SessionRequest sessionRequest,String sessionKey,ConcurrentMap<String,SessionContext> sessionContextConcurrentMap) throws OpenViduJavaClientException, OpenViduHttpException {
-      int activeSession = 0;
+  private boolean validateSession(SessionProperty sessionProperty, String sessionKey, ConcurrentMap<String,SessionContext> sessionContextConcurrentMap) throws OpenViduJavaClientException, OpenViduHttpException {
+      int activeAccountSession = 0;
       int activeUserSession = 0;
       sessionDestroyed(sessionKey);
       for (String key : sessionContextConcurrentMap.keySet()) {
-        if (key.startsWith(sessionRequest.getAccountId())) {
-          activeSession += 1;
+        if (key.startsWith(sessionProperty.getAccountId())) {
+          activeAccountSession += 1;
         }
-        if (key.startsWith(sessionRequest.getAccountId() + SessionConstant.SESSION_PREFIX + sessionRequest.getUserId())) {
+        if (key.startsWith(sessionProperty.getAccountId() + SessionConstant.SESSION_PREFIX + sessionProperty.getUserId())) {
           activeUserSession += 1;
         }
       }
-      logger.info("Active session for this account {} is {} and max active allowed is {} ", sessionRequest.getAccountId(), activeSession, sessionRequest.getAccountMaxSession());
-      logger.info("Active session for this user {} is {} and max active allowed is {} ", sessionRequest.getUserId(), activeUserSession, sessionRequest.getUserMaxSession());
-        if (activeSession < sessionRequest.getAccountMaxSession() && activeUserSession < sessionRequest.getUserMaxSession())
+      logger.info("Active session of Account Id {} is {} and max active session allowed is {} ", sessionProperty.getAccountId(), activeAccountSession, sessionProperty.getAccountMaxSessions());
+      logger.info("Active session of {} is User Id {} and max active session allowed is {} ", sessionProperty.getUserId(), activeUserSession, sessionProperty.getUserMaxSessions());
+        if (activeAccountSession < sessionProperty.getAccountMaxSessions() && activeUserSession < sessionProperty.getUserMaxSessions())
           return true;
-        else if(sessionContextConcurrentMap.containsKey(sessionKey))
-          return true;
+//        else if(sessionContextConcurrentMap.containsKey(sessionKey)) // Need to review this line
+//          return true;
         else
           return false;
 
   }
-  private boolean validateParticipantJoined(SessionRequest sessionRequest,Session session,ConcurrentMap<String,SessionContext> sessionContextConcurrentMap){
+  private boolean validateParticipantJoined(SessionProperty sessionProperty, Session session, ConcurrentMap<String,SessionContext> sessionContextConcurrentMap){
     if(session!=null) {
       List<Connection> connectionList=session.getActiveConnections();
-          if (connectionList.size() < Integer.parseInt(sessionRequest.getTotalParticipants())) {
-            logger.info("Active Participant for sessionId is {} and max Participant allowed for this session is {} ", connectionList.size(), sessionRequest.getTotalParticipants());
+      logger.info("Active Participant for sessionId is {} and max Participant allowed for this session is {} ", connectionList.size(), sessionProperty.getTotalParticipants());
+      if (connectionList.size() < sessionProperty.getTotalParticipants()) {
             return true;
         } else {
           return false;
@@ -276,28 +272,28 @@ public class SessionController {
     return headerMap;
   }
   private boolean validateRequest(Map<String, Object> params){
-    if(params.isEmpty()){
-      return false;
-    } else if (params.containsKey("sessionId")) {
+    if (params.containsKey("sessionKey")){
       return true;
-    }else{
-      return false;
     }
+    return false;
   }
   private boolean sessionDestroyed(String sessionKey) throws OpenViduJavaClientException, OpenViduHttpException {
     ConcurrentMap<String,SessionContext> sessionContextConcurrentMap=SessionUtil.getInstance().getSessionIdToSessionContextMap();
     if(sessionContextConcurrentMap.containsKey(sessionKey)) {
       logger.info("Session exists in context map {}",sessionKey);
-      String sessionId=sessionContextConcurrentMap.get(sessionKey).getSessionUniqueId();
-      Session session=openviduService.getActiveSession(sessionId);
+      Session session=sessionContextConcurrentMap.get(sessionKey).getSessionObject();
       if(session!=null){
-        if(session.getActiveConnections().size()==0){
-          session.close();
+          if(openviduService.isSessionExist(session) && openviduService.getActiveSession(session.getSessionId()).getActiveConnections().size()==0) {
+            try {
+              session.close();
+            }catch (Exception e){
+              logger.error("Getting Session While closing {}",e);
+            }
+          }
           sessionContextConcurrentMap.remove(sessionKey);
           return true;
         }
       }
-    }
     return false;
   }
 }

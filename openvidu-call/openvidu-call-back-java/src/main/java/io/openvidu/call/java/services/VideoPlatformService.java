@@ -1,8 +1,6 @@
 package io.openvidu.call.java.services;
 
-import com.google.gson.JsonObject;
-import io.openvidu.call.java.models.SessionCallback;
-import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.call.java.util.VideoPlatform;
 import org.apache.hc.core5.http.HttpException;
 import org.slf4j.Logger;
@@ -26,7 +24,7 @@ public class VideoPlatformService {
   public void init() {
     this.videoPlatform = new VideoPlatform(VIDEOPLATFORM_URL);
   }
-  public SessionRequest getVideoPlatformProperties(String authorization, String token, String sessionKey) throws IOException, HttpException {
+  public SessionProperty getVideoPlatformProperties(String authorization, String token, String sessionKey) throws IOException, HttpException {
     return videoPlatform.getVideoPlatformProperties(authorization,token,sessionKey);
   }
   public HashMap<String,Integer> getExpiredSession(){

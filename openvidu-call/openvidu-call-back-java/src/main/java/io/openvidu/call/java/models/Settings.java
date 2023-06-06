@@ -6,23 +6,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings {
-  private Integer duration;
+  private int duration;
   private boolean showLogo;
-  private Object logo;
+  private String logo;
   private Boolean moderators = false;
   private String description;
-  private Boolean displayTicker;
-  private Boolean displayTimer;
-  private Boolean recording;
-  private Object recordingDetails;
-  private Boolean screenShare;
-  private Boolean waitForModerator;
-  private Boolean chat;
-  private Boolean activitiesButton;
-  private Boolean participantsButton;
-  private Boolean floatingLayout;
-  private Boolean supervisor;
-  private Boolean preRecorded;
+  private Boolean displayTicker=false;
+  private Boolean displayTimer=false;
+  private Boolean recording=false;
+  private Object recordingDetails=false;
+  private Boolean screenShare=false;
+  private Boolean waitForModerator=false;
+  private Boolean chat=false;
+  private Boolean activitiesButton=false;
+  private Boolean participantsButton=false;
+  private Boolean floatingLayout=false;
+  private Boolean supervisor=false;
+  private Boolean preRecorded=false;
   private String preRecordedDetails;
   private Boolean broadcast=false;
   public Integer getDuration() {
@@ -33,11 +33,11 @@ public class Settings {
     this.duration = duration;
   }
 
-  public Object getLogo() {
+  public String getLogo() {
     return logo;
   }
 
-  public void setLogo(Object logo) {
+  public void setLogo(String logo) {
     this.logo = logo;
   }
 

@@ -1,17 +1,16 @@
 package io.openvidu.call.java.core;
 
-import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.java.client.Connection;
 import io.openvidu.java.client.Recording;
-import io.openvidu.java.client.Session;
 import org.springframework.data.annotation.Id;
 import java.io.Serializable;
 
 public class SessionContext implements Serializable {
   private static final long serialVersionUID = -4530028918010566689L;
-  private SessionRequest sessionRequest;
+  private SessionProperty sessionPropertyRequest;
   private Recording recordingRequest;
-  private Session sessionObject;
+  private io.openvidu.java.client.Session sessionObject;
   private Connection connectionObject;
   @Id
   private String sessionUniqueId;
@@ -19,19 +18,19 @@ public class SessionContext implements Serializable {
   private String callType;
   private int participantJoined;
   public static class Builder {
-    private SessionRequest sessionRequest;
+    private SessionProperty sessionPropertyRequest;
     private Recording recordingRequest;
-    private Session sessionObject;
+    private io.openvidu.java.client.Session sessionObject;
     private Connection connectionObject;
     private String sessionUniqueId;
     private String sessionKey;
     private String callType;
     private int participantJoined;
-    public Builder sessionRequest (SessionRequest sessionRequest){
-    this.sessionRequest = sessionRequest;
+    public Builder sessionRequest (SessionProperty sessionPropertyRequest){
+    this.sessionPropertyRequest = sessionPropertyRequest;
     return this;
     }
-    public Builder sessionObject (Session sessionObject){
+    public Builder sessionObject (io.openvidu.java.client.Session sessionObject){
       this.sessionObject = sessionObject;
       return this;
     }
@@ -61,7 +60,7 @@ public class SessionContext implements Serializable {
     }
     public SessionContext build () {
     SessionContext sessionContext = new SessionContext();
-    sessionContext.setSessionRequest(this.sessionRequest);
+    sessionContext.setSessionRequest(this.sessionPropertyRequest);
     sessionContext.setSessionObject(this.sessionObject);
     sessionContext.setConnectionObject(this.connectionObject);
     sessionContext.setRecordingRequest(this.recordingRequest);
@@ -74,12 +73,12 @@ public class SessionContext implements Serializable {
   }
   private SessionContext(){}
 
-  public SessionRequest getSessionRequest() {
-    return sessionRequest;
+  public SessionProperty getSessionRequest() {
+    return sessionPropertyRequest;
   }
 
-  public void setSessionRequest(SessionRequest sessionRequest) {
-    this.sessionRequest = sessionRequest;
+  public void setSessionRequest(SessionProperty sessionPropertyRequest) {
+    this.sessionPropertyRequest = sessionPropertyRequest;
   }
 
   public Recording getRecordingRequest() {
@@ -90,11 +89,11 @@ public class SessionContext implements Serializable {
     this.recordingRequest = recordingRequest;
   }
 
-  public Session getSessionObject() {
+  public io.openvidu.java.client.Session getSessionObject() {
     return sessionObject;
   }
 
-  public void setSessionObject(Session sessionObject) {
+  public void setSessionObject(io.openvidu.java.client.Session sessionObject) {
     this.sessionObject = sessionObject;
   }
 
@@ -141,7 +140,7 @@ public class SessionContext implements Serializable {
   @Override
   public String toString() {
     return "SessionContext{" +
-      "sessionRequest=" + sessionRequest +
+      "sessionRequest=" + sessionPropertyRequest +
       ", recordingRequest=" + recordingRequest +
       ", sessionObject=" + sessionObject +
       ", connectionObject=" + connectionObject +
