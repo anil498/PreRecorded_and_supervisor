@@ -9,4 +9,5 @@ public interface AccountService {
     List<AccountEntity> getAccountById(int id);
     AccountEntity createAccount(AccountEntity account);
     AccountEntity updateAccount(AccountEntity account);
+    String deleteAccount(Integer accountId);
 }

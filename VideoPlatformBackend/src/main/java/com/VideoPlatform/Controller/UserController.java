@@ -42,7 +42,6 @@ public class UserController {
     @Autowired
     private AccessRepository accessRepository;
 
-
     @Value("${secret.key}")
     private String secret;
     @Value("${access.time}")
@@ -159,7 +158,7 @@ public class UserController {
     }
 
     @PutMapping("/Update")
-    public ResponseEntity<UserEntity> updateUser(@RequestBody UserEntity user, HttpServletRequest request) {
+    public ResponseEntity<?> updateUser(@RequestBody UserEntity user, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -177,11 +176,15 @@ public class UserController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        return ok(userService.updateUser(user));
+        userService.updateUser(user);
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "User updated!");
+        return ok(result);
     }
 
     @DeleteMapping("/Delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer id, @RequestBody UserEntity user, HttpServletRequest request) {
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");

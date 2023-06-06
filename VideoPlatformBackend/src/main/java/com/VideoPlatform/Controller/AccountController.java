@@ -219,7 +219,7 @@ public class AccountController {
     }
 
     @PutMapping("/Update")
-    public ResponseEntity<AccountEntity> updateAccount(@RequestBody AccountEntity account, HttpServletRequest request){
+    public ResponseEntity<?> updateAccount(@RequestBody AccountEntity account, HttpServletRequest request){
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -237,11 +237,38 @@ public class AccountController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        return ok(accountService.updateAccount(account));
+        accountService.updateAccount(account);
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "Account updated!");
+        return ok(result);
+    }
+
+    @DeleteMapping("/Delete/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id, HttpServletRequest request) {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = isValidAuthKey(authKey);
+        if (authId == 0) {
+            logger.info("Unauthorised user, wrong authorization key !");
+            return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if (!isValidToken(token)) {
+            logger.info("Invalid Token !");
+            return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if (!(checkAccess("user_delete", token))) {
+            logger.info("Permission Denied. Don't have access for this service!");
+            return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        return ok(accountService.deleteAccount(id));
+
     }
 
 
-    private String generatedKey(int accountId){
+        private String generatedKey(int accountId){
         String key = generateKey(accountId,"AC");
         logger.info("AccountAuthKey : "+key);
         logger.info("Unique Authorization key generated...!");

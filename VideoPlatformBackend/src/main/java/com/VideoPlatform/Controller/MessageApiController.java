@@ -295,7 +295,6 @@ public class MessageApiController {
         if(CommonUtils.isExpire(acc.getExpDate())){
             return 0;
         }
-
         return 1;
     }
     public Boolean isValidToken(String token){

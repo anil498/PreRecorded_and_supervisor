@@ -39,7 +39,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Modifying
     @Transactional
-    @Query(nativeQuery=true, value = "UPDATE user_data SET sataus = 0 where user_id = :userId ")
+    @Query(nativeQuery=true, value = "UPDATE user_data SET status = 2 where user_id = :userId ")
     void deleteUser(@Param("userId") Integer userId);
 
     @Query(nativeQuery=true, value = "select session from user_data where user_id = :userId ")
