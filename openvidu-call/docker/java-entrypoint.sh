@@ -13,7 +13,9 @@ cd /opt/openvidu-call
 [ ! -z "${CALL_ADMIN_SECRET}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DCALL_ADMIN_SECRET=${CALL_ADMIN_SECRET}"
 [ ! -z "${CALL_RECORDING}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DRECORDING=${CALL_RECORDING}"
 [ ! -z "${SERVER_PORT}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${SERVER_PORT}"
-[ ! -z "${ACCOUNT_AUTH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${ACCOUNT_AUTH}"
-[ ! -z "${USER_AUTH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${USER_AUTH}"
+[ ! -z "${Authorization}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${Authorization}"
+[ ! -z "${Token}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${Token}"
+[ ! -z "${LOGO_FILE_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${LOGO_FILE_PATH}"
+[ ! -z "${LOGO_FILE_EXT}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${LOGO_FILE_EXT}"
 
 java ${JAVA_PROPERTIES} -jar target/openvidu-call-back-java.jar
