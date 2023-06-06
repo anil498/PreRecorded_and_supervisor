@@ -95,7 +95,7 @@ export class RestService {
     console.log('sms Sent');
 
     try {
-      return this.callRequest(sessionId, '/VPService/v1/video/api/sendSms', {
+      return this.callRequest(sessionId, '/VPService/v1/Session/Send/SMS', {
         msisdn,
 
         // callUrl,
@@ -123,7 +123,7 @@ export class RestService {
     console.warn('Whatsapp Message Sent');
 
     try {
-      return this.callRequest(sessionId, '/VPService/v1/video/api/sendWhatsapp', {
+      return this.callRequest(sessionId, '/VPService/v1/Session/Send/WhatsApp', {
         msisdn,
 
         callUrl,
@@ -152,7 +152,7 @@ export class RestService {
     try {
       //===="/video/api/notification"
       ///VPService/v1/video/api/notification
-      return this.callRequest(sessionId, '/VPService/v1/video/api/notification', {
+      return this.callRequest(sessionId, '/VPService/v1/Session/Send/AppNotification', {
         msisdn,
         title,
         body,
