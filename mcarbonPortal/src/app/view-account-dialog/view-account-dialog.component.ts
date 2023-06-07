@@ -120,13 +120,13 @@ export class ViewAccountDialogComponent implements OnInit {
 
         accessList: [this.account.accessId, Validators.required],
 
-        max_duration: [this.account.session.max_duration, Validators.required],
+        max_duration: [this.account.session.maxDuration, Validators.required],
         max_active_sessions: [
-          this.account.session.max_active_sessions,
+          this.account.session.maxActiveSessions,
           Validators.required,
         ],
         max_participants: [
-          this.account.session.max_participants,
+          this.account.session.maxParticipants,
           Validators.required,
         ],
 
