@@ -55,14 +55,8 @@ public class SessionController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if (authId == 0) {
-            logger.info("Unauthorised user, wrong authorization key !");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        if (!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if (!(commonService.checkAccess("my_sessions", token))) {
             logger.info("Permission Denied. Don't have access for this service!");
@@ -93,14 +87,8 @@ public class SessionController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("session_details",token))){
             logger.info("Permission Denied. Don't have access for this service!");
@@ -116,14 +104,8 @@ public class SessionController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("session_details",token))){
             logger.info("Permission Denied. Don't have access for this service!");
@@ -138,14 +120,8 @@ public class SessionController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("user_delete",token))){
             logger.info("Permission Denied. Don't have access for this service!");

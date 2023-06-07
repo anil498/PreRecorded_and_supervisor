@@ -80,15 +80,8 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("sms",token))){
             logger.info("Permission Denied. Don't have access for this service!");
@@ -147,14 +140,8 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("whatsapp",token))){
             logger.info("Permission Denied. Don't have access for this service!");
@@ -210,14 +197,8 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("app_notification",token))){
             logger.info("Permission Denied. Don't have access for this service!");

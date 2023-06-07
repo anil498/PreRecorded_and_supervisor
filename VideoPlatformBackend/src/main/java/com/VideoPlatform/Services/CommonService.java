@@ -10,7 +10,11 @@ import com.VideoPlatform.Repository.UserAuthRepository;
 import com.VideoPlatform.Repository.UserRepository;
 import com.VideoPlatform.Utils.TimeUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +22,9 @@ import java.util.*;
 
 @Service
 public class CommonService {
+
+    private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
+
     @Autowired
     AccountAuthRepository accountAuthRepository;
     @Autowired
@@ -80,6 +87,18 @@ public class CommonService {
         String val = String.format("%03d", accountId);
         String key = "AC"+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
         return key;
+    }
+    public Boolean authorizationCheck(String authKey, String token){
+        int authId = isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return false;
+        }
+        if(!isValidToken(token,authId)) {
+            logger.info("Invalid Token !");
+            return false;
+        }
+        return true;
     }
     public Map<String, String> getHeaders(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaderNames();
