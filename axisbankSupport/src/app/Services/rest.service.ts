@@ -91,12 +91,12 @@ export class RestService {
     }
   } //call request promise close
   //////////---------------------------------------------
-  async sendSMS(sessionId: string, msisdn: string, callUrl: string) {
+  async sendSMS(sessionId: string, msisdn: string, callUrl: string,getLink:string) {
     console.log('sms Sent');
 
     try {
       return this.callRequest(sessionId, '/VPService/v1/Session/CreateAndSendLink/SMS', {
-        msisdn,
+        msisdn,getLink
 
         // callUrl,
       });
@@ -118,7 +118,8 @@ export class RestService {
     type: string,
 
     templateId: string,
-    userInfo:string
+    userInfo:string,
+    getLink:string
   ) {
     console.warn('Whatsapp Message Sent');
 
@@ -133,7 +134,8 @@ export class RestService {
         type,
 
         templateId,
-        userInfo
+        userInfo,
+        getLink
       });
     } catch (error) {
       console.log(error);
@@ -146,7 +148,8 @@ export class RestService {
     title: string,
     body: string,
     sessionId: string,
-    msisdn: string
+    msisdn: string,
+    getLink:string
   ) {
     console.log('sendNotify run Notification Sent by data'+title+body+sessionId+msisdn);
     try {
@@ -156,6 +159,7 @@ export class RestService {
         msisdn,
         title,
         body,
+        getLink
       });
     } catch (error) {
       console.log("error in cath this.callRequest of restsevice sendnotify");
