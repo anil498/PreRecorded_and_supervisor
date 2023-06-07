@@ -37,10 +37,20 @@ public class CommonService {
         int authId = acc.getAuthId();
         return authId;
     }
-    public Boolean isValidToken(String token){
+    public int isValidAuthKeyU(String authKey){
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+        if(acc == null) return 0;
+        String key = (acc.getAuthKey());
+        if(TimeUtils.isExpire(acc.getExpDate())){
+            return 0;
+        }
+        int accountId = acc.getAccountId();
+        return accountId;
+    }
+    public Boolean isValidToken(String token,Integer authId){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
-        if(TimeUtils.isExpire(user.getExpDate()))
+        if(TimeUtils.isExpire(user.getExpDate()) && authId == user.getAuthId())
             return false;
         return true;
     }

@@ -8,7 +8,7 @@ import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Services.MessagingService;
 import com.VideoPlatform.Services.SessionService;
-import com.VideoPlatform.Utils.TimeUtils;
+
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -75,7 +75,7 @@ public class MessageApiController {
     CommonService commonService;
 
     private static final Logger logger= LoggerFactory.getLogger(MessageApiController.class);
-    @PostMapping(value="/Send/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value="/CreateAndSendLink/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendSMS(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException {
 
         String authKey = request.getHeader("Authorization");
@@ -87,7 +87,7 @@ public class MessageApiController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -102,17 +102,24 @@ public class MessageApiController {
 
 //        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
-        SessionEntity sessionEntitySupport = sessionService.createSession(null,authKey,token,true);
-        SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
-
-        String callUrl= callPrefix+sessionEntityCustomer.getSessionId();
+        String description=null;
+        if(params.containsKey("description")){
+            description= String.valueOf(params.get("description"));
+        }
+        String participantName=null;
+        if(params.containsKey("participantName")){
+            participantName= String.valueOf(params.get("participantName"));
+        }
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+        String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",callUrl);
 
         SubmitResponse responseSms=messagingService.sendSms(request,response,msisdn,callUrl);
         responseSms.setCallUrl(callUrl);
 
         HashMap<String,String> res=new HashMap<>();
-        String returnUrl = callUrl+supportSuffix;
+        String returnUrl = callUrl+sessionEntitySupport.getSessionKey();
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
             if(getLink.equals("0")){
@@ -136,43 +143,47 @@ public class MessageApiController {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping ("/Send/WhatsApp")
+    @PostMapping ("/CreateAndSendLink/WhatsApp")
     public ResponseEntity<?> sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
         logger.info("Rest API {} request {}",params,request);
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int check = commonService.isValidAuthKey(authKey);
-        if(check == 0){
+        int authId = commonService.isValidAuthKey(authKey);
+        if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!commonService.isValidToken(token,authId)) {
+            logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("whatsapp",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
         String from= (String) params.get("from");
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
         String templateid= (String) params.get("templateId");
-//        String userInfo=null;
-//        if(params.containsKey("userInfo")){
-//            userInfo= String.valueOf(params.get("userInfo"));
-//        }
-        SessionEntity sessionEntitySupport = sessionService.createSession(null,authKey,token,true);
-        SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
-        String placeHolder= callPrefix+sessionEntityCustomer.getSessionId();
+        String description=null;
+        if(params.containsKey("description")){
+            description= String.valueOf(params.get("description"));
+        }
+        String participantName=null;
+        if(params.containsKey("participantName")){
+            participantName= String.valueOf(params.get("participantName"));
+        }
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+        String placeHolder= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",placeHolder);
 
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
         SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateid);
         responseSms.setCallUrl(placeHolder);
         HashMap<String,String> res=new HashMap<>();
-        String returnUrl = placeHolder+supportSuffix;
+        String returnUrl = placeHolder+sessionEntitySupport.getSessionKey();
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
             if(getLink.equals("0")){
@@ -195,7 +206,7 @@ public class MessageApiController {
         return ResponseEntity.ok(res);
     }
 
-    @PostMapping("/Send/AppNotification")
+    @PostMapping("/CreateAndSendLink/AppNotification")
     public ResponseEntity<?> sendNotification(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException {
         logger.info("Rest API {}",params);
         String authKey = request.getHeader("Authorization");
@@ -206,13 +217,12 @@ public class MessageApiController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("app_notification",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
+        if(!commonService.isValidToken(token,authId)) {
+            logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-
-        if(!commonService.isValidToken(token)) {
-            logger.info("Invalid Token !");
+        if(!(commonService.checkAccess("app_notification",token))){
+            logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -230,13 +240,17 @@ public class MessageApiController {
             } else {
                 System.out.println("No such document!");
             }
-            String userInfo=null;
-            if(params.containsKey("userInfo")){
-                userInfo= String.valueOf(params.get("userInfo"));
+            String description=null;
+            if(params.containsKey("description")){
+                description= String.valueOf(params.get("description"));
+            }String participantName=null;
+            if(params.containsKey("participantName")){
+                participantName= String.valueOf(params.get("participantName"));
             }
-            SessionEntity sessionEntitySupport = sessionService.createSession(null,authKey,token,true);
-            SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
-            String callUrl= callPrefix+sessionEntityCustomer.getSessionId();
+
+            SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
+            SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+            String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
             logger.info("callUrl : {}",callUrl);
 
             HashMap<String, String>map= new HashMap<>();
@@ -251,7 +265,7 @@ public class MessageApiController {
 
             // Send notification message
             HashMap<String,String> res=new HashMap<>();
-            String returnUrl = callUrl+supportSuffix;
+            String returnUrl = callUrl+sessionEntitySupport.getSessionKey();
             if(params.containsKey("getLink")){
                 String getLink = String.valueOf(params.get("getLink"));
                 if(getLink.equals("0")){

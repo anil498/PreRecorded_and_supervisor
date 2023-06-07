@@ -19,6 +19,7 @@ public class SettingsEntity {
     private Boolean floatingLayout;
     private Boolean supervisor;
     private Boolean preRecorded;
+    private String landingPage;
     private String preRecordedDetails;
 
     public Integer getDuration() {
@@ -149,6 +150,15 @@ public class SettingsEntity {
         this.preRecordedDetails = preRecordedDetails;
     }
 
+    public String getLandingPage() {
+        return landingPage;
+    }
+
+    public void setLandingPage(String landingPage) {
+        this.landingPage = landingPage;
+    }
+
+
     @Override
     public String toString() {
         return "SettingsEntity{" +
@@ -158,16 +168,18 @@ public class SettingsEntity {
                 ", displayTicker=" + displayTicker +
                 ", displayTimer=" + displayTimer +
                 ", recording=" + recording +
-                ", recordingDetails='" + recordingDetails + '\'' +
+                ", recordingDetails=" + recordingDetails +
                 ", screenShare=" + screenShare +
                 ", waitForModerator=" + waitForModerator +
                 ", chat=" + chat +
                 ", activitiesButton=" + activitiesButton +
                 ", participantsButton=" + participantsButton +
-                ", floatigLayout=" + floatingLayout +
+                ", floatingLayout=" + floatingLayout +
                 ", supervisor=" + supervisor +
                 ", preRecorded=" + preRecorded +
+                ", landingPage='" + landingPage + '\'' +
                 ", preRecordedDetails='" + preRecordedDetails + '\'' +
                 '}';
     }
+
 }
