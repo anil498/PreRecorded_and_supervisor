@@ -34,6 +34,7 @@
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "ajv": "8.11.0",
+    "angular-material-fileupload": "^3.0.2",
     "arrive": "2.4.1",
     "bootstrap": "^4.6.1",
     "bootstrap-material-design": "4.1.3",

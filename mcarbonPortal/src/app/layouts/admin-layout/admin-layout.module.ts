@@ -29,6 +29,7 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatSortModule } from "@angular/material/sort";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { MatMenuModule } from "@angular/material/menu";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { AccountManagementComponent } from "app/account-management/account-management.component";
 import { CreateAccountComponent } from "app/create-account/create-account.component";
 import { UpdateAccountDialogComponent } from "app/update-account-dialog/update-account-dialog.component";
@@ -37,6 +38,7 @@ import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-di
 import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
 import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account-dialog.component";
 import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.component";
+import { MatFileUploadModule } from 'angular-material-fileupload';
 
 @NgModule({
   imports: [
@@ -62,6 +64,8 @@ import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.c
     MatPaginatorModule,
     MatProgressSpinnerModule,
     MatMenuModule,
+    MatSlideToggleModule,
+    MatFileUploadModule,
     RouterModule.forChild(AdminLayoutRoutes),
   ],
   declarations: [
@@ -81,6 +85,6 @@ import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.c
     ViewAccessDialogComponent,
     ViewFeatureDialogComponent,
   ],
-  entryComponents: [FormDialogComponent,DeleteDialogComponent],
+  entryComponents: [FormDialogComponent, DeleteDialogComponent],
 })
 export class AdminLayoutModule {}

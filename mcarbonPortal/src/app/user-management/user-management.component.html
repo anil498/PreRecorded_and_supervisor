@@ -140,17 +140,20 @@
                   </th>
                   <td mat-cell *matCellDef="let user">
                     <ng-container [ngSwitch]="user.status">
+                      <button class="btn btn-danger btn-sm" *ngSwitchCase="0">
+                        Deactive
+                      </button>
                       <button class="btn btn-success btn-sm" *ngSwitchCase="1">
                         Active
                       </button>
-                      <button class="btn btn-danger btn-sm" *ngSwitchCase="0">
-                        Deactive
+                      <button class="btn btn-dark btn-sm" *ngSwitchCase="2">
+                        Deleted
                       </button>
                       <button
                         class="btn btn-secondary btn-sm"
                         *ngSwitchCase="3"
                       >
-                        Suspended
+                        Expired
                       </button>
                     </ng-container>
                   </td>
