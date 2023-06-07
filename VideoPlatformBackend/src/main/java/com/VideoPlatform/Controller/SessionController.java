@@ -132,4 +132,31 @@ public class SessionController {
         String sessionKey = params.get("sessionKey");
             return new ResponseEntity<>(sessionService.getByKey(sessionKey), HttpStatus.OK);
     }
+    @DeleteMapping("/Delete/{key}")
+    public ResponseEntity<?> deleteSession(@PathVariable String key, HttpServletRequest request) {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        int authId = commonService.isValidAuthKey(authKey);
+        if(authId == 0){
+            logger.info("Unauthorised user, wrong authorization key !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!commonService.isValidToken(token,authId)) {
+            logger.info("Invalid Token !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        if(!(commonService.checkAccess("user_delete",token))){
+            logger.info("Permission Denied. Don't have access for this service!");
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        sessionService.deleteSession(key);
+
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "User deleted!");
+
+        return ok(result);
+    }
 }

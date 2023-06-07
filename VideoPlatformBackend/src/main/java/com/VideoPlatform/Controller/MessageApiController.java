@@ -287,13 +287,7 @@ public class MessageApiController {
         }
     }
 
-    public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
-        String generatedString = RandomStringUtils.randomAlphanumeric(10);
-        if(sessionRepository.findBySessionKey(generatedString) == null)
-            return generatedString;
-        else givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-        return null;
-    }
+
 
 }
 

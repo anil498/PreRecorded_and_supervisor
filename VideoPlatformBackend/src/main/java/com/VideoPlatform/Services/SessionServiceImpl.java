@@ -148,11 +148,17 @@ public class SessionServiceImpl implements SessionService{
     public SessionEntity getByKey(String key) {
         return sessionRepository.findBySessionKey(key);
     }
+    @Override
+    public String deleteSession(String sessionKey) {
+        sessionRepository.deleteSession(sessionKey);
+        return "Session successfully deleted.";
+    }
 
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
-        logger.info(generatedString);
-        System.out.println(generatedString);
-        return generatedString;
+        if(sessionRepository.findBySessionKey(generatedString) == null)
+            return generatedString;
+        else givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+        return null;
     }
 }
