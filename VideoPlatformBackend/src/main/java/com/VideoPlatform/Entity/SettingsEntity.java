@@ -6,7 +6,7 @@ public class SettingsEntity {
 
     private Integer duration;
     private Boolean logo;
-    private String description;
+    private Object description;
     private Boolean displayTicker;
     private Boolean displayTimer;
     private Boolean recording;
@@ -19,8 +19,8 @@ public class SettingsEntity {
     private Boolean floatingLayout;
     private Boolean supervisor;
     private Boolean preRecorded;
-    private String landingPage;
-    private String preRecordedDetails;
+    private Object landingPage;
+    private Object preRecordedDetails;
 
     public Integer getDuration() {
         return duration;
@@ -38,11 +38,11 @@ public class SettingsEntity {
         this.logo = logo;
     }
 
-    public String getDescription() {
+    public Object getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(Object description) {
         this.description = description;
     }
 
@@ -142,29 +142,28 @@ public class SettingsEntity {
         this.preRecorded = preRecorded;
     }
 
-    public String getPreRecordedDetails() {
+    public Object getPreRecordedDetails() {
         return preRecordedDetails;
     }
 
-    public void setPreRecordedDetails(String preRecordedDetails) {
+    public void setPreRecordedDetails(Object preRecordedDetails) {
         this.preRecordedDetails = preRecordedDetails;
     }
 
-    public String getLandingPage() {
+    public Object getLandingPage() {
         return landingPage;
     }
 
-    public void setLandingPage(String landingPage) {
+    public void setLandingPage(Object landingPage) {
         this.landingPage = landingPage;
     }
-
 
     @Override
     public String toString() {
         return "SettingsEntity{" +
                 "duration=" + duration +
                 ", logo=" + logo +
-                ", description='" + description + '\'' +
+                ", description=" + description +
                 ", displayTicker=" + displayTicker +
                 ", displayTimer=" + displayTimer +
                 ", recording=" + recording +
@@ -177,9 +176,8 @@ public class SettingsEntity {
                 ", floatingLayout=" + floatingLayout +
                 ", supervisor=" + supervisor +
                 ", preRecorded=" + preRecorded +
-                ", landingPage='" + landingPage + '\'' +
+                ", landingPage=" + landingPage +
                 ", preRecordedDetails='" + preRecordedDetails + '\'' +
                 '}';
     }
-
 }

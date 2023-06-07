@@ -66,13 +66,7 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0) {
-            logger.info("Unauthorised user, invalid authorization key !");
-            return new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
+        if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("customer_management",token))){
@@ -88,13 +82,7 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, invalid authorization key !");
-            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
+        if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("customer_management",token))){
@@ -109,15 +97,8 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        logger.info("Auth Id : "+authId);
-        if(authId == 0){
-            logger.info("Unauthorised user, Invalid authorization key !");
-            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("customer_creation",token))){
             logger.info("Permission Denied. Don't have access for this service!");
@@ -216,14 +197,8 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("customer_update",token))){
             logger.info("Permission Denied. Don't have access for this service!");
@@ -242,14 +217,8 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if (authId == 0) {
-            logger.info("Unauthorised user, wrong authorization key !");
-            return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if (!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
+        if(!commonService.authorizationCheck(authKey,token)){
+            return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
         if (!(commonService.checkAccess("user_delete", token))) {
             logger.info("Permission Denied. Don't have access for this service!");

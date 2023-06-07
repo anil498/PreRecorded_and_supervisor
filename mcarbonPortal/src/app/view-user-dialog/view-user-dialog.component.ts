@@ -102,13 +102,13 @@ export class ViewUserDialogComponent implements OnInit {
       confirm_password: ["", Validators.required],
       accessList: [this.user.accessId, Validators.required],
 
-      max_duration: [this.user.session.maxDuration, Validators.required],
+      max_duration: [this.user.session.max_duration, Validators.required],
       max_active_sessions: [
-        this.user.session.maxActiveSessions,
+        this.user.session.max_active_sessions,
         Validators.required,
       ],
       max_participants: [
-        this.user.session.maxParticipants,
+        this.user.session.max_participants,
         Validators.required,
       ],
 

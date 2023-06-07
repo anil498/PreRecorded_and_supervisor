@@ -56,17 +56,9 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
+        if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-
         if(!(commonService.checkAccess("my_users",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
@@ -80,17 +72,9 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
+        if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-
         if(!(commonService.checkAccess("my_users",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
@@ -105,13 +89,7 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
+        if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("my_users",token))){
@@ -166,13 +144,7 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
+        if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(!(commonService.checkAccess("user_update",token))){
@@ -192,15 +164,10 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = commonService.isValidAuthKey(authKey);
-        if(authId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
+        if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token,authId)) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
+
         if(!(commonService.checkAccess("user_delete",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);

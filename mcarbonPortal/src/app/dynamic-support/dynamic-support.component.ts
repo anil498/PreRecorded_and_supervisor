@@ -35,23 +35,16 @@ export class DynamicSupportComponent implements OnInit {
   failedMessage: boolean;
   state: any;
   phoneError: any;
-  roomError: boolean;
   callUrl: any;
   failedMessageShow: any;
-  url: string;
   titleValue: string = "mCarbon Support";
   bodyValue: string = "Join Video Call";
-  rooms = [
-    { label: "mCarbon Room 1", value: "mcarbon1" },
-    { label: "mCarbon Room 2", value: "mcarbon2" },
-  ];
 
   constructor(
     private router: Router,
     private restService: RestService,
     private fb: FormBuilder
   ) {
-    this.url = "https://demo2.progate.mobi/dynamicsupport/#/call/";
     this.accessList = this.restService.getData().Access;
   }
 
@@ -61,7 +54,6 @@ export class DynamicSupportComponent implements OnInit {
       title: ["", [Validators.required]],
       body: ["", [Validators.required]],
       msisdn: ["", [Validators.required, Validators.pattern("^[0-9]+$")]],
-      room: ["", Validators.required],
     });
   }
 
@@ -82,8 +74,8 @@ export class DynamicSupportComponent implements OnInit {
   }
   ngAfterViewInit() {}
 
-  goTo(sessionId: string) {
-    window.open(sessionId, "_blank");
+  goTo(link: string) {
+    window.open(link, "_blank");
     // this.router.navigate([`/${path}`, sessionId]);
   }
 
@@ -91,51 +83,43 @@ export class DynamicSupportComponent implements OnInit {
     this.showDescription = false;
     this.failedMessage = false;
     this.phoneError = false;
-    this.roomError = false;
     var numbers: any = [];
 
-    console.log("Form Submitted with value: ", this.userForm.value.msisdn);
     const msisdn = this.userForm.value.msisdn;
+    if (msisdn == null || msisdn == "") {
+      this.phoneError = true;
+      this.timeOut(30000);
+      return;
+    }
+    console.log("Form Submitted with value: ", this.userForm.value.msisdn);
+
     var splitted = msisdn.split(",");
     for (let i = 0; i < splitted.length; i++) {
       numbers.push(splitted[i]);
     }
 
-    const sessionId = this.userForm.value.room;
     this.titleValue = this.userForm.value.title;
     this.bodyValue = this.userForm.value.body;
 
-    if (msisdn == null || msisdn == "") {
-      this.phoneError = true;
-      this.timeOut(3000);
-      return;
-    }
-    if (sessionId == null || sessionId == "") {
-      this.roomError = true;
-      this.timeOut(3000);
-      return;
-    }
-
-    const callUrl = "/customers/#/" + sessionId;
     let messageResponse: any;
-
+    const getLink = "1";
     if (type == "sms") {
       try {
+        
         for (let i = 0; i < numbers.length; i++) {
-          messageResponse = await this.restService.sendSMS(
-            sessionId,
-            numbers[i],
-            callUrl
-          );
+          messageResponse = await this.restService.sendSMS(numbers[i], getLink);
         }
         console.warn(messageResponse);
-        this.goTo(messageResponse.callurl);
+        if (messageResponse.statusCode == 200) {
+          this.goTo(messageResponse.link);
+        } else {
+        }
       } catch (error) {
         console.log(error);
-        this.state = error.statusText;
+        this.state = error.error.error;
         this.failedMessage = true;
         this.failedMessageShow = "";
-        this.timeOut(3000);
+        this.timeOut(30000);
         return;
       }
       this.failedMessage = false;
@@ -146,7 +130,7 @@ export class DynamicSupportComponent implements OnInit {
       } else {
         this.state = messageResponse.description;
         this.showDescription = true;
-        this.timeOut(3000);
+        this.timeOut(30000);
       }
     } else if (type == "whatsapp") {
       const type = "template";
@@ -154,18 +138,22 @@ export class DynamicSupportComponent implements OnInit {
       const templateId = "53571";
       try {
         messageResponse = await this.restService.sendWhatsapp(
-          sessionId,
           msisdn,
-          callUrl,
           from,
           type,
-          templateId
+          templateId,
+          getLink
         );
+
+        if (messageResponse.statusCode == 200) {
+          this.goTo(messageResponse.link);
+        } else {
+        }
       } catch (error) {
         console.log(error);
-        this.state = error.statusText;
+        this.state = error.error.error;
         this.failedMessage = true;
-        this.timeOut(3000);
+        this.timeOut(30000);
         return;
       }
       this.failedMessage = false;
@@ -176,7 +164,7 @@ export class DynamicSupportComponent implements OnInit {
         this.state = messageResponse.message;
         this.showDescription = true;
         this.failedMessageShow = "";
-        this.timeOut(3000);
+        this.timeOut(30000);
         console.warn(messageResponse);
         this.goTo(messageResponse.callurl);
       }
@@ -186,17 +174,21 @@ export class DynamicSupportComponent implements OnInit {
           messageResponse = await this.restService.sendNotify(
             this.titleValue,
             this.bodyValue,
-            sessionId,
-            numbers[i]
+            numbers[i],
+            getLink
           );
+        }
+        if (messageResponse.statusCode == 200) {
+          this.goTo(messageResponse.link);
+        } else {
         }
 
         //this.goTo("/call", sessionId);
       } catch (error) {
         console.log(error);
-        this.state = error.statusText;
+        this.state = error.error.error;
         this.failedMessage = true;
-        this.timeOut(3000);
+        this.timeOut(30000);
         return;
       }
       this.failedMessage = false;
@@ -206,7 +198,7 @@ export class DynamicSupportComponent implements OnInit {
     //console.log("Message Sent: ", messageResponse);
     this.callUrl = messageResponse.callurl;
     this.failedMessageShow = " Please find video call link:- " + this.callUrl;
-    this.timeOut(3000);
+    this.timeOut(30000);
   }
 
   private timeOut(time: number) {
@@ -214,7 +206,6 @@ export class DynamicSupportComponent implements OnInit {
       this.showDescription = false;
       this.failedMessage = false;
       this.phoneError = false;
-      this.roomError = false;
     }, time);
   }
 

@@ -33,26 +33,6 @@
                           formControlName="msisdn"
                           [(ngModel)]="inputValue"
                         />
-                        <select formControlName="room">
-                          <option
-                            value=""
-                            style="
-                              text-align: center;
-                              width: 100%;
-                              color: #333333;
-                            "
-                            disabled
-                            selected
-                          >
-                            Select a Session
-                          </option>
-                          <option
-                            *ngFor="let room of rooms"
-                            [value]="room.value"
-                          >
-                            {{ room.label }}
-                          </option>
-                        </select>
                       </div>
                     </div>
                     <div class="row">
@@ -66,14 +46,12 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-4 offset-4 text-center" *ngIf="phoneError">
+                      <div
+                        class="col-4 offset-4 text-center"
+                        *ngIf="phoneError"
+                      >
                         <p class="alert alert-danger">
                           <strong>Enter valid mobile number</strong>
-                        </p>
-                      </div>
-                      <div class="col-4 offset-4 text-center" *ngIf="roomError">
-                        <p class="alert alert-danger">
-                          <strong>Please select a session</strong>
                         </p>
                       </div>
                       <div class="row" *ngIf="showDescription">
@@ -119,26 +97,6 @@
                           formControlName="msisdn"
                           [(ngModel)]="inputValue"
                         />
-                        <select formControlName="room">
-                          <option
-                            value=""
-                            style="
-                              text-align: center;
-                              width: 100%;
-                              color: #333333;
-                            "
-                            disabled
-                            selected
-                          >
-                            Select a Session
-                          </option>
-                          <option
-                            *ngFor="let room of rooms"
-                            [value]="room.value"
-                          >
-                            {{ room.label }}
-                          </option>
-                        </select>
                       </div>
                     </div>
                     <div class="row">
@@ -152,14 +110,12 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-4 offset-4 text-center" *ngIf="phoneError">
+                      <div
+                        class="col-4 offset-4 text-center"
+                        *ngIf="phoneError"
+                      >
                         <p class="alert alert-danger">
                           <strong>Enter valid mobile number</strong>
-                        </p>
-                      </div>
-                      <div class="col-4 offset-4 text-center" *ngIf="roomError">
-                        <p class="alert alert-danger">
-                          <strong>Please select a session</strong>
                         </p>
                       </div>
                       <div class="row" *ngIf="showDescription">
@@ -222,26 +178,6 @@
                           formControlName="body"
                           [(ngModel)]="bodyValue"
                         />
-                        <select formControlName="room">
-                          <option
-                            value=""
-                            style="
-                              text-align: center;
-                              width: 100%;
-                              color: #333333;
-                            "
-                            disabled
-                            selected
-                          >
-                            Select a Session
-                          </option>
-                          <option
-                            *ngFor="let room of rooms"
-                            [value]="room.value"
-                          >
-                            {{ room.label }}
-                          </option>
-                        </select>
                       </div>
                     </div>
                     <div class="row">
@@ -255,18 +191,16 @@
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-4 offset-4 text-center" *ngIf="phoneError">
+                      <div
+                        class="col-4 offset-4 text-center"
+                        *ngIf="phoneError"
+                      >
                         <p class="alert alert-danger">
                           <strong>Enter valid mobile number</strong>
                         </p>
                       </div>
-                      <div class="col-4 offset-4 text-center" *ngIf="roomError">
-                        <p class="alert alert-danger">
-                          <strong>Please select a session</strong>
-                        </p>
-                      </div>
                       <div class="row" *ngIf="showDescription">
-                        <div class="col-12 offset-xl-2 col-xl-8">
+                        <div class="col-12">
                           <p class="alert alert-success">
                             <strong>{{ state }}!</strong> Please find video call
                             link:-
@@ -275,7 +209,7 @@
                         </div>
                       </div>
                       <div class="row" *ngIf="failedMessage">
-                        <div class="col-12 offset-xl-2 col-xl-8">
+                        <div class="col-12">
                           <p class="alert alert-danger">
                             <strong>{{ state }}!</strong>{{ failedMessageShow }}
                           </p>

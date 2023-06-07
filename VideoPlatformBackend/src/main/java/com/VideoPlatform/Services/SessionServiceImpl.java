@@ -92,13 +92,11 @@ public class SessionServiceImpl implements SessionService{
                 }
                 else if (5 == featureId && moderator==false) {
                     settingsEntity.setDisplayTicker(true);
-                    String descJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setDescription(descJson);
+                    settingsEntity.setDescription(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
                 else if (6 == featureId && moderator==true) {
                     settingsEntity.setDisplayTicker(true);
-                    String descJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setDescription(descJson);
+                    settingsEntity.setDescription(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
                 else if (7 == featureId && moderator==true) {
                     settingsEntity.setDescription(description);
@@ -110,8 +108,7 @@ public class SessionServiceImpl implements SessionService{
                     settingsEntity.setSupervisor(true);
                 }
                 else if (10 == featureId) {
-                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setPreRecordedDetails(prdJson);
+                    settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
                 else if (11 == featureId) {
                     settingsEntity.setDisplayTimer(true);
@@ -123,12 +120,10 @@ public class SessionServiceImpl implements SessionService{
                     settingsEntity.setParticipantsButton(true);
                 }
                 else if (14 == featureId && moderator==true) {
-                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setLandingPage(prdJson);
+                    settingsEntity.setLandingPage(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
                 else if (15 == featureId && moderator==false) {
-                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setLandingPage(prdJson);
+                    settingsEntity.setLandingPage(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
             }
             String settingsJson = gson.toJson(settingsEntity);
@@ -151,7 +146,7 @@ public class SessionServiceImpl implements SessionService{
     @Override
     public String deleteSession(String sessionKey) {
         sessionRepository.deleteSession(sessionKey);
-        return "Session successfully deleted.";
+        return "Session deleted";
     }
 
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {

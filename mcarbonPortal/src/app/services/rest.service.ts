@@ -208,7 +208,6 @@ export class RestService {
   }
 
   private callRequest(
-    sessionId: string,
     path: string,
     body: any
   ): Promise<any> {
@@ -389,9 +388,9 @@ export class RestService {
     maxUser: number,
     expDate: string,
     creationDate: string,
-    maxDuration: number,
-    maxParticipants: number,
-    maxActiveSessions: number,
+    max_duration: number,
+    max_participants: number,
+    max_active_sessions: number,
     accessId: number[],
 
     features: number[],
@@ -408,9 +407,9 @@ export class RestService {
 
       accessId,
       session: {
-        maxDuration,
-        maxParticipants,
-        maxActiveSessions,
+        max_duration,
+        max_participants,
+        max_active_sessions,
       },
 
       features,
@@ -492,31 +491,32 @@ export class RestService {
     this.deleteRequest(`User/Delete/${id}`);
   }
 
-  async sendSMS(sessionId: string, msisdn: string, callUrl: string) {
+  async sendSMS(msisdn: string,getLink: any) {
     console.log("sms Sent");
     try {
-      return this.callRequest(sessionId, "Session/Send/SMS", {
+      return this.callRequest("CreateAndSendLink/SMS", {
         msisdn,
+        getLink
       });
     } catch (error) {
       console.log(error);
     }
   }
   async sendWhatsapp(
-    sessionId: string,
     msisdn: string,
-    callUrl: string,
     from: string,
     type: string,
-    templateId: string
+    templateId: string,
+    getLink: any
   ) {
     console.warn("Whatsapp Message Sent");
     try {
-      return this.callRequest(sessionId, "Session/Send/Whatsapp", {
+      return this.callRequest("CreateAndSendLink/Whatsapp", {
         msisdn,
         from,
         type,
         templateId,
+        getLink
       });
     } catch (error) {
       console.log(error);
@@ -526,15 +526,16 @@ export class RestService {
   async sendNotify(
     title: string,
     body: string,
-    sessionId: string,
-    msisdn: string
+    msisdn: string,
+    getLink: any
   ) {
     console.warn("Notification Sent");
     try {
-      return this.callRequest(sessionId, "Session/Send/AppNotification", {
+      return this.callRequest("CreateAndSendLink/AppNotification", {
         msisdn,
         title,
         body,
+        getLink
       });
     } catch (error) {
       console.log(error);
