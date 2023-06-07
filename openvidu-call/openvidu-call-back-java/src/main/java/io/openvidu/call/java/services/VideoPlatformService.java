@@ -1,9 +1,8 @@
 package io.openvidu.call.java.services;
 
-import com.google.gson.JsonObject;
-import io.openvidu.call.java.models.SessionCallback;
-import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.call.java.util.VideoPlatform;
+import org.apache.hc.core5.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +24,7 @@ public class VideoPlatformService {
   public void init() {
     this.videoPlatform = new VideoPlatform(VIDEOPLATFORM_URL);
   }
-  public SessionRequest getVideoPlatformProperties(String authorization, String token, String sessionKey) throws IOException {
+  public SessionProperty getVideoPlatformProperties(String authorization, String token, String sessionKey) throws IOException, HttpException {
     return videoPlatform.getVideoPlatformProperties(authorization,token,sessionKey);
   }
   public HashMap<String,Integer> getExpiredSession(){
@@ -34,7 +33,5 @@ public class VideoPlatformService {
     hashMap.put("test1234",20);
     return hashMap;
   }
-  public boolean sendSessionCallback(SessionCallback sessionCallback) throws IOException {
-    return videoPlatform.sendSessionCallback(sessionCallback,CALLBACK_RETRY);
-  }
+
 }

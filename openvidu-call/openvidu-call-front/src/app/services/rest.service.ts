@@ -23,10 +23,10 @@ export class RestService {
 	}
 
 	async getTokens(
-		sessionId: string,
+		sessionKey: string,
 		nickname?: string
 	): Promise<sessionResponse> {
-		return this.postRequest('sessions', { sessionId, nickname });
+		return this.postRequest('sessions', { sessionKey, nickname });
 	}
 	async removeSession(
 		sessionId: string

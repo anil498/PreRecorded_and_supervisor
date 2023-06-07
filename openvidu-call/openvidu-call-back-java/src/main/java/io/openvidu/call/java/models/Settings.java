@@ -1,26 +1,30 @@
 package io.openvidu.call.java.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings {
-  private Integer duration;
+  private int duration;
   private boolean showLogo;
-  private byte[] logo;
+  private String logo;
   private Boolean moderators = false;
   private String description;
-  private Boolean displayTicker;
-  private Boolean displayTimer;
-  private Boolean recording;
-  private Object recordingDetails;
-  private Boolean screenShare;
-  private Boolean waitForModerator;
-  private Boolean chat;
-  private Boolean activitiesButton;
-  private Boolean participantsButton;
-  private Boolean floatingLayout;
-  private Boolean supervisor;
-  private Boolean preRecorded;
+  private Boolean displayTicker=false;
+  private Boolean displayTimer=false;
+  private Boolean recording=false;
+  private Object recordingDetails=false;
+  private Boolean screenShare=false;
+  private Boolean waitForModerator=false;
+  private Boolean chat=false;
+  private Boolean activitiesButton=false;
+  private Boolean participantsButton=false;
+  private Boolean floatingLayout=false;
+  private Boolean supervisor=false;
+  private Boolean preRecorded=false;
   private String preRecordedDetails;
-  private Boolean broadcast;
-
+  private Boolean broadcast=false;
   public Integer getDuration() {
     return duration;
   }
@@ -29,11 +33,11 @@ public class Settings {
     this.duration = duration;
   }
 
-  public byte[] getLogo() {
+  public String getLogo() {
     return logo;
   }
 
-  public void setLogo(byte[] logo) {
+  public void setLogo(String logo) {
     this.logo = logo;
   }
 
@@ -171,5 +175,30 @@ public class Settings {
 
   public void setShowLogo(boolean showLogo) {
     this.showLogo = showLogo;
+  }
+
+  @Override
+  public String toString() {
+    return "Settings{" +
+      "duration=" + duration +
+      ", showLogo=" + showLogo +
+      ", logo=" + logo +
+      ", moderators=" + moderators +
+      ", description='" + description + '\'' +
+      ", displayTicker=" + displayTicker +
+      ", displayTimer=" + displayTimer +
+      ", recording=" + recording +
+      ", recordingDetails=" + recordingDetails +
+      ", screenShare=" + screenShare +
+      ", waitForModerator=" + waitForModerator +
+      ", chat=" + chat +
+      ", activitiesButton=" + activitiesButton +
+      ", participantsButton=" + participantsButton +
+      ", floatingLayout=" + floatingLayout +
+      ", supervisor=" + supervisor +
+      ", preRecorded=" + preRecorded +
+      ", preRecordedDetails='" + preRecordedDetails + '\'' +
+      ", broadcast=" + broadcast +
+      '}';
   }
 }

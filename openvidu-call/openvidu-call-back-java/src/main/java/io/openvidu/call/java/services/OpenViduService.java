@@ -162,6 +162,7 @@ public class OpenViduService {
 	public Session createSession(String sessionId,String recordingMode) throws OpenViduJavaClientException, OpenViduHttpException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("customSessionId", sessionId);
+    params.put("recordingMode",recordingMode);
 		SessionProperties properties = SessionProperties.fromJson(params).build();
 		Session session = openvidu.createSession(properties);
 		session.fetch();
@@ -237,6 +238,9 @@ public class OpenViduService {
 	}
   public Session getActiveSession(String sessionId) {
     return openvidu.getActiveSession(sessionId);
+  }
+  public Boolean isSessionExist(Session session) {
+    return openvidu.getActiveSessions().contains(session);
   }
 
 }

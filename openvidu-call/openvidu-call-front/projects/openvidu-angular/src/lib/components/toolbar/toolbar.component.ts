@@ -282,6 +282,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	sessionName: string;
+	/**
+	 * @ignore
+	 */
 	showScreenshareButton: boolean= true;
 	/**
 	 * @ignore
@@ -353,7 +357,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	sessionDuration=30;
+	sessionDuration:number;
 	/**
 	 * @ignore
 	 */
@@ -428,7 +432,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private currentWindowHeight = window.innerHeight;
 	private prefullscreenSub: Subscription;
 	private showfullscreenbuttonsub: Subscription;
-
+	private sessionNameSub: Subscription;
+	private displayTimerSub: Subscription;
+	private sessionDurationSub: Subscription;
 	/**
 	 * @ignore
 	 */
@@ -804,15 +810,16 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	private subscribeToSessionTimergStatus() {
+		if(this.showSessionTimer){
 		this.sessionTimerSubscription = this.openviduService.sessionTimerObs
 		.pipe(skip(1))
 		.subscribe((ev: {time?: Date }) => {
-			console.log(this.sessionTime.getTime())
 			if (ev.time) {
 				this.sessionTime = ev.time;
 			}
 			this.cd.markForCheck();
 		});
+	}
 	  }
 
 	private subscribeToToolbarDirectives() {
@@ -886,6 +893,18 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.showCaptionsButton = value;
 			this.cd.markForCheck();
 		});
+		this.sessionNameSub = this.libService.sessionNameObs.subscribe((value: string) => {
+			this.sessionName = value;
+			this.cd.markForCheck();
+		});
+		this.displayTimerSub = this.libService.displayTimerObs.subscribe((value: boolean) => {
+			this.showSessionTimer = value;
+			this.cd.markForCheck();
+		});
+		this.sessionDurationSub = this.libService.sessionDurationObs.subscribe((value: number) => {
+			this.sessionDuration = value;
+			this.cd.markForCheck();
+		});
 	}
 
 	private subscribeToScreenSize() {
@@ -900,6 +919,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.captionsEnabled = value;
 			this.cd.markForCheck();
 		});
+	
 	}
 
 	private checkDisplayMoreOptions() {

@@ -51,6 +51,9 @@ export class OpenViduAngularConfigService {
 	captionsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	captionsButtonObs: Observable<boolean>;
 
+	sessionName = <BehaviorSubject<string>>new BehaviorSubject('');
+	sessionNameObs: Observable<string>;
+
 	toolbarSettingsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	toolbarSettingsButtonObs: Observable<boolean>;
 
@@ -70,6 +73,12 @@ export class OpenViduAngularConfigService {
 
 	displaySessionName = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displaySessionNameObs: Observable<boolean>;
+
+	sessionDuration = <BehaviorSubject<number>>new BehaviorSubject(0);
+	sessionDurationObs: Observable<number>;
+
+	displayTimer = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	displayTimerObs: Observable<boolean>;
 
 	displayTicker = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayTickerObs: Observable<boolean>;
@@ -123,11 +132,14 @@ export class OpenViduAngularConfigService {
 		this.playvideoButtonObs = this.playvideoButton.asObservable();
 		this.activitiesPanelButtonObs = this.activitiesPanelButton.asObservable();
 		this.displaySessionNameObs = this.displaySessionName.asObservable();
+		this.sessionDurationObs = this.sessionDuration.asObservable();
+		this.displayTimerObs = this.displayTimer.asObservable();
 		this.displayTickerObs = this.displayTicker.asObservable();
 		this.displayLogoObs = this.displayLogo.asObservable();
 		this.recordingButtonObs = this.recordingButton.asObservable();
 		this.toolbarSettingsButtonObs = this.toolbarSettingsButton.asObservable();
 		this.captionsButtonObs = this.captionsButton.asObservable();
+		this.sessionNameObs = this.sessionName.asObservable();
 		//Stream observables
 		this.displayParticipantNameObs = this.displayParticipantName.asObservable();
 		this.displayAudioDetectionObs = this.displayAudioDetection.asObservable();

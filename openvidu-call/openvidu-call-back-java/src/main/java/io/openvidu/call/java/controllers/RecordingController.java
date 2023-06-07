@@ -9,8 +9,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import io.openvidu.call.java.models.SessionRequest;
+import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.call.java.services.*;
+import org.apache.hc.core5.http.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -107,8 +108,8 @@ public class RecordingController {
 
 		try {
       String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest=videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
-      String sessionId=sessionRequest.getSessionId();
+      SessionProperty sessionPropertyRequest =videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
+      String sessionId= sessionPropertyRequest.getSessionId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					Recording startingRecording = openviduService.startRecording(sessionId);
@@ -141,17 +142,19 @@ public class RecordingController {
 			System.err.println(message);
 			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 
-		}
+		} catch (HttpException e) {
+      throw new RuntimeException(e);
+    }
 
-	}
+  }
 
 	@PostMapping("/stop")
 	public ResponseEntity<?> stopRecording(@RequestBody(required = false) Map<String, String> params,
 			@CookieValue(name = OpenViduService.MODERATOR_TOKEN_NAME, defaultValue = "") String moderatorToken) throws IOException {
 		try {
 			String sessionKeyId = params.get("sessionId");
-      SessionRequest sessionRequest=videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
-      String sessionId=sessionRequest.getSessionId();
+      SessionProperty sessionPropertyRequest =videoPlatformService.getVideoPlatformProperties(authorization,token,sessionKeyId);
+      String sessionId= sessionPropertyRequest.getSessionId();
 			if (CALL_RECORDING.toUpperCase().equals("ENABLED")) {
 				if (openviduService.isModeratorSessionValid(sessionId, moderatorToken)) {
 					String recordingId = openviduService.moderatorsCookieMap.get(sessionId).getRecordingId();
@@ -191,8 +194,10 @@ public class RecordingController {
 			}
 			System.err.println(message);
 			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
+		} catch (HttpException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
 	@DeleteMapping("/delete/{recordingId}")
 	public ResponseEntity<?> deleteRecording(@PathVariable String recordingId,
