@@ -75,12 +75,12 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int check = commonService.isValidAuthKey(authKey);
-        if(check == 0) {
+        int authId = commonService.isValidAuthKey(authKey);
+        if(authId == 0) {
             logger.info("Unauthorised user, invalid authorization key !");
             return new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -98,13 +98,13 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int check = commonService.isValidAuthKey(authKey);
-        if(check == 0){
+        int authId = commonService.isValidAuthKey(authKey);
+        if(authId == 0){
             logger.info("Unauthorised user, invalid authorization key !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -121,13 +121,13 @@ public class AccountController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int check = commonService.isValidAuthKey(authKey);
-        logger.info("Auth Id : "+check);
-        if(check == 0){
+        int authId = commonService.isValidAuthKey(authKey);
+        logger.info("Auth Id : "+authId);
+        if(authId == 0){
             logger.info("Unauthorised user, Invalid authorization key !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -233,7 +233,7 @@ public class AccountController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -259,7 +259,7 @@ public class AccountController {
             logger.info("Unauthorised user, wrong authorization key !");
             return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if (!commonService.isValidToken(token)) {
+        if (!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }

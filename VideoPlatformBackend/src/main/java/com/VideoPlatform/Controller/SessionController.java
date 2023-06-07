@@ -50,17 +50,17 @@ public class SessionController {
     private int callAccessTime;
 
     @PostMapping("/Create")
-    public ResponseEntity<?> createSession(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> createSession(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int accountId = commonService.isValidAuthKey(authKey);
-        if (accountId == 0) {
+        int authId = commonService.isValidAuthKey(authKey);
+        if (authId == 0) {
             logger.info("Unauthorised user, wrong authorization key !");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if (!commonService.isValidToken(token)) {
+        if (!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -68,8 +68,19 @@ public class SessionController {
             logger.info("Permission Denied. Don't have access for this service!");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        SessionEntity sessionEntitySuppot= sessionService.createSession(null,authKey,token,true);
-        sessionService.createSession(sessionEntitySuppot,authKey,token,false);
+
+        String description=null;
+        if(params.containsKey("description")){
+            description= String.valueOf(params.get("description"));
+        }
+        String participantName=null;
+        if(params.containsKey("participantName")){
+            participantName= String.valueOf(params.get("participantName"));
+        }
+
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "Session created!");
@@ -77,7 +88,7 @@ public class SessionController {
     }
 
     @GetMapping("/GetAll")
-    public ResponseEntity<List<SessionEntity>> getAllSessions(HttpServletRequest request) {
+    public ResponseEntity<?> getAllSessions(HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -87,7 +98,7 @@ public class SessionController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -110,7 +121,7 @@ public class SessionController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }

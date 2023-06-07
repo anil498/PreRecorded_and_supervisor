@@ -35,9 +35,9 @@ public class SessionServiceImpl implements SessionService{
     private int callAccessTime;
 
     @Override
-    public SessionEntity createSession(SessionEntity session,String authKey, String token,Boolean moderator) {
-        if(session==null) {
-            session=new SessionEntity();
+    public SessionEntity createSession(String authKey, String token,Boolean moderator, String sessionId, String sessionKey, String description, String participantName) {
+
+        SessionEntity session=new SessionEntity();
             Date creation = TimeUtils.getDate();
             Date newDateTime = TimeUtils.increaseDateTime(creation);
             logger.info("Session Localdatetime = {}", newDateTime);
@@ -48,8 +48,12 @@ public class SessionServiceImpl implements SessionService{
             UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
 
             Gson gson = new Gson();
-            String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-            String sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
+            if (sessionKey.length()==0)
+                sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+            else
+                sessionKey = sessionKey +"_1";
+            if(sessionId.length()==0)
+                sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
             if(moderator==false){
                 session.setType("Customer");
             }else{
@@ -60,11 +64,11 @@ public class SessionServiceImpl implements SessionService{
             session.setSessionName(account.getName());
             session.setUserId(userAuth.getUserId());
             session.setAccountId(account.getAccountId());
-            session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+            session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_active_sessions").toString()));
             session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
             session.setCreationDate(creation);
             session.setExpDate(newDateTime);
-            session.setParticipantName(userEntity.getFname());
+            session.setParticipantName(participantName);
             session.setTotalParticipants(Integer.valueOf(account.getSession().get("max_participants").toString()));
 
             SettingsEntity settingsEntity = new SettingsEntity();
@@ -75,44 +79,61 @@ public class SessionServiceImpl implements SessionService{
                     settingsEntity.setRecording(true);
                     settingsEntity.setRecordingDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
-                if (2 == featureId) {
+                else if (2 == featureId) {
                     settingsEntity.setScreenShare(true);
                 }
-                if (3 == featureId) {
+                else if (3 == featureId) {
                     settingsEntity.setChat(true);
                 }
-                if (4 == featureId) {
+                else if (4 == featureId) {
                     settingsEntity.setPreRecorded(true);
                     String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
                     settingsEntity.setPreRecordedDetails(prdJson);
                 }
-                if (8 == featureId) {
+                else if (5 == featureId && moderator==false) {
+                    settingsEntity.setDisplayTicker(true);
+                    String descJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setDescription(descJson);
+                }
+                else if (6 == featureId && moderator==true) {
+                    settingsEntity.setDisplayTicker(true);
+                    String descJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setDescription(descJson);
+                }
+                else if (7 == featureId && moderator==true) {
+                    settingsEntity.setDescription(description);
+                }
+                else if (8 == featureId) {
                     settingsEntity.setFloatingLayout(true);
                 }
-                if (9 == featureId) {
+                else if (9 == featureId) {
                     settingsEntity.setSupervisor(true);
                 }
-                if (11 == featureId) {
+                else if (10 == featureId) {
+                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setPreRecordedDetails(prdJson);
+                }
+                else if (11 == featureId) {
                     settingsEntity.setDisplayTimer(true);
                 }
-                if (14 == featureId) {
+                else if (12 == featureId) {
                     settingsEntity.setActivitiesButton(true);
                 }
-                if (15 == featureId) {
+                else if (13 == featureId) {
                     settingsEntity.setParticipantsButton(true);
+                }
+                else if (14 == featureId && moderator==true) {
+                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setLandingPage(prdJson);
+                }
+                else if (15 == featureId && moderator==false) {
+                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setLandingPage(prdJson);
                 }
             }
             String settingsJson = gson.toJson(settingsEntity);
             session.setSettings(settingsJson);
-        }else {
-            String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-            session.setSessionKey(sessionKey);
-            if(moderator==false){
-                session.setType("Customer");
-            }else{
-                session.setType("Support");
-            }
-        }
+
         logger.info("Session : {}",session);
         sessionRepository.save(session);
         return session;

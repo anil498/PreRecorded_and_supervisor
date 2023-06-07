@@ -62,7 +62,7 @@ public class UserController {
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -86,7 +86,7 @@ public class UserController {
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -110,7 +110,7 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -129,12 +129,13 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int accountId = commonService.isValidAuthKey(authKey);
+        int accountId = commonService.isValidAuthKeyU(authKey);
         if(accountId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        int authId = commonService.isValidAuthKey(authKey);
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -170,7 +171,7 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -196,7 +197,7 @@ public class UserController {
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!commonService.isValidToken(token)) {
+        if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
