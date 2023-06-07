@@ -2,13 +2,12 @@ package com.VideoPlatform.Utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
 import static com.VideoPlatform.Constant.AllConstants.DATE_FORMATTER;
 
-public class CommonUtils {
+public class TimeUtils {
     public static SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMATTER);
 
     public static Date getDate() {

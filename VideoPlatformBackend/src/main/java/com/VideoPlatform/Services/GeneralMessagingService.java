@@ -33,8 +33,6 @@ import java.util.Optional;
 public class GeneralMessagingService implements MessagingService {
     @Autowired
     RestTemplate restTemplate;
-   // @Autowired
-   // OpenViduService openViduService;
     private static final Logger logger = LoggerFactory.getLogger(GeneralMessagingService.class);
     @Value("${sms.text:-}")
     String smsText;

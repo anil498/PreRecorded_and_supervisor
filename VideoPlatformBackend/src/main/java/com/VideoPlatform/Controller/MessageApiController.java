@@ -5,11 +5,10 @@ import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Models.AppNotification;
 import com.VideoPlatform.Models.SubmitResponse;
 import com.VideoPlatform.Repository.*;
+import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Services.MessagingService;
 import com.VideoPlatform.Services.SessionService;
-import com.VideoPlatform.Utils.CommonUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.VideoPlatform.Utils.TimeUtils;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
@@ -17,8 +16,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
-import com.VideoPlatform.Entity.*;
-import com.VideoPlatform.Repository.*;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -36,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.IntStream;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -75,6 +71,8 @@ public class MessageApiController {
     UserRepository userRepository;
     @Autowired
     SessionService sessionService;
+    @Autowired
+    CommonService commonService;
 
     private static final Logger logger= LoggerFactory.getLogger(MessageApiController.class);
     @PostMapping(value="/Send/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -83,17 +81,17 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(checkAccess("sms",token))){
+        if(!(commonService.checkAccess("sms",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -103,7 +101,7 @@ public class MessageApiController {
 //        logger.info("getHeaders(request).get(\"origin\") = "+getHeaders(request).get("origin"));
 
 //        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
-        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",getHeaders(request));
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
         SessionEntity sessionEntitySupport = sessionService.createSession(null,authKey,token,true);
         SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
 
@@ -144,16 +142,16 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int check = isValidAuthKey(authKey);
+        int check = commonService.isValidAuthKey(authKey);
         if(check == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(checkAccess("whatsapp",token))){
+        if(!(commonService.checkAccess("whatsapp",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -170,7 +168,7 @@ public class MessageApiController {
         String placeHolder= callPrefix+sessionEntityCustomer.getSessionId();
         logger.info("callUrlCustomer : {}",placeHolder);
 
-        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",getHeaders(request));
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
         SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateid);
         responseSms.setCallUrl(placeHolder);
         HashMap<String,String> res=new HashMap<>();
@@ -203,17 +201,17 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(checkAccess("app_notification",token))){
+        if(!(commonService.checkAccess("app_notification",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -240,8 +238,6 @@ public class MessageApiController {
             SessionEntity sessionEntityCustomer = sessionService.createSession(sessionEntitySupport,authKey,token,false);
             String callUrl= callPrefix+sessionEntityCustomer.getSessionId();
             logger.info("callUrl : {}",callUrl);
-
-//            SessionEntity sessionEntity = storeSessions(token,authKey,phoneNumber,userInfo);
 
             HashMap<String, String>map= new HashMap<>();
             map.put("TITLE",title);
@@ -280,53 +276,12 @@ public class MessageApiController {
         }
     }
 
-
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
         if(sessionRepository.findBySessionKey(generatedString) == null)
             return generatedString;
         else givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-        logger.info(generatedString);
         return null;
-    }
-    public int isValidAuthKey(String authKey){
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        if(acc == null)return 0;
-        if(CommonUtils.isExpire(acc.getExpDate())){
-            return 0;
-        }
-        return 1;
-    }
-    public Boolean isValidToken(String token){
-        UserAuthEntity user = userAuthRepository.findByToken(token);
-        if(user == null)return false;
-        if(CommonUtils.isExpire(user.getExpDate()))
-            return false;
-        return true;
-    }
-
-    private boolean checkAccess(String systemName,String token){
-        UserAuthEntity user = userAuthRepository.findByToken(token);
-        int userId = user.getUserId();
-        UserEntity u = userRepository.findByUserId(userId);
-        Integer[] accessId = u.getAccessId();
-        List<String> accessEntities = new ArrayList<>();
-        for (int i = 0; i < accessId.length; i++) {
-            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
-            accessEntities.add(accessEntity.getSystemName());
-        }
-        if(accessEntities.contains(systemName))
-            return true;
-        return false;
-    }
-    private Map<String, String> getHeaders(HttpServletRequest request) {
-        Enumeration<String> headers = request.getHeaderNames();
-        Map<String, String> headerMap = new HashMap<>();
-        while (headers.hasMoreElements()) {
-            String header = headers.nextElement();
-            headerMap.put(header, request.getHeader(header));
-        }
-        return headerMap;
     }
 
 }

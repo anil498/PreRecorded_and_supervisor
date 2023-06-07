@@ -2,10 +2,7 @@ package com.VideoPlatform.Services;
 
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
-import com.VideoPlatform.Utils.CommonUtils;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.VideoPlatform.Utils.TimeUtils;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
@@ -14,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -40,11 +36,10 @@ public class SessionServiceImpl implements SessionService{
 
     @Override
     public SessionEntity createSession(SessionEntity session,String authKey, String token,Boolean moderator) {
-        //logger.info("User details {}",session.toString());
         if(session==null) {
             session=new SessionEntity();
-            Date creation = CommonUtils.getDate();
-            Date newDateTime = CommonUtils.increaseDateTime(creation);
+            Date creation = TimeUtils.getDate();
+            Date newDateTime = TimeUtils.increaseDateTime(creation);
             logger.info("Session Localdatetime = {}", newDateTime);
 
             UserAuthEntity userAuth = userAuthRepository.findByToken(token);
@@ -53,18 +48,6 @@ public class SessionServiceImpl implements SessionService{
             UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
 
             Gson gson = new Gson();
-//        Map<String,String> userData=new HashMap<>();
-//        userData.put("user_id",String.valueOf(userAuth.getUserId()));
-//        userData.put("max_active_sessions", userEntity.getSession().get("max_duration").toString());
-//        Gson gson=new Gson();
-//        String userJson =gson.toJson(userData);
-//        logger.info(userJson);
-//
-//        Map<String,String> accountData=new HashMap<>();
-//        accountData.put("account_id",String.valueOf(account.getAccountId()));
-//        accountData.put("max_active_sessions", account.getSession().get("max_active_sessions").toString());
-//        String accountJson =gson.toJson(accountData);
-//        logger.info(accountJson);
             String sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
             String sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
             if(moderator==false){
@@ -83,7 +66,6 @@ public class SessionServiceImpl implements SessionService{
             session.setExpDate(newDateTime);
             session.setParticipantName(userEntity.getFname());
             session.setTotalParticipants(Integer.valueOf(account.getSession().get("max_participants").toString()));
-
 
             SettingsEntity settingsEntity = new SettingsEntity();
 
@@ -130,7 +112,6 @@ public class SessionServiceImpl implements SessionService{
             }else{
                 session.setType("Support");
             }
-
         }
         logger.info("Session : {}",session);
         sessionRepository.save(session);
@@ -147,18 +128,6 @@ public class SessionServiceImpl implements SessionService{
         return sessionRepository.findBySessionKey(key);
     }
 
-    private Object featureData(Integer userId) throws JsonProcessingException {
-        UserEntity user = userRepository.findByUserId(userId);
-        Integer[] featuresId = user.getFeatures();
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<FeatureEntity> featureEntities = new ArrayList<>();
-
-        for (int i = 0; i < featuresId.length; i++) {
-            FeatureEntity featureEntity = featureRepository.findByFeatureId(featuresId[i]);
-            featureEntities.add(featureEntity);
-        }
-        return objectMapper.convertValue(featureEntities, JsonNode.class);
-    }
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
         logger.info(generatedString);

@@ -2,7 +2,7 @@ package com.VideoPlatform.Controller;
 
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
-import com.VideoPlatform.Utils.CommonUtils;
+import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Services.UserServiceImpl;
 
@@ -41,6 +41,8 @@ public class UserController {
     AccountRepository accountRepository;
     @Autowired
     private AccessRepository accessRepository;
+    @Autowired
+    private CommonService commonService;
 
     @Value("${secret.key}")
     private String secret;
@@ -50,22 +52,22 @@ public class UserController {
     @GetMapping("/GetAll")
 
     public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request){
-        logger.info(getHeaders(request).toString());
+        logger.info(commonService.getHeaders(request).toString());
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!(checkAccess("my_users",token))){
+        if(!(commonService.checkAccess("my_users",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -78,18 +80,18 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        if(!(checkAccess("my_users",token))){
+        if(!(commonService.checkAccess("my_users",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -103,16 +105,16 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(checkAccess("my_users",token))){
+        if(!(commonService.checkAccess("my_users",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.FORBIDDEN);
         }
@@ -127,16 +129,16 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int accountId = isValidAuthKey(authKey);
+        int accountId = commonService.isValidAuthKey(authKey);
         if(accountId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(checkAccess("user_creation",token))){
+        if(!(commonService.checkAccess("user_creation",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -163,16 +165,16 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(checkAccess("user_update",token))){
+        if(!(commonService.checkAccess("user_update",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -189,16 +191,16 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!isValidToken(token)) {
+        if(!commonService.isValidToken(token)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(checkAccess("user_delete",token))){
+        if(!(commonService.checkAccess("user_delete",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -214,7 +216,7 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> params,HttpServletRequest request) {
         String authKey = request.getHeader("Authorization");
-        int authId = isValidAuthKey(authKey);
+        int authId = commonService.isValidAuthKey(authKey);
         logger.info("Auth Id .. " + authId);
         if (authId == 0) {
             return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
@@ -226,50 +228,5 @@ public class UserController {
         return userService.loginService(loginId, password, authId);
     }
 
-    public int isValidAuthKey(String authKey){
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        if(acc == null) return 0;
-        String key = (acc.getAuthKey());
-        if(CommonUtils.isExpire(acc.getExpDate())){
-            return 0;
-        }
-        int authId = acc.getAuthId();
-        return authId;
-    }
-    public Boolean isValidToken(String token){
-        UserAuthEntity user = userAuthRepository.findByToken(token);
-        if(user == null)return false;
-        logger.info("Data by authId.."+user);
-
-        if(CommonUtils.isExpire(user.getExpDate()))
-            return false;
-        return true;
-    }
-
-
-   private Map<String, String> getHeaders(HttpServletRequest request) {
-       Enumeration<String> headers = request.getHeaderNames();
-       Map<String, String> headerMap = new HashMap<>();
-       while (headers.hasMoreElements()) {
-           String header = headers.nextElement();
-           headerMap.put(header, request.getHeader(header));
-       }
-       return headerMap;
-   }
-
-    private boolean checkAccess(String systemName,String token){
-        UserAuthEntity user = userAuthRepository.findByToken(token);
-        int userId = user.getUserId();
-        UserEntity u = userRepository.findByUserId(userId);
-        Integer[] accessId = u.getAccessId();
-        List<String> accessEntities = new ArrayList<>();
-        for (int i = 0; i < accessId.length; i++) {
-            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
-            accessEntities.add(accessEntity.getSystemName());
-        }
-        if(accessEntities.contains(systemName))
-            return true;
-        return false;
-    }
 }
 

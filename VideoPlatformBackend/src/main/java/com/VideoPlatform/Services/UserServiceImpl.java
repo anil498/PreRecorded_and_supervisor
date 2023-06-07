@@ -3,7 +3,7 @@ package com.VideoPlatform.Services;
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 
-import com.VideoPlatform.Utils.CommonUtils;
+import com.VideoPlatform.Utils.TimeUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService{
         logger.info("User details {}",user.toString());
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         UserAuthEntity u = userAuthRepository.findByToken(token);
-        Date creation = CommonUtils.getDate();
+        Date creation = TimeUtils.getDate();
         user.setAccountId(acc.getAccountId());
         user.setCreationDate(creation);
         user.setParentId(u.getUserId());
@@ -148,8 +148,8 @@ public class UserServiceImpl implements UserService{
 
             if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
                 String token1 = generateToken(userId,"UR");
-                Date now = CommonUtils.getDate();
-                Date newDateTime = CommonUtils.increaseDateTime(now);
+                Date now = TimeUtils.getDate();
+                Date newDateTime = TimeUtils.increaseDateTime(now);
                 UserAuthEntity ua = userAuthRepository.findByUId(userId);
                 String lastLogin = LocalDateTime.now().format(formatter);
                 logger.info("LastLogin2 : {}",lastLogin);
@@ -192,7 +192,7 @@ public class UserServiceImpl implements UserService{
     public Boolean isValidTokenLogin(int id){
 
         UserAuthEntity user = userAuthRepository.findByUId(id);
-        if(user == null || CommonUtils.isExpire(user.getExpDate()) ) {
+        if(user == null || TimeUtils.isExpire(user.getExpDate()) ) {
             return false;
         }
         return true;
