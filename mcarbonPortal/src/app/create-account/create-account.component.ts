@@ -72,7 +72,7 @@ export class CreateAccountComponent implements OnInit {
 
   selectedFeatures: number[] = [];
 
-  selectedFeaturesMeta = {};
+  selectedFeaturesMeta: { [key: string]: any } = {};
 
   constructor(
     private router: Router,
@@ -84,6 +84,42 @@ export class CreateAccountComponent implements OnInit {
     this.loginResponse = this.restService.getToken();
   }
 
+  onFileInputChange(event: any, meta: any, featureId: number): void {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+      const reader = new FileReader();
+      //reader.readAsArrayBuffer(file);
+      console.warn(file);
+
+      reader.onloadend = () => {
+        console.warn(reader.result);
+        const blob = new Blob([reader.result], { type: file.type });
+        console.warn(blob);
+        this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
+        console.warn(this.selectedFeaturesMeta[featureId]);
+      };
+      // reader.onload = () => {
+      //   console.warn([reader.result]);
+      //   const blob = new Blob([reader.result]);
+      //   console.warn(blob);
+      //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
+      //   console.warn(this.selectedFeaturesMeta[featureId]);
+      // };
+      reader.readAsArrayBuffer(file);
+    }
+  }
+
+  toggleFeatureSelection(featureId: number): void {
+    const index = this.selectedFeatures.indexOf(featureId);
+    if (index > -1) {
+      this.selectedFeatures.splice(index, 1);
+      delete this.selectedFeaturesMeta[featureId.toString()];
+    } else {
+      this.selectedFeatures.push(featureId);
+      this.selectedFeaturesMeta[featureId.toString()] = {};
+    }
+  }
   updateSelectedFeaturesMeta(featureId, metaValue) {
     if (!this.selectedFeaturesMeta[featureId]) {
       this.selectedFeaturesMeta[featureId] = {};
@@ -93,18 +129,20 @@ export class CreateAccountComponent implements OnInit {
 
   setMetaValue(featureId, metaKey, metaValue) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
+    console.warn(this.selectedFeaturesMeta[featureId]);
   }
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
       this.selectedFeatures.push(feature.featureId);
-      feature.showMetaList = true;
+      feature.showMeta = true;
       feature.selectedMetaList = Object.keys(feature.metaList).map((key) => {
         return { key: key, value: feature.metaList[key] };
       });
+      console.log(feature.selectedMetaList);
     } else {
       const index = this.selectedFeatures.indexOf(feature.featureId);
       this.selectedFeatures.splice(index, 1);
-      feature.showMetaList = false;
+      feature.showMeta = false;
       feature.selectedMetaList = [];
     }
   }
@@ -241,7 +279,9 @@ export class CreateAccountComponent implements OnInit {
     this.login_id = this.userForm.value.login_id;
 
     this.password = this.userForm.value.password;
-
+    console.log("Access ID: " + this.selectedAccessId);
+    console.log("Feature ID: " + this.selectedFeatures);
+    console.log("FeatureMetas " + `${this.selectedFeaturesMeta}`);
     if (
       this.name == null ||
       this.max_user == null ||
@@ -264,7 +304,6 @@ export class CreateAccountComponent implements OnInit {
       console.warn(this.emptyError);
       return;
     }
-    console.warn(this.selectedAccessId);
 
     let response: any;
 

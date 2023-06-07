@@ -63,6 +63,42 @@ export class FormDialogComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
+  onFileInputChange(event: any, meta: any, featureId: number): void {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+      const reader = new FileReader();
+      //reader.readAsArrayBuffer(file);
+      console.warn(file);
+
+      reader.onloadend = () => {
+        console.warn(reader.result);
+        const blob = new Blob([reader.result], { type: file.type });
+        console.warn(blob);
+        this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
+        console.warn(this.selectedFeaturesMeta[featureId]);
+      };
+      // reader.onload = () => {
+      //   console.warn([reader.result]);
+      //   const blob = new Blob([reader.result]);
+      //   console.warn(blob);
+      //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
+      //   console.warn(this.selectedFeaturesMeta[featureId]);
+      // };
+      reader.readAsArrayBuffer(file);
+    }
+  }
+
+  toggleFeatureSelection(featureId: number): void {
+    const index = this.selectedFeatures.indexOf(featureId);
+    if (index > -1) {
+      this.selectedFeatures.splice(index, 1);
+      delete this.selectedFeaturesMeta[featureId.toString()];
+    } else {
+      this.selectedFeatures.push(featureId);
+      this.selectedFeaturesMeta[featureId.toString()] = {};
+    }
+  }
   updateSelectedFeaturesMeta(featureId, metaValue) {
     if (!this.selectedFeaturesMeta[featureId]) {
       this.selectedFeaturesMeta[featureId] = {};
@@ -72,18 +108,20 @@ export class FormDialogComponent implements OnInit {
 
   setMetaValue(featureId, metaKey, metaValue) {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
+    console.warn(this.selectedFeaturesMeta[featureId]);
   }
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
-      this.selectedFeatures.push(feature.feature_id);
-      feature.showMetaList = true;
+      this.selectedFeatures.push(feature.featureId);
+      feature.showMeta = true;
       feature.selectedMetaList = Object.keys(feature.metaList).map((key) => {
         return { key: key, value: feature.metaList[key] };
       });
+      console.log(feature.selectedMetaList);
     } else {
       const index = this.selectedFeatures.indexOf(feature.featureId);
       this.selectedFeatures.splice(index, 1);
-      feature.showMetaList = false;
+      feature.showMeta = false;
       feature.selectedMetaList = [];
     }
   }

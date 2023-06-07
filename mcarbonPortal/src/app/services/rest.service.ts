@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { response } from "express";
 import { catchError, lastValueFrom, Subject } from "rxjs";
 import { environment } from "environments/environment.prod";
 @Injectable({
@@ -11,7 +10,7 @@ export class RestService {
   private dialogClosedSource = new Subject<boolean>();
   public dialogClosed$ = this.dialogClosedSource.asObservable();
 
-  private authKey = "AC051vwuGeoU75L";
+  private authKey:string;
   private _response: any;
   private _token: string;
   private _userId: string;
@@ -27,6 +26,9 @@ export class RestService {
     this.baseHref = environment.url;
     //this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
     this.getHeaders();
+    this.http.get<any>("assets/json/headers.json").subscribe((response) =>{
+      this.authKey = response.authKey;
+    })
   }
 
   getHeaders() {
@@ -65,6 +67,7 @@ export class RestService {
 
   private loginRequest(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "/" + path);
+    console.warn(this.authKey);
     console.warn(body);
     try {
       const headers = {
@@ -492,7 +495,7 @@ export class RestService {
   async sendSMS(sessionId: string, msisdn: string, callUrl: string) {
     console.log("sms Sent");
     try {
-      return this.callRequest(sessionId, "session/Send/SMS", {
+      return this.callRequest(sessionId, "Session/Send/SMS", {
         msisdn,
       });
     } catch (error) {
@@ -509,7 +512,7 @@ export class RestService {
   ) {
     console.warn("Whatsapp Message Sent");
     try {
-      return this.callRequest(sessionId, "session/Send/Whatsapp", {
+      return this.callRequest(sessionId, "Session/Send/Whatsapp", {
         msisdn,
         from,
         type,
@@ -528,7 +531,7 @@ export class RestService {
   ) {
     console.warn("Notification Sent");
     try {
-      return this.callRequest(sessionId, "session/Send/AppNotification", {
+      return this.callRequest(sessionId, "Session/Send/AppNotification", {
         msisdn,
         title,
         body,
