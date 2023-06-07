@@ -1,7 +1,7 @@
 <mat-toolbar id="toolbar" role="heading" fxLayout fxLayoutAlign="center" fxLayoutGap="40px">
 	<div fxFlex="20%" fxLayoutAlign="start center" id="info-container" *ngIf="screenSize !== 'xs'">
 		<div>
-			<img *ngIf="!isMinimal && showLogo" id="branding-logo" [src]="getLogoPath()" ovLogo />
+			<img *ngIf="!isMinimal && showLogo" id="branding-logo" [src]="showLogoValue" ovLogo />
 			<div id="session-info-container" [class.colapsed]="recordingStatus === _recordingStatus.STARTED">
 				<span id="session-name" *ngIf="!isMinimal && session && session.sessionId && showSessionName">{{ sessionName }}</span>
 				<div *ngIf="recordingStatus === _recordingStatus.STARTED" id="recording-tag" class="recording-tag">
@@ -212,7 +212,7 @@
 	</div>
 	<div fxFlex="20%" fxFlexOrder="3" fxLayoutAlign="end center" id="menu-buttons-container">
 		<div *ngIf="showSessionTimer" id="recording-tag" class="recording-tag">
-			{{ sessionTime | date: 'H:mm:ss' }}
+			{{ sessionTime.getTime() < 3600000 ? (sessionTime | date: 'mm:ss') : (sessionTime | date: 'H:mm:ss') }}
 		</div>
 		<!-- Default activities button -->
 		<button

@@ -1012,3 +1012,49 @@ export class ToolbarDisplayLogoDirective implements AfterViewInit, OnDestroy {
 		}
 	}
 }
+/**
+ * The **displayLogoValue** directive show the branding logo.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarDisplayLogoValue]="false"></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarDisplayLogoValue]'
+})
+export class ToolbarDisplayLogoValueDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 * */
+
+@Input() set toolbarDisplayLogoValue(value: string) {
+	this.ovLogoValue = value;
+	this.update(this.ovLogoValue);
+}
+private ovLogoValue: string;
+
+constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+ngAfterViewInit() {
+	this.update(this.ovLogoValue);
+}
+
+ngOnDestroy(): void {
+	this.clear();
+}
+private clear() {
+	this.ovLogoValue = '';
+	this.update('');
+}
+
+private update(value: string) {
+	if (this.libService.displayLogoValue.getValue() !== value) {
+		console.log("logo value",value)
+		this.libService.displayLogoValue.next(value);
+	}
+}
+}
