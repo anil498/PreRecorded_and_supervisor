@@ -494,7 +494,7 @@ export class RestService {
   async sendSMS(msisdn: string,getLink: any) {
     console.log("sms Sent");
     try {
-      return this.callRequest("CreateAndSendLink/SMS", {
+      return this.callRequest("Session/CreateAndSendLink/SMS", {
         msisdn,
         getLink
       });
@@ -511,7 +511,7 @@ export class RestService {
   ) {
     console.warn("Whatsapp Message Sent");
     try {
-      return this.callRequest("CreateAndSendLink/Whatsapp", {
+      return this.callRequest("Session/CreateAndSendLink/WhatsApp", {
         msisdn,
         from,
         type,
@@ -531,7 +531,7 @@ export class RestService {
   ) {
     console.warn("Notification Sent");
     try {
-      return this.callRequest("CreateAndSendLink/AppNotification", {
+      return this.callRequest("Session/CreateAndSendLink/AppNotification", {
         msisdn,
         title,
         body,

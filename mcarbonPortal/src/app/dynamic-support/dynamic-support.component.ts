@@ -88,7 +88,7 @@ export class DynamicSupportComponent implements OnInit {
     const msisdn = this.userForm.value.msisdn;
     if (msisdn == null || msisdn == "") {
       this.phoneError = true;
-      this.timeOut(30000);
+      this.timeOut(3000);
       return;
     }
     console.log("Form Submitted with value: ", this.userForm.value.msisdn);
@@ -105,12 +105,12 @@ export class DynamicSupportComponent implements OnInit {
     const getLink = "1";
     if (type == "sms") {
       try {
-        
         for (let i = 0; i < numbers.length; i++) {
           messageResponse = await this.restService.sendSMS(numbers[i], getLink);
         }
         console.warn(messageResponse);
-        if (messageResponse.statusCode == 200) {
+        if (messageResponse.status_code == 200) {
+          console.log(messageResponse.link);
           this.goTo(messageResponse.link);
         } else {
         }
@@ -119,7 +119,7 @@ export class DynamicSupportComponent implements OnInit {
         this.state = error.error.error;
         this.failedMessage = true;
         this.failedMessageShow = "";
-        this.timeOut(30000);
+        this.timeOut(3000);
         return;
       }
       this.failedMessage = false;
@@ -130,7 +130,7 @@ export class DynamicSupportComponent implements OnInit {
       } else {
         this.state = messageResponse.description;
         this.showDescription = true;
-        this.timeOut(30000);
+        this.timeOut(3000);
       }
     } else if (type == "whatsapp") {
       const type = "template";
@@ -145,7 +145,8 @@ export class DynamicSupportComponent implements OnInit {
           getLink
         );
 
-        if (messageResponse.statusCode == 200) {
+        if (messageResponse.status_code == 200) {
+          console.log(messageResponse.link);
           this.goTo(messageResponse.link);
         } else {
         }
@@ -153,7 +154,7 @@ export class DynamicSupportComponent implements OnInit {
         console.log(error);
         this.state = error.error.error;
         this.failedMessage = true;
-        this.timeOut(30000);
+        this.timeOut(3000);
         return;
       }
       this.failedMessage = false;
@@ -164,7 +165,7 @@ export class DynamicSupportComponent implements OnInit {
         this.state = messageResponse.message;
         this.showDescription = true;
         this.failedMessageShow = "";
-        this.timeOut(30000);
+        this.timeOut(3000);
         console.warn(messageResponse);
         this.goTo(messageResponse.callurl);
       }
@@ -178,7 +179,7 @@ export class DynamicSupportComponent implements OnInit {
             getLink
           );
         }
-        if (messageResponse.statusCode == 200) {
+        if (messageResponse.status_code == 200) {
           this.goTo(messageResponse.link);
         } else {
         }
@@ -188,7 +189,7 @@ export class DynamicSupportComponent implements OnInit {
         console.log(error);
         this.state = error.error.error;
         this.failedMessage = true;
-        this.timeOut(30000);
+        this.timeOut(3000);
         return;
       }
       this.failedMessage = false;
@@ -198,7 +199,7 @@ export class DynamicSupportComponent implements OnInit {
     //console.log("Message Sent: ", messageResponse);
     this.callUrl = messageResponse.callurl;
     this.failedMessageShow = " Please find video call link:- " + this.callUrl;
-    this.timeOut(30000);
+    this.timeOut(3000);
   }
 
   private timeOut(time: number) {

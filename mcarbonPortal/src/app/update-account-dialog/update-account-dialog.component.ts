@@ -203,7 +203,12 @@ export class UpdateAccountDialogComponent implements OnInit {
             break;
           }
         }
-        if (flag === true) this.featuresData[i].status = 0;
+        if (flag === true) {
+          this.featuresData[i].status = 0;
+        }
+        else{
+        
+        }
       }
     }
   }
