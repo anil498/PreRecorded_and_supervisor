@@ -37,34 +37,25 @@ public class AccountController {
 
     @Autowired
     private AccountServiceImpl accountService;
-
     @Autowired
     private AccountRepository accountRepository;
-
     @Autowired
     private AccountAuthRepository accountAuthRepository;
-
     @Autowired
     private UserServiceImpl userService;
-
     @Autowired
     private AccessRepository accessRepository;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private UserAuthRepository userAuthRepository;
-
     @Autowired
     private PasswordEncoder passwordEncoder;
-
     @Autowired
     private CommonService commonService;
 
     @Value("${secret.key}")
     private String secret;
-
     @Value("${access.time}")
     private int accessTime;
 
@@ -88,7 +79,6 @@ public class AccountController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
@@ -103,7 +93,6 @@ public class AccountController {
             logger.info("Unauthorised user, invalid authorization key !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
         if(!commonService.isValidToken(token,authId)) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
@@ -112,7 +101,6 @@ public class AccountController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
 
@@ -268,6 +256,5 @@ public class AccountController {
             return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
         return ok(accountService.deleteAccount(id));
-
     }
 }

@@ -48,7 +48,6 @@ public class MessageApiController {
     @Value(("${support.suffix}"))
     private String supportSuffix;
 
-
     @Autowired
     MessagingService messagingService;
     @Autowired
@@ -119,7 +118,7 @@ public class MessageApiController {
         responseSms.setCallUrl(callUrl);
 
         HashMap<String,String> res=new HashMap<>();
-        String returnUrl = callUrl+sessionEntitySupport.getSessionKey();
+        String returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
             if(getLink.equals("0")){
@@ -138,7 +137,6 @@ public class MessageApiController {
                 res.put("customer_link",callUrl);
             }
         }
-
         logger.info(String.valueOf(responseSms));
         return ResponseEntity.ok(res);
     }
@@ -165,7 +163,7 @@ public class MessageApiController {
         String from= (String) params.get("from");
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
-        String templateid= (String) params.get("templateId");
+        String templateId= (String) params.get("templateId");
         String description=null;
         if(params.containsKey("description")){
             description= String.valueOf(params.get("description"));
@@ -180,10 +178,10 @@ public class MessageApiController {
         logger.info("callUrlCustomer : {}",placeHolder);
 
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
-        SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateid);
+        SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateId);
         responseSms.setCallUrl(placeHolder);
         HashMap<String,String> res=new HashMap<>();
-        String returnUrl = placeHolder+sessionEntitySupport.getSessionKey();
+        String returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
             if(getLink.equals("0")){
@@ -263,9 +261,8 @@ public class MessageApiController {
                     .putAllData(map)
                     .build();
 
-            // Send notification message
             HashMap<String,String> res=new HashMap<>();
-            String returnUrl = callUrl+sessionEntitySupport.getSessionKey();
+            String returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
             if(params.containsKey("getLink")){
                 String getLink = String.valueOf(params.get("getLink"));
                 if(getLink.equals("0")){
