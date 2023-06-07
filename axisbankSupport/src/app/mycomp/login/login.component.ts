@@ -377,7 +377,7 @@ getData() {
 
       
       console.log('messageresponse callurl is --->'+messageResponse.callurl);
-      this.goTo(messageResponse.callurl);
+      this.goTo(messageResponse.link);
       //this.goTo(sessionId); //this.goTo("/call", sessionId);
     }
 
@@ -445,7 +445,7 @@ getData() {
       console.log('messageresponse callurl is --->'+messageResponse.callurl);
 
       console.warn(messageResponse);
-      this.goTo(messageResponse.callurl);
+      this.goTo(messageResponse.link);
 
       //this.goTo(sessionId); //this.goTo("/call", sessionId);
     }
@@ -492,7 +492,7 @@ getData() {
       console.log('app messageResponse.status not failed');
       console.log('messageresponse is --->'+messageResponse);
       console.log('messageresponse callurl is --->'+messageResponse.callurl);
-      this.goTo(messageResponse.callurl);
+      this.goTo(messageResponse.link);
       //this.goTo(sessionId); //this.goTo("/call", sessionId);
     }
     //this.goTo('axis_session');
