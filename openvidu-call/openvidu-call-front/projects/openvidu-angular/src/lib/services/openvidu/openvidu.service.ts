@@ -49,7 +49,7 @@ export class OpenViduService {
 	private sessionTimerSub: Subscription;
 	showSessionTimer:boolean;
 
-	private sessionObsTime: Date;
+	private sessionTime: Date;
 	private sessionTimeInterval: NodeJS.Timer;
 
 	/**
@@ -226,7 +226,8 @@ export class OpenViduService {
 					this.showSessionTimer = value;
 				});
 				if(this.showSessionTimer){
-				this.startSessionTime()
+					console.log("TImes",this.showSessionTimer)
+					this.startSessionTime()
 				}
 			} else if (session === this.screenSession) {
 				this.log.d('Connecting screen session');
@@ -429,8 +430,11 @@ export class OpenViduService {
 			// I only have the camera published
 			const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
 			const userMedia=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
+			console.log(userMedia.getAudioTracks())
 			const displayMediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
+			console.log(displayMediaStream.getAudioTracks().length)
 			const hasAudio = displayMediaStream.getAudioTracks().length==0?false:true;
+			console.log(hasAudio)
 			const properties: PublisherProperties = {
 				videoSource: displayMediaStream.getVideoTracks()[0],
 				audioSource: displayMediaStream.getAudioTracks()[0],
@@ -709,13 +713,16 @@ export class OpenViduService {
 		try {
 			if (this.participantService.isMyVideoPublishActive()) {
 				// Unpublishing video 
+				console.log("unpublish")
 				this.participantService.disablePublishVideoStream();
 				this.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
+				console.log("publish")
 				// Create a custom video element with the video and audio streams
 				this.videoElement = document.createElement('video');
 				// videoElement.src = 'assets/video/music.mp4';
 				this.videoElement.src = './assets/video/1.mp4';
+				console.log('./assets/video/1.mp4');
 				this.videoElement.controls = true;
 				this.videoElement.setAttribute('controls', true.toString()); // or use setAttribute
 
@@ -741,7 +748,9 @@ export class OpenViduService {
 					const canvasContext = canvas.getContext('2d');
 					const videoStream = canvas.captureStream();
 					const audioTrack = audioDestination.stream.getAudioTracks()[0];
-				
+					// this.duration = videoElement.duration;
+
+					console.log("Audio is : " + audioTrack);
 					const properties: PublisherProperties = {
 						videoSource: videoStream.getVideoTracks()[0],
 						audioSource: audioTrack,
@@ -770,6 +779,7 @@ export class OpenViduService {
 	playVideo(){
 		try{
 			this.log.d("Playing")
+			console.log(this.videoElement)
 			this.isVideoPlaying=!this.isVideoPlaying
 		}catch(error){
 			this.log.d("Getting error while playing video",error)
@@ -778,18 +788,27 @@ export class OpenViduService {
 	pauseVideo(){
 		try{
 			this.log.d("Pausing")
+			console.log(this.videoElement)
 			this.isVideoPlaying=!this.isVideoPlaying
 		}catch(error){
 			this.log.d("Getting error while pausing video",error)
 		}
 	}
+	startSessionTimer() {
+		console.log("sessionTIme1")
+		this.startSessionTime();
+		this.sessionTimerStatus.next({time: this.sessionTime });
+	}
 	private startSessionTime() {
-		this.sessionObsTime = new Date();
-		this.sessionObsTime.setHours(0, 0, 0, 0);
+		
+		console.log("sessionTIme2",this.sessionTime)
+		this.sessionTime = new Date();
+		this.sessionTime.setHours(0, 0, 0, 0);
 		this.sessionTimeInterval = setInterval(() => {
-			this.sessionObsTime.setSeconds(this.sessionObsTime.getSeconds() + 1);
-			this.sessionObsTime = new Date(this.sessionObsTime.getTime());
-			this.sessionTimerStatus.next({ time: this.sessionObsTime });
+			this.sessionTime.setSeconds(this.sessionTime.getSeconds() + 60);
+			this.sessionTime = new Date(this.sessionTime.getTime());
+			this.sessionTimerStatus.next({ time: this.sessionTime });
 		}, 1000);
+		console.log("sessionTIme3",this.sessionTime)
 	}
 }

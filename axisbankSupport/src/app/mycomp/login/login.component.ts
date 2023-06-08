@@ -323,6 +323,7 @@ getData() {
     const sessionId = 'anilsession';
     const callUrl = '/customers/#/' + sessionId;
     const msisdn = phone_no;
+    const getLink="1";
     let messageResponse;
 
     ///-------------------------
@@ -333,7 +334,8 @@ getData() {
 
           phone_no,
 
-          callUrl
+          callUrl,
+          getLink
         );
       
 
@@ -375,7 +377,7 @@ getData() {
 
       
       console.log('messageresponse callurl is --->'+messageResponse.callurl);
-      this.goTo(messageResponse.callurl);
+      this.goTo(messageResponse.link);
       //this.goTo(sessionId); //this.goTo("/call", sessionId);
     }
 
@@ -394,6 +396,7 @@ getData() {
     const callUrl = '/customers/#/' + sessionId;
     const msisdn = phone_no;
     let messageResponse;
+    const getLink='1';
 
     try {
       messageResponse = await this.restservice.sendWhatsapp(
@@ -403,7 +406,9 @@ getData() {
         from,
         type,
         templateId,
-        userdetils
+        userdetils,
+        getLink
+     
       );
     } catch (error) {
       console.log(error);
@@ -440,7 +445,7 @@ getData() {
       console.log('messageresponse callurl is --->'+messageResponse.callurl);
 
       console.warn(messageResponse);
-      this.goTo(messageResponse.callurl);
+      this.goTo(messageResponse.link);
 
       //this.goTo(sessionId); //this.goTo("/call", sessionId);
     }
@@ -449,6 +454,7 @@ getData() {
   } //SendByWhatsApp close
 
   async SendByApp(phone_no: string) {
+    const getLink="1";
     console.log(' call api for app by no' + phone_no);
     let messageResponse;
     //for app
@@ -457,7 +463,8 @@ getData() {
         'Please join the video call',
         '',
         'axis_session',
-        phone_no
+        phone_no,
+        getLink
       );
     } catch (error) {
       //this.goTo("/call", sessionId);
@@ -485,7 +492,7 @@ getData() {
       console.log('app messageResponse.status not failed');
       console.log('messageresponse is --->'+messageResponse);
       console.log('messageresponse callurl is --->'+messageResponse.callurl);
-      this.goTo(messageResponse.callurl);
+      this.goTo(messageResponse.link);
       //this.goTo(sessionId); //this.goTo("/call", sessionId);
     }
     //this.goTo('axis_session');

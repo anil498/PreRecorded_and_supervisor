@@ -85,6 +85,10 @@ export class OpenViduAngularConfigService {
 
 	displayLogo = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayLogoObs: Observable<boolean>;
+
+	displayLogoValue = <BehaviorSubject<string>>new BehaviorSubject('');
+	displayLogoValueObs: Observable<string>;
+
 	displayParticipantName = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayParticipantNameObs: Observable<boolean>;
 	displayAudioDetection = <BehaviorSubject<boolean>>new BehaviorSubject(true);
@@ -136,6 +140,7 @@ export class OpenViduAngularConfigService {
 		this.displayTimerObs = this.displayTimer.asObservable();
 		this.displayTickerObs = this.displayTicker.asObservable();
 		this.displayLogoObs = this.displayLogo.asObservable();
+		this.displayLogoValueObs = this.displayLogoValue.asObservable();
 		this.recordingButtonObs = this.recordingButton.asObservable();
 		this.toolbarSettingsButtonObs = this.toolbarSettingsButton.asObservable();
 		this.captionsButtonObs = this.captionsButton.asObservable();

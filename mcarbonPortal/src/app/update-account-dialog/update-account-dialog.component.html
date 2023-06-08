@@ -251,7 +251,10 @@
 
               <div
                 class="col-md-5"
-                *ngIf="selectedFeatures.includes(feature.featureId) || isCheckFeature(feature)"
+                *ngIf="
+                  selectedFeatures.includes(feature.featureId) ||
+                  isCheckFeature(feature)
+                "
               >
                 <div *ngFor="let meta of feature.metaList">
                   <ng-container [ngSwitch]="meta.type">
@@ -282,6 +285,7 @@
 
                     <mat-form-field *ngSwitchCase="'text'">
                       <input
+                        value="{{ selectedFeaturesMeta[featureId] }}"
                         matInput
                         #metaValue
                         type="text"
