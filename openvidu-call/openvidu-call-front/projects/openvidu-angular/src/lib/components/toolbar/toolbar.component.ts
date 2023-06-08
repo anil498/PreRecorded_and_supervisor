@@ -820,7 +820,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.sessionTimerSubscription = this.openviduService.sessionTimerObs
 		.pipe(skip(1))	
 		.subscribe((ev: {time?: Date }) => {
-			console.log("SessionTImer",ev)
 			if (ev.time) {
 				this.sessionTime = ev.time;
 			}
