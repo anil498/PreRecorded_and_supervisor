@@ -798,7 +798,7 @@ export class OpenViduService {
 		this.sessionTime = new Date();
 		this.sessionTime.setHours(0, 0, 0, 0);
 		this.sessionTimeInterval = setInterval(() => {
-			this.sessionTime.setSeconds(this.sessionTime.getSeconds()+60);
+			this.sessionTime.setSeconds(this.sessionTime.getSeconds()+1);
 			this.sessionTime = new Date(this.sessionTime.getTime());
 			this.sessionTimerStatus.next({ time: this.sessionTime });
 		}, 1000);
