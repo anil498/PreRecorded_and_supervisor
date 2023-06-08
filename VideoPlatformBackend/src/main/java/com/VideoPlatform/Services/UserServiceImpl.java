@@ -115,16 +115,15 @@ public class UserServiceImpl implements UserService{
 
         logger.info("user "+user1);
         int userId = user1.getUserId();
-        UserAuthEntity user = userAuthRepository.findByUId(userId);
-        int auth = user.getAuthId();
-        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthId(auth);
-        logger.info("userId "+userId);
+
         if (!(passwordEncoder.matches(password,user1.getPassword()))) {
             logger.info("Inside loginid password check !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(isValidTokenLogin(userId)){
-
+            UserAuthEntity user = userAuthRepository.findByUId(userId);
+            int auth = user.getAuthId();
+            AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthId(auth);
             HashMap<String,Object> response=new HashMap<>();
             response.put("token",user.getToken());
             response.put("auth_key",accountAuthEntity.getAuthKey());
@@ -142,6 +141,7 @@ public class UserServiceImpl implements UserService{
         else {
 
             if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
+
                 String token1 = generateToken(userId,"UR");
                 Date now = TimeUtils.getDate();
                 Date newDateTime = TimeUtils.increaseDateTime(now);
@@ -169,6 +169,8 @@ public class UserServiceImpl implements UserService{
 
                 userAuthRepository.save(ua);
 
+                int auth = ua.getAuthId();
+                AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthId(auth);
                 HashMap<String,Object> res = new HashMap<>();
                 res.put("token",token1);
                 res.put("auth_key",accountAuthEntity.getAuthKey());
@@ -228,7 +230,9 @@ public class UserServiceImpl implements UserService{
 
         for (int i = 0; i < accessId.length; i++) {
             AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
-            accessEntities.add(accessEntity);
+            if(accessEntity.getStatus()==1){
+                accessEntities.add(accessEntity);
+            }
         }
         return objectMapper.convertValue(accessEntities, JsonNode.class);
     }
