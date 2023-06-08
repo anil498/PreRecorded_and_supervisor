@@ -97,8 +97,8 @@
 			[disabled]="isConnectionLost"
 			[class.active-btn]="isScreenShareActive"
 		>
-			<mat-icon *ngIf="!isScreenShareActive" matTooltip="{{ 'TOOLBAR.ENABLE_SCREEN' | translate }}">screen_share</mat-icon>
-			<mat-icon *ngIf="isScreenShareActive" matTooltip="{{ 'TOOLBAR.DISABLE_SCREEN' | translate }}">screen_share</mat-icon>
+			<mat-icon *ngIf="!isScreenShareActive" matTooltip="{{ 'TOOLBAR.ENABLE_SCREEN' | translate }}">open_in_browser</mat-icon>
+			<mat-icon *ngIf="isScreenShareActive" matTooltip="{{ 'TOOLBAR.DISABLE_SCREEN' | translate }}">open_in_browser</mat-icon>
 		</button>
 
 		<!-- VideoPublish button -->
