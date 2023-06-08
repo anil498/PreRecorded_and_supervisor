@@ -122,8 +122,7 @@ public class UserServiceImpl implements UserService{
         }
         if(isValidTokenLogin(userId)){
             UserAuthEntity user = userAuthRepository.findByUId(userId);
-            int auth = user.getAuthId();
-            AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthId(auth);
+            AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user1.getAccountId());
             HashMap<String,Object> response=new HashMap<>();
             response.put("token",user.getToken());
             response.put("auth_key",accountAuthEntity.getAuthKey());
@@ -141,7 +140,8 @@ public class UserServiceImpl implements UserService{
         else {
 
             if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
-
+                AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user1.getAccountId());
+                int auth = accountAuthEntity.getAuthId();
                 String token1 = generateToken(userId,"UR");
                 Date now = TimeUtils.getDate();
                 Date newDateTime = TimeUtils.increaseDateTime(now);
@@ -153,7 +153,7 @@ public class UserServiceImpl implements UserService{
 
                 if(ua != null){
                     ua.setToken(token1);
-                    ua.setAuthId(authId);
+                    ua.setAuthId(auth);
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
                 }
@@ -162,15 +162,13 @@ public class UserServiceImpl implements UserService{
                     ua.setLoginId(user1.getLoginId());
                     ua.setUserId(user1.getUserId());
                     ua.setToken(token1);
-                    ua.setAuthId(authId);
+                    ua.setAuthId(auth);
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
                 }
 
                 userAuthRepository.save(ua);
 
-                int auth = ua.getAuthId();
-                AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthId(auth);
                 HashMap<String,Object> res = new HashMap<>();
                 res.put("token",token1);
                 res.put("auth_key",accountAuthEntity.getAuthKey());

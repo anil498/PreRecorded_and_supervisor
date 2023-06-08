@@ -17,6 +17,9 @@ public interface AccountAuthRepository extends JpaRepository<AccountAuthEntity, 
 
     @Query(nativeQuery = true,value = "SELECT * FROM account_auth WHERE auth_id=:authId")
     AccountAuthEntity findByAuthId(@Param("authId") int authId);
+
+    @Query(nativeQuery = true,value = "SELECT * FROM account_auth WHERE account_id=:accountId")
+    AccountAuthEntity findByAccountId(@Param("accountId") int accountId);
 }
 
 
