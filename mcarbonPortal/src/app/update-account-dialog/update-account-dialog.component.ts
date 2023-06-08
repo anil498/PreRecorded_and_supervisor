@@ -174,6 +174,7 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+    console.warn(this.selectedFeaturesMeta);
     // For diplaying previous checked Access
     if (
       this.accessData.length !== 0 &&
@@ -205,9 +206,7 @@ export class UpdateAccountDialogComponent implements OnInit {
         }
         if (flag === true) {
           this.featuresData[i].status = 0;
-        }
-        else{
-        
+        } else {
         }
       }
     }

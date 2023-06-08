@@ -162,7 +162,6 @@
               <mat-checkbox
                 [value]="access.accessId"
                 class="col-md-5 offset-md-1"
-                (change)="addAccessId(access, $event.checked)"
                 [checked]="isCheckAccess(access)"
                 disabled
               >
@@ -188,39 +187,53 @@
                 <mat-checkbox
                   [value]="feature.featureId"
                   [checked]="isCheckFeature(feature)"
-                  (change)="
-                    showMetaList(feature, $event.checked);
-                    updateSelectedFeaturesMeta(
-                      feature.featureId,
-                      feature.metaList
-                    )
-                  "
                   disabled
                 >
                   {{ feature.name }}
                 </mat-checkbox>
               </div>
-              <div class="col-md-6" *ngIf="isCheckFeature(feature)">
-                <div class="row">
-                  <mat-form-field
-                    *ngFor="let meta of feature.selectedMetaList"
-                    class="col-md-6"
-                  >
-                    <input
-                      matInput
-                      value="{{ meta.value }}"
-                      placeholder="{{ meta.key }}"
-                      #metaValue
-                      (change)="
-                        setMetaValue(
-                          feature.featureId,
-                          meta.key,
-                          metaValue.value
-                        )
-                      "
-                      readonly
-                    />
-                  </mat-form-field>
+              <div
+                class="col-md-6 offset-md-1"
+                *ngIf="
+                  (selectedFeatures.includes(feature.featureId) ||
+                    isCheckFeature(feature)) &&
+                  selectedFeaturesMeta[feature.featureId]
+                "
+              >
+                <div *ngFor="let meta of feature.metaList">
+                  <ng-container [ngSwitch]="meta.type">
+                    <mat-slide-toggle
+                      checked="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
+                      *ngSwitchCase="'bool'"
+                      disabled
+                    >
+                      {{ meta.name }}
+                    </mat-slide-toggle>
+
+                    <div *ngSwitchCase="'file'">
+                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                      <input
+                        type="file"
+                        id="{{ meta.key }}"
+                        name="{{ meta.key }}"
+                        disabled
+                      />
+                    </div>
+
+                    <mat-form-field *ngSwitchCase="'text'">
+                      <input
+                        value="{{
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        }}"
+                        matInput
+                        #metaValue
+                        type="text"
+                        placeholder="{{ meta.name }}"
+                        disabled
+                    /></mat-form-field>
+                  </ng-container>
                 </div>
               </div>
             </div>

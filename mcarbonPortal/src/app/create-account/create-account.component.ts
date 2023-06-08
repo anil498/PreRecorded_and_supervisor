@@ -118,6 +118,7 @@ export class CreateAccountComponent implements OnInit {
     } else {
       this.selectedFeatures.push(featureId);
       this.selectedFeaturesMeta[featureId.toString()] = {};
+      console.log(this.selectedFeaturesMeta);
     }
   }
   updateSelectedFeaturesMeta(featureId, metaValue) {
