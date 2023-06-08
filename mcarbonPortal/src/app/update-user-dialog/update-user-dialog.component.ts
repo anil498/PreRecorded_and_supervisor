@@ -151,7 +151,7 @@ export class UpdateUserDialogComponent implements OnInit {
         validator: [this.dateValidator],
       }
     );
-
+    this.userForm.controls["login_id"].disable();
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
