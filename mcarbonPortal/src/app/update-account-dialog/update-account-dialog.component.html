@@ -250,15 +250,19 @@
               </div> -->
 
               <div
-                class="col-md-5"
+                class="col-md-6 offset-md-1"
                 *ngIf="
-                  selectedFeatures.includes(feature.featureId) ||
-                  isCheckFeature(feature)
+                  (selectedFeatures.includes(feature.featureId) ||
+                    isCheckFeature(feature)) &&
+                  selectedFeaturesMeta[feature.featureId]
                 "
               >
                 <div *ngFor="let meta of feature.metaList">
                   <ng-container [ngSwitch]="meta.type">
                     <mat-slide-toggle
+                      checked="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
                       *ngSwitchCase="'bool'"
                       (change)="
                         setMetaValue(
@@ -285,7 +289,9 @@
 
                     <mat-form-field *ngSwitchCase="'text'">
                       <input
-                        value="{{ selectedFeaturesMeta[featureId] }}"
+                        value="{{
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        }}"
                         matInput
                         #metaValue
                         type="text"

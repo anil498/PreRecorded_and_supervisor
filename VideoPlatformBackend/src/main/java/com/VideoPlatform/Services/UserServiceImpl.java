@@ -116,23 +116,16 @@ public class UserServiceImpl implements UserService{
         logger.info("user "+user1);
         int userId = user1.getUserId();
 
-        logger.info("userId "+userId);
-        UserAuthEntity user = userAuthRepository.findByUId(userId);
-        logger.info("userId "+userId);
-
-        logger.info("user1 {}",user1);
-        logger.info("user1.getLoginId() {}",user1.getLoginId());
-        logger.info("user1.getPassword() {}",user1.getPassword());
         if (!(passwordEncoder.matches(password,user1.getPassword()))) {
             logger.info("Inside loginid password check !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-
         if(isValidTokenLogin(userId)){
-            logger.info("Inside second if ...");
-            ObjectMapper obj = new ObjectMapper();
+            UserAuthEntity user = userAuthRepository.findByUId(userId);
+            AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user1.getAccountId());
             HashMap<String,Object> response=new HashMap<>();
             response.put("token",user.getToken());
+            response.put("auth_key",accountAuthEntity.getAuthKey());
             response.put("user_data",user1);
             response.put("status_code","200");
             response.put("status_message","Login Successful");
@@ -147,6 +140,8 @@ public class UserServiceImpl implements UserService{
         else {
 
             if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
+                AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user1.getAccountId());
+                int auth = accountAuthEntity.getAuthId();
                 String token1 = generateToken(userId,"UR");
                 Date now = TimeUtils.getDate();
                 Date newDateTime = TimeUtils.increaseDateTime(now);
@@ -158,7 +153,7 @@ public class UserServiceImpl implements UserService{
 
                 if(ua != null){
                     ua.setToken(token1);
-                    ua.setAuthId(authId);
+                    ua.setAuthId(auth);
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
                 }
@@ -167,15 +162,16 @@ public class UserServiceImpl implements UserService{
                     ua.setLoginId(user1.getLoginId());
                     ua.setUserId(user1.getUserId());
                     ua.setToken(token1);
-                    ua.setAuthId(authId);
+                    ua.setAuthId(auth);
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
                 }
 
                 userAuthRepository.save(ua);
 
-                Map<String,Object> res = new HashMap<>();
+                HashMap<String,Object> res = new HashMap<>();
                 res.put("token",token1);
+                res.put("auth_key",accountAuthEntity.getAuthKey());
                 res.put("user_data",user1);
                 res.put("status_code","200");
                 res.put("status_message","Login Successful");
@@ -232,7 +228,9 @@ public class UserServiceImpl implements UserService{
 
         for (int i = 0; i < accessId.length; i++) {
             AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
-            accessEntities.add(accessEntity);
+            if(accessEntity.getStatus()==1){
+                accessEntities.add(accessEntity);
+            }
         }
         return objectMapper.convertValue(accessEntities, JsonNode.class);
     }

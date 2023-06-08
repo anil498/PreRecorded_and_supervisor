@@ -13,8 +13,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,7 +36,6 @@ public class CommonService {
     public int isValidAuthKey(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         if(acc == null) return 0;
-        String key = (acc.getAuthKey());
         if(TimeUtils.isExpire(acc.getExpDate())){
             return 0;
         }
@@ -57,7 +55,9 @@ public class CommonService {
     public Boolean isValidToken(String token,Integer authId){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
-        if(TimeUtils.isExpire(user.getExpDate()) && authId == user.getAuthId())
+        logger.info("authId : {}",authId);
+        logger.info("authId1 : {}",user.getAuthId());
+        if(TimeUtils.isExpire(user.getExpDate()) || !(authId == user.getAuthId()))
             return false;
         return true;
     }
