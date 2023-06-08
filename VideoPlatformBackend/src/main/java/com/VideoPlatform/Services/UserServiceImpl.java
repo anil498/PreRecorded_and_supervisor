@@ -115,24 +115,19 @@ public class UserServiceImpl implements UserService{
 
         logger.info("user "+user1);
         int userId = user1.getUserId();
-
-        logger.info("userId "+userId);
         UserAuthEntity user = userAuthRepository.findByUId(userId);
+        int auth = user.getAuthId();
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthId(auth);
         logger.info("userId "+userId);
-
-        logger.info("user1 {}",user1);
-        logger.info("user1.getLoginId() {}",user1.getLoginId());
-        logger.info("user1.getPassword() {}",user1.getPassword());
         if (!(passwordEncoder.matches(password,user1.getPassword()))) {
             logger.info("Inside loginid password check !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-
         if(isValidTokenLogin(userId)){
-            logger.info("Inside second if ...");
-            ObjectMapper obj = new ObjectMapper();
+
             HashMap<String,Object> response=new HashMap<>();
             response.put("token",user.getToken());
+            response.put("auth_key",accountAuthEntity.getAuthKey());
             response.put("user_data",user1);
             response.put("status_code","200");
             response.put("status_message","Login Successful");
@@ -174,8 +169,9 @@ public class UserServiceImpl implements UserService{
 
                 userAuthRepository.save(ua);
 
-                Map<String,Object> res = new HashMap<>();
+                HashMap<String,Object> res = new HashMap<>();
                 res.put("token",token1);
+                res.put("auth_key",accountAuthEntity.getAuthKey());
                 res.put("user_data",user1);
                 res.put("status_code","200");
                 res.put("status_message","Login Successful");

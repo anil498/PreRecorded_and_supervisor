@@ -69,7 +69,7 @@ public class SessionServiceImpl implements SessionService{
             session.setCreationDate(creation);
             session.setExpDate(newDateTime);
             session.setParticipantName(participantName);
-            session.setTotalParticipants(Integer.valueOf(account.getSession().get("max_participants").toString()));
+            session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
 
             SettingsEntity settingsEntity = new SettingsEntity();
 
