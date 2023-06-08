@@ -39,8 +39,8 @@ public class SessionServiceImpl implements SessionService{
 
         SessionEntity session=new SessionEntity();
             Date creation = TimeUtils.getDate();
-            Date newDateTime = TimeUtils.increaseDateTime(creation);
-            logger.info("Session Localdatetime = {}", newDateTime);
+            Date expDate = TimeUtils.increaseDateTimeSession(creation);
+            logger.info("Session Localdatetime = {}", expDate);
 
             UserAuthEntity userAuth = userAuthRepository.findByToken(token);
             AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
@@ -67,7 +67,7 @@ public class SessionServiceImpl implements SessionService{
             session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_active_sessions").toString()));
             session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
             session.setCreationDate(creation);
-            session.setExpDate(newDateTime);
+            session.setExpDate(expDate);
             session.setParticipantName(participantName);
             session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
 

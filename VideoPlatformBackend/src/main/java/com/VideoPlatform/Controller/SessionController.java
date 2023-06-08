@@ -58,7 +58,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if (!(commonService.checkAccess("my_sessions", token))) {
+        if (!(commonService.checkAccess("session_create", token))) {
             logger.info("Permission Denied. Don't have access for this service!");
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -90,7 +90,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("session_details",token))){
+        if(!(commonService.checkAccess("my_sessions",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
@@ -107,7 +107,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("session_details",token))){
+        if(!(commonService.checkAccess("my_sessions",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -123,7 +123,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("user_delete",token))){
+        if(!(commonService.checkAccess("my_sessions",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }

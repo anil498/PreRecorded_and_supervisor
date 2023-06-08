@@ -35,6 +35,13 @@ public class TimeUtils {
         Date newDateTime = calendar.getTime();
         return newDateTime;
     }
+    public static Date increaseDateTimeSession(Date date){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MILLISECOND,1800000);
+        Date newDateTime = calendar.getTime();
+        return newDateTime;
+    }
     public static Date parseDate(String date){
         Date newDate = null;
         try {
