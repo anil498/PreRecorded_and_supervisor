@@ -4,6 +4,7 @@ import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,18 +86,30 @@ public class SessionServiceImpl implements SessionService{
                 else if (3 == featureId) {
                     settingsEntity.setChat(true);
                 }
-                else if (4 == featureId) {
-                    settingsEntity.setPreRecorded(true);
-                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setPreRecordedDetails(prdJson);
-                }
+//                else if (4 == featureId) {
+//                    settingsEntity.setPreRecorded(true);
+//                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
+//                    settingsEntity.setPreRecordedDetails(prdJson);
+//                }
                 else if (5 == featureId && moderator==false) {
                     settingsEntity.setDisplayTicker(true);
-                    settingsEntity.setDescription(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    try{
+                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setDescription(map.get("participants_ticker_text"));
+                    }
+                    catch (Exception e){
+                    logger.info("Getting null value from participants_ticker_text !");
+                    }
                 }
                 else if (6 == featureId && moderator==true) {
                     settingsEntity.setDisplayTicker(true);
-                    settingsEntity.setDescription(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    try{
+                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setDescription(map.get("admin_ticker_text"));
+                    }
+                    catch (Exception e){
+                    logger.info("Getting null value from admin_ticker_text !");
+                    }
                 }
                 else if (7 == featureId && moderator==true) {
                     settingsEntity.setDescription(description);
@@ -107,9 +120,10 @@ public class SessionServiceImpl implements SessionService{
                 else if (9 == featureId) {
                     settingsEntity.setSupervisor(true);
                 }
-                else if (10 == featureId) {
-                    settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
-                }
+//                else if (10 == featureId) {
+//                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+//                    settingsEntity.setPreRecordedDetails();
+//                }
                 else if (11 == featureId) {
                     settingsEntity.setDisplayTimer(true);
                 }
@@ -120,10 +134,22 @@ public class SessionServiceImpl implements SessionService{
                     settingsEntity.setParticipantsButton(true);
                 }
                 else if (14 == featureId && moderator==true) {
-                    settingsEntity.setLandingPage(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    try{
+                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setLandingPage(map.get("admin_landing_page"));
+                    }
+                    catch (Exception e){
+                    logger.info("Getting null value from admin_landing_page !");
+                    }
                 }
                 else if (15 == featureId && moderator==false) {
-                    settingsEntity.setLandingPage(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    try{
+                        Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                        settingsEntity.setLandingPage(map.get("participants_landing_page"));
+                    }
+                    catch (Exception e){
+                        logger.info("Getting null value from participants_landing_page !");
+                    }
                 }
             }
             String settingsJson = gson.toJson(settingsEntity);
