@@ -226,7 +226,6 @@ export class OpenViduService {
 					this.showSessionTimer = value;
 				});
 				if(this.showSessionTimer){
-					console.log("TImes",this.showSessionTimer)
 					this.startSessionTime()
 				}
 			} else if (session === this.screenSession) {
@@ -794,21 +793,14 @@ export class OpenViduService {
 			this.log.d("Getting error while pausing video",error)
 		}
 	}
-	startSessionTimer() {
-		console.log("sessionTIme1")
-		this.startSessionTime();
-		this.sessionTimerStatus.next({time: this.sessionTime });
-	}
+
 	private startSessionTime() {
-		
-		console.log("sessionTIme2",this.sessionTime)
 		this.sessionTime = new Date();
 		this.sessionTime.setHours(0, 0, 0, 0);
 		this.sessionTimeInterval = setInterval(() => {
-			this.sessionTime.setSeconds(this.sessionTime.getSeconds() + 60);
+			this.sessionTime.setSeconds(this.sessionTime.getSeconds()+60);
 			this.sessionTime = new Date(this.sessionTime.getTime());
 			this.sessionTimerStatus.next({ time: this.sessionTime });
 		}, 1000);
-		console.log("sessionTIme3",this.sessionTime)
 	}
 }

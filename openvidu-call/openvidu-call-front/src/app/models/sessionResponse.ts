@@ -10,6 +10,7 @@ export interface sessionResponse {
     showLogo: boolean;
     logo: string;
     description:string;
+    landingPage:string;
     moderators: boolean;
     displayTicker: boolean;
     displayTimer: boolean;

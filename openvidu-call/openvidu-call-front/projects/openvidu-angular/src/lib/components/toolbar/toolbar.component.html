@@ -212,7 +212,7 @@
 	</div>
 	<div fxFlex="20%" fxFlexOrder="3" fxLayoutAlign="end center" id="menu-buttons-container">
 		<div *ngIf="showSessionTimer" id="recording-tag" class="recording-tag">
-			{{ sessionTime.getTime() < 3600000 ? (sessionTime | date: 'mm:ss') : (sessionTime | date: 'H:mm:ss') }}
+			{{ sessionTime | date: 'H:mm:ss'}}
 		</div>
 		<!-- Default activities button -->
 		<button

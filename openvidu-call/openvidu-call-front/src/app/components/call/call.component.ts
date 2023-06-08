@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ParticipantService, RecordingInfo, TokenModel } from 'openvidu-angular';
-import { saveAs } from 'file-saver';
+import { ActionService, ParticipantService, RecordingInfo, TokenModel } from 'openvidu-angular';
 import { RestService } from '../../services/rest.service';
+import { TranslateService } from 'openvidu-angular';
 
 @Component({
 	selector: 'app-call',
@@ -35,13 +35,16 @@ export class CallComponent implements OnInit {
 	description:string;
 	participantsButton:Boolean;
 	sessionDuration:number;
+	type:string;
 	private isDebugSession: boolean = false;
 
 	constructor(
 		private restService: RestService,
 		private participantService: ParticipantService,
 		private router: Router,
-		private route: ActivatedRoute
+		private route: ActivatedRoute,
+		private actionService: ActionService,
+		private translateService: TranslateService
 	) {}
 
 	async ngOnInit() {
@@ -72,13 +75,12 @@ export class CallComponent implements OnInit {
 		this.isSessionAlive = false;
 		this.closeClicked = true;
 		// this.router.navigate([`/`]);
-		if (this.participantNameValue === "Customer") {
+		if (this.type === "Support") {
 			// Navigate to a specific URL for customers
-			window.location.replace("https://www.axisbank.com/grab-deals/online-offers");
-		  } else {
-			// Close the window
-			window.location.replace("https://www.axisbank.com/grab-deals/online-offers");
+			window.location.replace(this.redirectUrl);
 			this.restService.removeSession(this.sessionKey);
+		  } else {
+			window.location.replace(this.redirectUrl);
 		  }
 	}
 	participantName(){
@@ -127,7 +129,11 @@ export class CallComponent implements OnInit {
 		this.chatEnabled=response.settings.chat;
 		this.showSessionId=true;
 		this.participantNameValue=response.participantName;
-		this.redirectUrl=response.redirectUrl;
+		if(response.settings.landingPage){
+			this.redirectUrl=response.settings.landingPage;
+		}else{
+			this.redirectUrl="https://in.linkedin.com/company/mcarbon"
+		}
 		this.sessionName=response.sessionName;
 		this.showLogo=response.settings.showLogo;
 		this.logo=response.settings.logo;
@@ -137,10 +143,12 @@ export class CallComponent implements OnInit {
 		this.description=response.settings.description;
 		this.sessionDuration=response.settings.duration;
 		this.participantsButton=response.settings.participantsButton;
+		this.type=response.type;
 	}catch(error){
 		console.log(error)
+		this.actionService.openUrlDialog(this.translateService.translate('ERRORS.JOIN'), 'Please contact account admin',true,this.redirectUrl)
+	
 	}
-
 	}
 	recordingEnabled(){
 		return this.isRecording;
