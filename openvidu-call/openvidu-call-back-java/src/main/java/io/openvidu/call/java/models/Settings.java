@@ -25,6 +25,7 @@ public class Settings {
   private Boolean preRecorded=false;
   private String preRecordedDetails;
   private Boolean broadcast=false;
+  private String landingPage;
   public Integer getDuration() {
     return duration;
   }
@@ -175,6 +176,18 @@ public class Settings {
 
   public void setShowLogo(boolean showLogo) {
     this.showLogo = showLogo;
+  }
+
+  public void setDuration(int duration) {
+    this.duration = duration;
+  }
+
+  public String getLandingPage() {
+    return landingPage;
+  }
+
+  public void setLandingPage(String landingPage) {
+    this.landingPage = landingPage;
   }
 
   @Override
