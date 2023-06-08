@@ -29,6 +29,7 @@ export interface sessionResponse {
     preRecorded: boolean;
     broadcast: boolean;
   };
+  base64Logo:string;
   cameraToken: string;
   screenToken: string;
   recordings: RecordingInfo[];

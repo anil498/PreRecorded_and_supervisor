@@ -110,6 +110,7 @@
 	},
 	"ERRORS": {
 		"SESSION": "There was an error connecting to the session",
+		"EXPIRED":"Your Session has been Expired.",
 		"CONNECTION": "Connection lost",
 		"RECONNECT": "Oops! Trying to reconnect to the session...",
 		"TOGGLE_CAMERA": "There was an error toggling camera",

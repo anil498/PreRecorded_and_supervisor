@@ -128,7 +128,6 @@ export class CallComponent implements OnInit {
 		this.screenShareEnabled=response.settings.screenShare;
 		this.chatEnabled=response.settings.chat;
 		this.showSessionId=true;
-		this.participantNameValue=response.participantName;
 		if(response.settings.landingPage){
 			this.redirectUrl=response.settings.landingPage;
 		}else{
@@ -136,7 +135,7 @@ export class CallComponent implements OnInit {
 		}
 		this.sessionName=response.sessionName;
 		this.showLogo=response.settings.showLogo;
-		this.logo=response.settings.logo;
+		this.logo=response.base64Logo;
 		this.activitiesButton=response.settings.activitiesButton;
 		this.displayTicker=response.settings.displayTicker;
 		this.displayTimer=response.settings.displayTimer;
@@ -144,9 +143,14 @@ export class CallComponent implements OnInit {
 		this.sessionDuration=response.settings.duration;
 		this.participantsButton=response.settings.participantsButton;
 		this.type=response.type;
+		if(this.type){
+			this.participantNameValue=response.participantName;
+		}else{
+			this.participantNameValue==this.type;
+		}
 	}catch(error){
 		console.log(error)
-		this.actionService.openUrlDialog(this.translateService.translate('ERRORS.JOIN'), 'Please contact account admin',true,this.redirectUrl)
+		this.actionService.openUrlDialog(this.translateService.translate('ERRORS.EXPIRED'), '',true,this.redirectUrl)
 	
 	}
 	}
