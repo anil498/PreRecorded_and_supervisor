@@ -10,7 +10,7 @@ export class RestService {
   private dialogClosedSource = new Subject<boolean>();
   public dialogClosed$ = this.dialogClosedSource.asObservable();
 
-  private authKey:string;
+  private authKey: string;
   private _response: any;
   private _token: string;
   private _userId: string;
@@ -26,9 +26,9 @@ export class RestService {
     this.baseHref = environment.url;
     //this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
     this.getHeaders();
-    this.http.get<any>("assets/json/headers.json").subscribe((response) =>{
+    this.http.get<any>("assets/json/headers.json").subscribe((response) => {
       this.authKey = response.authKey;
-    })
+    });
   }
 
   getHeaders() {
@@ -43,6 +43,10 @@ export class RestService {
 
   setToken(value: string) {
     this._token = value;
+  }
+
+  setAuthKey(value: string) {
+    this.authKey = value;
   }
 
   setUserId(value: string) {
@@ -92,6 +96,7 @@ export class RestService {
   private postRequest1(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "User/" + path);
     console.warn(body);
+    console.warn(this.authKey);
     try {
       const headers = new HttpHeaders({
         Authorization: `${this.authKey}`,
@@ -115,6 +120,7 @@ export class RestService {
   private postRequest2(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "Account/" + path);
     console.warn(body);
+    console.warn(this.authKey);
     try {
       const headers = new HttpHeaders({
         Authorization: `${this.authKey}`,
@@ -140,6 +146,7 @@ export class RestService {
   private putRequest1(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "User/" + path);
     console.warn(body);
+    console.warn(this.authKey);
     try {
       const headers = new HttpHeaders({
         Authorization: `${this.authKey}`,
@@ -163,6 +170,7 @@ export class RestService {
   private putRequest2(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "Account/" + path);
     console.warn(body);
+    console.warn(this.authKey);
     try {
       const headers = new HttpHeaders({
         Authorization: `${this.authKey}`,
@@ -207,11 +215,9 @@ export class RestService {
     }
   }
 
-  private callRequest(
-    path: string,
-    body: any
-  ): Promise<any> {
+  private callRequest(path: string, body: any): Promise<any> {
     console.warn(body);
+    console.warn(this.authKey);
     try {
       const headers = new HttpHeaders({
         Token: `${this._token}`,
@@ -491,12 +497,12 @@ export class RestService {
     this.deleteRequest(`User/Delete/${id}`);
   }
 
-  async sendSMS(msisdn: string,getLink: any) {
+  async sendSMS(msisdn: string, getLink: any) {
     console.log("sms Sent");
     try {
       return this.callRequest("Session/CreateAndSendLink/SMS", {
         msisdn,
-        getLink
+        getLink,
       });
     } catch (error) {
       console.log(error);
@@ -516,26 +522,21 @@ export class RestService {
         from,
         type,
         templateId,
-        getLink
+        getLink,
       });
     } catch (error) {
       console.log(error);
     }
   }
 
-  async sendNotify(
-    title: string,
-    body: string,
-    msisdn: string,
-    getLink: any
-  ) {
+  async sendNotify(title: string, body: string, msisdn: string, getLink: any) {
     console.warn("Notification Sent");
     try {
       return this.callRequest("Session/CreateAndSendLink/AppNotification", {
         msisdn,
         title,
         body,
-        getLink
+        getLink,
       });
     } catch (error) {
       console.log(error);

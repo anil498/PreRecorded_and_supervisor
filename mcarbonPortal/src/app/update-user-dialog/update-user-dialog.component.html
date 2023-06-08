@@ -62,16 +62,6 @@
         <div class="row">
           <div class="col-md-5 offset-md-1">
             <mat-form-field>
-              <input
-                matInput
-                type="text"
-                placeholder="Login ID"
-                formControlName="login_id"
-              />
-            </mat-form-field>
-          </div>
-          <div class="col-md-5">
-            <mat-form-field>
               <mat-label>Account Expiry Date</mat-label>
               <input
                 matInput
@@ -87,6 +77,16 @@
               <mat-error *ngIf="userForm.hasError('mismatch', 'acc_exp_date')"
                 >Select a valid date</mat-error
               >
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="Login ID"
+                formControlName="login_id"
+              />
             </mat-form-field>
           </div>
         </div>
@@ -200,18 +200,12 @@
                 <mat-checkbox
                   [value]="feature.featureId"
                   [checked]="isCheckFeature(feature)"
-                  (change)="
-                    showMetaList(feature, $event.checked);
-                    updateSelectedFeaturesMeta(
-                      feature.featureId,
-                      feature.metaList
-                    )
-                  "
+                  (change)="toggleFeatureSelection(feature.featureId)"
                 >
                   {{ feature.name }}
                 </mat-checkbox>
               </div>
-              <div class="col-md-6" *ngIf="isCheckFeature(feature)">
+              <!-- <div class="col-md-6" *ngIf="feature.showMeta">
                 <div class="row">
                   <mat-form-field
                     *ngFor="let meta of feature.selectedMetaList"
@@ -219,18 +213,77 @@
                   >
                     <input
                       matInput
-                      value="{{ meta.value }}"
-                      placeholder="{{ meta.key }}"
+                      type="{{meta.type}}"
+                      placeholder="{{ meta.value.name }}"
                       #metaValue
                       (change)="
                         setMetaValue(
                           feature.featureId,
-                          meta.key,
+                          meta.value.key,
                           metaValue.value
                         )
                       "
                     />
                   </mat-form-field>
+                </div>
+              </div> -->
+
+              <div
+                class="col-md-6 offset-md-1 "
+                *ngIf="
+                  (selectedFeatures.includes(feature.featureId) ||
+                    isCheckFeature(feature)) &&
+                  selectedFeaturesMeta[feature.featureId]
+                "
+              >
+                <div *ngFor="let meta of feature.metaList">
+                  <ng-container [ngSwitch]="meta.type">
+                    <mat-slide-toggle
+                      checked="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
+                      *ngSwitchCase="'bool'"
+                      (change)="
+                        setMetaValue(
+                          feature.featureId,
+                          meta.key,
+                          $event.checked
+                        )
+                      "
+                    >
+                      {{ meta.name }}
+                    </mat-slide-toggle>
+
+                    <div *ngSwitchCase="'file'">
+                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                      <input
+                        type="file"
+                        id="{{ meta.key }}"
+                        name="{{ meta.key }}"
+                        (change)="
+                          onFileInputChange($event, meta, feature.featureId)
+                        "
+                      />
+                    </div>
+
+                    <mat-form-field *ngSwitchCase="'text'">
+                      <input
+                        value="{{
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        }}"
+                        matInput
+                        #metaValue
+                        type="text"
+                        placeholder="{{ meta.name }}"
+                        (change)="
+                          setMetaValue(
+                            feature.featureId,
+                            meta.key,
+                            metaValue.value
+                          )
+                        "
+                    /></mat-form-field>
+                  </ng-container>
                 </div>
               </div>
             </div>

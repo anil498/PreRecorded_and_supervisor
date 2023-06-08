@@ -62,16 +62,6 @@
         <div class="row">
           <div class="col-md-5 offset-md-1">
             <mat-form-field>
-              <input
-                matInput
-                type="text"
-                placeholder="Login ID"
-                formControlName="login_id"
-              />
-            </mat-form-field>
-          </div>
-          <div class="col-md-5">
-            <mat-form-field>
               <mat-label>Account Expiry Date</mat-label>
               <input
                 matInput
@@ -84,7 +74,19 @@
                 [for]="picker"
               ></mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
-              <mat-error *ngIf="userForm.hasError('mismatch', 'acc_exp_date')">Select a valid date</mat-error>
+              <mat-error *ngIf="userForm.hasError('mismatch', 'acc_exp_date')"
+                >Select a valid date</mat-error
+              >
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                placeholder="Login ID"
+                formControlName="login_id"
+              />
             </mat-form-field>
           </div>
         </div>
@@ -106,8 +108,16 @@
           </div>
           <div class="col-md-5">
             <mat-form-field>
-              <input matInput type="password" placeholder="Confirm Password" formControlName="confirm_password" />
-              <mat-error *ngIf="userForm.hasError('mismatch', 'confirm_password')">Passwords do not match</mat-error>
+              <input
+                matInput
+                type="password"
+                placeholder="Confirm Password"
+                formControlName="confirm_password"
+              />
+              <mat-error
+                *ngIf="userForm.hasError('mismatch', 'confirm_password')"
+                >Passwords do not match</mat-error
+              >
             </mat-form-field>
           </div>
         </div>
@@ -123,7 +133,7 @@
             <mat-checkbox
               *ngFor="let access of accessData"
               [value]="access.accessId"
-              class="col-md-3 offset-md-1"
+              class="col-md-5 offset-md-1"
               (change)="addAccessId(access, $event.checked)"
             >
               {{ access.name }}
@@ -252,7 +262,7 @@
               </div> -->
 
               <div
-                class="col-md-5"
+                class="col-md-6 offset-md-1"
                 *ngIf="selectedFeatures.includes(feature.featureId)"
               >
                 <div *ngFor="let meta of feature.metaList">
@@ -304,7 +314,7 @@
         </div>
 
         <div class="row" *ngIf="emptyField">
-          <div class="col-md-6 offset-md-3 text-center" >
+          <div class="col-md-6 offset-md-3 text-center">
             <p class="alert alert-danger">
               <strong>All fields are mandatory</strong>
             </p>

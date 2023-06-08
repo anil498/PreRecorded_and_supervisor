@@ -95,6 +95,7 @@ export class LoginComponent implements OnInit {
       console.warn(loginResponse);
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);
+      this.restService.setAuthKey(loginResponse.auth_key)
       this.restService.setUserId(this.username);
       const defaultLabel = loginResponse.Access[0].systemName;
       this.router.navigate(["/app/" + `${defaultLabel}`]);

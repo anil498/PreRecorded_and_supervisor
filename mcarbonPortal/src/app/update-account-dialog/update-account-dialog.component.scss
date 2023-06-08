@@ -1,131 +1,138 @@
 .card-1 {
-    height: 80% !important;
-  }
-  
-  .card-header {
-    margin-bottom: 10px;
-  }
-  
-  #tabGroup {
-    background-color: #e63b37;
-  }
-  
-  /* Alert message */
-  .alert {
-    padding: 0.75rem 1.25rem;
-  }
-  
-  .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border-color: #c3e6cb;
-    border-radius: 10px;
-    font-size: 1rem;
-  }
-  
-  .alert-danger {
-    background-color: #e9bdc2;
-    color: #b02a37;
-    border-color: #e7908c;
-    border-radius: 10px;
-    font-weight: bolder;
-    font-size: 1rem;
-  }
-  
-  .btn-1 {
-    background: linear-gradient(60deg, #009688, #17d1be);
-    color: white;
-    width: 120px;
-  }
-  .prev-btn {
-    background: linear-gradient(60deg, #17d1be, #009688);
-    color: white;
-    width: 120px;
-  }
-  
-  .submit-btn {
-    background: linear-gradient(60deg, #069c1a, #09ec28);
-    color: white;
-    width: 120px;
-  }
-  
-  .actions {
-    margin-top: 10px;
-  }
-  
-  .row {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  mat-tab-group {
-    min-height: 350px;
-  }
-  
-  ::ng-deep .mat-checkbox-checked .mat-checkbox-background,
-  ::ng-deep
-    .mat-checkbox-indeterminate
-    .mat-checkbox-background
-    .mat-checkbox-ripple.mat-ripple-active
-    .mat-ripple-element {
-    background-color: #17d1be !important;
-    border-color: #17d1be !important;
-  }
-  
-  .container {
-    padding-top: 10px;
-  }
-  
-  .example-section {
-    margin-top: 10px;
-  }
-  
-  ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
-    opacity: 0.5;
-    height: 1px;
-    background: #009688;
-  }
-  
-  ::ng-deep .mat-form-field-label-wrapper {
-    font-size: 0.75rem;
-  }
-  
-  ::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
-  .mat-tab-nav-bar.mat-primary .mat-ink-bar {
-    background-color: #009688;
-  }
-  
-  input[type="file"] {
-    display: none;
-  }
-  
-  button[type="button"] {
-    border-radius: 50%;
-  }
-  
-  img {
-    border-radius: 50%;
-  }
-  
-  ::ng-deep .mat-datepicker-content {
-    margin-top: 100px !important;
-  }
-  
-  .close-btn {
-    position: absolute;
-    right: 1px;
-    top: 10px;
-  }
-  
-  .col-custom {
-    padding-left: 0px !important;
-    padding-right: 0px !important;
-  }
-  
-  .example-section {
-    width: 100%;
-  }
-  
-  .label{
-    font-weight: bolder;
-    font-size: 1rem;
-  }
+  height: 80% !important;
+}
+
+.card-header {
+  margin-bottom: 10px;
+}
+
+#tabGroup {
+  background-color: #e63b37;
+}
+
+/* Alert message */
+.alert {
+  padding: 0.75rem 1.25rem;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.alert-danger {
+  background-color: #e9bdc2;
+  color: #b02a37;
+  border-color: #e7908c;
+  border-radius: 10px;
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
+.btn-1 {
+  background: linear-gradient(60deg, #009688, #17d1be);
+  color: white;
+  width: 120px;
+}
+.prev-btn {
+  background: linear-gradient(60deg, #17d1be, #009688);
+  color: white;
+  width: 120px;
+}
+
+.submit-btn {
+  background: linear-gradient(60deg, #069c1a, #09ec28);
+  color: white;
+  width: 120px;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.row {
+  margin-left: auto;
+  margin-right: auto;
+}
+mat-tab-group {
+  min-height: 350px;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+::ng-deep
+  .mat-checkbox-indeterminate
+  .mat-checkbox-background
+  .mat-checkbox-ripple.mat-ripple-active
+  .mat-ripple-element {
+  background-color: #17d1be !important;
+  border-color: #17d1be !important;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #17d1be !important;
+}
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: #bbfff8 !important;
+}
+
+.container {
+  padding-top: 10px;
+}
+
+.example-section {
+  margin-top: 10px;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+  opacity: 0.5;
+  height: 1px;
+  background: #009688;
+}
+
+::ng-deep .mat-form-field-label-wrapper {
+  font-size: 0.75rem;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #009688;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+button[type="button"] {
+  border-radius: 50%;
+}
+
+img {
+  border-radius: 50%;
+}
+
+::ng-deep .mat-datepicker-content {
+  margin-top: 100px !important;
+}
+
+.close-btn {
+  position: absolute;
+  right: 1px;
+  top: 10px;
+}
+
+.col-custom {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.example-section {
+  width: 100%;
+}
+
+.label {
+  font-weight: bolder;
+  font-size: 1rem;
+}
