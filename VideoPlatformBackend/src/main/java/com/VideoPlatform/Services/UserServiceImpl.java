@@ -126,6 +126,10 @@ public class UserServiceImpl implements UserService{
             logger.info("No user present with given login id !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+        if(user1.getStatus()!=1){
+            logger.info("User does not exist !");
+            return  new ResponseEntity<UserEntity>(HttpStatus.FORBIDDEN);
+        }
 
         logger.info("user "+user1);
         int userId = user1.getUserId();
