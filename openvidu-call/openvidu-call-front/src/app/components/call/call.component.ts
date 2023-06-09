@@ -136,7 +136,11 @@ export class CallComponent implements OnInit {
 		this.activitiesButton=response.settings.activitiesButton;
 		this.displayTicker=response.settings.displayTicker;
 		this.displayTimer=response.settings.displayTimer;
+		if(response.settings.description){
 		this.description=response.settings.description;
+		}else{
+			this.description=''
+		}
 		this.sessionDuration=response.settings.duration;
 		this.participantsButton=response.settings.participantsButton;
 		this.type=response.type;
