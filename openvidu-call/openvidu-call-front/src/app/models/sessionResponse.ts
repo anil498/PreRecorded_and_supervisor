@@ -8,7 +8,10 @@ export interface sessionResponse {
   settings: {
     duration: number;
     showLogo: boolean;
-    logo: string;
+    logo:{
+      byte:string;
+      type:string;
+    }
     description:string;
     landingPage:string;
     moderators: boolean;
@@ -29,7 +32,6 @@ export interface sessionResponse {
     preRecorded: boolean;
     broadcast: boolean;
   };
-  base64Logo:string;
   cameraToken: string;
   screenToken: string;
   recordings: RecordingInfo[];

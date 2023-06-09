@@ -132,7 +132,7 @@ export class CallComponent implements OnInit {
 		}
 		this.sessionName=response.sessionName;
 		this.showLogo=response.settings.showLogo;
-		this.logo=response.base64Logo;
+		this.logo=response.settings.logo.byte;
 		this.activitiesButton=response.settings.activitiesButton;
 		this.displayTicker=response.settings.displayTicker;
 		this.displayTimer=response.settings.displayTimer;
