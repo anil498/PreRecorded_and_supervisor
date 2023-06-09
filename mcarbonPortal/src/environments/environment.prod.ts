@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  url: "https://demo2.progate.mobi/VPService/v1/"
+  url: "https://demos.progate.mobi/VPService/v1/"
 };
