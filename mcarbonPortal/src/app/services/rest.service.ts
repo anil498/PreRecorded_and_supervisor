@@ -305,6 +305,7 @@ export class RestService {
     contact: number,
     email: string,
     loginId: string,
+    logo: any,
     expDate: string,
 
     accessId: number[],
@@ -323,6 +324,7 @@ export class RestService {
       contact,
       email,
       loginId,
+      logo,
       expDate,
       accessId,
 

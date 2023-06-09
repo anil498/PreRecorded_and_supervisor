@@ -29,7 +29,7 @@ export class UpdateUserDialogComponent implements OnInit {
   login_id: string;
   acc_exp_date: Date;
   exp_date: string;
-
+  logo: Blob = null;
   max_duration: number;
   max_active_sessions: number;
   max_participants: number;
@@ -130,6 +130,7 @@ export class UpdateUserDialogComponent implements OnInit {
         mobile: [this.user.contact, Validators.required],
         email: [this.user.email, Validators.required],
         login_id: [this.user.loginId, Validators.required],
+        logo: [this.user.logo],
         acc_exp_date: [new Date(this.user.expDate), Validators.required],
 
         accessList: [this.user.accessId, Validators.required],
@@ -259,7 +260,7 @@ export class UpdateUserDialogComponent implements OnInit {
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
-
+    console.log(this.logo);
     if (
       this.user_lname === "" ||
       this.user_fname === "" ||
@@ -286,6 +287,7 @@ export class UpdateUserDialogComponent implements OnInit {
         this.mobile,
         this.email,
         this.login_id,
+        this.logo,
         this.exp_date,
 
         this.selectedAccessId.sort(),
