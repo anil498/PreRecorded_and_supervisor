@@ -11,7 +11,7 @@ public interface UserService {
     UserEntity getUserById(Integer id);
     UserEntity createUser(UserEntity user,String authKey,String token);
     UserEntity createUserZero(UserEntity user);
-    UserEntity updateUser(UserEntity user);
+    UserEntity updateUser(String params);
     String deleteUser(Integer userId);
     public ResponseEntity<?> loginService(String loginId, String password, int authId);
 }

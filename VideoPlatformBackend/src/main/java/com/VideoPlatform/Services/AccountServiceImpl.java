@@ -2,11 +2,19 @@ package com.VideoPlatform.Services;
 
 import com.VideoPlatform.Entity.AccountEntity;
 import com.VideoPlatform.Repository.AccountRepository;
+import com.VideoPlatform.Utils.TimeUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -34,18 +42,27 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountEntity updateAccount(AccountEntity account) {
-        logger.info("Account details for update : {} ",account);
-        AccountEntity existing = accountRepository.findByAccountId(account.getAccountId());
-        logger.info("existing : {}",existing);
-        existing.setSession(account.getSession());
-        existing.setFeatures(account.getFeatures());
-        existing.setFeaturesMeta(account.getFeaturesMeta());
-        existing.setAccessId(account.getAccessId());
-        existing.setExpDate(account.getExpDate());
-        existing.setAddress(account.getAddress());
-        existing.setName(account.getName());
-        existing.setMaxUser(account.getMaxUser());
+    public AccountEntity updateAccount(String params1) {
+        Gson gson=new Gson();
+        JsonObject params=gson.fromJson(params1,JsonObject.class);
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        AccountEntity existing = accountRepository.findByAccountId(params.get("accountId").getAsInt());
+        try {
+            existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+            existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+            existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+            existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+            existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+            Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
+            existing.setExpDate(expDate);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        existing.setMaxUser(params.get("maxUser").getAsInt());
+        existing.setName(params.get("name").getAsString());
+        existing.setAddress(params.get("address").getAsString());
+        logger.info("New Entity {}",existing);
         return accountRepository.save(existing);
     }
     @Override

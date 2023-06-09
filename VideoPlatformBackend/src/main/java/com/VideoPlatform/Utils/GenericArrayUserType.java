@@ -1,12 +1,15 @@
 package com.VideoPlatform.Utils;
-
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.UserType;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.sql.*;
+import java.sql.Array;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Objects;
 
 @Component
@@ -17,18 +20,26 @@ public class GenericArrayUserType implements UserType {
     }
 
     @Override
-    public Class returnedClass() {
+    public Class<Integer[]> returnedClass() {
         return Integer[].class;
     }
 
     @Override
     public boolean equals(Object o, Object o1) throws HibernateException {
-        return false;
+        if (o == o1) {
+            return true;
+        }
+        if (o == null || o1 == null) {
+            return false;
+        }
+        Integer[] arr1 = (Integer[]) o;
+        Integer[] arr2 = (Integer[]) o1;
+        return Objects.deepEquals(arr1, arr2);
     }
 
     @Override
     public int hashCode(Object o) throws HibernateException {
-        return 0;
+        return Objects.hashCode(o);
     }
 
     @Override
@@ -42,7 +53,8 @@ public class GenericArrayUserType implements UserType {
     public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor session)
             throws HibernateException, SQLException {
         if (value != null && st != null) {
-            Array array = session.connection().createArrayOf("int", (Integer[])value);
+            Integer[] castObject = (Integer[]) value;
+            Array array = session.connection().createArrayOf("integer", castObject);
             st.setArray(index, array);
         } else {
             st.setNull(index, sqlTypes()[0]);
@@ -51,26 +63,41 @@ public class GenericArrayUserType implements UserType {
 
     @Override
     public Object deepCopy(Object o) throws HibernateException {
-        return null;
+        if (o == null) {
+            return null;
+        }
+        Integer[] source = (Integer[]) o;
+        Integer[] destination = new Integer[source.length];
+        System.arraycopy(source, 0, destination, 0, source.length);
+        return destination;
     }
 
     @Override
     public boolean isMutable() {
-        return false;
+        return true;
     }
 
     @Override
     public Serializable disassemble(Object o) throws HibernateException {
-        return null;
+        if (o == null) {
+            return null;
+        }
+        Integer[] array = (Integer[]) o;
+        return array;
     }
 
     @Override
     public Object assemble(Serializable serializable, Object o) throws HibernateException {
-        return null;
+        if (serializable == null) {
+            return null;
+        }
+        Integer[] array = (Integer[]) serializable;
+        return array;
     }
 
     @Override
     public Object replace(Object o, Object o1, Object o2) throws HibernateException {
-        return null;
+        return deepCopy(o);
     }
 }
+ 

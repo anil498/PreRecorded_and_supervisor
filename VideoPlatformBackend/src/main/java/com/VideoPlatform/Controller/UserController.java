@@ -139,7 +139,7 @@ public class UserController {
     }
 
     @PutMapping("/Update")
-    public ResponseEntity<?> updateUser(@RequestBody UserEntity user, HttpServletRequest request) {
+    public ResponseEntity<?> updateUser(@RequestBody String params1, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -151,7 +151,7 @@ public class UserController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        userService.updateUser(user);
+        userService.updateUser(params1);
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "User updated!");

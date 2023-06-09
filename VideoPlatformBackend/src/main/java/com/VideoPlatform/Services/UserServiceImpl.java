@@ -4,8 +4,12 @@ import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 
 import com.VideoPlatform.Utils.TimeUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,19 +83,29 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity updateUser(UserEntity user) {
-        UserEntity existing = (UserEntity) userRepository.findByUserId(user.getUserId());
-        existing.setFname(user.getFname());
-        existing.setLname(user.getLname());
-        existing.setSession(user.getSession());
-        existing.setFeatures(user.getFeatures());
-        existing.setFeaturesMeta(user.getFeaturesMeta());
-        logger.info("AccessId val : {}",user.getAccessId());
-        existing.setAccessId(user.getAccessId());
-        existing.setExpDate(user.getExpDate());
-        existing.setContact(user.getContact());
-        existing.setEmail(user.getEmail());
-
+    public UserEntity updateUser(String params1) {
+        logger.info("Params Update : {}",params1);
+        Gson gson=new Gson();
+        JsonObject params=gson.fromJson(params1,JsonObject.class);
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        UserEntity existing = userRepository.findByUserId(params.get("userId").getAsInt());
+        existing.setFname(params.get("fname").getAsString());
+        existing.setLname(params.get("lname").getAsString());
+        try {
+            existing.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
+            existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+            existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+            existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+            existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+            Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
+            existing.setExpDate(expDate);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        existing.setContact(params.get("contact").getAsString());
+        existing.setEmail(params.get("email").getAsString());
+        logger.info("New Entity {}",existing);
         return userRepository.save(existing);
     }
 

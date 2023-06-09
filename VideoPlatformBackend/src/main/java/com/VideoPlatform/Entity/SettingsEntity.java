@@ -1,11 +1,12 @@
 package com.VideoPlatform.Entity;
 
 
+import java.util.Arrays;
 
 public class SettingsEntity {
 
     private Integer duration;
-    private Boolean logo;
+    private Object logo;
     private Object description;
     private Boolean displayTicker;
     private Boolean displayTimer;
@@ -30,11 +31,11 @@ public class SettingsEntity {
         this.duration = duration;
     }
 
-    public Boolean getLogo() {
+    public Object getLogo() {
         return logo;
     }
 
-    public void setLogo(Boolean logo) {
+    public void setLogo(Object logo) {
         this.logo = logo;
     }
 
@@ -162,7 +163,7 @@ public class SettingsEntity {
     public String toString() {
         return "SettingsEntity{" +
                 "duration=" + duration +
-                ", logo=" + logo +
+                ", logo='" + logo +
                 ", description=" + description +
                 ", displayTicker=" + displayTicker +
                 ", displayTimer=" + displayTimer +
@@ -177,7 +178,7 @@ public class SettingsEntity {
                 ", supervisor=" + supervisor +
                 ", preRecorded=" + preRecorded +
                 ", landingPage=" + landingPage +
-                ", preRecordedDetails='" + preRecordedDetails + '\'' +
+                ", preRecordedDetails=" + preRecordedDetails +
                 '}';
     }
 }

@@ -75,6 +75,10 @@ public class UserEntity implements Serializable {
     @Column(name = "status")
     private int status = 1;
 
+    @Column(name="logo",columnDefinition="text")
+    @Type(type="com.VideoPlatform.Utils.MapType")
+    private HashMap<String, Object> logo = new HashMap<String, Object>(0);
+
     public int getUserId() {
         return userId;
     }
@@ -212,6 +216,14 @@ public class UserEntity implements Serializable {
         this.status = status;
     }
 
+    public HashMap<String, Object> getLogo() {
+        return logo;
+    }
+
+    public void setLogo(HashMap<String, Object> logo) {
+        this.logo = logo;
+    }
+
     @Override
     public String toString() {
         return "UserEntity{" +
@@ -223,15 +235,16 @@ public class UserEntity implements Serializable {
                 ", lname='" + lname + '\'' +
                 ", contact='" + contact + '\'' +
                 ", email='" + email + '\'' +
-                ", creationDate='" + creationDate + '\'' +
+                ", creationDate=" + creationDate +
                 ", lastLogin='" + lastLogin + '\'' +
-                ", expDate='" + expDate + '\'' +
+                ", expDate=" + expDate +
                 ", parentId=" + parentId +
                 ", session=" + session +
                 ", features=" + Arrays.toString(features) +
                 ", accessId=" + Arrays.toString(accessId) +
                 ", featuresMeta=" + featuresMeta +
                 ", status=" + status +
+                ", logo=" + logo +
                 '}';
     }
 }

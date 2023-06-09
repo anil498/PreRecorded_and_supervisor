@@ -28,8 +28,9 @@ public class AccountEntity {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "logo")
-    private byte[] logo;
+    @Column(name="logo",columnDefinition="text")
+    @Type(type="com.VideoPlatform.Utils.MapType")
+    private HashMap<String, Object> logo = new HashMap<String, Object>(0);
 
     @Column(name = "creation_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
@@ -85,11 +86,11 @@ public class AccountEntity {
         this.address = address;
     }
 
-    public byte[] getLogo() {
+    public HashMap<String, Object> getLogo() {
         return logo;
     }
 
-    public void setLogo(byte[] logo) {
+    public void setLogo(HashMap<String, Object> logo) {
         this.logo = logo;
     }
 
@@ -163,15 +164,15 @@ public class AccountEntity {
                 "accountId=" + accountId +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
-                ", logo=" + Arrays.toString(logo) +
-                ", creationDate='" + creationDate + '\'' +
-                ", maxUser='" + maxUser + '\'' +
+                ", logo=" + logo +
+                ", creationDate=" + creationDate +
+                ", maxUser=" + maxUser +
                 ", session=" + session +
-                ", features=" + features +
+                ", features=" + Arrays.toString(features) +
                 ", featuresMeta=" + featuresMeta +
-                ", accessId=" + accessId +
+                ", accessId=" + Arrays.toString(accessId) +
                 ", status=" + status +
-                ", expDate='" + expDate + '\'' +
+                ", expDate=" + expDate +
                 '}';
     }
 }

@@ -67,7 +67,7 @@ public class SessionController {
         if(params.containsKey("description")){
             description= String.valueOf(params.get("description"));
         }
-        String participantName=null;
+        String participantName="Participant";
         if(params.containsKey("participantName")){
             participantName= String.valueOf(params.get("participantName"));
         }
@@ -131,7 +131,7 @@ public class SessionController {
 
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
-        result.put("msg", "User deleted!");
+        result.put("msg", "Session deleted!");
 
         return ok(result);
     }
