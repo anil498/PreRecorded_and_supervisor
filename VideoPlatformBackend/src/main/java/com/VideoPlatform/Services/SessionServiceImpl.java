@@ -32,9 +32,6 @@ public class SessionServiceImpl implements SessionService{
     @Autowired
     private AccountAuthRepository accountAuthRepository;
 
-    @Value(("${call.access.time}"))
-    private int callAccessTime;
-
     @Override
     public SessionEntity createSession(String authKey, String token,Boolean moderator, String sessionId, String sessionKey, String description, String participantName) {
 
@@ -94,8 +91,14 @@ public class SessionServiceImpl implements SessionService{
                 }
 //                else if (4 == featureId) {
 //                    settingsEntity.setPreRecorded(true);
-//                    String prdJson = gson.toJson(userEntity.getFeaturesMeta().get(featureId.toString()));
-//                    settingsEntity.setPreRecordedDetails(prdJson);
+//                    try{
+//                        Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+//                        settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
+//                    }
+//                    catch (Exception e){
+//                        logger.info("Getting null value from pre_recorded_video_file !");
+//                    }
+//
 //                }
                 else if (5 == featureId && moderator==false) {
                     settingsEntity.setDisplayTicker(true);
@@ -127,8 +130,13 @@ public class SessionServiceImpl implements SessionService{
                     settingsEntity.setSupervisor(true);
                 }
 //                else if (10 == featureId) {
-//                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-//                    settingsEntity.setPreRecordedDetails();
+//                    try{
+//                        Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+//                        settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
+//                    }
+//                    catch (Exception e){
+//                        logger.info("Getting null value from pre_recorded_video_file !");
+//                    }
 //                }
                 else if (11 == featureId) {
                     settingsEntity.setDisplayTimer(true);

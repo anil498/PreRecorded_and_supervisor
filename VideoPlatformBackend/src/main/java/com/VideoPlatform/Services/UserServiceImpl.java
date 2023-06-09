@@ -64,7 +64,14 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity createUser(UserEntity user,String authKey,String token) {
+    public UserEntity createUser(UserEntity user,String authKey,String token,int accountId) {
+        AccountEntity a = accountRepository.findByAccountId(accountId);
+        int maxUsers = a.getMaxUser();
+
+        if(maxUsers == 0){
+            logger.info("No more users are allowed, max limit exceed..!");
+            return null;
+        }
         logger.info("User details {}",user.toString());
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         UserAuthEntity u = userAuthRepository.findByToken(token);

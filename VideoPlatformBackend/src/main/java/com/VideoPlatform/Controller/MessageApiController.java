@@ -43,11 +43,6 @@ public class MessageApiController {
     private String firebaseCollection;
     @Value("${call.prefix}")
     private String callPrefix;
-    @Value(("${call.access.time}"))
-    private int callAccessTime;
-    @Value(("${support.suffix}"))
-    private String supportSuffix;
-
     @Autowired
     MessagingService messagingService;
     @Autowired
