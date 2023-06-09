@@ -110,7 +110,9 @@
 	background-color: transparent;
 	border-radius: var(--ov-video-radius);
   }
-
+  .OV_stream.ticker-exists {
+	height: 93%;
+  }
   input {
 	caret-color: #ffffff !important;
   }
