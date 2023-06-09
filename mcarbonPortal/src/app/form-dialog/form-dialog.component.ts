@@ -15,6 +15,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { Router } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
+import { ImageFile } from "app/model/image-file";
 
 @Component({
   selector: "app-form-dialog",
@@ -32,7 +33,9 @@ export class FormDialogComponent implements OnInit {
   loginResponse: any;
 
   emptyField: boolean = false;
-
+  logo: any;
+  photoUrl: any;
+  photoControl: boolean = false;
   user_fname: string;
   user_lname: string;
   mobile: number;
@@ -63,6 +66,32 @@ export class FormDialogComponent implements OnInit {
     private snackBar: MatSnackBar
   ) {}
 
+  onPhotoSelected(event) {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+
+      const image: ImageFile = {
+        file: file,
+        url: this.sanitizer.bypassSecurityTrustUrl(
+          window.URL.createObjectURL(file)
+        ),
+      };
+      const reader = new FileReader();
+      console.log(file);
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        console.log(reader.result);
+        this.photoUrl = image.url;
+        this.photoControl = true;
+
+        this.logo = { byte: reader.result, type: file.type };
+        console.log(this.logo);
+        console.log(this.photoControl);
+        console.log(this.photoUrl);
+      };
+    }
+  }
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const files: FileList = event.target.files;
     if (files && files.length > 0) {
@@ -244,7 +273,7 @@ export class FormDialogComponent implements OnInit {
       this.confirm_password === "" ||
       this.max_active_sessions === null ||
       this.max_duration === null ||
-      this.max_participants === null
+      this.max_participants === null 
     ) {
       //this.emptyField = true;
       this.openSnackBar("All fields are mandatory", "snackBar");
@@ -267,6 +296,7 @@ export class FormDialogComponent implements OnInit {
         this.email,
         this.login_id,
         this.exp_date,
+        this.logo,
 
         this.password,
         this.selectedAccessId.sort(),

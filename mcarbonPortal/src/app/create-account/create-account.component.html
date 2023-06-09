@@ -63,28 +63,28 @@
             </div>
           </div>
 
-          <div class="col-md-5">
-            <!-- <mat-form-field>
-              <mat-label>Select a Logo</mat-label>
-              <input
-                type="file"
-                (change)="onPhotoSelected($event)"
-                accept="image/*"
-                style="display: none"
+          <div class="col-md-5 offset-md-1">
+            <div class="row justify-content-center align-items-center">
+              <img
+                [src]="photoUrl"
+                style="border-radius: 50%"
+                alt="selected logo"
+                height="60%"
+                width="60%"
               />
-              <button mat-icon-button type="button" (click)="fileInput.click()">
-                <mat-icon>photo_camera</mat-icon>
+            </div>
+            <div class="row justify-content-center align-items-center">
+              <input
+                #fileInput
+                type="file"
+                accept="image/*"
+                (change)="onPhotoSelected($event)"
+                formControlName="logo"
+              />
+              <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
+                Select a Logo
               </button>
-              <mat-icon *ngIf="photoControl"
-                >check_circle_outline</mat-icon
-              >
-            </mat-form-field>
-            <img
-              *ngIf="photoUrl"
-              [src]="photoUrl"
-              alt="Selected photo"
-              style="border-radius: 50%; max-width: 200px; height: auto"
-            /> -->
+            </div>
           </div>
         </div>
 
@@ -153,7 +153,7 @@
               *ngFor="let access of accessData"
               [value]="access.accessId"
               class="col-md-5 offset-md-1"
-              (change)="addAccessId(access, $event.checked)"
+              (change)="toggleAccessId(access, $event.checked)"
             >
               {{ access.name }}
             </mat-checkbox>

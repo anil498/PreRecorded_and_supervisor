@@ -14,6 +14,7 @@ import { MatDialogRef } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { Router } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
+import { ImageFile } from "app/model/image-file";
 
 @Component({
   selector: "app-create-account",
@@ -49,7 +50,7 @@ export class CreateAccountComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: Blob;
+  logo: any;
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
@@ -59,7 +60,8 @@ export class CreateAccountComponent implements OnInit {
   mobile: number;
   email: string;
   login_id: string;
-
+  photoUrl: any;
+  photoControl: boolean = false;
   password: string;
   confirm_password: string;
   max_duration: number;
@@ -84,6 +86,33 @@ export class CreateAccountComponent implements OnInit {
     this.loginResponse = this.restService.getToken();
   }
 
+  onPhotoSelected(event) {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+
+      const image: ImageFile = {
+        file: file,
+        url: this.sanitizer.bypassSecurityTrustUrl(
+          window.URL.createObjectURL(file)
+        ),
+      };
+      const reader = new FileReader();
+      console.log(file);
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        console.log(reader.result);
+        this.photoUrl = image.url;
+        this.photoControl = true;
+
+        this.logo = { byte: reader.result, type: file.type };
+        console.log(this.logo);
+        console.log(this.photoControl);
+        console.log(this.photoUrl);
+      };
+    }
+  }
+
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const files: FileList = event.target.files;
     if (files && files.length > 0) {
@@ -91,7 +120,6 @@ export class CreateAccountComponent implements OnInit {
       const reader = new FileReader();
       //reader.readAsArrayBuffer(file);
       console.warn(file);
-
       reader.onloadend = () => {
         console.warn(reader.result);
         const blob = new Blob([reader.result], { type: file.type });
@@ -148,7 +176,7 @@ export class CreateAccountComponent implements OnInit {
     }
   }
 
-  addAccessId(access: any, isChecked: boolean) {
+  toggleAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
       this.selectedAccessId.push(access.accessId);
     } else {
@@ -165,7 +193,7 @@ export class CreateAccountComponent implements OnInit {
         acc_exp_date: ["", Validators.required],
         max_admin: ["", Validators.required],
         max_user: ["", Validators.required],
-
+        logo: [null, Validators.required],
         user_fname: ["", Validators.required],
         user_lname: ["", Validators.required],
         mobile: ["", Validators.required],
@@ -188,20 +216,6 @@ export class CreateAccountComponent implements OnInit {
       }
     );
   }
-
-  // onPhotoSelected(event) {
-  //   const file: File = event.target.files[0];
-  //   const reader: FileReader = new FileReader();
-
-  //   reader.onloadend = (e) => {
-  //     this.photoUrl = reader.result as string;
-  //     this.photoControl = true;
-  //   };
-
-  //   if (file) {
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
 
   passwordMatchValidator(formGroup: FormGroup) {
     const password = formGroup.get("password").value;
@@ -268,6 +282,7 @@ export class CreateAccountComponent implements OnInit {
       this.exp_date +
       " " +
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
+    //this.logo = this.userForm.value.logo;
 
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
@@ -283,6 +298,7 @@ export class CreateAccountComponent implements OnInit {
     console.log("Access ID: " + this.selectedAccessId);
     console.log("Feature ID: " + this.selectedFeatures);
     console.log("FeatureMetas " + `${this.selectedFeaturesMeta}`);
+    console.log(this.logo);
     if (
       this.name == null ||
       this.max_user == null ||

@@ -17,77 +17,113 @@
       <div class="container">
         <div class="row">
           <div class="col-md-5 offset-md-1">
-            <mat-form-field>
-              <input
-                matInput
-                type="text"
-                placeholder="First Name"
-                formControlName="user_fname"
-              />
-            </mat-form-field>
+            <div class="row">
+              <div class="col-md-12 col-custom">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="First Name"
+                    formControlName="user_fname"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-custom">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="tel"
+                    placeholder="Mobile Number"
+                    formControlName="mobile"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-custom">
+                <mat-form-field>
+                  <mat-label>Account Expiry Date</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    formControlName="acc_exp_date"
+                  />
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle
+                    matIconSuffix
+                    [for]="picker"
+                  ></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  <mat-error
+                    *ngIf="userForm.hasError('mismatch', 'acc_exp_date')"
+                    >Select a valid date</mat-error
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-custom">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Login ID"
+                    formControlName="login_id"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
           </div>
-          <div class="col-md-5">
-            <mat-form-field>
-              <input
-                matInput
-                type="text"
-                placeholder="Last Name"
-                formControlName="user_lname"
-              />
-            </mat-form-field>
-          </div>
-        </div>
-        <div class="row">
+
           <div class="col-md-5 offset-md-1">
-            <mat-form-field>
-              <input
-                matInput
-                type="tel"
-                placeholder="Mobile Number"
-                formControlName="mobile"
+            <div class="row">
+              <div class="col-md-12 col-custom">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="text"
+                    placeholder="Last Name"
+                    formControlName="user_lname"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-custom">
+                <mat-form-field>
+                  <input
+                    matInput
+                    type="email"
+                    placeholder="Email"
+                    formControlName="email"
+                  />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row justify-content-center align-items-center">
+              <img
+                [src]="photoUrl"
+                style="border-radius: 50%"
+                alt="selected logo"
+                height="60%"
+                width="60%"
               />
-            </mat-form-field>
-          </div>
-          <div class="col-md-5">
-            <mat-form-field>
+            </div>
+            <div class="row justify-content-center align-items-center">
               <input
-                matInput
-                type="email"
-                placeholder="Email"
-                formControlName="email"
+                #fileInput
+                type="file"
+                accept="image/*"
+                (change)="onPhotoSelected($event)"
+                formControlName="logo"
               />
-            </mat-form-field>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-5 offset-md-1">
-            <mat-form-field>
-              <mat-label>Account Expiry Date</mat-label>
-              <input
-                matInput
-                [matDatepicker]="picker"
-                formControlName="acc_exp_date"
-              />
-              <mat-hint>MM/DD/YYYY</mat-hint>
-              <mat-datepicker-toggle
-                matIconSuffix
-                [for]="picker"
-              ></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-              <mat-error *ngIf="userForm.hasError('mismatch', 'acc_exp_date')"
-                >Select a valid date</mat-error
-              >
-            </mat-form-field>
-          </div>
-          <div class="col-md-5">
-            <mat-form-field>
-              <input
-                matInput
-                type="text"
-                placeholder="Login ID"
-                formControlName="login_id"
-              />
-            </mat-form-field>
+              <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
+                Select a Logo
+              </button>
+            </div>
           </div>
         </div>
       </div>
