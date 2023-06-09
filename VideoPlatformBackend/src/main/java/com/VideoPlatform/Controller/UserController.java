@@ -4,7 +4,7 @@ import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Constant.RequestMappings;
-import com.VideoPlatform.Services.UserServiceImpl;
+import com.VideoPlatform.Services.UserService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public class UserController {
     private static final Logger logger= LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private UserServiceImpl userService;
+    private UserService userService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -63,7 +63,6 @@ public class UserController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
         return ok(userService.getAllUsers());
     }
 
@@ -98,7 +97,6 @@ public class UserController {
         }
 
             return ok(userService.getUserById(id));
-
     }
 
     @PostMapping("/Create")
@@ -121,21 +119,13 @@ public class UserController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        AccountEntity a = accountRepository.findByAccountId(accountId);
-        int maxUsers = a.getMaxUser();
-
-        if(maxUsers == 0){
-            logger.info("No more users are allowed, max limit exceed..!");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(userService.createUser(user,authKey,token,accountId)==null){
+            return  new ResponseEntity<UserEntity>(HttpStatus.FORBIDDEN);
         }
-
-        userService.createUser(user,authKey,token);
-
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "User created!");
         return ok(result);
-
     }
 
     @PutMapping("/Update")

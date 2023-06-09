@@ -5,14 +5,16 @@
   height: 100vh;
 }
 
-.container-1{
+.container-1 {
   min-width: 100%;
 }
 
 .card {
+  border-radius: 5%;
   width: 26%;
-  margin-top: 8%;
-  margin-right: 5%;
+  margin-top: 15%;
+  margin-right: 11%;
+  background-color: rgb(255, 255, 255,0.25);
 }
 
 .form {
@@ -22,7 +24,7 @@
 }
 
 #login-head {
-  color: black;
+  color: rgb(0,0,0);
 }
 
 .form-field {
@@ -30,6 +32,7 @@
 }
 
 .login-button {
+  border-radius: 5%;
   background: linear-gradient(0deg, #009688, #17d1be);
   margin-top: 16px;
   color: white;
@@ -111,10 +114,10 @@
 // }
 
 .back {
-  background-image: url("../../assets/img/mcarbon_7.jpg");
+  background-image: url("../../assets/img/login_back_1.png");
   background-repeat: no-repeat;
-  background-size: cover;
-  height: 100%;
+  background-size: contain;
+  background-color: #ebe9e7;
 }
 
 .alert {
@@ -130,9 +133,13 @@
   font-size: 0.8rem;
 }
 
+.mat-form-field-appearance-legacy .mat-form-field-label {
+  color: rgba(0,0,0,);
+}
+
 ::ng-deep .mat-snack-bar-container {
   background: linear-gradient(60deg, #e8f1ee, #ffffff) !important;
-  color:  #be1818 !important;
+  color: #be1818 !important;
   font-weight: bold;
 }
 

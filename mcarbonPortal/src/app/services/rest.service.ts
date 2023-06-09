@@ -262,6 +262,7 @@ export class RestService {
     email: string,
     loginId: string,
     expDate: string,
+    logo: any,
 
     password: string,
     accessId: number[],
@@ -280,6 +281,8 @@ export class RestService {
       email,
       loginId,
       expDate,
+      logo,
+      
       password,
       accessId,
 
@@ -361,6 +364,7 @@ export class RestService {
     return this.postRequest2(type, {
       name,
       address,
+      logo,
       maxUser,
       expDate,
 
@@ -398,7 +402,7 @@ export class RestService {
     accessId: number[],
 
     features: number[],
-    featureMeta: any
+    featuresMeta: any
   ) {
     return this.putRequest2(type, {
       accountId,
@@ -407,6 +411,7 @@ export class RestService {
       maxUser,
       expDate,
       creationDate,
+      logo,
 
       accessId,
       session: {
@@ -416,7 +421,7 @@ export class RestService {
       },
 
       features,
-      featureMeta,
+      featuresMeta,
     });
   }
 

@@ -46,8 +46,6 @@ public class SessionController {
     @Autowired
     CommonService commonService;
 
-    @Value(("${call.access.time}"))
-    private int callAccessTime;
 
     @PostMapping("/Create")
     public ResponseEntity<?> createSession(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {

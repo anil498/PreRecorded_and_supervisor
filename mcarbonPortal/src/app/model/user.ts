@@ -4,6 +4,7 @@ export interface User{
     loginId: string,
     contact: number,
     email: string,
+    logo: any,
     address: string,
     accessId: number[],
     features: number[],
