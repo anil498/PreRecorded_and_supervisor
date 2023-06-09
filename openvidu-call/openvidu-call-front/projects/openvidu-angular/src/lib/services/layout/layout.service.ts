@@ -41,7 +41,7 @@ export class LayoutService {
 			bigClass: LayoutClass.BIG_ELEMENT, // The class to add to elements that should be sized bigger
 			smallClass: LayoutClass.SMALL_ELEMENT,
 			ignoredClass: LayoutClass.IGNORED_ELEMENT,
-			bigPercentage: 1, // The maximum percentage of space the big ones should take up
+			bigPercentage: 0.8, // The maximum percentage of space the big ones should take up
 			minBigPercentage: 0, // If this is set then it will scale down the big space if there is left over whitespace down to this minimum size
 			bigFixedRatio: false, // fixedRatio for the big ones
 			bigMaxRatio: 9 / 16, // The narrowest ratio to use for the big elements (default 2x3)
@@ -50,7 +50,7 @@ export class LayoutService {
 			animate: true, // Whether you want to animate the transitions. Deprecated property, to disable it remove the transaction property on OT_publisher css class
 			alignItems: LayoutAlignment.CENTER,
 			bigAlignItems: LayoutAlignment.CENTER,
-			smallAlignItems: LayoutAlignment.END,
+			smallAlignItems: LayoutAlignment.CENTER,
 			maxWidth: Infinity, // The maximum width of the elements
 			maxHeight: Infinity, // The maximum height of the elements
 			smallMaxWidth: Infinity,
