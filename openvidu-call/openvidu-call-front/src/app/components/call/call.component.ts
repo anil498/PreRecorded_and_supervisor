@@ -77,8 +77,8 @@ export class CallComponent implements OnInit {
 		// this.router.navigate([`/`]);
 		if (this.type === "Support") {
 			// Navigate to a specific URL for customers
-			window.location.replace(this.redirectUrl);
 			this.restService.removeSession(this.sessionKey);
+			window.location.replace(this.redirectUrl);
 		  } else {
 			window.location.replace(this.redirectUrl);
 		  }
