@@ -97,8 +97,8 @@
 			[disabled]="isConnectionLost"
 			[class.active-btn]="isScreenShareActive"
 		>
-			<mat-icon *ngIf="!isScreenShareActive" matTooltip="{{ 'TOOLBAR.ENABLE_SCREEN' | translate }}">screen_share</mat-icon>
-			<mat-icon *ngIf="isScreenShareActive" matTooltip="{{ 'TOOLBAR.DISABLE_SCREEN' | translate }}">screen_share</mat-icon>
+			<mat-icon *ngIf="!isScreenShareActive" matTooltip="{{ 'TOOLBAR.ENABLE_SCREEN' | translate }}">open_in_browser</mat-icon>
+			<mat-icon *ngIf="isScreenShareActive" matTooltip="{{ 'TOOLBAR.DISABLE_SCREEN' | translate }}">open_in_browser</mat-icon>
 		</button>
 
 		<!-- VideoPublish button -->
@@ -212,7 +212,7 @@
 	</div>
 	<div fxFlex="20%" fxFlexOrder="3" fxLayoutAlign="end center" id="menu-buttons-container">
 		<div *ngIf="showSessionTimer" id="recording-tag" class="recording-tag">
-			{{ sessionTime.getTime() < 3600000 ? (sessionTime | date: 'mm:ss') : (sessionTime | date: 'H:mm:ss') }}
+			{{ sessionTime | date: 'H:mm:ss'}}
 		</div>
 		<!-- Default activities button -->
 		<button

@@ -30,6 +30,7 @@ public class SessionProperty {
   private List<Recording> recordings;
   private String type;
   private String recordingMode="MANUAL"; // for auto recording need to set {ALWAYS}
+  private String base64Logo;
 
   public String getSessionId() {
     return sessionId;
@@ -165,6 +166,14 @@ public class SessionProperty {
 
   public void setRecordingMode(String recordingMode) {
     this.recordingMode = recordingMode;
+  }
+
+  public String getBase64Logo() {
+    return base64Logo;
+  }
+
+  public void setBase64Logo(String base64Logo) {
+    this.base64Logo = base64Logo;
   }
 
   @Override

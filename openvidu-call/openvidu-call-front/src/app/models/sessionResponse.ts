@@ -10,6 +10,7 @@ export interface sessionResponse {
     showLogo: boolean;
     logo: string;
     description:string;
+    landingPage:string;
     moderators: boolean;
     displayTicker: boolean;
     displayTimer: boolean;
@@ -28,6 +29,7 @@ export interface sessionResponse {
     preRecorded: boolean;
     broadcast: boolean;
   };
+  base64Logo:string;
   cameraToken: string;
   screenToken: string;
   recordings: RecordingInfo[];

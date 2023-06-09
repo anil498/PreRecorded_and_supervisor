@@ -304,7 +304,6 @@ export class RestService {
     loginId: string,
     expDate: string,
 
-    password: string,
     accessId: number[],
 
     max_duration: number,
@@ -314,15 +313,14 @@ export class RestService {
     features: number[],
     featuresMeta: any
   ) {
-    let path = type + "/" + userId;
     return this.putRequest1(type, {
+      userId,
       fname,
       lname,
       contact,
       email,
       loginId,
       expDate,
-      password,
       accessId,
 
       session: {
@@ -402,7 +400,6 @@ export class RestService {
     features: number[],
     featureMeta: any
   ) {
-    let path = type + "/" + accountId;
     return this.putRequest2(type, {
       accountId,
       name,

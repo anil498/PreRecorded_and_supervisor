@@ -1053,7 +1053,6 @@ private clear() {
 
 private update(value: string) {
 	if (this.libService.displayLogoValue.getValue() !== value) {
-		console.log("logo value",value)
 		this.libService.displayLogoValue.next(value);
 	}
 }

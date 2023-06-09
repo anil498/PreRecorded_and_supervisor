@@ -42,10 +42,6 @@ public class SessionController {
   String authorization;
   @Value(("${Token}"))
   String token;
-  @Value(("${LOGO_FILE_PATH}"))
-  String logoFilPath;
-  @Value(("${LOGO_FILE_EXT}"))
-  String fileExtension;
 
 
 	@Autowired
@@ -86,6 +82,7 @@ public class SessionController {
              sessionProperty = videoPlatformService.getVideoPlatformProperties(authorization, token, sessionKey);
              logger.info("Session Property: {}", sessionProperty);
              sessionId= sessionProperty.getSessionId();
+             sessionProperty.setBase64Logo(sessionService.convertByteToBase64(sessionProperty.getSettings().getLogo()));
         }catch (Exception e){
           logger.error("Getting Exception while fetching Session property from videoplatform {}",e);
           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("INTERVAL_SERVER_ERROR");

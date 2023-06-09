@@ -1,18 +1,17 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatTabGroup } from '@angular/material/tabs';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { RestService } from 'app/services/rest.service';
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { MatTabGroup } from "@angular/material/tabs";
+import { DomSanitizer } from "@angular/platform-browser";
+import { Router } from "@angular/router";
+import { RestService } from "app/services/rest.service";
 
 @Component({
-  selector: 'app-view-account-dialog',
-  templateUrl: './view-account-dialog.component.html',
-  styleUrls: ['./view-account-dialog.component.scss']
+  selector: "app-view-account-dialog",
+  templateUrl: "./view-account-dialog.component.html",
+  styleUrls: ["./view-account-dialog.component.scss"],
 })
 export class ViewAccountDialogComponent implements OnInit {
-
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
 
   samePassword = false;
@@ -111,29 +110,27 @@ export class ViewAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.userForm = this.fb.group(
-      {
-        name: [this.account.name, Validators.required],
-        address: [this.account.address, Validators.required],
-        acc_exp_date: [new Date(this.account.expDate), Validators.required],
-        max_user: [this.account.maxUser, Validators.required],
+    this.userForm = this.fb.group({
+      name: [this.account.name, Validators.required],
+      address: [this.account.address, Validators.required],
+      acc_exp_date: [new Date(this.account.expDate), Validators.required],
+      max_user: [this.account.maxUser, Validators.required],
 
-        accessList: [this.account.accessId, Validators.required],
+      accessList: [this.account.accessId, Validators.required],
 
-        max_duration: [this.account.session.max_duration, Validators.required],
-        max_active_sessions: [
-          this.account.session.max_active_sessions,
-          Validators.required,
-        ],
-        max_participants: [
-          this.account.session.max_participants,
-          Validators.required,
-        ],
+      max_duration: [this.account.session.max_duration, Validators.required],
+      max_active_sessions: [
+        this.account.session.max_active_sessions,
+        Validators.required,
+      ],
+      max_participants: [
+        this.account.session.max_participants,
+        Validators.required,
+      ],
 
-        featureList: [this.account.features, Validators.required],
-        featureMeta: [this.account.featuresMeta, Validators.required],
-      },
-    );
+      featureList: [this.account.features, Validators.required],
+      featureMeta: [this.account.featuresMeta, Validators.required],
+    });
 
     this.userForm.disable();
 
@@ -141,28 +138,35 @@ export class ViewAccountDialogComponent implements OnInit {
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
     // For diplaying previous checked Access
-    for (let i = 0; i < this.accessData.length; i++) {
-      var flag = true;
-      for (let j = 0; j < this.userForm.value.accessList.length; j++) {
-        if (this.userForm.value.accessList[j] === this.accessData[i].accessId) {
-          flag = false;
-          break;
+    if (this.accessData) {
+      for (let i = 0; i < this.accessData.length; i++) {
+        var flag = true;
+        for (let j = 0; j < this.userForm.value.accessList.length; j++) {
+          if (
+            this.userForm.value.accessList[j] === this.accessData[i].accessId
+          ) {
+            flag = false;
+            break;
+          }
         }
+        if (flag === true) this.accessData[i].status = 0;
       }
-      if (flag === true) this.accessData[i].status = 0;
     }
     // for displaying previous checked features
-    for (let i = 0; i < this.featuresData.length; i++) {
-      var flag = true;
-      for (let j = 0; j < this.userForm.value.featureList.length; j++) {
-        if (
-          this.userForm.value.featureList[j] === this.featuresData[i].featureId
-        ) {
-          flag = false;
-          break;
+    if (this.featuresData) {
+      for (let i = 0; i < this.featuresData.length; i++) {
+        var flag = true;
+        for (let j = 0; j < this.userForm.value.featureList.length; j++) {
+          if (
+            this.userForm.value.featureList[j] ===
+            this.featuresData[i].featureId
+          ) {
+            flag = false;
+            break;
+          }
         }
+        if (flag === true) this.featuresData[i].status = 0;
       }
-      if (flag === true) this.featuresData[i].status = 0;
     }
   }
 
@@ -202,5 +206,4 @@ export class ViewAccountDialogComponent implements OnInit {
       ? this.currentTabIndex === this.tabGroup._tabs.length - 1
       : false;
   }
-
 }

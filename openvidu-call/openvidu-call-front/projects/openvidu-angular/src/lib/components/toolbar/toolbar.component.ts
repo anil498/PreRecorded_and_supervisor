@@ -349,6 +349,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	showLogoValue: string;
+	/**
+	 * @ignore
+	 */
 	showSessionName: boolean = true;
 	/**
 	 * @ignore
@@ -425,6 +429,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private participantsPanelButtonSub: Subscription;
 	private chatPanelButtonSub: Subscription;
 	private displayLogoSub: Subscription;
+	private displayLogoValueSub: Subscription;
 	private displaySessionNameSub: Subscription;
 	private screenSizeSub: Subscription;
 	private settingsButtonSub: Subscription;
@@ -522,6 +527,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.participantsPanelButtonSub) this.participantsPanelButtonSub.unsubscribe();
 		if (this.chatPanelButtonSub) this.chatPanelButtonSub.unsubscribe();
 		if (this.displayLogoSub) this.displayLogoSub.unsubscribe();
+		if (this.displayLogoValueSub) this.displayLogoValueSub.unsubscribe();
 		if (this.displaySessionNameSub) this.displaySessionNameSub.unsubscribe();
 		if (this.minimalSub) this.minimalSub.unsubscribe();
 		if (this.activitiesPanelButtonSub) this.activitiesPanelButtonSub.unsubscribe();
@@ -812,7 +818,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private subscribeToSessionTimergStatus() {
 		if(this.showSessionTimer){
 		this.sessionTimerSubscription = this.openviduService.sessionTimerObs
-		.pipe(skip(1))
+		.pipe(skip(1))	
 		.subscribe((ev: {time?: Date }) => {
 			if (ev.time) {
 				this.sessionTime = ev.time;
@@ -883,6 +889,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 		this.displayLogoSub = this.libService.displayLogoObs.subscribe((value: boolean) => {
 			this.showLogo = value;
+			this.cd.markForCheck();
+		});
+		this.displayLogoValueSub = this.libService.displayLogoValueObs.subscribe((value: string) => {
+			this.showLogoValue = value;
 			this.cd.markForCheck();
 		});
 		this.displaySessionNameSub = this.libService.displaySessionNameObs.subscribe((value: boolean) => {

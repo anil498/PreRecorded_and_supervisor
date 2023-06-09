@@ -15,7 +15,6 @@ import { RestService } from "app/services/rest.service";
 export class UpdateUserDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
 
-  samePassword = false;
   currentTabIndex: number = 0;
   userForm: FormGroup;
   messageResponse: any;
@@ -30,9 +29,6 @@ export class UpdateUserDialogComponent implements OnInit {
   login_id: string;
   acc_exp_date: Date;
   exp_date: string;
-
-  password: string;
-  confirm_password: string;
 
   max_duration: number;
   max_active_sessions: number;
@@ -136,8 +132,6 @@ export class UpdateUserDialogComponent implements OnInit {
         login_id: [this.user.loginId, Validators.required],
         acc_exp_date: [new Date(this.user.expDate), Validators.required],
 
-        password: ["", Validators.required],
-        confirm_password: ["", Validators.required],
         accessList: [this.user.accessId, Validators.required],
 
         max_duration: [this.user.session.max_duration, Validators.required],
@@ -154,10 +148,10 @@ export class UpdateUserDialogComponent implements OnInit {
         featureMeta: [this.user.featuresMeta, Validators.required],
       },
       {
-        validator: [this.passwordMatchValidator],
+        validator: [this.dateValidator],
       }
     );
-
+    this.userForm.controls["login_id"].disable();
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
@@ -206,24 +200,13 @@ export class UpdateUserDialogComponent implements OnInit {
     return false;
   }
 
-  passwordMatchValidator(formGroup: FormGroup) {
-    const password = formGroup.get("password").value;
-    const confirm_password = formGroup.get("confirm_password").value;
-
-    if (password !== confirm_password) {
-      formGroup.get("confirm_password").setErrors({ mismatch: true });
-    } else {
-      formGroup.get("confirm_password").setErrors(null);
-    }
-  }
-
   dateValidator(formGroup: FormGroup) {
     const expdate = formGroup.get("acc_exp_date").value;
     const currentDate = new Date();
     if (expdate < currentDate) {
       formGroup.get("acc_exp_date").setErrors({ mismatch: true });
     } else {
-      formGroup.get("confirm_password").setErrors(null);
+      formGroup.get("acc_exp_date").setErrors(null);
     }
   }
 
@@ -273,9 +256,6 @@ export class UpdateUserDialogComponent implements OnInit {
       " " +
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
 
-    this.password = this.userForm.value.password;
-    this.confirm_password = this.userForm.value.confirm_password;
-
     this.max_duration = this.userForm.value.max_duration;
     this.max_participants = this.userForm.value.max_participants;
     this.max_active_sessions = this.userForm.value.max_active_sessions;
@@ -286,8 +266,6 @@ export class UpdateUserDialogComponent implements OnInit {
       this.mobile == null ||
       this.email === "" ||
       this.login_id === "" ||
-      this.password === "" ||
-      this.confirm_password === "" ||
       this.max_active_sessions === null ||
       this.max_duration === null ||
       this.max_participants === null
@@ -295,10 +273,6 @@ export class UpdateUserDialogComponent implements OnInit {
       //this.emptyField = true;
       this.openSnackBar("All fields are mandatory", "snackBar");
       //this.timeOut(3000);
-      return;
-    }
-
-    if (this.password !== this.confirm_password) {
       return;
     }
 
@@ -314,7 +288,6 @@ export class UpdateUserDialogComponent implements OnInit {
         this.login_id,
         this.exp_date,
 
-        this.password,
         this.selectedAccessId.sort(),
 
         this.max_duration,
