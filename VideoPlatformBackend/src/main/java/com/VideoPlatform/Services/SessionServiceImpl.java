@@ -75,6 +75,12 @@ public class SessionServiceImpl implements SessionService{
             SettingsEntity settingsEntity = new SettingsEntity();
 
             settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+            if(userEntity.getLogo() == null){
+                settingsEntity.setLogo(account.getLogo());
+            }
+            else{
+                settingsEntity.setLogo(userEntity.getLogo());
+            }
             for (Integer featureId : userEntity.getFeatures()) {
                 if (1 == featureId) {
                     settingsEntity.setRecording(true);

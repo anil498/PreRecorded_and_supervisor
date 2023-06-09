@@ -117,9 +117,9 @@ public class AccountController {
             logger.info(String.valueOf(params));
             acc.setName(params.get("name").getAsString());
             acc.setAddress(params.get("address").getAsString());
-//            acc.setLogo(objectMapper.readValue(params.get("logo").getAsString(),byte[].class));
             acc.setCreationDate(creation);
             acc.setMaxUser(params.get("maxUser").getAsInt());
+            acc.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
             acc.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
             acc.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
             acc.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
@@ -135,7 +135,7 @@ public class AccountController {
             user.setExpDate(expDate);
             user.setLoginId(params.get("loginId").getAsString());
             String pass = params.get("password").getAsString();
-            logger.info("PAssword Check !!! {}",pass);
+            logger.info("Password Check !!! {}",pass);
             String myPass = passwordEncoder.encode(pass);
             logger.info("Encoded Pass : {}",myPass);
             user.setPassword(myPass);
@@ -143,6 +143,7 @@ public class AccountController {
             user.setEmail(params.get("email").getAsString());
             user.setCreationDate(creation);
             user.setParentId(u.getUserId());
+            user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
             user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
             user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
             user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
@@ -192,7 +193,7 @@ public class AccountController {
     }
 
     @PutMapping("/Update")
-    public ResponseEntity<?> updateAccount(@RequestBody AccountEntity account, HttpServletRequest request){
+    public ResponseEntity<?> updateAccount(@RequestBody String params1, HttpServletRequest request){
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -204,7 +205,7 @@ public class AccountController {
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        accountService.updateAccount(account);
+        accountService.updateAccount(params1);
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "Account updated!");
@@ -212,7 +213,7 @@ public class AccountController {
     }
 
     @DeleteMapping("/Delete/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable Integer id, HttpServletRequest request) {
+    public ResponseEntity<?> deleteAccount(@PathVariable Integer id, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -220,10 +221,16 @@ public class AccountController {
         if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        if (!(commonService.checkAccess("user_delete", token))) {
+        if (!(commonService.checkAccess("customer_delete", token))) {
             logger.info("Permission Denied. Don't have access for this service!");
             return new ResponseEntity<AccountEntity>(HttpStatus.UNAUTHORIZED);
         }
-        return ok(accountService.deleteAccount(id));
+        accountService.deleteAccount(id);
+
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "Account deleted!");
+
+        return ok(result);
     }
 }

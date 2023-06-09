@@ -200,7 +200,7 @@ public class MessageApiController {
         if(!commonService.authorizationCheck(authKey,token)){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("app_notification",token))){
+        if(!(commonService.checkAccess("send_notification",token))){
             logger.info("Permission Denied. Don't have access for this service!");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
