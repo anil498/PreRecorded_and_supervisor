@@ -947,7 +947,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.showFullscreenButton = value;
 				// this.cd.markForCheck();
 			});
-			if(this.autoFullScreen && !this.isShareFullscreenActive && !this.showFullscreenButton){
+			if(!this.isShareFullscreenActive && !this.showFullscreenButton){
 			   console.log("Full screen")
 			   this.toggleShareFullscreen();
 			}else if(this.showShareFullScreenButton){
