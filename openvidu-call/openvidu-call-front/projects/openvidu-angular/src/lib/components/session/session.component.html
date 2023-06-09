@@ -6,17 +6,17 @@
 		</mat-sidenav>
 
 		<mat-sidenav-content class="sidenav-main">
-			<div id="layout-container" #layoutContainer>
-				<div [hidden]="!displayTickerValue || usedInPrejoinPage" class="container">
-					<div class="ticker">
-						<div class="news">
-							<marquee class="news-content" direction="left" onmouseover="this.stop();" onmouseout="this.start();" *ngIf="displayTicker">
-								<span>{{ displayTickerValue }}</span>
-							</marquee>
-							<span *ngIf="!displayTicker" class="centered">{{ displayTickerValue }}</span>
-						</div>
+			<div [hidden]="!displayTickerValue || usedInPrejoinPage" class="container">
+				<div class="ticker">
+					<div class="news">
+						<marquee class="news-content" direction="left" onmouseover="this.stop();" onmouseout="this.start();" *ngIf="displayTicker">
+							<span>{{ displayTickerValue }}</span>
+						</marquee>
+						<span *ngIf="!displayTicker" class="centered">{{ displayTickerValue }}</span>
 					</div>
 				</div>
+			</div>
+			<div id="layout-container" #layoutContainer>
 				<ng-container *ngTemplateOutlet="layoutTemplate"></ng-container>
 			</div>
 		</mat-sidenav-content>
