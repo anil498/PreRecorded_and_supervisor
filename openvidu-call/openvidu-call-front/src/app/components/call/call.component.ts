@@ -83,9 +83,6 @@ export class CallComponent implements OnInit {
 			window.location.replace(this.redirectUrl);
 		  }
 	}
-	participantName(){
-		return this.participantNameValue
-	}
 	async onStartRecordingClicked() {
 		try {
 			await this.restService.startRecording(this.sessionKey);
@@ -143,10 +140,10 @@ export class CallComponent implements OnInit {
 		this.sessionDuration=response.settings.duration;
 		this.participantsButton=response.settings.participantsButton;
 		this.type=response.type;
-		if(this.type){
+		if(response.participantName){
 			this.participantNameValue=response.participantName;
 		}else{
-			this.participantNameValue==this.type;
+			this.participantNameValue=response.type;
 		}
 	}catch(error){
 		console.log(error)

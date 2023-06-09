@@ -11,6 +11,7 @@ import java.util.List;
 
 import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
+import io.openvidu.call.java.models.ErrorResponse;
 import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.call.java.services.SessionService;
 import io.openvidu.call.java.services.VideoPlatformService;
@@ -64,6 +65,7 @@ public class SessionController {
     logger.info("Request API /sessions Headers {} and Parameters {}",headers,params);
     String sessionId=null;
     SessionProperty sessionProperty =null;
+    ErrorResponse errorResponse=new ErrorResponse();
     try {
       if (validateRequest(params)) {
         long date = -1;
@@ -73,9 +75,13 @@ public class SessionController {
           nickname = params.get("nickname").toString();
         }
         if(authorization==null){
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Authorization Key not found");
+          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
+          errorResponse.setReason("Authorization Key not found");
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
         } else if (token==null) {
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Token not found");
+          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
+          errorResponse.setReason("Token not found");
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
         }
         String sessionKey = params.get("sessionKey").toString();
         try {
@@ -85,14 +91,18 @@ public class SessionController {
              sessionProperty.setBase64Logo(sessionService.convertByteToBase64(sessionProperty.getSettings().getLogo()));
         }catch (Exception e){
           logger.error("Getting Exception while fetching Session property from videoplatform {}",e);
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("INTERVAL_SERVER_ERROR");
+          errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+          errorResponse.setReason("Session not found");
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
         Session sessionCreated = null;
         if (validateSession(sessionProperty, sessionKey,sessionIdToSessionContextMap)) {
           logger.info("Going to Create session {} with recordingMode {}",sessionProperty.getSessionId(),sessionProperty.getRecordingMode());
           sessionCreated = this.openviduService.createSession(sessionId, sessionProperty.getRecordingMode());
         } else {
-          ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Session limit exceed");
+          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
+          errorResponse.setReason("Session limit exist");
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
         }
         String MODERATOR_TOKEN_NAME = OpenViduService.MODERATOR_TOKEN_NAME;
         String PARTICIPANT_TOKEN_NAME = OpenViduService.PARTICIPANT_TOKEN_NAME;
@@ -121,7 +131,9 @@ public class SessionController {
             }
           }
         } else {
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Max participant joined");
+          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
+          errorResponse.setReason("Max participant joined");
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
         }
         if(!sessionIdToSessionContextMap.containsKey(sessionId)) {
           SessionContext sessionContext = new SessionContext.Builder().sessionObject(sessionCreated).connectionObject(cameraConnection).sessionRequest(sessionProperty).sessionKey(sessionKey).sessionUniqueID(sessionId).build();
@@ -189,7 +201,9 @@ public class SessionController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(sessionProperty);
       }else {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("SessionId not found");
+        errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+        errorResponse.setReason("SessionKey not found");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
       }
 
       } catch(OpenViduJavaClientException | OpenViduHttpException e){
@@ -203,7 +217,9 @@ public class SessionController {
         } else {
           e.printStackTrace();
           System.err.println(e.getMessage());
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(sessionProperty);
+          errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
+          errorResponse.setReason("Session Expired");
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
         }
       }
   }
