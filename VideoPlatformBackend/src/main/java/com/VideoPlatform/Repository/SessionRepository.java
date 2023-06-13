@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface SessionRepository extends JpaRepository<SessionEntity,String> {
@@ -29,12 +30,12 @@ public interface SessionRepository extends JpaRepository<SessionEntity,String> {
     @Query(nativeQuery = true,value = "SELECT COUNT(*) FROM sessions where exp_date NOT BETWEEN creation_date AND NOW()")
     Integer activeSessions();
 
-    @Query(nativeQuery = true,value = "select date_trunc('day',creation_date) as creation_date,count(*) from sessions group by date_trunc('day',creation_date)")
-    List<Object> dailySessionCreation();
+    @Query(nativeQuery = true,value = "select EXTRACT('day' from date_trunc('day',creation_date)) as day,count(*) from sessions group by date_trunc('day',creation_date)")
+    List<Map<String,Object>> dailySessionCreation();
 
-    @Query(nativeQuery = true,value = "select date_trunc('month',creation_date) as creation_date,count(*) from sessions group by date_trunc('month',creation_date)")
-    List<Object> monthlySessionCreation();
+    @Query(nativeQuery = true,value = "select EXTRACT('month' from date_trunc('month',creation_date)) as month,count(*) from sessions group by date_trunc('month',creation_date)")
+    List<Map<String,Object>> monthlySessionCreation();
 
-    @Query(nativeQuery = true,value = " select date_trunc('year',creation_date) as creation_date,count(*) from sessions group by date_trunc('year',creation_date)")
-    List<Object> yearlySessionCreation();
+    @Query(nativeQuery = true,value = " select EXTRACT('year' from date_trunc('year',creation_date)) as year,count(*) from sessions group by date_trunc('year',creation_date)")
+    List<Map<String,Object>> yearlySessionCreation();
 }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface AccountRepository extends JpaRepository<AccountEntity, Integer> {
@@ -28,14 +29,14 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
     @Query(nativeQuery = true,value = "SELECT COUNT(*) FROM account_data WHERE status=1")
     Integer activeAccounts();
 
-    @Query(nativeQuery = true,value = "select date_trunc('day',creation_date) as creation_date,count(*) from account_data group by date_trunc('day',creation_date)")
-    List<Object> dailyAccountCreation();
+    @Query(nativeQuery = true,value = "select EXTRACT('day' from date_trunc('day',creation_date)) as day,count(*) from account_data group by date_trunc('day',creation_date)")
+    List<Map<String,Object>> dailyAccountCreation();
 
-    @Query(nativeQuery = true,value = "select date_trunc('month',creation_date) as creation_date,count(*) from account_data group by date_trunc('month',creation_date)")
-    List<Object> monthlyAccountCreation();
+    @Query(nativeQuery = true,value = "select EXTRACT('month' from date_trunc('month',creation_date)) as month ,count(*) from account_data group by date_trunc('month',creation_date)")
+    List<Map<String,Object>> monthlyAccountCreation();
 
-    @Query(nativeQuery = true,value = "select date_trunc('year',creation_date) as creation_date,count(*) from account_data group by date_trunc('year',creation_date)")
-    List<Object> yearlyAccountCreation();
+    @Query(nativeQuery = true,value = "select EXTRACT('year' from date_trunc('year',creation_date)) as year,count(*) from account_data group by date_trunc('year',creation_date)")
+    List<Map<String,Object>> yearlyAccountCreation();
 
     @Modifying
     @Transactional

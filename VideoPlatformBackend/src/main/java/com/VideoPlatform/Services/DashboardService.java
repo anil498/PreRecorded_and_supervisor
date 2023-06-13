@@ -42,9 +42,9 @@ public class DashboardService {
         accInfo.put("totalAccounts",accountRepository.totalAccounts());
         accInfo.put("activeAccounts",accountRepository.activeAccounts());
         logger.info("dailyAccountCreation {} ",accountRepository.dailyAccountCreation());
-//        accInfo.put("dailyAccountCreation",accountRepository.dailyAccountCreation());
-//        accInfo.put("monthlyAccountCreation",accountRepository.monthlyAccountCreation());
-//        accInfo.put("yearlyAccountCreation",accountRepository.yearlyAccountCreation());
+        accInfo.put("dailyAccountCreation",accountRepository.dailyAccountCreation());
+        accInfo.put("monthlyAccountCreation",accountRepository.monthlyAccountCreation());
+        accInfo.put("yearlyAccountCreation",accountRepository.yearlyAccountCreation());
         return objectMapper.convertValue(accInfo, JsonNode.class);
     }
     public Object userDetails(){
@@ -53,9 +53,9 @@ public class DashboardService {
         userInfo.put("isDisplay",true);
         userInfo.put("totalUsers",userRepository.totalUsers());
         userInfo.put("activeUsers",userRepository.activeUsers());
-//        userInfo.put("dailyUserCreation",userRepository.dailyUserCreation());
-//        userInfo.put("monthlyUserCreation",userRepository.monthlyUserCreation());
-//        userInfo.put("yearlyUserCreation",userRepository.yearlyUserCreation());
+        userInfo.put("dailyUserCreation",userRepository.dailyUserCreation());
+        userInfo.put("monthlyUserCreation",userRepository.monthlyUserCreation());
+        userInfo.put("yearlyUserCreation",userRepository.yearlyUserCreation());
         return objectMapper.convertValue(userInfo,JsonNode.class);
     }
     public Object sessionDetails(){
@@ -68,9 +68,9 @@ public class DashboardService {
         sessionInfo.put("totalSessions",totalSessions);
         sessionInfo.put("activeSessions",activeSessions);
         sessionInfo.put("expiredSessions",totalSessions-activeSessions);
-//        sessionInfo.put("dailySessionCreation",sessionRepository.dailySessionCreation());
-//        sessionInfo.put("monthlySessionCreation",sessionRepository.monthlySessionCreation());
-//        sessionInfo.put("yearlySessionCreation",sessionRepository.yearlySessionCreation());
+        sessionInfo.put("dailySessionCreation",sessionRepository.dailySessionCreation());
+        sessionInfo.put("monthlySessionCreation",sessionRepository.monthlySessionCreation());
+        sessionInfo.put("yearlySessionCreation",sessionRepository.yearlySessionCreation());
         return objectMapper.convertValue(sessionInfo,JsonNode.class);
     }
 }
