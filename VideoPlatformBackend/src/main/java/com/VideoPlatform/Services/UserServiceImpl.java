@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService{
             response.put("status_message","Login Successful");
             response.put("Features", featureData(user1.getUserId()));
             response.put("Access", accessData(user1.getUserId()));
-            response.put("Dashboard",dashboardService.dashboardData());
+            response.put("Dashboard",dashboardService.dashboardData(loginId));
             String lastLogin = LocalDateTime.now().format(formatter);
             logger.info("LastLogin1 : {}",lastLogin);
             user1.setLastLogin(lastLogin);
@@ -237,7 +237,7 @@ public class UserServiceImpl implements UserService{
                 res.put("status_message","Login Successful");
                 res.put("Features", featureData(user1.getUserId()));
                 res.put("Access", accessData(user1.getUserId()));
-                res.put("Dashboard",dashboardService.dashboardData());
+                res.put("Dashboard",dashboardService.dashboardData(loginId));
                 logger.info(user1.toString());
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }

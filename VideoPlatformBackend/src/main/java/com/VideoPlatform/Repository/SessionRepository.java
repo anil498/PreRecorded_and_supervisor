@@ -30,6 +30,9 @@ public interface SessionRepository extends JpaRepository<SessionEntity,String> {
     @Query(nativeQuery = true,value = "SELECT COUNT(*) FROM sessions where exp_date NOT BETWEEN creation_date AND NOW()")
     Integer activeSessions();
 
+    @Query(nativeQuery = true,value = "SELECT SUM(total_participants) FROM sessions")
+    Integer participants();
+
     @Query(nativeQuery = true,value = "select EXTRACT('day' from date_trunc('day',creation_date)) as day,count(*) from sessions group by date_trunc('day',creation_date)")
     List<Map<String,Object>> dailySessionCreation();
 

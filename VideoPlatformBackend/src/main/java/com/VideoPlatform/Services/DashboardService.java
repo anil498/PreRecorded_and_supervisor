@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 public class DashboardService {
@@ -26,13 +28,25 @@ public class DashboardService {
     private SessionRepository sessionRepository;
     @Autowired
     private AccountAuthRepository accountAuthRepository;
+    @Autowired
+    private AccessRepository accessRepository;
 
-    public Object dashboardData(){
+    public Object dashboardData(String loginId){
+        UserEntity userEntity = userRepository.findByLoginId(loginId);
+        if (userEntity == null) return null;
+        Integer[] accessId = userEntity.getAccessId();
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String,Object> dashData = new HashMap<>();
-        dashData.put("accounts",accountDetails());
-        dashData.put("users",userDetails());
-        dashData.put("sessions",sessionDetails());
+        if(checkAccess("customer_management",accessId)){
+            dashData.put("accounts",accountDetails());
+        }
+        if(checkAccess("my_users",accessId)) {
+            dashData.put("users", userDetails());
+        }
+        if(checkAccess("my_sessions",accessId)) {
+            dashData.put("sessions", sessionDetails());
+        }
+        dashData.put("participants",sessionRepository.participants());
         return objectMapper.convertValue(dashData, JsonNode.class);
     }
     public Object accountDetails(){
@@ -59,7 +73,6 @@ public class DashboardService {
         return objectMapper.convertValue(userInfo,JsonNode.class);
     }
     public Object sessionDetails(){
-
         ObjectMapper objectMapper = new ObjectMapper();
         HashMap<String,Object> sessionInfo = new HashMap<>();
         Integer totalSessions = sessionRepository.totalSessions();
@@ -72,6 +85,18 @@ public class DashboardService {
         sessionInfo.put("monthlySessionCreation",sessionRepository.monthlySessionCreation());
         sessionInfo.put("yearlySessionCreation",sessionRepository.yearlySessionCreation());
         return objectMapper.convertValue(sessionInfo,JsonNode.class);
+    }
+
+    public boolean checkAccess(String systemName, Integer[] accessId){
+
+        List<String> accessEntities = new ArrayList<>();
+        for (int i = 0; i < accessId.length; i++) {
+            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
+            accessEntities.add(accessEntity.getSystemName());
+        }
+        if(accessEntities.contains(systemName))
+            return true;
+        return false;
     }
 }
 
