@@ -1,5 +1,10 @@
 .card-1 {
-  min-height: 80% !important;
+  box-shadow: none;
+  margin-bottom: 0px;
+}
+
+::ng-deep .mat-dialog-container {
+  height: auto !important;
 }
 
 .logo {
