@@ -77,8 +77,8 @@ export class CallComponent implements OnInit {
 		// this.router.navigate([`/`]);
 		if (this.type === "Support") {
 			// Navigate to a specific URL for customers
-			window.location.replace(this.redirectUrl);
 			this.restService.removeSession(this.sessionKey);
+			window.location.replace(this.redirectUrl);
 		  } else {
 			window.location.replace(this.redirectUrl);
 		  }
@@ -132,11 +132,15 @@ export class CallComponent implements OnInit {
 		}
 		this.sessionName=response.sessionName;
 		this.showLogo=response.settings.showLogo;
-		this.logo=response.base64Logo;
+		this.logo=response.settings.logo.byte;
 		this.activitiesButton=response.settings.activitiesButton;
 		this.displayTicker=response.settings.displayTicker;
 		this.displayTimer=response.settings.displayTimer;
+		if(response.settings.description){
 		this.description=response.settings.description;
+		}else{
+			this.description=''
+		}
 		this.sessionDuration=response.settings.duration;
 		this.participantsButton=response.settings.participantsButton;
 		this.type=response.type;

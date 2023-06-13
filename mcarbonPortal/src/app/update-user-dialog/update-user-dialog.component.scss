@@ -1,6 +1,11 @@
 .card-1 {
-    height: 80% !important;
-  }
+  box-shadow: none;
+  margin-bottom: 0px;
+}
+
+::ng-deep .mat-dialog-container {
+  height: auto !important;
+}
   
   .card-header {
     margin-bottom: 10px;
@@ -30,6 +35,11 @@
     border-radius: 10px;
     font-weight: bolder;
     font-size: 1rem;
+  }
+  
+  .btn-photo{
+    background: linear-gradient(60deg, #009688, #17d1be);
+    color: white;
   }
   
   .btn-1 {

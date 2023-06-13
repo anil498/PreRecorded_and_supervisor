@@ -116,6 +116,7 @@ export class StreamComponent implements OnInit {
 	 */
 	showSettingsButton: boolean = true;
 	showVideo: boolean;
+	displayTickerValue:string;
 
 	/**
 	 * @ignore
@@ -157,6 +158,7 @@ export class StreamComponent implements OnInit {
 	private displayParticipantNameSub: Subscription;
 	private displayAudioDetectionSub: Subscription;
 	private settingsButtonSub: Subscription;
+	private displayTickerValueSub: Subscription;
 
 	/**
 	 * @ignore
@@ -269,6 +271,10 @@ export class StreamComponent implements OnInit {
 		});
 		this.settingsButtonSub = this.libService.streamSettingsButtonObs.subscribe((value: boolean) => {
 			this.showSettingsButton = value;
+			// this.cd.markForCheck();
+		});
+		this.displayTickerValueSub = this.libService.displayTickerValueObs.subscribe((value: string) => {
+			this.displayTickerValue = value;
 			// this.cd.markForCheck();
 		});
 	}

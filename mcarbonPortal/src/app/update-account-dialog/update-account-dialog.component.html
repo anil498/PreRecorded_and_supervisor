@@ -1,7 +1,7 @@
 <div class="card card-1">
   <div class="card-header card-header-danger">
     <h4 class="card-title">
-      Edit Account Details
+      {{title}}
       <button mat-icon-button mat-dialog-close class="close-btn">
         <mat-icon aria-label="Close dialog">close</mat-icon>
       </button>
@@ -63,28 +63,29 @@
             </div>
           </div>
 
-          <div class="col-md-5">
-            <!-- <mat-form-field>
-                <mat-label>Select a Logo</mat-label>
-                <input
-                  type="file"
-                  (change)="onPhotoSelected($event)"
-                  accept="image/*"
-                  style="display: none"
-                />
-                <button mat-icon-button type="button" (click)="fileInput.click()">
-                  <mat-icon>photo_camera</mat-icon>
-                </button>
-                <mat-icon *ngIf="photoControl"
-                  >check_circle_outline</mat-icon
-                >
-              </mat-form-field>
+          <div class="col-md-5 offset-md-1">
+            <div class="row justify-content-center align-items-center">
               <img
-                *ngIf="photoUrl"
+                *ngIf="photoControl"
                 [src]="photoUrl"
-                alt="Selected photo"
-                style="border-radius: 50%; max-width: 200px; height: auto"
-              /> -->
+                style="border-radius: 50%"
+                alt="selected logo"
+                height="60%"
+                width="60%"
+              />
+            </div>
+            <div class="row justify-content-center align-items-center">
+              <input
+                #fileInput
+                type="file"
+                accept="image/*"
+                (change)="onPhotoSelected($event)"
+                formControlName="logo"
+              />
+              <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
+                Change Logo
+              </button>
+            </div>
           </div>
         </div>
 
@@ -149,16 +150,36 @@
 
         <div class="row">
           <section class="example-section">
-            <ng-container *ngFor="let access of accessData">
-              <mat-checkbox
-                [value]="access.accessId"
-                class="col-md-5 offset-md-1"
-                (change)="addAccessId(access, $event.checked)"
-                [checked]="isCheckAccess(access)"
-              >
-                {{ access.name }}
-              </mat-checkbox></ng-container
+            <div
+              *ngFor="let topAccess of topLevelAccess"
+              class="col-md-10 offset-md-1"
             >
+              <mat-checkbox
+                [value]="topAccess.accessId"
+                (change)="toggleAccessId(topAccess, $event.checked)"
+                [checked]="isCheckAccess(topAccess)"
+              >
+                {{ topAccess.name }}
+              </mat-checkbox>
+              <div
+                class="row"
+                *ngIf="selectedAccessId.includes(topAccess.accessId)"
+              >
+                <div *ngFor="let access of accessData">
+                  <mat-checkbox
+                    class="col-md-5 offset-md-1"
+                    *ngIf="
+                      topAccess.accessId === access.pId && access.pId !== 0
+                    "
+                    [value]="access.accessId"
+                    (change)="toggleAccessId(access, $event.checked)"
+                    [checked]="isCheckAccess(access)"
+                  >
+                    {{ access.name }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
           </section>
         </div>
       </div>

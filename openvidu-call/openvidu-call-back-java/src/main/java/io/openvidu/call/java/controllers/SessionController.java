@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.ErrorResponse;
@@ -88,7 +89,6 @@ public class SessionController {
              sessionProperty = videoPlatformService.getVideoPlatformProperties(authorization, token, sessionKey);
              logger.info("Session Property: {}", sessionProperty);
              sessionId= sessionProperty.getSessionId();
-             sessionProperty.setBase64Logo(sessionService.convertByteToBase64(sessionProperty.getSettings().getLogo()));
         }catch (Exception e){
           logger.error("Getting Exception while fetching Session property from videoplatform {}",e);
           errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());

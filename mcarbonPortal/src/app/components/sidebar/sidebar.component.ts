@@ -69,7 +69,7 @@ export class SidebarComponent implements OnInit {
 
   async ngOnInit() {
     this.menuItems = ROUTE.filter((menuItem) => menuItem);
-    this.accessList = this.restService.getData().Access;
+    this.accessList = this.restService.getData().Access.filter(item => item.pId === 0);
     this.showSideNav();
   }
 

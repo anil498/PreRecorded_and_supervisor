@@ -1,5 +1,10 @@
 .card-1 {
-  height: 80% !important;
+  box-shadow: none;
+  margin-bottom: 0px;
+}
+
+::ng-deep .mat-dialog-container {
+  height: auto !important;
 }
 
 .card-header {
@@ -32,8 +37,9 @@
   font-size: 1rem;
 }
 
-.btn-photo{
-  background-color:#009688;
+.btn-photo {
+  background: linear-gradient(60deg, #009688, #17d1be);
+  color: white;
 }
 .btn-1 {
   background: linear-gradient(60deg, #009688, #17d1be);
@@ -60,9 +66,9 @@
   margin-left: auto;
   margin-right: auto;
 }
-mat-tab-group {
-  min-height: 350px;
-}
+// mat-tab-group {
+//   min-height: 350px;
+// }
 
 ::ng-deep .mat-checkbox-checked .mat-checkbox-background,
 ::ng-deep

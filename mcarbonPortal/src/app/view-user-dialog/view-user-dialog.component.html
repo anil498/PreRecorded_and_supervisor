@@ -125,16 +125,36 @@
 
         <div class="row">
           <section class="example-section">
-            <ng-container *ngFor="let access of accessData">
-              <mat-checkbox
-                [value]="access.accessId"
-                class="col-md-5 offset-md-1"
-                [checked]="isCheckAccess(access)"
-                disabled
-              >
-                {{ access.name }}
-              </mat-checkbox></ng-container
+            <div
+              *ngFor="let topAccess of topLevelAccess"
+              class="col-md-10 offset-md-1"
             >
+              <mat-checkbox
+                [value]="topAccess.accessId"
+                [checked]="isCheckAccess(topAccess)"
+                [disabled]="true"
+              >
+                {{ topAccess.name }}
+              </mat-checkbox>
+              <div
+                class="row"
+                *ngIf="selectedAccessId.includes(topAccess.accessId)"
+              >
+                <div *ngFor="let access of accessData">
+                  <mat-checkbox
+                    class="col-md-5 offset-md-1"
+                    *ngIf="
+                      topAccess.accessId === access.pId && access.pId !== 0
+                    "
+                    [value]="access.accessId"
+                    [checked]="isCheckAccess(access)"
+                    [disabled]="true"
+                  >
+                    {{ access.name }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
           </section>
         </div>
       </div>

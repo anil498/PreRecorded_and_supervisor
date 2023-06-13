@@ -3,12 +3,13 @@ package io.openvidu.call.java.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings {
   private int duration;
   private boolean showLogo;
-  private String logo;
+  private Object logo;
   private Boolean moderators = false;
   private String description;
   private Boolean displayTicker=false;
@@ -34,11 +35,11 @@ public class Settings {
     this.duration = duration;
   }
 
-  public String getLogo() {
+  public  Object getLogo() {
     return logo;
   }
 
-  public void setLogo(String logo) {
+  public void setLogo(Object logo) {
     this.logo = logo;
   }
 

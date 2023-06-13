@@ -305,6 +305,7 @@ export class RestService {
     contact: number,
     email: string,
     loginId: string,
+    logo: any,
     expDate: string,
 
     accessId: number[],
@@ -323,6 +324,7 @@ export class RestService {
       contact,
       email,
       loginId,
+      logo,
       expDate,
       accessId,
 
@@ -479,6 +481,27 @@ export class RestService {
     try {
       return lastValueFrom(
         this.http.get<any>(this.baseHref + "Account/GetAll", { headers })
+      );
+    } catch (error) {
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
+
+  async getSessionList(token: string, id: string) {
+    console.warn(token + "\n" + id);
+    const headers = new HttpHeaders({
+      Token: `${token}`,
+      Authorization: `${this.authKey}`,
+    });
+    try {
+      return lastValueFrom(
+        this.http.get<any>(this.baseHref + "Session/GetAll/", { headers })
       );
     } catch (error) {
       if (error.status === 404) {

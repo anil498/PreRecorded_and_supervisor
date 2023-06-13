@@ -16,6 +16,7 @@ export class UserProfileComponent implements OnInit {
   deactive: boolean = false;
   accessList: any[] = [];
   featureList: any[] = [];
+  srcImg: any;
   constructor(private restService: RestService) {}
 
   async ngOnInit(): Promise<void> {
@@ -23,7 +24,12 @@ export class UserProfileComponent implements OnInit {
     this.deactive = false;
     this.token = this.restService.getToken();
     this.user = this.restService.getData().user_data;
-
+    if(this.user.logo == null){
+      this.srcImg = "./assets/img/faces/marc.jpeg"
+    }
+    else{
+      this.srcImg = this.user.logo.byte;
+    }
     this.user.expDate = this.user.expDate.substring(0, 10);
     console.log(this.user);
     this.accessList = this.restService.getData().Access;
