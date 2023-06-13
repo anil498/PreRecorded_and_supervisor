@@ -34,10 +34,9 @@ export class ViewAccountDialogComponent implements OnInit {
   contactError: boolean;
   emailError: boolean;
   loginIdError: boolean;
-
+  photoUrl: string;
   name: string;
   address: string;
-  logo: Blob;
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
@@ -51,6 +50,7 @@ export class ViewAccountDialogComponent implements OnInit {
   selectedAccessId: number[] = [];
 
   selectedFeatures: number[] = [];
+  topLevelAccess: any[] = [];
 
   selectedFeaturesMeta = {};
 
@@ -115,7 +115,7 @@ export class ViewAccountDialogComponent implements OnInit {
       address: [this.account.address, Validators.required],
       acc_exp_date: [new Date(this.account.expDate), Validators.required],
       max_user: [this.account.maxUser, Validators.required],
-
+      logo: [this.account.logo],
       accessList: [this.account.accessId, Validators.required],
 
       max_duration: [this.account.session.max_duration, Validators.required],
@@ -133,10 +133,14 @@ export class ViewAccountDialogComponent implements OnInit {
     });
 
     this.userForm.disable();
+    if (this.userForm.value.logo !== null) {
+      this.photoUrl = this.userForm.value.logo.byte;
+    }
 
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+    this.topLevelAccess = this.accessData.filter(item => item.pId === 0);
     // For diplaying previous checked Access
     if (this.accessData) {
       for (let i = 0; i < this.accessData.length; i++) {

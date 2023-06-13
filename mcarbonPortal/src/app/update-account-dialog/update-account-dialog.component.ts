@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MatTabGroup } from "@angular/material/tabs";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
+import { ImageFile } from "app/model/image-file";
 import { RestService } from "app/services/rest.service";
 
 @Component({
@@ -13,7 +14,7 @@ import { RestService } from "app/services/rest.service";
 })
 export class UpdateAccountDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
-
+  title: string;
   samePassword = false;
   currentTabIndex: number = 0;
   userForm: FormGroup;
@@ -37,7 +38,9 @@ export class UpdateAccountDialogComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: Blob = null;
+  logo: any = null;
+  photoUrl: any;
+  photoControl: boolean;
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
@@ -52,7 +55,7 @@ export class UpdateAccountDialogComponent implements OnInit {
   selectedAccessId: number[] = [];
 
   selectedFeatures: number[] = [];
-
+  topLevelAccess: any[] = [];
   selectedFeaturesMeta = {};
 
   constructor(
@@ -64,6 +67,33 @@ export class UpdateAccountDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public account: any
   ) {
     this.loginResponse = this.restService.getToken();
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+  }
+
+  onPhotoSelected(event) {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+
+      const image: ImageFile = {
+        file: file,
+        url: this.sanitizer.bypassSecurityTrustUrl(
+          window.URL.createObjectURL(file)
+        ),
+      };
+      const reader = new FileReader();
+      console.log(file);
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        this.photoUrl = reader.result;
+        this.photoControl = true;
+
+        this.logo = { byte: reader.result, type: file.type };
+        console.log(this.logo);
+        console.log(this.photoControl);
+        console.log(this.photoUrl);
+      };
+    }
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
@@ -129,12 +159,26 @@ export class UpdateAccountDialogComponent implements OnInit {
     }
   }
 
-  addAccessId(access: any, isChecked: boolean) {
+  toggleAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
       this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.accessId);
-      this.selectedAccessId.splice(index, 1);
+      if (access.pId === 0) {
+        this.accessData.forEach((accessData) => {
+          if (accessData.pId === access.accessId) {
+            if (this.selectedAccessId.includes(accessData.accessId)) {
+              console.log(accessData);
+              const index = this.selectedAccessId.indexOf(accessData.accessId);
+              this.selectedAccessId.splice(index, 1);
+            }
+          }
+        });
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      } else {
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      }
     }
   }
 
@@ -170,10 +214,22 @@ export class UpdateAccountDialogComponent implements OnInit {
       featureList: [this.account.features, Validators.required],
       featureMeta: [this.account.featuresMeta, Validators.required],
     });
+    this.accessData.forEach((access) => {
+      console.log(access);
+      if (access.systemName == "customer_update") {
+        this.title = access.name;
+      }
+    });
 
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+    this.logo = this.userForm.value.logo;
+    if (this.logo !== null) {
+      this.photoControl = true;
+      this.photoUrl = this.logo.byte;
+      console.log(this.photoUrl);
+    }
     console.warn(this.selectedFeaturesMeta);
     // For diplaying previous checked Access
     if (
@@ -211,19 +267,6 @@ export class UpdateAccountDialogComponent implements OnInit {
       }
     }
   }
-
-  // onPhotoSelected(event) {
-  //   const file: File = event.target.files[0];
-  //   const reader: FileReader = new FileReader();
-
-  //   reader.onloadend = (e) => {
-  //     this.photoUrl = reader.result as string;
-  //     this.photoControl = true;
-  //   };
-
-  //   if (file)
-  //     reader.readAsDataURL(file);
-  // }
 
   isCheckFeature(feature: any) {
     if (feature.status == 1) return true;
@@ -297,7 +340,6 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
-
     console.warn(this.userForm.value);
     if (
       this.name == null ||

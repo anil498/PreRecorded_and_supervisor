@@ -24,7 +24,7 @@ import { ImageFile } from "app/model/image-file";
 })
 export class CreateAccountComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
-
+  title: string;
   samePassword = false;
   currentTabIndex: number = 0;
   userForm: FormGroup;
@@ -73,6 +73,7 @@ export class CreateAccountComponent implements OnInit {
   selectedAccessId: number[] = [];
 
   selectedFeatures: number[] = [];
+  topLevelAccess: any[] = [];
 
   selectedFeaturesMeta: { [key: string]: any } = {};
 
@@ -101,8 +102,8 @@ export class CreateAccountComponent implements OnInit {
       console.log(file);
       reader.readAsDataURL(file);
       reader.onloadend = () => {
-        console.log(reader.result);
-        this.photoUrl = image.url;
+        console.log();
+        this.photoUrl = reader.result;
         this.photoControl = true;
 
         this.logo = { byte: reader.result, type: file.type };
@@ -180,8 +181,22 @@ export class CreateAccountComponent implements OnInit {
     if (isChecked) {
       this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.accessId);
-      this.selectedAccessId.splice(index, 1);
+      if (access.pId === 0) {
+        this.accessData.forEach((accessData) => {
+          if (accessData.pId === access.accessId) {
+            if (this.selectedAccessId.includes(accessData.accessId)) {
+              console.log(accessData);
+              const index = this.selectedAccessId.indexOf(accessData.accessId);
+              this.selectedAccessId.splice(index, 1);
+            }
+          }
+        });
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      } else {
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      }
     }
   }
 
@@ -215,6 +230,16 @@ export class CreateAccountComponent implements OnInit {
         validator: this.passwordMatchValidator,
       }
     );
+    this.accessData.forEach((access) => {
+      console.log(access);
+      if (access.systemName == "customer_creation") {
+        this.title = access.name;
+      }
+    });
+    console.log(this.title);
+
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+    console.log(this.topLevelAccess);
   }
 
   passwordMatchValidator(formGroup: FormGroup) {

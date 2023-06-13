@@ -1,58 +1,106 @@
 [
-    {
-      "path": "/app/dashboard",
-      "title": "Dashboard",
-      "icon": "dashboard",
-      "class": "",
-      "show": false,
-      "systemName": "dashboard"
-    },
-    {
-      "path": "/app/user_profile",
-      "title": "User Profile",
-      "icon": "person",
-      "class": "",
-      "show": false,
-      "systemName": "user_profile"
-    },
-    {
-      "path": "/app/customer_management",
-      "title": "Customer Management",
-      "icon": "supervisor_account",
-      "class": "",
-      "show": false,
-      "systemName": "customer_management"
-    },
-    {
-      "path": "/app/my_users",
-      "title": "My Users",
-      "icon": "person",
-      "class": "",
-      "show": false,
-      "systemName": "my_users"
-    },
-    {
-      "path": "/app/my_sessions",
-      "title": "My Session",
-      "icon": "videocam",
-      "class": "",
-      "show": false,
-      "systemName": "my_sessions"
-    },
-    {
-      "path": "/app/dynamic_links",
-      "title": "Dynamic Links",
-      "icon": "headset_mic",
-      "class": "",
-      "show": false,
-      "systemName": "dynamic_links"
-    },
-    {
-        "path": "/app/my_reports",
-        "title": "My Reports",
-        "icon": "library_books",
-        "class": "",
-        "show": false,
-        "systemName": "my_reports"
-      }
-  ]
+  {
+    "path": "/app/dashboard",
+    "title": "Dashboard",
+    "icon": "dashboard",
+    "class": "",
+    "show": false,
+    "systemName": "dashboard"
+  },
+  {
+    "path": "/app/user_profile",
+    "title": "User Profile",
+    "icon": "person",
+    "class": "",
+    "show": false,
+    "systemName": "user_profile"
+  },
+  {
+    "path": "/app/customer_management",
+    "title": "Customer Management",
+    "icon": "supervisor_account",
+    "class": "",
+    "show": false,
+    "systemName": "customer_management"
+  },
+  {
+    "path": "/app/my_users",
+    "title": "My Users",
+    "icon": "person",
+    "class": "",
+    "show": false,
+    "systemName": "my_users"
+  },
+  {
+    "path": "/app/my_sessions",
+    "title": "My Session",
+    "icon": "videocam",
+    "class": "",
+    "show": false,
+    "systemName": "my_sessions"
+  },
+  {
+    "path": "/app/dynamic_links",
+    "title": "Dynamic Links",
+    "icon": "headset_mic",
+    "class": "",
+    "show": false,
+    "systemName": "dynamic_links"
+  },
+  {
+    "path": "/app/my_reports",
+    "title": "My Reports",
+    "icon": "library_books",
+    "class": "",
+    "show": false,
+    "systemName": "my_reports"
+  },
+  {
+    "path": "",
+    "title": "Customer Creation",
+    "icon": "",
+    "class": "",
+    "show": false,
+    "systemName": "customer_creation"
+  },
+  {
+    "path": "",
+    "title": "Customer Update",
+    "icon": "",
+    "class": "",
+    "show": false,
+    "systemName": "customer_update"
+  },
+  {
+    "path": "",
+    "title": "Custommer Delete",
+    "icon": "",
+    "class": "",
+    "show": false,
+    "systemName": "customer_delete"
+  },
+  {
+    "path": "",
+    "title": "Group Creation",
+    "icon": "",
+    "class": "",
+    "show": false,
+    "systemName": "group_creation"
+  },
+  {
+    "path": "",
+    "title": "Group Update",
+    "icon": "",
+    "class": "",
+    "show": false,
+    "systemName": "group_update"
+  },
+  {
+    "path": "",
+    "title": "Group Delete",
+    "icon": "",
+    "class": "",
+    "show": false,
+    "systemName": "group_delete"
+  }
+]

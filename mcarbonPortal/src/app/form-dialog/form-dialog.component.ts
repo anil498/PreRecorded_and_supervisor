@@ -25,7 +25,7 @@ import { ImageFile } from "app/model/image-file";
 })
 export class FormDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
-
+  title: string;
   samePassword = false;
   currentTabIndex: number = 0;
   userForm: FormGroup;
@@ -55,6 +55,7 @@ export class FormDialogComponent implements OnInit {
   accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
   selectedFeatures: number[] = [];
+  topLevelAccess: any[] = [];
 
   selectedFeaturesMeta = {};
   constructor(
@@ -82,7 +83,7 @@ export class FormDialogComponent implements OnInit {
       reader.readAsDataURL(file);
       reader.onloadend = () => {
         console.log(reader.result);
-        this.photoUrl = image.url;
+        this.photoUrl = reader.result;
         this.photoControl = true;
 
         this.logo = { byte: reader.result, type: file.type };
@@ -155,12 +156,26 @@ export class FormDialogComponent implements OnInit {
     }
   }
 
-  addAccessId(access: any, isChecked: boolean) {
+  toggleAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
       this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.accessId);
-      this.selectedAccessId.splice(index, 1);
+      if (access.pId === 0) {
+        this.accessData.forEach((accessData) => {
+          if (accessData.pId === access.accessId) {
+            if (this.selectedAccessId.includes(accessData.accessId)) {
+              console.log(accessData);
+              const index = this.selectedAccessId.indexOf(accessData.accessId);
+              this.selectedAccessId.splice(index, 1);
+            }
+          }
+        });
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      } else {
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      }
     }
   }
   async ngOnInit(): Promise<void> {
@@ -187,6 +202,13 @@ export class FormDialogComponent implements OnInit {
         validator: [this.passwordMatchValidator],
       }
     );
+    this.accessData.forEach((access) => {
+      console.log(access);
+      if (access.systemName == "user_creation") {
+        this.title = access.name;
+      }
+    });
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
   }
 
   passwordMatchValidator(formGroup: FormGroup) {
@@ -273,7 +295,7 @@ export class FormDialogComponent implements OnInit {
       this.confirm_password === "" ||
       this.max_active_sessions === null ||
       this.max_duration === null ||
-      this.max_participants === null 
+      this.max_participants === null
     ) {
       //this.emptyField = true;
       this.openSnackBar("All fields are mandatory", "snackBar");

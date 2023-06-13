@@ -1,7 +1,7 @@
 <div class="card card-1">
   <div class="card-header card-header-danger">
     <h4 class="card-title">
-      Create Account
+      {{title}}
       <button mat-icon-button mat-dialog-close class="close-btn">
         <mat-icon aria-label="Close dialog">close</mat-icon>
       </button>
@@ -63,9 +63,10 @@
             </div>
           </div>
 
-          <div class="col-md-5 offset-md-1">
+          <div class="col-md-5">
             <div class="row justify-content-center align-items-center">
               <img
+                *ngIf="photoControl"
                 [src]="photoUrl"
                 style="border-radius: 50%"
                 alt="selected logo"
@@ -149,14 +150,35 @@
 
         <div class="row">
           <section class="example-section">
-            <mat-checkbox
-              *ngFor="let access of accessData"
-              [value]="access.accessId"
-              class="col-md-5 offset-md-1"
-              (change)="toggleAccessId(access, $event.checked)"
+            <div
+              *ngFor="let topAccess of topLevelAccess"
+              class="col-md-10 offset-md-1"
             >
-              {{ access.name }}
-            </mat-checkbox>
+              <mat-checkbox
+                [value]="topAccess.accessId"
+                (change)="toggleAccessId(topAccess, $event.checked)"
+              >
+                {{ topAccess.name }}
+              </mat-checkbox>
+              <div
+                class="row"
+                *ngIf="selectedAccessId.includes(topAccess.accessId)"
+              >
+                <div *ngFor="let access of accessData">
+                  <mat-checkbox
+                    class="col-md-5 offset-md-1"
+                    *ngIf="
+                      topAccess.accessId === access.pId && access.pId !== 0
+                    "
+                    [value]="access.accessId"
+                    (change)="toggleAccessId(access, $event.checked)"
+                    [checked]="false"
+                  >
+                    {{ access.name }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
           </section>
         </div>
       </div>
