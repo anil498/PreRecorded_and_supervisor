@@ -84,10 +84,6 @@ public class MessageApiController {
         }
 
         String msisdn= (String) params.get("msisdn");
-//        logger.info("getHeaders(request) = "+getHeaders(request));
-//        logger.info("getHeaders(request).get(\"origin\") = "+getHeaders(request).get("origin"));
-
-//        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
         String description=null;
         if(params.containsKey("description")){

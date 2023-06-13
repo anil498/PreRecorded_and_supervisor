@@ -38,7 +38,7 @@ public class SessionServiceImpl implements SessionService{
         SessionEntity session=new SessionEntity();
             Date creation = TimeUtils.getDate();
             Date expDate = TimeUtils.increaseDateTimeSession(creation);
-            logger.info("Session Localdatetime = {}", expDate);
+            logger.info("Session ExpDate = {}", expDate);
 
             UserAuthEntity userAuth = userAuthRepository.findByToken(token);
             AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
@@ -66,7 +66,11 @@ public class SessionServiceImpl implements SessionService{
             session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
             session.setCreationDate(creation);
             session.setExpDate(expDate);
-            session.setParticipantName(participantName);
+            if(participantName==null){
+                session.setParticipantName(userEntity.getFname());
+            }else{
+                session.setParticipantName(participantName);
+            }
             session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
 
             SettingsEntity settingsEntity = new SettingsEntity();
@@ -175,12 +179,18 @@ public class SessionServiceImpl implements SessionService{
     }
 
     @Override
-    public List<SessionEntity> getAllSessions() {
-        return sessionRepository.findAll();
+    public List<SessionEntity> getAllSupportSessions(String authKey,String token) {
+        UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
+        Integer userId = userAuthEntity.getUserId();
+        return sessionRepository.findSupportSessions(userId);
     }
 
     @Override
     public SessionEntity getByKey(String key) {
+        SessionEntity sessionEntity = sessionRepository.findBySessionKey(key);
+        if(TimeUtils.isExpire(sessionEntity.getExpDate())) {
+            return null;
+        }
         return sessionRepository.findBySessionKey(key);
     }
     @Override

@@ -93,11 +93,11 @@ public class SessionController {
             return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
         }
 
-        return ok(sessionService.getAllSessions());
+        return ok(sessionService.getAllSupportSessions(authKey,token));
     }
 
     @PostMapping("/GetByKey")
-    public ResponseEntity<SessionEntity> getSessionByKey(@RequestBody Map<String, String> params, HttpServletRequest request) {
+    public ResponseEntity<?> getSessionByKey(@RequestBody Map<String, String> params, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -110,7 +110,9 @@ public class SessionController {
             return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
         String sessionKey = params.get("sessionKey");
-            return new ResponseEntity<>(sessionService.getByKey(sessionKey), HttpStatus.OK);
+        if(sessionService.getByKey(sessionKey) == null)
+            return new ResponseEntity<>("Session Key Expired !",HttpStatus.FORBIDDEN);
+        return ok(sessionService.getByKey(sessionKey));
     }
     @DeleteMapping("/Delete/{key}")
     public ResponseEntity<?> deleteSession(@PathVariable String key, HttpServletRequest request) {

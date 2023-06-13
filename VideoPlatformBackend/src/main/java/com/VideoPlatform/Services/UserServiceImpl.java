@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.VideoPlatform.Constant.AllConstants.DATE_FORMATTER;
+import static org.springframework.http.ResponseEntity.ok;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -44,6 +45,8 @@ public class UserServiceImpl implements UserService{
     private FeatureRepository featureRepository;
     @Autowired
     private AccessRepository accessRepository;
+    @Autowired
+    private DashboardService dashboardService;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
@@ -90,21 +93,48 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity updateUser(String params1) {
+    public ResponseEntity<?> updateUser(String params1,String authKey) {
         logger.info("Params Update : {}",params1);
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
+        AccountEntity accountEntity = accountRepository.findByAccountId(accountAuthEntity.getAccountId());
         UserEntity existing = userRepository.findByUserId(params.get("userId").getAsInt());
+        Integer[] featuresId = accountEntity.getFeatures();
+        Integer[] accessId = accountEntity.getAccessId();
+        HashMap<String, Object> sessionA = accountEntity.getSession();
+        if(existing.getAccountId() != accountEntity.getAccountId()){
+            logger.info("Checking parent account !");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         existing.setFname(params.get("fname").getAsString());
         existing.setLname(params.get("lname").getAsString());
         try {
+            if(checkIfAllowedFeature(featuresId,objectMapper.readValue(params.get("features").toString(),Integer[].class))){
+                existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+            }
+            else {
+                logger.info("Feature values not present in Account Entity. Not allowed to update !");
+                return new ResponseEntity<>("Invalid feature values !",HttpStatus.NOT_ACCEPTABLE);
+            }
+            if(checkIfAllowedAccess(accessId,objectMapper.readValue(params.get("accessId").toString(),Integer[].class))){
+                existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+            }
+            else {
+                logger.info("Access Id values not present in Account Entity. Not allowed to update !");
+                return new ResponseEntity<>("Invalid access id values !",HttpStatus.NOT_ACCEPTABLE);
+            }
+            if(checkIfAllowedSession(sessionA,objectMapper.readValue(params.get("session").toString(),HashMap.class))){
+                existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+            }
+            else {
+                logger.info("Invalid session values. Not allowed to update !");
+                return new ResponseEntity<>("Invalid session values !",HttpStatus.NOT_ACCEPTABLE);
+            }
             existing.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
-            existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
             existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-            existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-            existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
             Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
             existing.setExpDate(expDate);
         } catch (JsonProcessingException e) {
@@ -113,7 +143,11 @@ public class UserServiceImpl implements UserService{
         existing.setContact(params.get("contact").getAsString());
         existing.setEmail(params.get("email").getAsString());
         logger.info("New Entity {}",existing);
-        return userRepository.save(existing);
+        userRepository.save(existing);
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "User updated!");
+        return ok(result);
     }
 
     @Override
@@ -156,6 +190,7 @@ public class UserServiceImpl implements UserService{
             response.put("status_message","Login Successful");
             response.put("Features", featureData(user1.getUserId()));
             response.put("Access", accessData(user1.getUserId()));
+            response.put("Dashboard",dashboardService.dashboardData());
             String lastLogin = LocalDateTime.now().format(formatter);
             logger.info("LastLogin1 : {}",lastLogin);
             user1.setLastLogin(lastLogin);
@@ -202,6 +237,7 @@ public class UserServiceImpl implements UserService{
                 res.put("status_message","Login Successful");
                 res.put("Features", featureData(user1.getUserId()));
                 res.put("Access", accessData(user1.getUserId()));
+                res.put("Dashboard",dashboardService.dashboardData());
                 logger.info(user1.toString());
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }
@@ -210,6 +246,13 @@ public class UserServiceImpl implements UserService{
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
+//    public String resetPassword(String newPassword, String loginId, Integer userId){
+//        UserEntity userEntity = userRepository.findByUserId(userId);
+//        if(userEntity==null) return null;
+//        userEntity.setPassword(passwordEncoder.encode(newPassword));
+//        return "Password reset Successfully !";
+//    }
+
     public Boolean isValidTokenLogin(int id){
 
         UserAuthEntity user = userAuthRepository.findByUId(id);
@@ -258,6 +301,32 @@ public class UserServiceImpl implements UserService{
             }
         }
         return objectMapper.convertValue(accessEntities, JsonNode.class);
+    }
+    public Boolean checkIfAllowedFeature(Integer[] featureA, Integer[] featureU){
+        int f=0;
+        List<Integer> intList = new ArrayList<>(Arrays.asList(featureA));
+        for(int i=0;i<featureU.length;i++) {
+            if (!intList.contains(featureU[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public Boolean checkIfAllowedAccess(Integer[] accessA, Integer[] accessU){
+        int f=0;
+        List<Integer> intList = new ArrayList<>(Arrays.asList(accessA));
+        for(int i=0;i<accessU.length;i++) {
+            if (!intList.contains(accessU[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    public Boolean checkIfAllowedSession(HashMap<String,Object> sessionA, HashMap<String,Object> sessionU){
+        if(Integer.valueOf(String.valueOf(sessionA.get("max_duration"))) < Integer.valueOf(String.valueOf(sessionU.get("max_duration"))) || Integer.valueOf(String.valueOf(sessionA.get("max_participants"))) < Integer.valueOf(String.valueOf(sessionU.get("max_participants"))) || Integer.valueOf(String.valueOf(sessionA.get("max_active_sessions"))) < Integer.valueOf(String.valueOf(sessionU.get("max_active_sessions")))){
+            return false;
+        }
+        return true;
     }
 }
 

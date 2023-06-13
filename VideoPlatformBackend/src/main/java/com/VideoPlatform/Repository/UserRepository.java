@@ -45,5 +45,20 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(nativeQuery=true, value = "select session from user_data where user_id = :userId ")
     JsonObject getSession(@Param("userId") Integer userId);
 
+    @Query(nativeQuery = true,value = "SELECT COUNT(*) FROM user_data")
+    Integer totalUsers();
+
+    @Query(nativeQuery = true,value = "SELECT COUNT(*) FROM user_data WHERE status=1")
+    Integer activeUsers();
+
+    @Query(nativeQuery = true,value = "select date_trunc('day',creation_date) as creation_date,count(*) from user_data group by date_trunc('day',creation_date)")
+    List<Object> dailyUserCreation();
+
+    @Query(nativeQuery = true,value = "select date_trunc('month',creation_date) as creation_date,count(*) from user_data group by date_trunc('month',creation_date)")
+    List<Object> monthlyUserCreation();
+
+    @Query(nativeQuery = true,value = "select date_trunc('year',creation_date) as creation_date,count(*) from user_data group by date_trunc('year',creation_date)")
+    List<Object> yearlyUserCreation();
+
 
 }
