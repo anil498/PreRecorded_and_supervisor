@@ -69,17 +69,22 @@ public class SessionServiceImpl implements SessionService{
             }else{
                 session.setParticipantName(participantName);
             }
-            session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
 
-            SettingsEntity settingsEntity = new SettingsEntity();
+        SettingsEntity settingsEntity = new SettingsEntity();
 
-            settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
-            if(userEntity.getLogo() == null){
-                settingsEntity.setLogo(account.getLogo());
-            }
-            else{
-                settingsEntity.setLogo(userEntity.getLogo());
-            }
+                session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
+
+                settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+                if (userEntity.getLogo() != null) {
+                    settingsEntity.setLogo(userEntity.getLogo());
+                }
+                else if(account.getLogo() != null) {
+                    settingsEntity.setLogo(account.getLogo());
+                }
+                else{
+                    settingsEntity.setLogo("{}");
+                }
+
             for (Integer featureId : userEntity.getFeatures()) {
                 if (1 == featureId) {
                     settingsEntity.setRecording(true);
