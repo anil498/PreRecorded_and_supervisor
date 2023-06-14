@@ -98,6 +98,7 @@ public class SessionController {
 
     @PostMapping("/GetByKey")
     public ResponseEntity<?> getSessionByKey(@RequestBody Map<String, String> params, HttpServletRequest request) {
+        long startTime = System.currentTimeMillis();
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -112,7 +113,10 @@ public class SessionController {
         String sessionKey = params.get("sessionKey");
         if(sessionService.getByKey(sessionKey) == null)
             return new ResponseEntity<>("Session Key Expired !",HttpStatus.FORBIDDEN);
+        long timeTaken = System.currentTimeMillis() - startTime;
+        logger.info("TIme taken = {}",timeTaken);
         return ok(sessionService.getByKey(sessionKey));
+
     }
     @DeleteMapping("/Delete/{key}")
     public ResponseEntity<?> deleteSession(@PathVariable String key, HttpServletRequest request) {

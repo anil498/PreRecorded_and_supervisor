@@ -145,7 +145,7 @@ public class UserServiceImpl implements UserService{
         logger.info("New Entity {}",existing);
         userRepository.save(existing);
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "User updated!");
         return ok(result);
     }
@@ -182,6 +182,8 @@ public class UserServiceImpl implements UserService{
         if(isValidTokenLogin(userId)){
             UserAuthEntity user = userAuthRepository.findByUId(userId);
             AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user1.getAccountId());
+            user.setSystemNames(accessCheck(userId));
+
             HashMap<String,Object> response=new HashMap<>();
             response.put("token",user.getToken());
             response.put("auth_key",accountAuthEntity.getAuthKey());
@@ -216,6 +218,7 @@ public class UserServiceImpl implements UserService{
                     ua.setAuthId(auth);
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
+                    ua.setSystemNames(accessCheck(userId));
                 }
                 else{
                     ua = new UserAuthEntity();
@@ -225,6 +228,7 @@ public class UserServiceImpl implements UserService{
                     ua.setAuthId(auth);
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
+                    ua.setSystemNames(accessCheck(userId));
                 }
 
                 userAuthRepository.save(ua);
@@ -307,6 +311,7 @@ public class UserServiceImpl implements UserService{
         List<Integer> intList = new ArrayList<>(Arrays.asList(featureA));
         for(int i=0;i<featureU.length;i++) {
             if (!intList.contains(featureU[i])) {
+
                 return false;
             }
         }
@@ -327,6 +332,18 @@ public class UserServiceImpl implements UserService{
             return false;
         }
         return true;
+    }
+    public String accessCheck(Integer userId){
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        Integer[] accessId = userEntity.getAccessId();
+        List<String> accessEntities = new ArrayList<>();
+        for (int i = 0; i < accessId.length; i++) {
+            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
+            accessEntities.add(accessEntity.getSystemName());
+        }
+        logger.info("system_name array is : {}",accessEntities);
+
+       return String.valueOf(accessEntities);
     }
 }
 

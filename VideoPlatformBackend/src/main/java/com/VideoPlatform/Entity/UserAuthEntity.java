@@ -3,6 +3,7 @@ package com.VideoPlatform.Entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.Date;
 
 @Entity
@@ -21,6 +22,9 @@ public class UserAuthEntity {
 
     @Column(nullable = false, name="token")
     private String token;
+
+    @Column(name="system_name",columnDefinition = "text")
+    private String systemNames;
 
     @Column(nullable = false,name="creation_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
@@ -70,6 +74,14 @@ public class UserAuthEntity {
         this.authId = authId;
     }
 
+    public String getSystemNames() {
+        return systemNames;
+    }
+
+    public void setSystemNames(String systemNames) {
+        this.systemNames = systemNames;
+    }
+
     @Override
     public String toString() {
         return "UserAuthEntity{" +
@@ -77,6 +89,7 @@ public class UserAuthEntity {
                 ", loginId='" + loginId + '\'' +
                 ", authId=" + authId +
                 ", token='" + token + '\'' +
+                ", systemNames='" + systemNames + '\'' +
                 ", creationDate=" + creationDate +
                 ", expDate=" + expDate +
                 '}';

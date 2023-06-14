@@ -191,7 +191,7 @@ public class SessionServiceImpl implements SessionService{
         if(TimeUtils.isExpire(sessionEntity.getExpDate())) {
             return null;
         }
-        return sessionRepository.findBySessionKey(key);
+        return sessionEntity;
     }
     @Override
     public String deleteSession(String sessionKey) {

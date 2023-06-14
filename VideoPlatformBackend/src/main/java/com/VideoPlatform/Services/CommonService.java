@@ -64,14 +64,10 @@ public class CommonService {
     public boolean checkAccess(String systemName,String token){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         int userId = user.getUserId();
+        String systemNames = user.getSystemNames();
+        logger.info("SystemNames : {}",systemNames);
         UserEntity u = userRepository.findByUserId(userId);
-        Integer[] accessId = u.getAccessId();
-        List<String> accessEntities = new ArrayList<>();
-        for (int i = 0; i < accessId.length; i++) {
-            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
-            accessEntities.add(accessEntity.getSystemName());
-        }
-        if(accessEntities.contains(systemName))
+        if(systemNames.contains(systemName))
             return true;
         return false;
     }
