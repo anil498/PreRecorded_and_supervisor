@@ -5,6 +5,7 @@ import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
+import { ImageFile } from "app/model/image-file";
 import { RestService } from "app/services/rest.service";
 
 @Component({
@@ -14,7 +15,7 @@ import { RestService } from "app/services/rest.service";
 })
 export class UpdateUserDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
-
+  title: string;
   currentTabIndex: number = 0;
   userForm: FormGroup;
   messageResponse: any;
@@ -29,7 +30,9 @@ export class UpdateUserDialogComponent implements OnInit {
   login_id: string;
   acc_exp_date: Date;
   exp_date: string;
-  logo: Blob = null;
+  logo: any = null;
+  photoUrl: any;
+  photoControl: boolean;
   max_duration: number;
   max_active_sessions: number;
   max_participants: number;
@@ -37,7 +40,7 @@ export class UpdateUserDialogComponent implements OnInit {
   featuresData: any = this.restService.getData().Features;
   accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
-
+  topLevelAccess: any[] = [];
   selectedFeatures: number[] = [];
 
   selectedFeaturesMeta = {};
@@ -49,8 +52,36 @@ export class UpdateUserDialogComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public user: any
-  ) {}
+  ) {
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+  }
 
+  onPhotoSelected(event) {
+    const files: FileList = event.target.files;
+    if (files && files.length > 0) {
+      const file: File = files[0];
+
+      const image: ImageFile = {
+        file: file,
+        url: this.sanitizer.bypassSecurityTrustUrl(
+          window.URL.createObjectURL(file)
+        ),
+      };
+      const reader = new FileReader();
+      console.log(file);
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        console.log(reader.result);
+        this.photoUrl = reader.result;
+        this.photoControl = true;
+
+        this.logo = { byte: reader.result, type: file.type };
+        console.log(this.logo);
+        console.log(this.photoControl);
+        console.log(this.photoUrl);
+      };
+    }
+  }
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const files: FileList = event.target.files;
     if (files && files.length > 0) {
@@ -114,12 +145,26 @@ export class UpdateUserDialogComponent implements OnInit {
     }
   }
 
-  addAccessId(access: any, isChecked: boolean) {
+  toggleAccessId(access: any, isChecked: boolean) {
     if (isChecked) {
       this.selectedAccessId.push(access.accessId);
     } else {
-      const index = this.selectedAccessId.indexOf(access.accessId);
-      this.selectedAccessId.splice(index, 1);
+      if (access.pId === 0) {
+        this.accessData.forEach((accessData) => {
+          if (accessData.pId === access.accessId) {
+            if (this.selectedAccessId.includes(accessData.accessId)) {
+              console.log(accessData);
+              const index = this.selectedAccessId.indexOf(accessData.accessId);
+              this.selectedAccessId.splice(index, 1);
+            }
+          }
+        });
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      } else {
+        const index = this.selectedAccessId.indexOf(access.accessId);
+        this.selectedAccessId.splice(index, 1);
+      }
     }
   }
   async ngOnInit(): Promise<void> {
@@ -152,10 +197,22 @@ export class UpdateUserDialogComponent implements OnInit {
         validator: [this.dateValidator],
       }
     );
+
+    this.accessData.forEach((access) => {
+      console.log(access);
+      if (access.systemName == "user_update") {
+        this.title = access.name;
+      }
+    });
     this.userForm.controls["login_id"].disable();
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+    this.logo = this.userForm.value.logo;
+    if (this.logo !== null) {
+      this.photoControl = true;
+      this.photoUrl = this.logo.byte;
+    }
     // For diplaying previous checked Access
     for (let i = 0; i < this.accessData.length; i++) {
       var flag = true;

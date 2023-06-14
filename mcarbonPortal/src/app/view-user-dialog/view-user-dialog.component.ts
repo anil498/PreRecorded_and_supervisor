@@ -40,7 +40,7 @@ export class ViewUserDialogComponent implements OnInit {
   selectedAccessId: number[] = [];
 
   selectedFeatures: number[] = [];
-
+  topLevelAccess: any[] = [];
   selectedFeaturesMeta = {};
   constructor(
     private router: Router,
@@ -50,7 +50,9 @@ export class ViewUserDialogComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public user: any
-  ) {}
+  ) {
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+  }
 
   updateSelectedFeaturesMeta(featureId: string | number, metaValue: any) {
     if (!this.selectedFeaturesMeta[featureId]) {
@@ -114,13 +116,14 @@ export class ViewUserDialogComponent implements OnInit {
 
       featureList: [this.user.features, Validators.required],
       featureMeta: [this.user.featuresMeta, Validators.required],
-    })
+    });
 
     this.userForm.disable();
 
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
+
     // For diplaying previous checked Access
     for (let i = 0; i < this.accessData.length; i++) {
       var flag = true;

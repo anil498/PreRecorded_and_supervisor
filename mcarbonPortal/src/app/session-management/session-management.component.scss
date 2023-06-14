@@ -7,22 +7,25 @@
   border-radius: 40px;
 }
 
+th {
+  font-weight: bolder !important;
+}
 
 .row-1 {
   height: 70px;
 }
 
-th{ 
+th {
   color: #009688;
 }
 
-.main-content{
+.main-content {
   margin-top: 60px !important;
 }
 
 ::ng-deep .mat-snack-bar-container {
   background: linear-gradient(60deg, #e8f1ee, #ffffff) !important;
-  color:  #009688 !important;
+  color: #009688 !important;
   font-weight: bold;
 }
 
@@ -36,7 +39,7 @@ th{
   background: #009688;
 }
 
-.btn-action{
+.btn-action {
   color: #009688 !important;
 }
 
@@ -66,11 +69,15 @@ th{
   background: transparent;
 }
 
+input {
+  color: #009688;
+}
+
 .box a .material-icons {
   color: #009688;
   font-size: 18px;
 }
 
-.icon{
+.icon {
   padding-top: 5px;
 }

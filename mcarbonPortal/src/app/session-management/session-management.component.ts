@@ -6,6 +6,8 @@ import { Sessions } from "../model/sessions";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { SessionDialogComponent } from "../session-dialog/session-dialog.component";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
 
 @Component({
   selector: "app-session-management",
@@ -15,18 +17,66 @@ import { SessionDialogComponent } from "../session-dialog/session-dialog.compone
 export class SessionManagementComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  token: string;
+  userId: string;
+  accessList: any[];
   search = "";
-  pageSizes = [5, 10, 15];
+  pageSizes = [10, 25, 50, 100, 500];
 
-  displayedColumns: string[] = ["Session ID", "Sessions Name"];
-  sessions: Sessions[] = [];
-  dataSourceWithPageSize = new MatTableDataSource<Sessions>(this.sessions);
+  displayedColumns: string[] = [
+    "sessionName",
+    "participantName",
+    "totalParticipants",
+    "accountMaxSessions",
+    "userMaxSessions",
+    "settings",
+    "creationDate",
+    "expDate",
+    "status",
+    "Action",
+  ];
+  session: Sessions[] = [];
+  dataSourceWithPageSize = new MatTableDataSource(this.session);
   constructor(
     private dialog: MatDialog,
-    private restService: RestService
-  ) {}
+    private restService: RestService,
+    private snackBar: MatSnackBar
+  ) {
+    this.token = this.restService.getToken();
+    this.userId = this.restService.getUserId();
+    this.accessList = this.restService.getData().Access;
+  }
 
-  ngOnInit(): void {}
+  async ngOnInit(): Promise<void> {
+    this.viewTable();
+  }
+
+  ngAfterViewInit() {
+    this.dataSourceWithPageSize.paginator = this.paginator;
+    this.dataSourceWithPageSize.sort = this.sort;
+  }
+
+  viewTable() {
+    this.restService.getSessionList(this.token, this.userId).then(
+      (response) => {
+        this.session = response;
+        console.log(this.session);
+        this.dataSourceWithPageSize.data = this.session;
+      },
+      (err) => {
+        let msg = "";
+        if (err.status == 0) {
+          msg = "Server Not Responding";
+        } else {
+          msg = err.error.error;
+        }
+        // this.snackBar.open(msg, "Close", {
+        //   duration: 3000,
+        //   panelClass: ["snackBar"],
+        // });
+      }
+    );
+  }
 
   searchData(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -35,9 +85,21 @@ export class SessionManagementComponent implements OnInit {
 
   openDialog() {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "690px";
-    dialogConfig.height = "550px";
+    dialogConfig.width = "60%";
+    dialogConfig.height = "70%";
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(SessionDialogComponent, dialogConfig);
+  }
+
+  viewSessionSettings(session: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "50%";
+    dialogConfig.height = "50%";
+    dialogConfig.data = session.settings;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(
+      ViewSessionSettingDialogComponent,
+      dialogConfig
+    );
   }
 }

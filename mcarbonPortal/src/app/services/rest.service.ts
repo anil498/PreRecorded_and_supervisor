@@ -493,6 +493,27 @@ export class RestService {
     }
   }
 
+  async getSessionList(token: string, id: string) {
+    console.warn(token + "\n" + id);
+    const headers = new HttpHeaders({
+      Token: `${token}`,
+      Authorization: `${this.authKey}`,
+    });
+    try {
+      return lastValueFrom(
+        this.http.get<any>(this.baseHref + "Session/GetAll/", { headers })
+      );
+    } catch (error) {
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
+
   async deleteAccount(id: number) {
     this.deleteRequest(`Account/Delete/${id}`);
   }

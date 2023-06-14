@@ -1,0 +1,23 @@
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      Session Settings
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+  <div class="row justify-content-center">
+    <ng-container *ngFor="let setting of settings | keyvalue">
+      <div class="col-md-10 offset-md-1" *ngIf="checkType(setting.value)">
+        <div class="row">
+          <div class="col-md-4 key">
+            <h6>{{ setting.key }}</h6>
+          </div>
+          <div class="col-md-1 key">:</div>
+          <div class="col-md-7">{{ setting.value }}</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

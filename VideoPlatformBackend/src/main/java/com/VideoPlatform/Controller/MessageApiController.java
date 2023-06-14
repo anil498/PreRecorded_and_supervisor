@@ -75,19 +75,11 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"sms")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!(commonService.checkAccess("sms",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
         String msisdn= (String) params.get("msisdn");
-//        logger.info("getHeaders(request) = "+getHeaders(request));
-//        logger.info("getHeaders(request).get(\"origin\") = "+getHeaders(request).get("origin"));
-
-//        String callUrl= "https://demo2.progate.mobi"+(String) params.get("callUrl");
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
         String description=null;
         if(params.containsKey("description")){
@@ -135,13 +127,10 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"whatsapp")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("whatsapp",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
+
         String from= (String) params.get("from");
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
@@ -192,12 +181,8 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"send_notification")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!(commonService.checkAccess("send_notification",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
         String phoneNumber= (String) params.get("msisdn");

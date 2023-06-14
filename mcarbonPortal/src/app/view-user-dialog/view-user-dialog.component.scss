@@ -1,5 +1,9 @@
 .card-1 {
-  height: 400px !important;
+  box-shadow: none;
+  margin-bottom: 0px;
+}
+::ng-deep .mat-dialog-container {
+  height: auto !important;
 }
 
 .card-header {

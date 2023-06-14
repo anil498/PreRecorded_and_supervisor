@@ -4,12 +4,10 @@ import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -38,7 +36,7 @@ public class SessionServiceImpl implements SessionService{
         SessionEntity session=new SessionEntity();
             Date creation = TimeUtils.getDate();
             Date expDate = TimeUtils.increaseDateTimeSession(creation);
-            logger.info("Session Localdatetime = {}", expDate);
+            logger.info("Session ExpDate = {}", expDate);
 
             UserAuthEntity userAuth = userAuthRepository.findByToken(token);
             AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
@@ -66,18 +64,27 @@ public class SessionServiceImpl implements SessionService{
             session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
             session.setCreationDate(creation);
             session.setExpDate(expDate);
-            session.setParticipantName(participantName);
-            session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
-
-            SettingsEntity settingsEntity = new SettingsEntity();
-
-            settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
-            if(userEntity.getLogo() == null){
-                settingsEntity.setLogo(account.getLogo());
+            if(participantName==null){
+                session.setParticipantName(userEntity.getFname());
+            }else{
+                session.setParticipantName(participantName);
             }
-            else{
-                settingsEntity.setLogo(userEntity.getLogo());
-            }
+
+        SettingsEntity settingsEntity = new SettingsEntity();
+
+                session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
+
+                settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+                if (userEntity.getLogo() != null) {
+                    settingsEntity.setLogo(userEntity.getLogo());
+                }
+                else if(account.getLogo() != null) {
+                    settingsEntity.setLogo(account.getLogo());
+                }
+                else{
+                    settingsEntity.setLogo("{}");
+                }
+
             for (Integer featureId : userEntity.getFeatures()) {
                 if (1 == featureId) {
                     settingsEntity.setRecording(true);
@@ -175,13 +182,19 @@ public class SessionServiceImpl implements SessionService{
     }
 
     @Override
-    public List<SessionEntity> getAllSessions() {
-        return sessionRepository.findAll();
+    public List<SessionEntity> getAllSupportSessions(String authKey,String token) {
+        UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
+        Integer userId = userAuthEntity.getUserId();
+        return sessionRepository.findSupportSessions(userId);
     }
 
     @Override
     public SessionEntity getByKey(String key) {
-        return sessionRepository.findBySessionKey(key);
+        SessionEntity sessionEntity = sessionRepository.findBySessionKey(key);
+        if(TimeUtils.isExpire(sessionEntity.getExpDate())) {
+            return null;
+        }
+        return sessionEntity;
     }
     @Override
     public String deleteSession(String sessionKey) {
