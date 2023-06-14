@@ -100,7 +100,7 @@ public class UserController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         int authId = commonService.isValidAuthKey(authKey);
-        if(!commonService.isValidTokenAndAccess(token,authId,"user_creation")) {
+        if(!commonService.isValidRequest(token,authKey,"user_creation")) {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }

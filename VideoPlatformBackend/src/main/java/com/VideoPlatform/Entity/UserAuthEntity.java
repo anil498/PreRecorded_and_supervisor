@@ -23,6 +23,9 @@ public class UserAuthEntity {
     @Column(nullable = false, name="token")
     private String token;
 
+    @Column(nullable = false, name="auth_key")
+    private String authKey;
+
     @Column(name="system_name",columnDefinition = "text")
     private String systemNames;
 
@@ -82,6 +85,10 @@ public class UserAuthEntity {
         this.systemNames = systemNames;
     }
 
+    public String getAuthKey() { return authKey; }
+
+    public void setAuthKey(String authKey) { this.authKey = authKey; }
+
     @Override
     public String toString() {
         return "UserAuthEntity{" +
@@ -89,6 +96,7 @@ public class UserAuthEntity {
                 ", loginId='" + loginId + '\'' +
                 ", authId=" + authId +
                 ", token='" + token + '\'' +
+                ", authKey='" + authKey + '\'' +
                 ", systemNames='" + systemNames + '\'' +
                 ", creationDate=" + creationDate +
                 ", expDate=" + expDate +

@@ -180,12 +180,15 @@ public class UserServiceImpl implements UserService{
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(isValidTokenLogin(userId)){
-            UserAuthEntity user = userAuthRepository.findByUId(userId);
+            UserAuthEntity userAuthEntity = userAuthRepository.findByUId(userId);
             AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(userEntity.getAccountId());
-            user.setSystemNames(accessCheck(userId));
+            if(TimeUtils.isExpire(accountAuthEntity.getExpDate())){
+                return new ResponseEntity<>("Account Expired !",HttpStatus.UNAUTHORIZED);
+            }
+            userAuthEntity.setSystemNames(accessCheck(userId));
 
             HashMap<String,Object> response=new HashMap<>();
-            response.put("token",user.getToken());
+            response.put("token",userAuthEntity.getToken());
             response.put("auth_key",accountAuthEntity.getAuthKey());
             response.put("user_data",userEntity);
             response.put("status_code","200");
@@ -203,6 +206,9 @@ public class UserServiceImpl implements UserService{
 
             if (passwordEncoder.matches(password,userEntity.getPassword())) {
                 AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(userEntity.getAccountId());
+                if(TimeUtils.isExpire(accountAuthEntity.getExpDate())){
+                    return new ResponseEntity<>("Account Expired !",HttpStatus.UNAUTHORIZED);
+                }
                 int auth = accountAuthEntity.getAuthId();
                 String token1 = generateToken(userId,"UR");
                 Date now = TimeUtils.getDate();
@@ -219,6 +225,7 @@ public class UserServiceImpl implements UserService{
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
                     ua.setSystemNames(accessCheck(userId));
+                    ua.setAuthKey(accountAuthEntity.getAuthKey());
                 }
                 else{
                     ua = new UserAuthEntity();
@@ -229,6 +236,7 @@ public class UserServiceImpl implements UserService{
                     ua.setCreationDate(now);
                     ua.setExpDate(newDateTime);
                     ua.setSystemNames(accessCheck(userId));
+                    ua.setAuthKey(accountAuthEntity.getAuthKey());
                 }
 
                 userAuthRepository.save(ua);

@@ -50,17 +50,13 @@ public class CommonService {
         int accountId = acc.getAccountId();
         return accountId;
     }
-    public Boolean isValidTokenAndAccess(String token,Integer authId,String systemName){
-        UserAuthEntity user = userAuthRepository.findByToken(token);
+    public Boolean isValidRequest(String token,String authKey,String systemName){
+        UserAuthEntity user = userAuthRepository.findByTokenAndAuthKey(token,authKey);
         if(user == null)return false;
-
-        int userId = user.getUserId();
         String systemNames = user.getSystemNames();
         logger.info("SystemNames : {}",systemNames);
 
-        logger.info("authId : {}",authId);
-        logger.info("authId1 : {}",user.getAuthId());
-        if(TimeUtils.isExpire(user.getExpDate()) || !(authId == user.getAuthId()))
+        if(TimeUtils.isExpire(user.getExpDate()))
             return false;
         if(!systemNames.contains(systemName)){
             logger.info("Permission Denied. Don't have access for this service!");
@@ -83,12 +79,9 @@ public class CommonService {
         return key;
     }
     public Boolean authorizationCheck(String authKey, String token, String systemName){
-        int authId = isValidAuthKey(authKey);
-        if(authId == 0){
+
+        if(!isValidRequest(token,authKey,systemName)) {
             logger.info("Unauthorised user, wrong authorization key !");
-            return false;
-        }
-        if(!isValidTokenAndAccess(token,authId,systemName)) {
             logger.info("Invalid Token !");
             return false;
         }

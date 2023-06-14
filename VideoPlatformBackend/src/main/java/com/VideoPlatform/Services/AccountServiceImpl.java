@@ -1,13 +1,7 @@
 package com.VideoPlatform.Services;
 
-import com.VideoPlatform.Entity.AccountAuthEntity;
-import com.VideoPlatform.Entity.AccountEntity;
-import com.VideoPlatform.Entity.UserAuthEntity;
-import com.VideoPlatform.Entity.UserEntity;
-import com.VideoPlatform.Repository.AccountAuthRepository;
-import com.VideoPlatform.Repository.AccountRepository;
-import com.VideoPlatform.Repository.UserAuthRepository;
-import com.VideoPlatform.Repository.UserRepository;
+import com.VideoPlatform.Entity.*;
+import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +36,8 @@ public class AccountServiceImpl implements AccountService {
     private CommonService commonService;
     @Autowired
     UserServiceImpl userService;
+    @Autowired
+    AccessRepository accessRepository;
 
     private static final Logger logger= LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -123,6 +120,8 @@ public class AccountServiceImpl implements AccountService {
 
         int authId1 = auth.getAuthId();
         logger.info("acc.getMaxUser() : "+acc.getMaxUser());
+
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user.getAccountId());
         if(acc.getMaxUser() == 0){
             logger.info("Checking userId : "+user.getUserId());
             String token1 = commonService.generateToken(user.getUserId(),"UR");
@@ -133,6 +132,8 @@ public class AccountServiceImpl implements AccountService {
             ua.setAuthId(authId1);
             ua.setCreationDate(creation);
             ua.setExpDate(expDate);
+            ua.setSystemNames(accessCheck(user.getUserId()));
+            ua.setAuthKey(accountAuthEntity.getAuthKey());
             userAuthRepository.save(ua);
         }
         return "Account created !";
@@ -171,5 +172,17 @@ public class AccountServiceImpl implements AccountService {
     public String deleteAccount(Integer accountId) {
         accountRepository.deleteAccount(accountId);
         return "Account successfully deleted.";
+    }
+    public String accessCheck(Integer userId){
+        UserEntity userEntity = userRepository.findByUserId(userId);
+        Integer[] accessId = userEntity.getAccessId();
+        List<String> accessEntities = new ArrayList<>();
+        for (int i = 0; i < accessId.length; i++) {
+            AccessEntity accessEntity = accessRepository.findByAccessIds(accessId[i]);
+            accessEntities.add(accessEntity.getSystemName());
+        }
+        logger.info("system_name array is : {}",accessEntities);
+
+        return String.valueOf(accessEntities);
     }
 }
