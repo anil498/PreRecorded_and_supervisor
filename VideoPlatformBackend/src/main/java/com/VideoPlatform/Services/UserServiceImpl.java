@@ -161,48 +161,48 @@ public class UserServiceImpl implements UserService{
         logger.info("loginId : "+loginId);
         logger.info("password : "+password);
 
-        UserEntity user1 = userRepository.findByLoginId(loginId);
+        UserEntity userEntity = userRepository.findByLoginId(loginId);
 
-        if(user1 == null){
+        if(userEntity == null){
             logger.info("No user present with given login id !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(user1.getStatus()!=1){
+        if(userEntity.getStatus()!=1){
             logger.info("User does not exist !");
             return  new ResponseEntity<UserEntity>(HttpStatus.FORBIDDEN);
         }
 
-        logger.info("user "+user1);
-        int userId = user1.getUserId();
+        logger.info("user "+userEntity);
+        int userId = userEntity.getUserId();
 
-        if (!(passwordEncoder.matches(password,user1.getPassword()))) {
+        if (!(passwordEncoder.matches(password,userEntity.getPassword()))) {
             logger.info("Inside loginid password check !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(isValidTokenLogin(userId)){
             UserAuthEntity user = userAuthRepository.findByUId(userId);
-            AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user1.getAccountId());
+            AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(userEntity.getAccountId());
             user.setSystemNames(accessCheck(userId));
 
             HashMap<String,Object> response=new HashMap<>();
             response.put("token",user.getToken());
             response.put("auth_key",accountAuthEntity.getAuthKey());
-            response.put("user_data",user1);
+            response.put("user_data",userEntity);
             response.put("status_code","200");
             response.put("status_message","Login Successful");
-            response.put("Features", featureData(user1.getUserId()));
-            response.put("Access", accessData(user1.getUserId()));
+            response.put("Features", featureData(userEntity.getUserId()));
+            response.put("Access", accessData(userEntity.getUserId()));
             response.put("Dashboard",dashboardService.dashboardData(loginId));
             String lastLogin = LocalDateTime.now().format(formatter);
             logger.info("LastLogin1 : {}",lastLogin);
-            user1.setLastLogin(lastLogin);
+            userEntity.setLastLogin(lastLogin);
             userRepository.setLogin(lastLogin,userId);
             return  ResponseEntity.ok(response);
         }
         else {
 
-            if (user1 != null && passwordEncoder.matches(password,user1.getPassword())) {
-                AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user1.getAccountId());
+            if (passwordEncoder.matches(password,userEntity.getPassword())) {
+                AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(userEntity.getAccountId());
                 int auth = accountAuthEntity.getAuthId();
                 String token1 = generateToken(userId,"UR");
                 Date now = TimeUtils.getDate();
@@ -210,7 +210,7 @@ public class UserServiceImpl implements UserService{
                 UserAuthEntity ua = userAuthRepository.findByUId(userId);
                 String lastLogin = LocalDateTime.now().format(formatter);
                 logger.info("LastLogin2 : {}",lastLogin);
-                user1.setLastLogin(lastLogin);
+                userEntity.setLastLogin(lastLogin);
                 userRepository.setLogin(lastLogin,userId);
 
                 if(ua != null){
@@ -222,8 +222,8 @@ public class UserServiceImpl implements UserService{
                 }
                 else{
                     ua = new UserAuthEntity();
-                    ua.setLoginId(user1.getLoginId());
-                    ua.setUserId(user1.getUserId());
+                    ua.setLoginId(userEntity.getLoginId());
+                    ua.setUserId(userEntity.getUserId());
                     ua.setToken(token1);
                     ua.setAuthId(auth);
                     ua.setCreationDate(now);
@@ -236,13 +236,13 @@ public class UserServiceImpl implements UserService{
                 HashMap<String,Object> res = new HashMap<>();
                 res.put("token",token1);
                 res.put("auth_key",accountAuthEntity.getAuthKey());
-                res.put("user_data",user1);
+                res.put("user_data",userEntity);
                 res.put("status_code","200");
                 res.put("status_message","Login Successful");
-                res.put("Features", featureData(user1.getUserId()));
-                res.put("Access", accessData(user1.getUserId()));
+                res.put("Features", featureData(userEntity.getUserId()));
+                res.put("Access", accessData(userEntity.getUserId()));
                 res.put("Dashboard",dashboardService.dashboardData(loginId));
-                logger.info(user1.toString());
+                logger.info(userEntity.toString());
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }
         }

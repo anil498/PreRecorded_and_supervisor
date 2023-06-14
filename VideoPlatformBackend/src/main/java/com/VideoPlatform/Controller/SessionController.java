@@ -9,7 +9,6 @@ import com.VideoPlatform.Services.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -46,21 +44,15 @@ public class SessionController {
     @Autowired
     CommonService commonService;
 
-
     @PostMapping("/Create")
     public ResponseEntity<?> createSession(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"session_create")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if (!(commonService.checkAccess("session_create", token))) {
-            logger.info("Permission Denied. Don't have access for this service!");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-
         String description=null;
         if(params.containsKey("description")){
             description= String.valueOf(params.get("description"));
@@ -85,14 +77,9 @@ public class SessionController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("my_sessions",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<List<SessionEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-
         return ok(sessionService.getAllSupportSessions(authKey,token));
     }
 
@@ -103,12 +90,8 @@ public class SessionController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!(commonService.checkAccess("my_sessions",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<SessionEntity>(HttpStatus.UNAUTHORIZED);
         }
         String sessionKey = params.get("sessionKey");
         if(sessionService.getByKey(sessionKey) == null)
@@ -124,12 +107,8 @@ public class SessionController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!(commonService.checkAccess("my_sessions",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         sessionService.deleteSession(key);
 

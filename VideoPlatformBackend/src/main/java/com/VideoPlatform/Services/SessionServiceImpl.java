@@ -4,12 +4,10 @@ import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;

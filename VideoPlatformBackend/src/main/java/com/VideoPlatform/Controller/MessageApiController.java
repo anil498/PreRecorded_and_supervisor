@@ -75,12 +75,8 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"sms")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!(commonService.checkAccess("sms",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
         String msisdn= (String) params.get("msisdn");
@@ -131,13 +127,10 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"whatsapp")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        if(!(commonService.checkAccess("whatsapp",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
+
         String from= (String) params.get("from");
         String to= (String) params.get("msisdn");
         String type= (String) params.get("type");
@@ -188,12 +181,8 @@ public class MessageApiController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token)){
+        if(!commonService.authorizationCheck(authKey,token,"send_notification")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        if(!(commonService.checkAccess("send_notification",token))){
-            logger.info("Permission Denied. Don't have access for this service!");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
         String phoneNumber= (String) params.get("msisdn");

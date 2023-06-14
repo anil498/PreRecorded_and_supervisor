@@ -1,9 +1,7 @@
 package com.VideoPlatform.Services;
 
-import com.VideoPlatform.Entity.AccessEntity;
 import com.VideoPlatform.Entity.AccountAuthEntity;
 import com.VideoPlatform.Entity.UserAuthEntity;
-import com.VideoPlatform.Entity.UserEntity;
 import com.VideoPlatform.Repository.AccessRepository;
 import com.VideoPlatform.Repository.AccountAuthRepository;
 import com.VideoPlatform.Repository.UserAuthRepository;
@@ -52,25 +50,25 @@ public class CommonService {
         int accountId = acc.getAccountId();
         return accountId;
     }
-    public Boolean isValidToken(String token,Integer authId){
+    public Boolean isValidTokenAndAccess(String token,Integer authId,String systemName){
         UserAuthEntity user = userAuthRepository.findByToken(token);
         if(user == null)return false;
+
+        int userId = user.getUserId();
+        String systemNames = user.getSystemNames();
+        logger.info("SystemNames : {}",systemNames);
+
         logger.info("authId : {}",authId);
         logger.info("authId1 : {}",user.getAuthId());
         if(TimeUtils.isExpire(user.getExpDate()) || !(authId == user.getAuthId()))
             return false;
+        if(!systemNames.contains(systemName)){
+            logger.info("Permission Denied. Don't have access for this service!");
+            return false;
+        }
         return true;
     }
-    public boolean checkAccess(String systemName,String token){
-        UserAuthEntity user = userAuthRepository.findByToken(token);
-        int userId = user.getUserId();
-        String systemNames = user.getSystemNames();
-        logger.info("SystemNames : {}",systemNames);
-        UserEntity u = userRepository.findByUserId(userId);
-        if(systemNames.contains(systemName))
-            return true;
-        return false;
-    }
+
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
         return generatedString;
@@ -84,13 +82,13 @@ public class CommonService {
         String key = "AC"+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
         return key;
     }
-    public Boolean authorizationCheck(String authKey, String token){
+    public Boolean authorizationCheck(String authKey, String token, String systemName){
         int authId = isValidAuthKey(authKey);
         if(authId == 0){
             logger.info("Unauthorised user, wrong authorization key !");
             return false;
         }
-        if(!isValidToken(token,authId)) {
+        if(!isValidTokenAndAccess(token,authId,systemName)) {
             logger.info("Invalid Token !");
             return false;
         }
