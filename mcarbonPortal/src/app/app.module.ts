@@ -15,6 +15,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { ViewSessionSettingDialogComponent } from './view-session-setting-dialog/view-session-setting-dialog.component';
 
 @NgModule({
   imports: [

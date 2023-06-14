@@ -99,6 +99,23 @@
                   </td>
                 </ng-container>
 
+                <ng-container matColumnDef="settings">
+                  <th mat-header-cell *matHeaderCellDef>Settings</th>
+                  <td mat-cell *matCellDef="let session">
+                    <button
+                      class=""
+                      matTooltip="Show settings of {{ session.sessionName }} session"
+                      (click)="viewSessionSettings(session)"
+                      style="
+                        background-color: transparent;
+                        border-color: transparent;
+                      "
+                    >
+                      <mat-icon style="color: #009688">remove_red_eye</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
                 <ng-container matColumnDef="expDate">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
                     Expiry Date

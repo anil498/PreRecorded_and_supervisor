@@ -7,6 +7,7 @@ import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { SessionDialogComponent } from "../session-dialog/session-dialog.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
 
 @Component({
   selector: "app-session-management",
@@ -28,6 +29,7 @@ export class SessionManagementComponent implements OnInit {
     "totalParticipants",
     "accountMaxSessions",
     "userMaxSessions",
+    "settings",
     "creationDate",
     "expDate",
     "status",
@@ -87,5 +89,17 @@ export class SessionManagementComponent implements OnInit {
     dialogConfig.height = "70%";
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(SessionDialogComponent, dialogConfig);
+  }
+
+  viewSessionSettings(session: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "50%";
+    dialogConfig.height = "50%";
+    dialogConfig.data = session.settings;
+    console.log("Dialog Form Opened");
+    const dialogRef = this.dialog.open(
+      ViewSessionSettingDialogComponent,
+      dialogConfig
+    );
   }
 }

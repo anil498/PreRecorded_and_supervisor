@@ -1,0 +1,86 @@
+.card-1 {
+  min-height: 80% !important;
+}
+
+.card-header {
+  margin-bottom: 10px;
+}
+
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+::ng-deep
+  .mat-checkbox-indeterminate
+  .mat-checkbox-background
+  .mat-checkbox-ripple.mat-ripple-active
+  .mat-ripple-element {
+  background-color: #17d1be !important;
+  border-color: #17d1be !important;
+}
+
+.container {
+  padding-top: 10px;
+}
+
+.example-section {
+  margin-top: 10px;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+  opacity: 0.5;
+  height: 1px;
+  background: #009688;
+}
+
+::ng-deep .mat-form-field-label-wrapper {
+  font-size: 0.75rem;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #009688;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+button[type="button"] {
+  border-radius: 50%;
+}
+
+img {
+  border-radius: 50%;
+}
+
+::ng-deep .mat-datepicker-content {
+  margin-top: 100px !important;
+}
+
+.close-btn {
+  position: absolute;
+  right: 1px;
+  top: 10px;
+}
+
+.col-custom {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.example-section {
+  width: 100%;
+}
+
+.label {
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
+.key {
+  font-size: 1rem;
+  font-weight: bolder;
+}
