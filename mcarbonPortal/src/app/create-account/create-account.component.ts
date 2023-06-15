@@ -15,6 +15,7 @@ import { RestService } from "app/services/rest.service";
 import { Router } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ImageFile } from "app/model/image-file";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 
 @Component({
   selector: "app-create-account",
@@ -69,6 +70,8 @@ export class CreateAccountComponent implements OnInit {
   max_participants: number;
 
   featuresData: any = this.restService.getData().Features;
+  featuresData1: any;
+  featuresData2: any;
   accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
 
@@ -82,9 +85,13 @@ export class CreateAccountComponent implements OnInit {
     private dialogRef: MatDialogRef<CreateAccountComponent>,
     private restService: RestService,
     private fb: FormBuilder,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private snackBar: MatSnackBar
   ) {
     this.loginResponse = this.restService.getToken();
+    const half = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, half);
+    this.featuresData2 = this.featuresData.slice(half);
   }
 
   onPhotoSelected(event) {
@@ -119,11 +126,13 @@ export class CreateAccountComponent implements OnInit {
     if (files && files.length > 0) {
       const file: File = files[0];
       const reader = new FileReader();
+      reader.readAsDataURL(file);
       //reader.readAsArrayBuffer(file);
       console.warn(file);
+
       reader.onloadend = () => {
         console.warn(reader.result);
-        const blob = new Blob([reader.result], { type: file.type });
+        const blob = { byte: reader.result, type: file.type };
         console.warn(blob);
         this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
         console.warn(this.selectedFeaturesMeta[featureId]);
@@ -135,7 +144,6 @@ export class CreateAccountComponent implements OnInit {
       //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
       //   console.warn(this.selectedFeaturesMeta[featureId]);
       // };
-      reader.readAsArrayBuffer(file);
     }
   }
 
@@ -373,9 +381,9 @@ export class CreateAccountComponent implements OnInit {
         this.password
       );
       console.warn(response);
-      if (response.statusCode === 200) {
-        this.dialogRef.close();
-        this.restService.closeDialog();
+      if (response.status_code === 200) {
+        this.openSnackBar(response.msg, "snackBar");
+        this.timeOut(3000);
       }
     } catch (error) {
       console.warn(error);
@@ -385,11 +393,15 @@ export class CreateAccountComponent implements OnInit {
     this.restService.closeDialog();
   }
 
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    this.snackBar.open(message, "Dismiss", snackBarConfig);
+  }
   private timeOut(time: number) {
-    console.warn(this.emptyError);
     setTimeout(() => {
       this.emptyError = false;
     }, time);
-    console.warn(this.emptyError);
   }
 }

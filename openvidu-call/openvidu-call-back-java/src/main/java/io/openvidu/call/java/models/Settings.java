@@ -7,15 +7,15 @@ import com.google.gson.JsonObject;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings {
-  private int duration;
-  private boolean showLogo;
+  private int duration=0;
+  private boolean showLogo=false;
   private Object logo;
   private Boolean moderators = false;
-  private String description;
+  private String description="";
   private Boolean displayTicker=false;
   private Boolean displayTimer=false;
   private Boolean recording=false;
-  private Object recordingDetails=false;
+  private Object recordingDetails;
   private Boolean screenShare=false;
   private Boolean waitForModerator=false;
   private Boolean chat=false;
@@ -24,9 +24,9 @@ public class Settings {
   private Boolean floatingLayout=false;
   private Boolean supervisor=false;
   private Boolean preRecorded=false;
-  private String preRecordedDetails;
+  private Object preRecordedDetails;
   private Boolean broadcast=false;
-  private String landingPage;
+  private String landingPage="https://in.linkedin.com/company/mcarbon";
   public Integer getDuration() {
     return duration;
   }
@@ -48,6 +48,7 @@ public class Settings {
   }
 
   public void setModerators(Boolean moderators) {
+    if(moderators!=null)
     this.moderators = moderators;
   }
 
@@ -56,6 +57,7 @@ public class Settings {
   }
 
   public void setDescription(String description) {
+    if(moderators!=null)
     this.description = description;
   }
 
@@ -64,6 +66,7 @@ public class Settings {
   }
 
   public void setDisplayTicker(Boolean displayTicker) {
+    if(moderators!=null)
     this.displayTicker = displayTicker;
   }
 
@@ -72,6 +75,7 @@ public class Settings {
   }
 
   public void setDisplayTimer(Boolean displayTimer) {
+    if(moderators!=null)
     this.displayTimer = displayTimer;
   }
 
@@ -80,6 +84,7 @@ public class Settings {
   }
 
   public void setRecording(Boolean recording) {
+    if(moderators!=null)
     this.recording = recording;
   }
 
@@ -96,6 +101,7 @@ public class Settings {
   }
 
   public void setScreenShare(Boolean screenShare) {
+    if(moderators!=null)
     this.screenShare = screenShare;
   }
 
@@ -104,6 +110,7 @@ public class Settings {
   }
 
   public void setWaitForModerator(Boolean waitForModerator) {
+    if(moderators!=null)
     this.waitForModerator = waitForModerator;
   }
 
@@ -112,6 +119,7 @@ public class Settings {
   }
 
   public void setChat(Boolean chat) {
+    if(moderators!=null)
     this.chat = chat;
   }
 
@@ -120,6 +128,7 @@ public class Settings {
   }
 
   public void setActivitiesButton(Boolean activitiesButton) {
+    if(moderators!=null)
     this.activitiesButton = activitiesButton;
   }
 
@@ -128,6 +137,7 @@ public class Settings {
   }
 
   public void setParticipantsButton(Boolean participantsButton) {
+    if(moderators!=null)
     this.participantsButton = participantsButton;
   }
 
@@ -136,6 +146,7 @@ public class Settings {
   }
 
   public void setFloatingLayout(Boolean floatingLayout) {
+    if(moderators!=null)
     this.floatingLayout = floatingLayout;
   }
 
@@ -144,6 +155,7 @@ public class Settings {
   }
 
   public void setSupervisor(Boolean supervisor) {
+    if(moderators!=null)
     this.supervisor = supervisor;
   }
 
@@ -152,14 +164,15 @@ public class Settings {
   }
 
   public void setPreRecorded(Boolean preRecorded) {
+    if(moderators!=null)
     this.preRecorded = preRecorded;
   }
 
-  public String getPreRecordedDetails() {
+  public Object getPreRecordedDetails() {
     return preRecordedDetails;
   }
 
-  public void setPreRecordedDetails(String preRecordedDetails) {
+  public void setPreRecordedDetails(Object preRecordedDetails) {
     this.preRecordedDetails = preRecordedDetails;
   }
 
@@ -168,6 +181,7 @@ public class Settings {
   }
 
   public void setBroadcast(Boolean broadcast) {
+    if(moderators!=null)
     this.broadcast = broadcast;
   }
 
@@ -176,6 +190,7 @@ public class Settings {
   }
 
   public void setShowLogo(boolean showLogo) {
+    if(moderators!=null)
     this.showLogo = showLogo;
   }
 
@@ -188,6 +203,7 @@ public class Settings {
   }
 
   public void setLandingPage(String landingPage) {
+    if(moderators!=null)
     this.landingPage = landingPage;
   }
 

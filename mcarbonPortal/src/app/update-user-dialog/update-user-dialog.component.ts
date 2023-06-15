@@ -18,7 +18,6 @@ export class UpdateUserDialogComponent implements OnInit {
   title: string;
   currentTabIndex: number = 0;
   userForm: FormGroup;
-  messageResponse: any;
   loginResponse: any;
 
   emptyField: boolean = false;
@@ -38,6 +37,8 @@ export class UpdateUserDialogComponent implements OnInit {
   max_participants: number;
 
   featuresData: any = this.restService.getData().Features;
+  featuresData1: any;
+  featuresData2: any;
   accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
   topLevelAccess: any[] = [];
@@ -54,6 +55,9 @@ export class UpdateUserDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public user: any
   ) {
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+    const half = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, half);
+    this.featuresData2 = this.featuresData.slice(half);
   }
 
   onPhotoSelected(event) {
@@ -329,7 +333,8 @@ export class UpdateUserDialogComponent implements OnInit {
       this.max_participants === null
     ) {
       //this.emptyField = true;
-      this.openSnackBar("All fields are mandatory", "snackBar");
+      this.openSnackBar("ALL FIELDS ARE MANDATORY", "snackBar");
+      this.timeOut(3000);
       //this.timeOut(3000);
       return;
     }
@@ -348,39 +353,36 @@ export class UpdateUserDialogComponent implements OnInit {
         this.exp_date,
 
         this.selectedAccessId.sort(),
-
+        this.max_active_sessions,
         this.max_duration,
         this.max_participants,
-        this.max_active_sessions,
 
         this.selectedFeatures.sort(),
         this.selectedFeaturesMeta
       );
       console.warn(response);
-      if (response.statusCode === 200) {
-        this.dialogRef.close();
-        this.restService.closeDialog();
+      if (response.status_code === 200) {
+        console.warn(response);
+        this.openSnackBar(response.msg, "snackBar");
+        this.timeOut(3000);
       }
     } catch (error) {
       console.warn(error);
     }
-    this.messageResponse = response;
     this.dialogRef.close();
     this.restService.closeDialog();
   }
 
   openSnackBar(message: string, color: string) {
     const snackBarConfig = new MatSnackBarConfig();
-    snackBarConfig.duration = 30000;
+    snackBarConfig.duration = 3000;
     snackBarConfig.panelClass = [color];
     this.snackBar.open(message, "Dismiss", snackBarConfig);
   }
 
   private timeOut(time: number) {
-    console.warn(this.emptyField);
     setTimeout(() => {
       this.emptyField = false;
     }, time);
-    console.warn(this.emptyField);
   }
 }

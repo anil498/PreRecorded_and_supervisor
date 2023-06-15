@@ -151,6 +151,7 @@ export class AccountManagementComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
 

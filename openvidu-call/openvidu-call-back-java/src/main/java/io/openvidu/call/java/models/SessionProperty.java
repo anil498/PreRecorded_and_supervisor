@@ -14,23 +14,22 @@ public class SessionProperty {
   private String sessionId;
   private String sessionName;
   private String userId;
-  private int userMaxSessions;
+  private int userMaxSessions=0;
   private String accountId;
-  private int accountMaxSessions;
-  private String participantName;
-  private int totalParticipants;
+  private int accountMaxSessions=0;
+  private String participantName="Customer";
+  private int totalParticipants=2;
   private Settings settings;
   private String sessionKey;
   @JsonDeserialize(using = CustomDateDeserializer.class)
   private Date creationDate;
   @JsonDeserialize(using = CustomDateDeserializer.class)
   private Date expDate;
-  private String cameraToken;
-  private String screenToken;
+  private String cameraToken="";
+  private String screenToken="";
   private List<Recording> recordings;
-  private String type;
+  private String type="Customer";
   private String recordingMode="MANUAL"; // for auto recording need to set {ALWAYS}
-  private String base64Logo;
 
   public String getSessionId() {
     return sessionId;
@@ -85,6 +84,7 @@ public class SessionProperty {
   }
 
   public void setParticipantName(String participantName) {
+    if(participantName!=null && participantName.length()>0)
     this.participantName = participantName;
   }
 
@@ -157,6 +157,7 @@ public class SessionProperty {
   }
 
   public void setType(String type) {
+    if(type!=null && type.length()>0)
     this.type = type;
   }
 
@@ -165,15 +166,8 @@ public class SessionProperty {
   }
 
   public void setRecordingMode(String recordingMode) {
+    if(recordingMode!=null && recordingMode.length()>0)
     this.recordingMode = recordingMode;
-  }
-
-  public String getBase64Logo() {
-    return base64Logo;
-  }
-
-  public void setBase64Logo(String base64Logo) {
-    this.base64Logo = base64Logo;
   }
 
   @Override

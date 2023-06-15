@@ -40,7 +40,7 @@ import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account
 import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.component";
 import { MatFileUploadModule } from "angular-material-fileupload";
 import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
-
+import { MatGridListModule } from "@angular/material/grid-list";
 @NgModule({
   imports: [
     CommonModule,
@@ -49,6 +49,7 @@ import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dial
     MatInputModule,
     MatCheckboxModule,
     MatDatepickerModule,
+    MatGridListModule,
     MatNativeDateModule,
     MatTableModule,
     MatTabsModule,
