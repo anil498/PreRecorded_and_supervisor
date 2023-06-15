@@ -208,7 +208,129 @@
           </div>
         </div>
 
-        <div class="row">
+        <section class="feature-section">
+          <div class="grid-container">
+            <div
+              *ngFor="let feature of featuresData1"
+              class="grid-item"
+              id="feature{{ feature.featureId }}"
+            >
+              <mat-checkbox
+                [value]="feature.featureId"
+                [checked]="isCheckFeature(feature)"
+                disabled
+              >
+                {{ feature.name }}
+              </mat-checkbox>
+
+              <div
+                class="grid-item-content"
+                *ngIf="
+                  (selectedFeatures.includes(feature.featureId) ||
+                    isCheckFeature(feature)) &&
+                  selectedFeaturesMeta[feature.featureId]
+                "
+              >
+                <div *ngFor="let meta of feature.metaList">
+                  <ng-container [ngSwitch]="meta.type">
+                    <mat-slide-toggle
+                      *ngSwitchCase="'bool'"
+                      checked="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
+                      disabled
+                    >
+                      {{ meta.name }}
+                    </mat-slide-toggle>
+
+                    <div *ngSwitchCase="'file'">
+                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                      <input
+                        type="file"
+                        id="{{ meta.key }}"
+                        name="{{ meta.key }}"
+                        accept="video/*"
+                        disabled
+                      />
+                    </div>
+
+                    <mat-form-field *ngSwitchCase="'text'">
+                      <input
+                        value="{{
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        }}"
+                        matInput
+                        #metaValue
+                        type="text"
+                        placeholder="{{ meta.name }}"
+                        disabled
+                      />
+                    </mat-form-field>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-container">
+            <div *ngFor="let feature of featuresData2" class="grid-item">
+              <mat-checkbox
+                [value]="feature.featureId"
+                [checked]="isCheckFeature(feature)"
+                disabled
+              >
+                {{ feature.name }}
+              </mat-checkbox>
+
+              <div
+                class="grid-item-content"
+                *ngIf="
+                  (selectedFeatures.includes(feature.featureId) ||
+                    isCheckFeature(feature)) &&
+                  selectedFeaturesMeta[feature.featureId]
+                "
+              >
+                <div *ngFor="let meta of feature.metaList">
+                  <ng-container [ngSwitch]="meta.type">
+                    <mat-slide-toggle
+                      *ngSwitchCase="'bool'"
+                      checked="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
+                      disabled
+                    >
+                      {{ meta.name }}
+                    </mat-slide-toggle>
+
+                    <div *ngSwitchCase="'file'">
+                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                      <input
+                        type="file"
+                        id="{{ meta.key }}"
+                        name="{{ meta.key }}"
+                        disabled
+                      />
+                    </div>
+
+                    <mat-form-field *ngSwitchCase="'text'">
+                      <input
+                        value="{{
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        }}"
+                        matInput
+                        #metaValue
+                        type="text"
+                        placeholder="{{ meta.name }}"
+                        disabled
+                      />
+                    </mat-form-field>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <!-- <div class="row">
           <section class="example-section">
             <div *ngFor="let feature of featuresData" class="row">
               <div class="col-md-4 offset-md-1">
@@ -266,7 +388,7 @@
               </div>
             </div>
           </section>
-        </div>
+        </div> -->
 
         <div class="row" *ngIf="emptyField">
           <div class="col-md-6 offset-md-3 text-center">

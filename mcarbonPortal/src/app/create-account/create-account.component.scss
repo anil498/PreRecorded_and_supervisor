@@ -144,3 +144,41 @@ img {
   font-weight: bolder;
   font-size: 1rem;
 }
+
+::ng-deep .mat-grid-tile-content {
+  flex-direction: column !important;
+  justify-content: start !important;
+  align-items: self-start !important;
+}
+
+.container-1 {
+  margin-top: 20px;
+  justify-content: start;
+  align-items: self-start;
+  margin-left: 8.33333333% !important;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: self-start;
+  margin-left: 0 !important;
+}
+
+.feature-section {
+  display: flex;
+  padding-left: 10%;
+}
+
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: min-content;
+  width: 50%;
+}
+
+.grid-item {
+  width: 90%;
+}

@@ -149,7 +149,6 @@
                 [value]="topAccess.accessId"
                 [checked]="isCheckAccess(topAccess)"
                 [disabled]="true"
-
               >
                 {{ topAccess.name }}
               </mat-checkbox>
@@ -184,20 +183,24 @@
             <mat-label class="label">Select the features you want:</mat-label>
           </div>
         </div>
-        <div class="row">
-          <section class="example-section" *ngIf="featuresData">
-            <div *ngFor="let feature of featuresData" class="row">
-              <div class="col-md-4 offset-md-1">
-                <mat-checkbox
-                  [value]="feature.featureId"
-                  [checked]="isCheckFeature(feature)"
-                  disabled
-                >
-                  {{ feature.name }}
-                </mat-checkbox>
-              </div>
+
+        <section class="feature-section">
+          <div class="grid-container">
+            <div
+              *ngFor="let feature of featuresData1"
+              class="grid-item"
+              id="feature{{ feature.featureId }}"
+            >
+              <mat-checkbox
+                [value]="feature.featureId"
+                [checked]="isCheckFeature(feature)"
+                disabled
+              >
+                {{ feature.name }}
+              </mat-checkbox>
+
               <div
-                class="col-md-6 offset-md-1"
+                class="grid-item-content"
                 *ngIf="
                   (selectedFeatures.includes(feature.featureId) ||
                     isCheckFeature(feature)) &&
@@ -207,10 +210,69 @@
                 <div *ngFor="let meta of feature.metaList">
                   <ng-container [ngSwitch]="meta.type">
                     <mat-slide-toggle
+                      *ngSwitchCase="'bool'"
                       checked="{{
                         selectedFeaturesMeta[feature.featureId][meta.key]
                       }}"
+                      disabled
+                    >
+                      {{ meta.name }}
+                    </mat-slide-toggle>
+
+                    <div *ngSwitchCase="'file'">
+                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                      <input
+                        type="file"
+                        id="{{ meta.key }}"
+                        name="{{ meta.key }}"
+                        accept="video/*"
+                        disabled
+                      />
+                    </div>
+
+                    <mat-form-field *ngSwitchCase="'text'">
+                      <input
+                        value="{{
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        }}"
+                        matInput
+                        #metaValue
+                        type="text"
+                        placeholder="{{ meta.name }}"
+                        disabled
+                      />
+                    </mat-form-field>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-container">
+            <div *ngFor="let feature of featuresData2" class="grid-item">
+              <mat-checkbox
+                [value]="feature.featureId"
+                [checked]="isCheckFeature(feature)"
+                disabled
+              >
+                {{ feature.name }}
+              </mat-checkbox>
+
+              <div
+                class="grid-item-content"
+                *ngIf="
+                  (selectedFeatures.includes(feature.featureId) ||
+                    isCheckFeature(feature)) &&
+                  selectedFeaturesMeta[feature.featureId]
+                "
+              >
+                <div *ngFor="let meta of feature.metaList">
+                  <ng-container [ngSwitch]="meta.type">
+                    <mat-slide-toggle
                       *ngSwitchCase="'bool'"
+                      checked="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
                       disabled
                     >
                       {{ meta.name }}
@@ -236,114 +298,16 @@
                         type="text"
                         placeholder="{{ meta.name }}"
                         disabled
-                    /></mat-form-field>
+                      />
+                    </mat-form-field>
                   </ng-container>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </div>
     </mat-tab>
-
-    <!-- <mat-tab label="User Information">
-        <div class="container">
-          <div class="row">
-            <div class="col-md-5 offset-md-1">
-              <mat-form-field>
-                <input
-                  matInput
-                  type="text"
-                  placeholder="First Name"
-                  formControlName="user_fname"
-                />
-              </mat-form-field>
-            </div>
-            <div class="col-md-5">
-              <mat-form-field>
-                <input
-                  matInput
-                  type="text"
-                  placeholder="Last Name"
-                  formControlName="user_lname"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-5 offset-md-1">
-              <mat-form-field>
-                <input
-                  matInput
-                  type="tel"
-                  placeholder="Mobile Number"
-                  formControlName="mobile"
-                />
-              </mat-form-field>
-            </div>
-            <div class="col-md-5">
-              <mat-form-field>
-                <input
-                  matInput
-                  type="email"
-                  placeholder="Email"
-                  formControlName="email"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-  
-          <div class="row">
-            <div class="col-md-5 offset-md-1">
-              <mat-form-field>
-                <input
-                  matInput
-                  type="text"
-                  placeholder="Login ID"
-                  formControlName="login_id"
-                />
-              </mat-form-field>
-            </div>
-          </div>
-  
-          <div class="row">
-            <div class="col-md-5 offset-md-1">
-              <mat-form-field>
-                <input
-                  matInput
-                  type="password"
-                  placeholder="Password"
-                  formControlName="password"
-                  [(ngModel)]="password"
-                />
-              </mat-form-field>
-            </div>
-            <div class="col-md-5">
-              <mat-form-field>
-                <input
-                  matInput
-                  type="password"
-                  placeholder="Confirm Password"
-                  formControlName="confirm_password"
-                  [(ngModel)]="confirm_password"
-                />
-                <mat-error
-                  *ngIf="userForm.hasError('mismatch', 'confirm_password')"
-                  >Passwords do not match</mat-error
-                >
-              </mat-form-field>
-            </div>
-          </div>
-  
-          <div class="row" *ngIf="nameError">
-            <div class="col-md-6 offset-md-3 text-center">
-              <p class="alert alert-danger">
-                <strong>All fields are mandatory</strong>
-              </p>
-            </div>
-          </div>
-        </div>
-      </mat-tab> -->
   </mat-tab-group>
 
   <div mat-dialog-actions align="end" class="actions">
