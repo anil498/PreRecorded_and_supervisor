@@ -125,7 +125,11 @@ public class SessionController {
         boolean hasParticipantValidToken = this.openviduService.isParticipantSessionValid(sessionId,
           participantCookie);
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
-        boolean iAmSessionCreator= sessionProperty.getSettings().getModerators();
+        boolean iAmSessionCreator=false;
+        if(sessionProperty.getType().equals("Support")){
+          iAmSessionCreator=true;
+          sessionProperty.setParticipantName(sessionProperty.getSessionName());
+        }
         boolean isSessionCreator = hasModeratorValidToken || iAmSessionCreator;
 
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
