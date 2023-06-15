@@ -95,7 +95,7 @@ public class SessionController {
         }
         String sessionKey = params.get("sessionKey");
         if(sessionService.getByKey(sessionKey) == null)
-            return new ResponseEntity<>("Session Key Expired !",HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Session Key Expired or does not exist!",HttpStatus.FORBIDDEN);
         long timeTaken = System.currentTimeMillis() - startTime;
         logger.info("TIme taken = {}",timeTaken);
         return ok(sessionService.getByKey(sessionKey));

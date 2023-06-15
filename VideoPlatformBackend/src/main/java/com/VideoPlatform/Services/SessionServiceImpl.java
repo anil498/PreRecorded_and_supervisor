@@ -65,7 +65,7 @@ public class SessionServiceImpl implements SessionService{
             session.setCreationDate(creation);
             session.setExpDate(expDate);
             if(participantName==null){
-                session.setParticipantName(userEntity.getFname());
+                session.setParticipantName("");
             }else{
                 session.setParticipantName(participantName);
             }
@@ -191,6 +191,7 @@ public class SessionServiceImpl implements SessionService{
     @Override
     public SessionEntity getByKey(String key) {
         SessionEntity sessionEntity = sessionRepository.findBySessionKey(key);
+        if(sessionEntity == null) return null;
         if(TimeUtils.isExpire(sessionEntity.getExpDate())) {
             return null;
         }

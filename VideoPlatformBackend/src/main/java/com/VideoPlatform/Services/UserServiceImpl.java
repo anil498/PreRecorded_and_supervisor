@@ -45,8 +45,8 @@ public class UserServiceImpl implements UserService{
     private FeatureRepository featureRepository;
     @Autowired
     private AccessRepository accessRepository;
-    @Autowired
-    private DashboardService dashboardService;
+ //   @Autowired
+//    private DashboardService dashboardService;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
@@ -144,6 +144,10 @@ public class UserServiceImpl implements UserService{
         existing.setEmail(params.get("email").getAsString());
         logger.info("New Entity {}",existing);
         userRepository.save(existing);
+
+        UserAuthEntity userAuthEntity = userAuthRepository.findByUId(params.get("userId").getAsInt());
+        userAuthEntity.setSystemNames(accessCheck(params.get("userId").getAsInt()));
+        userAuthRepository.save(userAuthEntity);
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "User updated!");
@@ -195,7 +199,7 @@ public class UserServiceImpl implements UserService{
             response.put("status_message","Login Successful");
             response.put("Features", featureData(userEntity.getUserId()));
             response.put("Access", accessData(userEntity.getUserId()));
-            response.put("Dashboard",dashboardService.dashboardData(loginId));
+//            response.put("Dashboard",dashboardService.dashboardData(loginId));
             String lastLogin = LocalDateTime.now().format(formatter);
             logger.info("LastLogin1 : {}",lastLogin);
             userEntity.setLastLogin(lastLogin);
@@ -249,7 +253,7 @@ public class UserServiceImpl implements UserService{
                 res.put("status_message","Login Successful");
                 res.put("Features", featureData(userEntity.getUserId()));
                 res.put("Access", accessData(userEntity.getUserId()));
-                res.put("Dashboard",dashboardService.dashboardData(loginId));
+//                res.put("Dashboard",dashboardService.dashboardData(loginId));
                 logger.info(userEntity.toString());
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }

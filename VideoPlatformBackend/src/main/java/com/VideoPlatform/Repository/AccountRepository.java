@@ -30,13 +30,13 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
     Integer activeAccounts();
 
     @Query(nativeQuery = true,value = "select EXTRACT('day' from date_trunc('day',creation_date)) as day,count(*) from account_data group by date_trunc('day',creation_date)")
-    List<Map<String,Object>> dailyAccountCreation();
+    List<Map<String,String>> dailyAccountCreation();
 
     @Query(nativeQuery = true,value = "select EXTRACT('month' from date_trunc('month',creation_date)) as month ,count(*) from account_data group by date_trunc('month',creation_date)")
-    List<Map<String,Object>> monthlyAccountCreation();
+    List<Map<String,String>> monthlyAccountCreation();
 
     @Query(nativeQuery = true,value = "select EXTRACT('year' from date_trunc('year',creation_date)) as year,count(*) from account_data group by date_trunc('year',creation_date)")
-    List<Map<String,Object>> yearlyAccountCreation();
+    List<Map<String,String>> yearlyAccountCreation();
 
     @Modifying
     @Transactional
