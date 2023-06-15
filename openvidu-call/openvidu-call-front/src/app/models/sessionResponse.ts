@@ -37,4 +37,5 @@ export interface sessionResponse {
   recordings: RecordingInfo[];
   type: string;
   recordingMode: string;
+  isSessionExpired:boolean;
 }

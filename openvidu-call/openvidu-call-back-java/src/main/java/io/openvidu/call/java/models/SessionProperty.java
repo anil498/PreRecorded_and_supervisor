@@ -30,6 +30,7 @@ public class SessionProperty {
   private List<Recording> recordings;
   private String type="Customer";
   private String recordingMode="MANUAL"; // for auto recording need to set {ALWAYS}
+  private Boolean isSessionExpired=false;
 
   public String getSessionId() {
     return sessionId;
@@ -170,26 +171,36 @@ public class SessionProperty {
     this.recordingMode = recordingMode;
   }
 
+  public Boolean getSessionExpired() {
+    return isSessionExpired;
+  }
+
+  public void setSessionExpired(Boolean sessionExpired) {
+    if(sessionExpired!=null)
+    isSessionExpired = sessionExpired;
+  }
+
   @Override
   public String toString() {
     return "SessionProperty{" +
-      "sessionId='" + sessionId + '\'' +
-      ", sessionName='" + sessionName + '\'' +
-      ", userId='" + userId + '\'' +
-      ", userMaxSessions=" + userMaxSessions +
-      ", accountId='" + accountId + '\'' +
-      ", accountMaxSessions=" + accountMaxSessions +
-      ", participantName='" + participantName + '\'' +
-      ", totalParticipants=" + totalParticipants +
-      ", settings=" + settings +
-      ", sessionKey='" + sessionKey + '\'' +
-      ", creationDate=" + creationDate +
-      ", expDate=" + expDate +
-      ", cameraToken=" + cameraToken +
-      ", screenToken=" + screenToken +
-      ", recordings=" + recordings +
-      ", type='" + type + '\'' +
-      ", recordingMode='" + recordingMode + '\'' +
-      '}';
+            "sessionId='" + sessionId + '\'' +
+            ", sessionName='" + sessionName + '\'' +
+            ", userId='" + userId + '\'' +
+            ", userMaxSessions=" + userMaxSessions +
+            ", accountId='" + accountId + '\'' +
+            ", accountMaxSessions=" + accountMaxSessions +
+            ", participantName='" + participantName + '\'' +
+            ", totalParticipants=" + totalParticipants +
+            ", settings=" + settings +
+            ", sessionKey='" + sessionKey + '\'' +
+            ", creationDate=" + creationDate +
+            ", expDate=" + expDate +
+            ", cameraToken='" + cameraToken + '\'' +
+            ", screenToken='" + screenToken + '\'' +
+            ", recordings=" + recordings +
+            ", type='" + type + '\'' +
+            ", recordingMode='" + recordingMode + '\'' +
+            ", isSessionExpired=" + isSessionExpired +
+            '}';
   }
 }

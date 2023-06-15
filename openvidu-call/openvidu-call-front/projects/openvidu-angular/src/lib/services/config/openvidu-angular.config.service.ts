@@ -95,6 +95,8 @@ export class OpenViduAngularConfigService {
 	displayAudioDetectionObs: Observable<boolean>;
 	streamSettingsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	streamSettingsButtonObs: Observable<boolean>;
+	floatingLayout = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	floatingLayoutObs: Observable<boolean>;
 	participantItemMuteButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	participantItemMuteButtonObs: Observable<boolean>;
 	backgroundEffectsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
@@ -149,6 +151,7 @@ export class OpenViduAngularConfigService {
 		this.displayParticipantNameObs = this.displayParticipantName.asObservable();
 		this.displayAudioDetectionObs = this.displayAudioDetection.asObservable();
 		this.streamSettingsButtonObs = this.streamSettingsButton.asObservable();
+		this.floatingLayoutObs = this.floatingLayout.asObservable();
 		// Participant item observables
 		this.participantItemMuteButtonObs = this.participantItemMuteButton.asObservable();
 		// Recording activity observables

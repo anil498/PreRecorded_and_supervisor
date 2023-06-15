@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Publisher, Subscriber } from 'openvidu-browser';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { ILogger } from '../../models/logger.model';
 import { ParticipantAbstractModel, ParticipantModel, ParticipantProperties, StreamModel } from '../../models/participant.model';
 import { VideoType } from '../../models/video-type.model';
@@ -29,6 +29,8 @@ export class ParticipantService {
 	protected remoteParticipants: ParticipantAbstractModel[] = [];
 
 	protected log: ILogger;
+	private floatingLayoutSub: Subscription;
+	floatingLayoutEnable:boolean;
 
 	/**
 	 * @internal
@@ -46,6 +48,7 @@ export class ParticipantService {
 	initLocalParticipant(props: ParticipantProperties) {
 		this.localParticipant = this.newParticipant(props);
 		this.updateLocalParticipant();
+		this.subscribeFloatingLayout();
 	}
 
 	getLocalParticipant(): ParticipantAbstractModel {
@@ -302,7 +305,7 @@ export class ParticipantService {
 		const type: VideoType = this.getTypeConnectionData(data);
 		const streamModel: StreamModel = {
 			type,
-			videoEnlarged: type === VideoType.SCREEN,
+			videoEnlarged: this.floatingLayoutEnable?true:type === VideoType.SCREEN,
 			streamManager: subscriber,
 			connected: true,
 			connectionId
@@ -479,5 +482,11 @@ export class ParticipantService {
 			return this.openviduAngularConfigSrv.getParticipantFactory().apply(this, [props, streamModel]);
 		}
 		return new ParticipantModel(props, streamModel);
+	}
+	private subscribeFloatingLayout(){
+		this.floatingLayoutSub=this.openviduAngularConfigSrv.floatingLayoutObs.subscribe((value: boolean) => {
+			this.floatingLayoutEnable = value;
+			// this.cd.markForCheck();
+		});
 	}
 }

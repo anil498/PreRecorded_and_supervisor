@@ -8,7 +8,7 @@ import com.google.gson.JsonObject;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings {
   private int duration=0;
-  private boolean showLogo=false;
+  private boolean showLogo=true;
   private Object logo;
   private Boolean moderators = false;
   private String description="";
