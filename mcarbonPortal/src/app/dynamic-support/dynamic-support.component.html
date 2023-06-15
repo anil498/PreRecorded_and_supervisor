@@ -38,7 +38,7 @@
                     <div class="row">
                       <div class="col-12 text-center">
                         <button
-                          class="fbutton1 fbutton"
+                          class="fbutton1 fbutton btn"
                           (click)="submitForm('sms')"
                         >
                           <i>SMS</i>
@@ -102,7 +102,7 @@
                     <div class="row">
                       <div class="col-12 text-center">
                         <button
-                          class="fbutton1 fbutton"
+                          class="fbutton1 fbutton btn"
                           (click)="submitForm('whatsapp')"
                         >
                           <i>Whatsapp</i>
@@ -141,79 +141,74 @@
 
               <mat-tab label="Call on App" *ngIf="showAppTab"
                 ><form id="form1" [formGroup]="userForm" *ngIf="userForm">
-                  <div class="">
-                    <div class="row row-content">
-                      <div class="col-12 offset-xl-2 col-xl-8">
-                        <label
-                          id="phone"
-                          style="
-                            text-align: center;
-                            width: 100%;
-                            color: rgba(75, 72, 72, 0.356);
-                          "
-                          for="firstName"
-                          >Enter Mobile Number to Send Link:
-                        </label>
-                        <input
-                          type="text"
-                          id="fname"
-                          name="firstname"
-                          placeholder="Mobile Number"
-                          formControlName="msisdn"
-                          [(ngModel)]="inputValue"
-                        />
-                        <input
-                          type="text"
-                          id="fname"
-                          name="firstname"
-                          placeholder="Notification Title"
-                          formControlName="title"
-                          [(ngModel)]="titleValue"
-                        />
-                        <input
-                          type="text"
-                          id="fname"
-                          name="firstname"
-                          placeholder="Notification Body"
-                          formControlName="body"
-                          [(ngModel)]="bodyValue"
-                        />
-                      </div>
+                  <div class="row row-content">
+                    <div class="col-12 offset-xl-2 col-xl-8">
+                      <label
+                        id="phone"
+                        style="
+                          text-align: center;
+                          width: 100%;
+                          color: rgba(75, 72, 72, 0.356);
+                        "
+                        for="firstName"
+                        >Enter Mobile Number to Send Link:
+                      </label>
+                      <input
+                        type="text"
+                        id="fname"
+                        name="firstname"
+                        placeholder="Mobile Number"
+                        formControlName="msisdn"
+                        [(ngModel)]="inputValue"
+                      />
+                      <input
+                        type="text"
+                        id="fname"
+                        name="firstname"
+                        placeholder="Notification Title"
+                        formControlName="title"
+                        [(ngModel)]="titleValue"
+                      />
+                      <input
+                        type="text"
+                        id="fname"
+                        name="firstname"
+                        placeholder="Notification Body"
+                        formControlName="body"
+                        [(ngModel)]="bodyValue"
+                      />
                     </div>
-                    <div class="row">
-                      <div class="col-12 text-center">
-                        <button
-                          class="fbutton1 fbutton"
-                          (click)="submitForm('notify')"
-                        >
-                          <i>Notification</i>
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div
-                        class="col-4 offset-4 text-center"
-                        *ngIf="phoneError"
+                  </div>
+                  <div class="row">
+                    <div class="col-12 text-center">
+                      <button
+                        class="fbutton1 fbutton btn"
+                        (click)="submitForm('notify')"
                       >
-                        <p class="alert alert-danger">
-                          <strong>Enter valid mobile number</strong>
+                        <i>Notification</i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-4 offset-4 text-center" *ngIf="phoneError">
+                      <p class="alert alert-danger">
+                        <strong>Enter valid mobile number</strong>
+                      </p>
+                    </div>
+                    <div class="row" *ngIf="showDescription">
+                      <div class="col-12">
+                        <p class="alert alert-success">
+                          <strong>{{ state }}!</strong> Please find video call
+                          link:-
+                          {{ callUrl }}
                         </p>
                       </div>
-                      <div class="row" *ngIf="showDescription">
-                        <div class="col-12">
-                          <p class="alert alert-success">
-                            <strong>{{ state }}!</strong> Please find video call
-                            link:-
-                            {{ callUrl }}
-                          </p>
-                        </div>
-                      </div>
-                      <div class="row" *ngIf="failedMessage">
-                        <div class="col-12">
-                          <p class="alert alert-danger">
-                            <strong>{{ state }}!</strong>{{ failedMessageShow }}
-                          </p>
-                        </div>
+                    </div>
+                    <div class="row" *ngIf="failedMessage">
+                      <div class="col-12">
+                        <p class="alert alert-danger">
+                          <strong>{{ state }}!</strong>{{ failedMessageShow }}
+                        </p>
                       </div>
                     </div>
                   </div>

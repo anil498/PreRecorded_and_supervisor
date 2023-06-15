@@ -1,6 +1,6 @@
 <div class="card card-1">
   <div class="card-header card-header-danger">
-    <h4 class="card-title">{{title}}</h4>
+    <h4 class="card-title">{{ title }}</h4>
     <button mat-icon-button mat-dialog-close class="close-btn">
       <mat-icon aria-label="Close dialog">close</mat-icon>
     </button>
@@ -131,33 +131,6 @@
 
     <mat-tab label="Security">
       <div class="container">
-        <!-- <div class="row">
-          <div class="col-md-5 offset-md-1">
-            <mat-form-field>
-              <input
-                matInput
-                type="password"
-                placeholder="Password"
-                formControlName="password"
-              />
-            </mat-form-field>
-          </div>
-          <div class="col-md-5">
-            <mat-form-field>
-              <input
-                matInput
-                type="password"
-                placeholder="Confirm Password"
-                formControlName="confirm_password"
-              />
-              <mat-error
-                *ngIf="userForm.hasError('mismatch', 'confirm_password')"
-                >Passwords do not match</mat-error
-              >
-            </mat-form-field>
-          </div>
-        </div> -->
-
         <div class="row">
           <div class="col-md-10 offset-md-1">
             <mat-label>Select the Access you want:</mat-label>
@@ -249,43 +222,26 @@
           </div>
         </div>
 
-        <div class="row">
-          <section class="example-section">
-            <div *ngFor="let feature of featuresData" class="row">
-              <div class="col-md-4 offset-md-1">
-                <mat-checkbox
-                  [value]="feature.featureId"
-                  [checked]="isCheckFeature(feature)"
-                  (change)="toggleFeatureSelection(feature.featureId)"
-                >
-                  {{ feature.name }}
-                </mat-checkbox>
-              </div>
-              <!-- <div class="col-md-6" *ngIf="feature.showMeta">
-                <div class="row">
-                  <mat-form-field
-                    *ngFor="let meta of feature.selectedMetaList"
-                    class="col-md-6"
-                  >
-                    <input
-                      matInput
-                      type="{{meta.type}}"
-                      placeholder="{{ meta.value.name }}"
-                      #metaValue
-                      (change)="
-                        setMetaValue(
-                          feature.featureId,
-                          meta.value.key,
-                          metaValue.value
-                        )
-                      "
-                    />
-                  </mat-form-field>
-                </div>
-              </div> -->
+        <section class="feature-section">
+          <div class="grid-container">
+            <div
+              *ngFor="let feature of featuresData1"
+              class="grid-item"
+              id="feature{{ feature.featureId }}"
+              [ngClass]="{
+                expanded: selectedFeatures.includes(feature.featureId)
+              }"
+            >
+              <mat-checkbox
+                [value]="feature.featureId"
+                [checked]="isCheckFeature(feature)"
+                (change)="toggleFeatureSelection(feature.featureId)"
+              >
+                {{ feature.name }}
+              </mat-checkbox>
 
               <div
-                class="col-md-6 offset-md-1"
+                class="grid-item-content"
                 *ngIf="
                   (selectedFeatures.includes(feature.featureId) ||
                     isCheckFeature(feature)) &&
@@ -316,6 +272,7 @@
                         type="file"
                         id="{{ meta.key }}"
                         name="{{ meta.key }}"
+                        accept="video/*"
                         (change)="
                           onFileInputChange($event, meta, feature.featureId)
                         "
@@ -338,13 +295,94 @@
                             metaValue.value
                           )
                         "
-                    /></mat-form-field>
+                      />
+                    </mat-form-field>
                   </ng-container>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+
+          <div class="grid-container">
+            <div
+              *ngFor="let feature of featuresData2"
+              class="grid-item"
+              id="feature{{ feature.featureId }}"
+              [ngClass]="{
+                expanded: selectedFeatures.includes(feature.featureId)
+              }"
+            >
+              <mat-checkbox
+                [value]="feature.featureId"
+                [checked]="isCheckFeature(feature)"
+                (change)="toggleFeatureSelection(feature.featureId)"
+              >
+                {{ feature.name }}
+              </mat-checkbox>
+
+              <div
+                class="grid-item-content"
+                *ngIf="
+                  (selectedFeatures.includes(feature.featureId) ||
+                    isCheckFeature(feature)) &&
+                  selectedFeaturesMeta[feature.featureId]
+                "
+              >
+                <div *ngFor="let meta of feature.metaList">
+                  <ng-container [ngSwitch]="meta.type">
+                    <mat-slide-toggle
+                      checked="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
+                      *ngSwitchCase="'bool'"
+                      (change)="
+                        setMetaValue(
+                          feature.featureId,
+                          meta.key,
+                          $event.checked
+                        )
+                      "
+                    >
+                      {{ meta.name }}
+                    </mat-slide-toggle>
+
+                    <div *ngSwitchCase="'file'">
+                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                      <input
+                        type="file"
+                        id="{{ meta.key }}"
+                        name="{{ meta.key }}"
+                        accept="video/*"
+                        (change)="
+                          onFileInputChange($event, meta, feature.featureId)
+                        "
+                      />
+                    </div>
+
+                    <mat-form-field *ngSwitchCase="'text'">
+                      <input
+                        value="{{
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        }}"
+                        matInput
+                        #metaValue
+                        type="text"
+                        placeholder="{{ meta.name }}"
+                        (change)="
+                          setMetaValue(
+                            feature.featureId,
+                            meta.key,
+                            metaValue.value
+                          )
+                        "
+                      />
+                    </mat-form-field>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         <div class="row" *ngIf="emptyField">
           <div class="col-md-6 offset-md-3 text-center">

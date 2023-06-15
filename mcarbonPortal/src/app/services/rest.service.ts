@@ -267,9 +267,9 @@ export class RestService {
     password: string,
     accessId: number[],
 
+    max_active_sessions: number,
     max_duration: number,
     max_participants: number,
-    max_active_sessions: number,
 
     features: number[],
     featuresMeta: any
@@ -282,7 +282,7 @@ export class RestService {
       loginId,
       expDate,
       logo,
-      
+
       password,
       accessId,
 
@@ -310,9 +310,9 @@ export class RestService {
 
     accessId: number[],
 
+    max_active_sessions: number,
     max_duration: number,
     max_participants: number,
-    max_active_sessions: number,
 
     features: number[],
     featuresMeta: any
@@ -398,9 +398,10 @@ export class RestService {
     maxUser: number,
     expDate: string,
     creationDate: string,
+    max_active_sessions: number,
     max_duration: number,
     max_participants: number,
-    max_active_sessions: number,
+
     accessId: number[],
 
     features: number[],

@@ -149,3 +149,20 @@ button[type="button"] {
   min-height: 130px !important;
   max-height: 130px !important;
 }
+
+.feature-section {
+  display: flex;
+  padding-left: 10%;
+}
+
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: min-content;
+  width: 50%;
+}
+
+.grid-item {
+  width: 90%;
+}

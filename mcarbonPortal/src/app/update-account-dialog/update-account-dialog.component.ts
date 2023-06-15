@@ -51,6 +51,8 @@ export class UpdateAccountDialogComponent implements OnInit {
   max_participants: number;
 
   featuresData: any = this.restService.getData().Features;
+  featuresData1: any;
+  featuresData2: any;
   accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
 
@@ -68,6 +70,9 @@ export class UpdateAccountDialogComponent implements OnInit {
   ) {
     this.loginResponse = this.restService.getToken();
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+    const half = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, half);
+    this.featuresData2 = this.featuresData.slice(half);
   }
 
   onPhotoSelected(event) {

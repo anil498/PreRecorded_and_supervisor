@@ -46,6 +46,8 @@ export class ViewAccountDialogComponent implements OnInit {
   max_participants: number;
 
   featuresData: any = this.restService.getData().Features;
+  featuresData1: any;
+  featuresData2: any;
   accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
 
@@ -63,6 +65,9 @@ export class ViewAccountDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public account: any
   ) {
     this.loginResponse = this.restService.getToken();
+    const half = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, half);
+    this.featuresData2 = this.featuresData.slice(half);
   }
 
   updateSelectedFeaturesMeta(featureId, metaValue) {

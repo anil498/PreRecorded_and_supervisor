@@ -52,6 +52,8 @@ export class FormDialogComponent implements OnInit {
   max_participants: number;
 
   featuresData: any = this.restService.getData().Features;
+  featuresData1: any;
+  featuresData2: any;
   accessData: any = this.restService.getData().Access;
   selectedAccessId: number[] = [];
   selectedFeatures: number[] = [];
@@ -65,7 +67,11 @@ export class FormDialogComponent implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    const half = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, half);
+    this.featuresData2 = this.featuresData.slice(half);
+  }
 
   onPhotoSelected(event) {
     const files: FileList = event.target.files;
@@ -322,10 +328,11 @@ export class FormDialogComponent implements OnInit {
 
         this.password,
         this.selectedAccessId.sort(),
-
+        
+        this.max_active_sessions,
         this.max_duration,
         this.max_participants,
-        this.max_active_sessions,
+        
 
         this.selectedFeatures.sort(),
         this.selectedFeaturesMeta
