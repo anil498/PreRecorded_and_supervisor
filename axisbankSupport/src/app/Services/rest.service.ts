@@ -9,12 +9,14 @@ export class RestService {
   private dialogClosedSource = new Subject<boolean>();
   public dialogClosed$ = this.dialogClosedSource.asObservable();
 
- // private _token!: string;
- // private _userId!: string;
+ 
   private baseHref!: string;
-  private url: string;
-  //private token!: string;
-  //private userId!: string;
+  private url!: string;
+
+  private smspath!:string;
+  private whatsapppath!:string;
+  private apppath!:string;
+  
   private _token!: string;
   private _authkey!:string;
 
@@ -25,28 +27,36 @@ export class RestService {
     //     ? window.location.pathname.split('/')[1] + '/'
     //     : '');
        
-    // this.url="https://demo2.progate.mobi/dynamicsupport/send/sendNotification";
-
+    
     //app run by this url
    // this.url = 'https://demo2.progate.mobi/dynamicsupport/';
 
     
     //mychnage run sms and chat
     // this.url = 'https://demo2.progate.mobi';
-    this.url='https://demos.progate.mobi';
+    //this.url='https://demos.progate.mobi';
     this.getKeys();
   } //constructur close
 
   getKeys() {
     let x = Math.floor((Math.random() * 100) + 1);
     this.http.get<any[]>('assets/key.json?'+x).subscribe(
-      (response: any[]) => {
+      (response: any) => {
         
          
-        console.log("token key ->"+response[0]['Token']);
-        console.log("authorization key -->"+response[0]['Authorization']);
-        this._token=response[0]['Token'];
-        this._authkey=response[0]['Authorization'];
+        console.log("token key ->"+response['Token']);
+        console.log("authorization key -->"+response['Authorization']);
+        this._token=response['Token'];
+        this._authkey=response['Authorization'];
+
+        this.url=response['URL'];
+        console.log("url by json file--> "+this.url);
+        this.smspath=response['SMSpath'];
+        console.log("url by json file--> "+this.smspath);
+        this.whatsapppath=response['WHATSAPPpath'];
+        console.log("url by json file--> "+this.whatsapppath);
+        this.apppath=response['APPpath'];
+        console.log("url by json file--> "+this.apppath);
         },
       (error) => {
         console.error(error);
@@ -91,12 +101,12 @@ export class RestService {
     }
   } //call request promise close
   //////////---------------------------------------------
-  async sendSMS(sessionId: string, msisdn: string, callUrl: string,getLink:string) {
+  async sendSMS(sessionId: string, msisdn: string, callUrl: string,getLink:string,participantName:string,description:string) {
     console.log('sms Sent');
 
     try {
-      return this.callRequest(sessionId, '/VPService/v1/Session/CreateAndSendLink/SMS', {
-        msisdn,getLink
+      return this.callRequest(sessionId, this.smspath, {
+        msisdn,getLink,participantName,description
 
         // callUrl,
       });
@@ -118,13 +128,14 @@ export class RestService {
     type: string,
 
     templateId: string,
-    userInfo:string,
-    getLink:string
+    description:string,
+    getLink:string,
+    participantName:string
   ) {
     console.warn('Whatsapp Message Sent');
 
     try {
-      return this.callRequest(sessionId, '/VPService/v1/Session/CreateAndSendLink/WhatsApp', {
+      return this.callRequest(sessionId, this.whatsapppath, {
         msisdn,
 
         callUrl,
@@ -134,7 +145,8 @@ export class RestService {
         type,
 
         templateId,
-        userInfo,
+        participantName,
+        description,
         getLink
       });
     } catch (error) {
@@ -149,17 +161,22 @@ export class RestService {
     body: string,
     sessionId: string,
     msisdn: string,
-    getLink:string
+    getLink:string,
+    description:string,
+    participantName:string
   ) {
     console.log('sendNotify run Notification Sent by data'+title+body+sessionId+msisdn);
     try {
       //===="/video/api/notification"
       ///VPService/v1/video/api/notification
-      return this.callRequest(sessionId, '/VPService/v1/Session/CreateAndSendLink/AppNotification', {
+      return this.callRequest(sessionId, this.apppath, {
         msisdn,
         title,
         body,
-        getLink
+        getLink,
+        participantName,
+        description,
+
       });
     } catch (error) {
       console.log("error in cath this.callRequest of restsevice sendnotify");

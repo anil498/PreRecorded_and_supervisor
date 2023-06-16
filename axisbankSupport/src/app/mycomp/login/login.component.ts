@@ -22,6 +22,7 @@ export class LoginComponent {
   // address: string = '';
   // upname:string='anil';
   userinfo:string='';
+  customername_send:string='';
   dateTimeString :string='';
   data!:any;
   // data = [
@@ -283,6 +284,8 @@ getData() {
   ConnectToUserClick(phone_no: string, connecttype: string,index: number): void {
 
     console.log("ConnectToUserClick run");
+    this.customername_send=this.data[index].Name;
+    console.log("customername_send-->"+this.customername_send);
     this.userinfo="Name: "+this.data[index].Name+","+" PhoneNo: "+this.data[index]['Phone No']
     +","+" Address: "+this.data[index].Address;
 
@@ -292,32 +295,22 @@ getData() {
     this.data[index]['Last Interaction Mode']="Video Call";
     
     this.data[index]['Last Interaction Time']=this.getCurrentTime();;
-     ///
-      //  let choice=-1;
-      //  choice=index%3;
-      //  if(choice==0)
-      //  connecttype ='SMS'
-      //  else if(choice==1)
-      //  connecttype == 'WhatsApp'
-      //  else 
-      //  connecttype == 'CallToApp'
-
-     ///
+    
 
 
     if (connecttype == 'SMS') {
       console.log('function call for sms');
-      this.SendBySMS(phone_no);
+      this.SendBySMS(phone_no,this.customername_send,this.userinfo);
     } else if (connecttype == 'WhatsApp') {
       console.log('function call for WhatsApp');
-      this.SendByWhatsApp(phone_no,this.userinfo);
+      this.SendByWhatsApp(phone_no,this.customername_send,this.userinfo);
     } else if (connecttype == 'CallToApp') {
       console.log('function call for App');
-      this.SendByApp(phone_no);
+      this.SendByApp(phone_no,this.customername_send,this.userinfo);
     }
   }
 
-  async SendBySMS(phone_no: string) {
+  async SendBySMS(phone_no: string,customername:string,userdetils:string) {
     console.log(' call api for sms by no' + phone_no);
 
     const sessionId = 'anilsession';
@@ -335,7 +328,9 @@ getData() {
           phone_no,
 
           callUrl,
-          getLink
+          getLink,
+          customername,
+          userdetils
         );
       
 
@@ -385,7 +380,7 @@ getData() {
   } //###########sendbysms close
 
   /////---------------------------------------------------------
-  async SendByWhatsApp(phone_no: string,userdetils:string) {
+  async SendByWhatsApp(phone_no: string,customername:string,userdetils:string) {
     console.log(' call api for  WhatsApp by no' + phone_no);
 
     //------------------
@@ -407,7 +402,8 @@ getData() {
         type,
         templateId,
         userdetils,
-        getLink
+        getLink,
+        customername
      
       );
     } catch (error) {
@@ -453,7 +449,7 @@ getData() {
     //---------------
   } //SendByWhatsApp close
 
-  async SendByApp(phone_no: string) {
+  async SendByApp(phone_no: string,customername:string,userdetils:string) {
     const getLink="1";
     console.log(' call api for app by no' + phone_no);
     let messageResponse;
@@ -464,7 +460,9 @@ getData() {
         '',
         'axis_session',
         phone_no,
-        getLink
+        getLink,
+        userdetils,
+        customername
       );
     } catch (error) {
       //this.goTo("/call", sessionId);

@@ -1,5 +1,11 @@
-  [{
+  {
     "Token": "UR6514qEmY7sHqA",
+    "Authorization": "AC651JP7dwIKsrx",
+    
+     "URL":"http://172.17.0.122:5000",
 
-    "Authorization": "AC651JP7dwIKsrx"
-  }]
+    "SMSpath":"/VPService/v1/Session/CreateAndSendLink/SMS",
+    "WHATSAPPpath":"/VPService/v1/Session/CreateAndSendLink/WhatsApp",
+    "APPpath":"/VPService/v1/Session/CreateAndSendLink/AppNotification"
+}
+
