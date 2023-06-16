@@ -5,5 +5,5 @@
 
 export const environment = {
   production: false,
-  url: "https://demouhhgggff.progate.mobi/VPService/v1/"
+  url: "https://demos.progate.mobi/VPService/v1/"
 };
