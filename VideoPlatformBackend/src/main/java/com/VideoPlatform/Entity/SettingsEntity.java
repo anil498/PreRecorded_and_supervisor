@@ -1,11 +1,29 @@
 package com.VideoPlatform.Entity;
 
 
+import com.VideoPlatform.Services.UserServiceImpl;
+import com.VideoPlatform.Utils.CustomMultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.google.api.client.util.Base64;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class SettingsEntity {
+    private static final Logger logger= LoggerFactory.getLogger(SettingsEntity.class);
+//    private static final String FILE_DIRECTORY = "/home/Vatsala.Vats/vid-content/";
 
-    private Integer duration;
+    private Integer duration=0;
     private Object logo;
     private Object description;
     private Boolean displayTicker;
@@ -18,17 +36,20 @@ public class SettingsEntity {
     private Boolean activitiesButton;
     private Boolean participantsButton;
     private Boolean floatingLayout;
+    private Object layoutType;
     private Boolean supervisor;
     private Boolean preRecorded;
+    private Boolean sharePreRecordedVideo;
     private Object landingPage;
     private Object preRecordedDetails;
+
 
     public Integer getDuration() {
         return duration;
     }
 
     public void setDuration(Integer duration) {
-        this.duration = duration;
+        if(duration!=0) this.duration = duration;
     }
 
     public Object getLogo() {
@@ -36,7 +57,7 @@ public class SettingsEntity {
     }
 
     public void setLogo(Object logo) {
-        this.logo = logo;
+        if(logo != null) this.logo = logo;
     }
 
     public Object getDescription() {
@@ -44,7 +65,7 @@ public class SettingsEntity {
     }
 
     public void setDescription(Object description) {
-        this.description = description;
+        if(description != null) this.description = description;
     }
 
     public Boolean getDisplayTicker() {
@@ -76,7 +97,7 @@ public class SettingsEntity {
     }
 
     public void setRecordingDetails(Object recordingDetails) {
-        this.recordingDetails = recordingDetails;
+        if(recordingDetails != null) this.recordingDetails = recordingDetails;
     }
 
     public Boolean getScreenShare() {
@@ -147,8 +168,24 @@ public class SettingsEntity {
         return preRecordedDetails;
     }
 
+    public Object getLayoutType() { return layoutType; }
+
+    public void setLayoutType(Object layoutType) { this.layoutType = layoutType; }
+
     public void setPreRecordedDetails(Object preRecordedDetails) {
-        this.preRecordedDetails = preRecordedDetails;
+        if(preRecordedDetails != null) this.preRecordedDetails = preRecordedDetails;
+//        try {
+////            Gson gson=new Gson();
+////            JsonObject params=gson.fromJson(String.valueOf(preRecordedDetails),JsonObject.class);
+////            ObjectMapper objectMapper=new ObjectMapper();
+////            objectMapper.registerModule(new JavaTimeModule());
+//            byte[] input = Base64.decodeBase64(preRecordedDetails.toString());
+//            CustomMultipartFile file = new CustomMultipartFile(input);
+//            Files.copy(file.getInputStream(), Paths.get(FILE_DIRECTORY,file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+//        } catch (IOException e) {
+//            logger.info("Exception occurred while uploading file to server !");
+//            e.printStackTrace();
+//        }
     }
 
     public Object getLandingPage() {
@@ -156,14 +193,22 @@ public class SettingsEntity {
     }
 
     public void setLandingPage(Object landingPage) {
-        this.landingPage = landingPage;
+        if(landingPage != null) this.landingPage = landingPage;
+    }
+
+    public Boolean getSharePreRecordedVideo() {
+        return sharePreRecordedVideo;
+    }
+
+    public void setSharePreRecordedVideo(Boolean sharePreRecordedVideo) {
+        this.sharePreRecordedVideo = sharePreRecordedVideo;
     }
 
     @Override
     public String toString() {
         return "SettingsEntity{" +
                 "duration=" + duration +
-                ", logo='" + logo +
+                ", logo=" + logo +
                 ", description=" + description +
                 ", displayTicker=" + displayTicker +
                 ", displayTimer=" + displayTimer +
@@ -175,8 +220,10 @@ public class SettingsEntity {
                 ", activitiesButton=" + activitiesButton +
                 ", participantsButton=" + participantsButton +
                 ", floatingLayout=" + floatingLayout +
+                ", layoutType=" + layoutType +
                 ", supervisor=" + supervisor +
                 ", preRecorded=" + preRecorded +
+                ", sharePreRecordedVideo=" + sharePreRecordedVideo +
                 ", landingPage=" + landingPage +
                 ", preRecordedDetails=" + preRecordedDetails +
                 '}';

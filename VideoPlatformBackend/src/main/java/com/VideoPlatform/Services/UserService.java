@@ -14,5 +14,6 @@ public interface UserService {
     ResponseEntity<?> updateUser(String params,String authKey);
     String deleteUser(Integer userId);
     ResponseEntity<?> loginService(String loginId, String password, int authId);
+    Boolean checkLoginId(String loginId);
 //    String resetPassword(String newPassword, String loginId, Integer userId);
 }

@@ -34,147 +34,157 @@ public class SessionServiceImpl implements SessionService{
     public SessionEntity createSession(String authKey, String token,Boolean moderator, String sessionId, String sessionKey, String description, String participantName) {
 
         SessionEntity session=new SessionEntity();
-            Date creation = TimeUtils.getDate();
-            Date expDate = TimeUtils.increaseDateTimeSession(creation);
-            logger.info("Session ExpDate = {}", expDate);
+        Date creation = TimeUtils.getDate();
+        Date expDate = TimeUtils.increaseDateTimeSession(creation);
+        logger.info("Session ExpDate = {}", expDate);
 
-            UserAuthEntity userAuth = userAuthRepository.findByToken(token);
-            AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-            AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
-            UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
+        UserAuthEntity userAuth = userAuthRepository.findByToken(token);
+        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
+        AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
+        UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
 
-            Gson gson = new Gson();
-            if (sessionKey.length()==0)
-                sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-            else
-                sessionKey = sessionKey +"_1";
-            if(sessionId.length()==0)
-                sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
-            if(moderator==false){
-                session.setType("Customer");
-            }else{
-                session.setType("Support");
-            }
-            session.setSessionId(sessionId);
-            session.setSessionKey(sessionKey);
-            session.setSessionName(account.getName());
-            session.setUserId(userAuth.getUserId());
-            session.setAccountId(account.getAccountId());
-            session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_active_sessions").toString()));
-            session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
-            session.setCreationDate(creation);
-            session.setExpDate(expDate);
-            if(participantName==null){
-                session.setParticipantName("");
-            }else{
-                session.setParticipantName(participantName);
-            }
+        Gson gson = new Gson();
+        if (sessionKey.length()==0)
+            sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+        else
+            sessionKey = sessionKey +"_1";
+        if(sessionId.length()==0)
+            sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
+        if(moderator==false){
+            session.setType("Customer");
+        }
+        else{
+            session.setType("Support");
+        }
+        session.setSessionId(sessionId);
+        session.setSessionKey(sessionKey);
+        session.setSessionName(account.getName());
+        session.setUserId(userAuth.getUserId());
+        session.setAccountId(account.getAccountId());
+        session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_active_sessions").toString()));
+        session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
+        session.setCreationDate(creation);
+        session.setExpDate(expDate);
+        if(participantName==null){
+            session.setParticipantName("");
+        }else{
+            session.setParticipantName(participantName);
+        }
 
         SettingsEntity settingsEntity = new SettingsEntity();
 
-                session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
+        session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
+        settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+        if (userEntity.getLogo() != null) {
+            settingsEntity.setLogo(userEntity.getLogo());
+        }
+        else if(account.getLogo() != null) {
+            settingsEntity.setLogo(account.getLogo());
+        }
+        else{
+            settingsEntity.setLogo("{}");
+        }
+        for (Integer featureId : userEntity.getFeatures()) {
+            if (1 == featureId) {
+                settingsEntity.setRecording(true);
+                settingsEntity.setRecordingDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+            }
+            else if (2 == featureId) {
+                settingsEntity.setScreenShare(true);
+            }
+            else if (3 == featureId) {
+                settingsEntity.setChat(true);
+            }
+            else if (4 == featureId) {
+                settingsEntity.setPreRecorded(true);
+                try{
+                    Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    logger.info("Pre recorded val : {}",map.get("pre_recorded_video_file"));
+                    settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
+                    if(map.containsKey("share_pre_recorded_video")){
+                        settingsEntity.setSharePreRecordedVideo(true);
+                    }
+                }
+                catch (Exception e){
+                    logger.info("Getting null value from pre_recorded_video_file 1 !",e);
+                }
 
-                settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
-                if (userEntity.getLogo() != null) {
-                    settingsEntity.setLogo(userEntity.getLogo());
-                }
-                else if(account.getLogo() != null) {
-                    settingsEntity.setLogo(account.getLogo());
-                }
-                else{
-                    settingsEntity.setLogo("{}");
-                }
-
-            for (Integer featureId : userEntity.getFeatures()) {
-                if (1 == featureId) {
-                    settingsEntity.setRecording(true);
-                    settingsEntity.setRecordingDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
-                }
-                else if (2 == featureId) {
-                    settingsEntity.setScreenShare(true);
-                }
-                else if (3 == featureId) {
-                    settingsEntity.setChat(true);
-                }
-//                else if (4 == featureId) {
-//                    settingsEntity.setPreRecorded(true);
-//                    try{
-//                        Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-//                        settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
-//                    }
-//                    catch (Exception e){
-//                        logger.info("Getting null value from pre_recorded_video_file !");
-//                    }
-//
-//                }
-                else if (5 == featureId && moderator==false) {
-                    settingsEntity.setDisplayTicker(true);
-                    try{
+            }
+            else if (5 == featureId && moderator==false) {
+                settingsEntity.setDisplayTicker(true);
+                try{
                     Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
                     settingsEntity.setDescription(map.get("participants_ticker_text"));
-                    }
-                    catch (Exception e){
-                    logger.info("Getting null value from participants_ticker_text !");
-                    }
                 }
-                else if (6 == featureId && moderator==true) {
-                    settingsEntity.setDisplayTicker(true);
-                    try{
-                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setDescription(map.get("admin_ticker_text"));
-                    }
-                    catch (Exception e){
-                    logger.info("Getting null value from admin_ticker_text !");
-                    }
-                }
-                else if (7 == featureId && moderator==true) {
-                    settingsEntity.setDescription(description);
-                }
-                else if (8 == featureId) {
-                    settingsEntity.setFloatingLayout(true);
-                }
-                else if (9 == featureId) {
-                    settingsEntity.setSupervisor(true);
-                }
-//                else if (10 == featureId) {
-//                    try{
-//                        Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-//                        settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
-//                    }
-//                    catch (Exception e){
-//                        logger.info("Getting null value from pre_recorded_video_file !");
-//                    }
-//                }
-                else if (11 == featureId) {
-                    settingsEntity.setDisplayTimer(true);
-                }
-                else if (12 == featureId) {
-                    settingsEntity.setActivitiesButton(true);
-                }
-                else if (13 == featureId) {
-                    settingsEntity.setParticipantsButton(true);
-                }
-                else if (14 == featureId && moderator==true) {
-                    try{
-                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setLandingPage(map.get("admin_landing_page"));
-                    }
-                    catch (Exception e){
-                    logger.info("Getting null value from admin_landing_page !");
-                    }
-                }
-                else if (15 == featureId && moderator==false) {
-                    try{
-                        Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                        settingsEntity.setLandingPage(map.get("participants_landing_page"));
-                    }
-                    catch (Exception e){
-                        logger.info("Getting null value from participants_landing_page !");
-                    }
+                catch (Exception e){
+                    logger.info("Getting null value from participants_ticker_text 2 !");
                 }
             }
-            String settingsJson = gson.toJson(settingsEntity);
-            session.setSettings(settingsJson);
+            else if (6 == featureId && moderator==true) {
+                settingsEntity.setDisplayTicker(true);
+                try{
+                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setDescription(map.get("admin_ticker_text"));
+                }
+                catch (Exception e){
+                    logger.info("Getting null value from admin_ticker_text !");
+                }
+            }
+            else if (7 == featureId && moderator==true) {
+                settingsEntity.setDescription(description);
+            }
+            else if (8 == featureId) {
+                settingsEntity.setFloatingLayout(true);
+                try{
+                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setLayoutType(map.get("customised_layout"));
+                }
+                catch (Exception e){
+                    logger.info("Getting null value from custom layout !");
+                }
+            }
+            else if (9 == featureId) {
+                settingsEntity.setSupervisor(true);
+            }
+//            else if (10 == featureId) {
+//                try{
+//                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+//                    settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
+//                }
+//                catch (Exception e){
+//                    logger.info("Getting null value from pre_recorded_video_file !");
+//                }
+//            }
+            else if (11 == featureId) {
+                settingsEntity.setDisplayTimer(true);
+            }
+            else if (12 == featureId) {
+                settingsEntity.setActivitiesButton(true);
+            }
+            else if (13 == featureId) {
+                settingsEntity.setParticipantsButton(true);
+            }
+            else if (14 == featureId && moderator==true) {
+                try{
+                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setLandingPage(map.get("admin_landing_page"));
+                }
+                catch (Exception e){
+                    logger.info("Getting null value from admin_landing_page !");
+                }
+            }
+            else if (15 == featureId && moderator==false) {
+                try{
+                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setLandingPage(map.get("participants_landing_page"));
+                }
+                catch (Exception e){
+                    logger.info("Getting null value from participants_landing_page !");
+                }
+            }
+        }
+        String settingsJson = gson.toJson(settingsEntity);
+        session.setSettings(settingsJson);
 
         logger.info("Session : {}",session);
         sessionRepository.save(session);

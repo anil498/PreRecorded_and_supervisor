@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -52,14 +53,15 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(nativeQuery = true,value = "SELECT COUNT(*) FROM user_data WHERE status=1")
     Integer activeUsers();
 
-    @Query(nativeQuery = true,value = "select EXTRACT('day' from date_trunc('day',creation_date)) as day,count(*) from user_data group by date_trunc('day',creation_date)")
-    List<Map<String,Object>> dailyUserCreation();
+    @Query(nativeQuery = true,value = "SELECT EXTRACT('day' FROM d.day) AS day,COUNT(a.creation_date) AS count FROM (SELECT generate_series(:startDate,:endDate, interval '1 day') AS day) AS d LEFT JOIN user_data a ON DATE_TRUNC('day', a.creation_date\\:\\:date) = d.day GROUP BY d.day ORDER BY d.day;")
+    List<Object[]> dailyUserCreation(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query(nativeQuery = true,value = "select EXTRACT('month' from date_trunc('month',creation_date)) as month,count(*) from user_data group by date_trunc('month',creation_date)")
-    List<Map<String,Object>> monthlyUserCreation();
+    @Query(nativeQuery = true, value = "SELECT EXTRACT('month' FROM m.month) AS month,COUNT(a.creation_date) AS count FROM (SELECT generate_series(DATE '2023-01-01',DATE '2023-12-01', interval '1 month') AS month) AS m LEFT JOIN user_data a ON DATE_TRUNC('month', a.creation_date\\:\\:date) = m.month GROUP BY m.month ORDER BY m.month;")
+    List<Object[]> monthlyUserCreation();
 
-    @Query(nativeQuery = true,value = "select EXTRACT('year' from date_trunc('year',creation_date)) as year,count(*) from user_data group by date_trunc('year',creation_date)")
-    List<Map<String,Object>> yearlyUserCreation();
+    @Query(nativeQuery = true, value = "SELECT EXTRACT('year' FROM y.year) AS year,COUNT(a.creation_date) AS count FROM (SELECT generate_series(DATE '2023-01-01',DATE '2025-12-01', interval '1 year') AS year) AS y LEFT JOIN user_data a ON DATE_TRUNC('year', a.creation_date\\:\\:date) = y.year GROUP BY y.year ORDER BY y.year;")
+    List<Object[]> yearlyUserCreation();
 
-
+    @Query(nativeQuery = true, value = "Select COUNT(*) from user_data where account_id = :accountId")
+    Integer usersAccount(@Param("accountId") Integer accountId);
 }

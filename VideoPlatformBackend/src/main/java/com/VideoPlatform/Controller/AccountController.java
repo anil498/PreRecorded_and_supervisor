@@ -71,7 +71,9 @@ public class AccountController {
         if(!commonService.authorizationCheck(authKey,token,"customer_creation")){
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        accountService.accountCreation(params1,authKey,token);
+        if(accountService.accountCreation(params1,authKey,token) == null){
+            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
+        }
 
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
@@ -89,7 +91,9 @@ public class AccountController {
         if(!commonService.authorizationCheck(authKey,token,"customer_update")){
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        accountService.updateAccount(params1);
+        if(accountService.updateAccount(params1)==null){
+            return  new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
+        }
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "Account updated!");

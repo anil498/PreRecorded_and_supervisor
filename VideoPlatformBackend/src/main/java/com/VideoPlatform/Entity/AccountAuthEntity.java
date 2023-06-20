@@ -1,12 +1,10 @@
 package com.VideoPlatform.Entity;
 
-import com.VideoPlatform.Utils.UnixTimestampConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity

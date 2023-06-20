@@ -18,7 +18,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +88,13 @@ public class MessageApiController {
         if(params.containsKey("participantName")){
             participantName= String.valueOf(params.get("participantName"));
         }
+        String agentName="";
+        if(params.containsKey("agentName")){
+            agentName= String.valueOf(params.get("agentName"));
+        }
+
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
         String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",callUrl);
 
@@ -143,8 +147,12 @@ public class MessageApiController {
         if(params.containsKey("participantName")){
             participantName= String.valueOf(params.get("participantName"));
         }
+        String agentName="";
+        if(params.containsKey("agentName")){
+            agentName= String.valueOf(params.get("agentName"));
+        }
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
         String placeHolder= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",placeHolder);
 
@@ -206,9 +214,13 @@ public class MessageApiController {
             if(params.containsKey("participantName")){
                 participantName= String.valueOf(params.get("participantName"));
             }
+            String agentName="";
+            if(params.containsKey("agentName")){
+                agentName= String.valueOf(params.get("agentName"));
+            }
 
             SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-            SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+            SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
             String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
             logger.info("callUrl : {}",callUrl);
 
@@ -222,6 +234,8 @@ public class MessageApiController {
                     .putAllData(map)
                     .build();
 
+            String id=firebaseMessaging.send(message);
+            logger.info("FCM Id : {}",id);
             HashMap<String,String> res=new HashMap<>();
             String returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
             if(params.containsKey("getLink")){
