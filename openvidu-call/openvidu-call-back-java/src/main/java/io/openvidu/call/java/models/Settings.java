@@ -21,6 +21,8 @@ public class Settings {
   private Boolean activitiesButton=false;
   private Boolean participantsButton=false;
   private Boolean floatingLayout=false;
+  private String layoutType;
+  private int layoutNumber=0;
   private Boolean supervisor=false;
   private Boolean preRecorded=false;
   private Object preRecordedDetails;
@@ -196,27 +198,47 @@ public class Settings {
     this.landingPage = landingPage;
   }
 
+  public String getLayoutType() {
+    return layoutType;
+  }
+
+  public void setLayoutType(String layoutType) {
+    if(layoutType!=null)
+    this.layoutType = layoutType;
+  }
+
+  public int getLayoutNumber() {
+    return layoutNumber;
+  }
+
+  public void setLayoutNumber(int layoutNumber) {
+    this.layoutNumber = layoutNumber;
+  }
+
   @Override
   public String toString() {
     return "Settings{" +
-      "duration=" + duration +
-      ", showLogo=" + showLogo +
-      ", logo=" + logo +
-      ", description='" + description + '\'' +
-      ", displayTicker=" + displayTicker +
-      ", displayTimer=" + displayTimer +
-      ", recording=" + recording +
-      ", recordingDetails=" + recordingDetails +
-      ", screenShare=" + screenShare +
-      ", waitForModerator=" + waitForModerator +
-      ", chat=" + chat +
-      ", activitiesButton=" + activitiesButton +
-      ", participantsButton=" + participantsButton +
-      ", floatingLayout=" + floatingLayout +
-      ", supervisor=" + supervisor +
-      ", preRecorded=" + preRecorded +
-      ", preRecordedDetails='" + preRecordedDetails + '\'' +
-      ", broadcast=" + broadcast +
-      '}';
+            "duration=" + duration +
+            ", showLogo=" + showLogo +
+            ", logo=" + logo +
+            ", description='" + description + '\'' +
+            ", displayTicker=" + displayTicker +
+            ", displayTimer=" + displayTimer +
+            ", recording=" + recording +
+            ", recordingDetails=" + recordingDetails +
+            ", screenShare=" + screenShare +
+            ", waitForModerator=" + waitForModerator +
+            ", chat=" + chat +
+            ", activitiesButton=" + activitiesButton +
+            ", participantsButton=" + participantsButton +
+            ", floatingLayout=" + floatingLayout +
+            ", layoutType='" + layoutType + '\'' +
+            ", layoutNumber=" + layoutNumber +
+            ", supervisor=" + supervisor +
+            ", preRecorded=" + preRecorded +
+            ", preRecordedDetails=" + preRecordedDetails +
+            ", broadcast=" + broadcast +
+            ", landingPage='" + landingPage + '\'' +
+            '}';
   }
 }

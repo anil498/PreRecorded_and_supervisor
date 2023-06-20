@@ -8,7 +8,8 @@ import {
 	StreamDisplayAudioDetectionDirective,
 	StreamDisplayParticipantNameDirective,
 	StreamSettingsButtonDirective,
-	FloatingLayoutDirective
+	FloatingLayoutDirective,
+	FloatingLayoutTypeDirective
 } from './stream.directive';
 import {
 	ToolbarActivitiesPanelButtonDirective,
@@ -70,6 +71,7 @@ import {
 		StreamDisplayAudioDetectionDirective,
 		StreamSettingsButtonDirective,
 		FloatingLayoutDirective,
+		FloatingLayoutTypeDirective,
 		LogoDirective,
 		ParticipantPanelItemMuteButtonDirective,
 		ParticipantNameDirective,
@@ -112,6 +114,7 @@ import {
 		StreamDisplayAudioDetectionDirective,
 		StreamSettingsButtonDirective,
 		FloatingLayoutDirective,
+		FloatingLayoutTypeDirective,
 		LogoDirective,
 		ParticipantPanelItemMuteButtonDirective,
 		ParticipantNameDirective,

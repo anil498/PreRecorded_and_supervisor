@@ -452,6 +452,14 @@ export class ParticipantService {
 	 * Force to update the remote participants object and fire a new {@link remoteParticipantsObs} Observable event.
 	 */
 	updateRemoteParticipants() {
+		if(this.floatingLayoutEnable){
+			const remoteModel=this.remoteParticipants[0].streams.get(VideoType.CAMERA);
+			if(remoteModel){
+			console.log(remoteModel)
+			this.remoteParticipants[0].streams.clear();
+			this.remoteParticipants[0].streams.set(VideoType.SCREEN, remoteModel);
+			}
+		}
 		this._remoteParticipants.next([...this.remoteParticipants]);
 	}
 

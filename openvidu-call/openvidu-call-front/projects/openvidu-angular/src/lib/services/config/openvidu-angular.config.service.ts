@@ -17,6 +17,9 @@ export class OpenViduAngularConfigService {
 
 	participantName = <BehaviorSubject<string>>new BehaviorSubject('');
 	participantNameObs: Observable<string>;
+	
+	floatingLayoutType = <BehaviorSubject<number>>new BehaviorSubject('');
+	floatingLayoutTypeObs: Observable<number>;
 
 	displayTickerValue = <BehaviorSubject<string>>new BehaviorSubject('');
 	displayTickerValueObs: Observable<string>;
@@ -120,6 +123,7 @@ export class OpenViduAngularConfigService {
 		if (this.isProduction()) console.log('OpenVidu Angular Production Mode');
 		this.minimalObs = this.minimal.asObservable();
 		this.participantNameObs = this.participantName.asObservable();
+		this.floatingLayoutTypeObs=this.floatingLayoutType.asObservable();
 		this.displayTickerValueObs = this.displayTickerValue.asObservable();
 		this.prejoinObs = this.prejoin.asObservable();
 		this.prefullscreenObs = this.prefullscreen.asObservable();

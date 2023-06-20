@@ -129,6 +129,10 @@ export interface OpenViduLayoutOptions {
 	 * Enable Floating layout
 	 */
 	floatingLayoutEnable?: boolean;
+	/**
+	 * Floating layout type
+	 */
+	floatingLayoutType?: number;
 }
 
 /**
@@ -759,7 +763,8 @@ export class OpenViduLayout {
 			bigMaxHeight = Infinity,
 			scaleLastRow = true,
 			bigScaleLastRow = true,
-			floatingLayoutEnable=false
+			floatingLayoutEnable=false,
+			floatingLayoutType=0
 		} = opts;
 		const availableRatio = containerHeight / containerWidth;
 		let offsetLeft = 0;
@@ -797,8 +802,8 @@ export class OpenViduLayout {
 			let bigWidth;
 			let bigHeight;
 			let showBigFirst = bigFirst;
-
-			if (availableRatio > this.getVideoRatio(bigOnes[0])) {
+			const LayoutMode=floatingLayoutType==2?true:availableRatio > this.getVideoRatio(bigOnes[0])
+			if (LayoutMode) {
 				// We are tall, going to take up the whole width and arrange small
 				// guys at the bottom
 				bigWidth = containerWidth;

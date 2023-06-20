@@ -37,6 +37,7 @@ export class CallComponent implements OnInit {
 	sessionDuration: number;
 	type: string;
 	floatingLayout: boolean;
+	layoutNumber: number;
 	private isDebugSession: boolean = false;
 
 	constructor(
@@ -147,6 +148,7 @@ export class CallComponent implements OnInit {
 			this.participantsButton = response.settings.participantsButton;
 			this.type = response.type;
 			this.floatingLayout = response.settings.floatingLayout;
+			this.layoutNumber=response.settings.layoutNumber;
 			if (response.participantName) {
 				this.participantNameValue = response.participantName;
 			} else {

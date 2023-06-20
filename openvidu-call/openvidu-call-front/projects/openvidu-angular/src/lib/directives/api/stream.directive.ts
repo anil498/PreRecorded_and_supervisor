@@ -199,3 +199,53 @@ export class FloatingLayoutDirective implements AfterViewInit, OnDestroy {
 		this.update(true);
 	}
 }
+/**
+ * The **floatingLayout type** directive sets the floatingLayout type.
+ *
+ *
+ * @example
+ * <ov-videoconference [floatingLayoutType]="'OpenVidu'"></ov-videoconference>
+ */
+@Directive({
+	selector: 'ov-videoconference[floatingLayoutType]'
+})
+export class FloatingLayoutTypeDirective implements OnInit {
+
+	/**
+	 * @ignore
+	 */
+	@Input() floatingLayoutType: number;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+	 * @ignore
+	 */
+	ngOnInit(): void {
+		this.update(this.floatingLayoutType);
+	}
+
+	/**
+	 * @ignore
+	 */
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+	 * @ignore
+	 */
+	clear() {
+		this.update(0);
+	}
+
+	/**
+	 * @ignore
+	 */
+	update(value: number) {
+		this.libService.floatingLayoutType.next(value);
+	}
+}

@@ -134,7 +134,6 @@ public class SessionController {
 
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
 
-
         Connection cameraConnection = null;
         if (validateParticipantJoined(sessionProperty, sessionCreated,sessionIdToSessionContextMap)) {
           if(sessionCreated!=null) {
@@ -323,5 +322,17 @@ public class SessionController {
         }
       }
     return false;
+  }
+  private int layoutNumber(String layoutType){
+      if(layoutType.equals("Right Layout")){
+        return 0;
+      }
+      if(layoutType.equals("Bottom Layout")){
+        return 2;
+      }
+      if(layoutType.equals("Overlay Layout")){
+        return 1;
+      }
+      return -1;
   }
 }
