@@ -214,7 +214,7 @@ export class FloatingLayoutTypeDirective implements OnInit {
 	/**
 	 * @ignore
 	 */
-	@Input() floatingLayoutType: number;
+	@Input() floatingLayoutType: string;
 
 	/**
 	 * @ignore
@@ -239,13 +239,13 @@ export class FloatingLayoutTypeDirective implements OnInit {
 	 * @ignore
 	 */
 	clear() {
-		this.update(0);
+		this.update('');
 	}
 
 	/**
 	 * @ignore
 	 */
-	update(value: number) {
+	update(value: string) {
 		this.libService.floatingLayoutType.next(value);
 	}
 }
