@@ -1,6 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, lastValueFrom, Subject } from 'rxjs';
+import { DataService } from 'src/app/Services/Data.service';
+
 
 @Injectable({
   providedIn: 'root',
@@ -19,8 +21,9 @@ export class RestService {
   
   private _token!: string;
   private _authkey!:string;
+  private agentname!:string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private dataService:DataService) {
     // this.url =
     //   '/' +
     //   (!!window.location.pathname.split('/')[1]
@@ -36,6 +39,7 @@ export class RestService {
       //this.url:"http://172.17.0.122:5000";
     // this.url = 'https://demo2.progate.mobi';
     //this.url='https://demos.progate.mobi';
+    this.agentname=this.dataService.shareusername;
     this.getKeys();
   } //constructur close
 
@@ -102,12 +106,12 @@ export class RestService {
     }
   } //call request promise close
   //////////---------------------------------------------
-  async sendSMS(sessionId: string, msisdn: string, callUrl: string,getLink:string,participantName:string,description:string) {
+  async sendSMS(sessionId: string, msisdn: string, callUrl: string,getLink:string,participantName:string,description:string,agentName:string=this.agentname) {
     console.log('sms Sent');
 
     try {
       return this.callRequest(sessionId, this.smspath, {
-        msisdn,getLink,participantName,description
+        msisdn,getLink,participantName,description,agentName
 
         // callUrl,
       });
@@ -131,7 +135,8 @@ export class RestService {
     templateId: string,
     description:string,
     getLink:string,
-    participantName:string
+    participantName:string,
+    agentName:string=this.agentname
   ) {
     console.warn('Whatsapp Message Sent');
 
@@ -148,7 +153,8 @@ export class RestService {
         templateId,
         participantName,
         description,
-        getLink
+        getLink,
+        agentName
       });
     } catch (error) {
       console.log(error);
@@ -164,7 +170,8 @@ export class RestService {
     msisdn: string,
     getLink:string,
     description:string,
-    participantName:string
+    participantName:string,
+    agentName:string=this.agentname
   ) {
     console.log('sendNotify run Notification Sent by data'+title+body+sessionId+msisdn);
     try {
@@ -177,6 +184,7 @@ export class RestService {
         getLink,
         participantName,
         description,
+        agentName
 
       });
     } catch (error) {
