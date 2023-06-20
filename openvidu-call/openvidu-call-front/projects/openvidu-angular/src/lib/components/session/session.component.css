@@ -51,7 +51,7 @@
 }
 
 #layout-container {
-	height: inherit;
+	height: calc(100% - 40px);
 	width: inherit;
 }
 
