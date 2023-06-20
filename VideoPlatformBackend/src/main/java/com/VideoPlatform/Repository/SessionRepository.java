@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -33,12 +34,12 @@ public interface SessionRepository extends JpaRepository<SessionEntity,String> {
     @Query(nativeQuery = true,value = "SELECT SUM(total_participants) FROM sessions")
     Integer participants();
 
-    @Query(nativeQuery = true,value = "select EXTRACT('day' from date_trunc('day',creation_date)) as day,count(*) from sessions group by date_trunc('day',creation_date)")
-    List<Map<String,Object>> dailySessionCreation();
+    @Query(nativeQuery = true,value = "SELECT EXTRACT('day' FROM d.day) AS day,COUNT(a.creation_date) AS count FROM (SELECT generate_series(:startDate,:endDate, interval '1 day') AS day) AS d LEFT JOIN sessions a ON DATE_TRUNC('day', a.creation_date\\:\\:date) = d.day GROUP BY d.day ORDER BY d.day;")
+    List<Object[]> dailySessionCreation(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    @Query(nativeQuery = true,value = "select EXTRACT('month' from date_trunc('month',creation_date)) as month,count(*) from sessions group by date_trunc('month',creation_date)")
-    List<Map<String,Object>> monthlySessionCreation();
+    @Query(nativeQuery = true, value = "SELECT EXTRACT('month' FROM m.month) AS month,COUNT(a.creation_date) AS count FROM (SELECT generate_series(DATE '2023-01-01',DATE '2023-12-01', interval '1 month') AS month) AS m LEFT JOIN sessions a ON DATE_TRUNC('month', a.creation_date\\:\\:date) = m.month GROUP BY m.month ORDER BY m.month;")
+    List<Object[]> monthlySessionCreation();
 
-    @Query(nativeQuery = true,value = " select EXTRACT('year' from date_trunc('year',creation_date)) as year,count(*) from sessions group by date_trunc('year',creation_date)")
-    List<Map<String,Object>> yearlySessionCreation();
+    @Query(nativeQuery = true, value = "SELECT EXTRACT('year' FROM y.year) AS year,COUNT(a.creation_date) AS count FROM (SELECT generate_series(DATE '2023-01-01',DATE '2025-12-01', interval '1 year') AS year) AS y LEFT JOIN sessions a ON DATE_TRUNC('year', a.creation_date\\:\\:date) = y.year GROUP BY y.year ORDER BY y.year;")
+    List<Object[]> yearlySessionCreation();
 }

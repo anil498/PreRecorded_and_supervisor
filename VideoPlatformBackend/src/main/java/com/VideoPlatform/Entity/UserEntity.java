@@ -31,16 +31,16 @@ public class UserEntity implements Serializable {
     private String password;
 
     @Column(name = "fname")
-    private String fname;
+    private String fname = "";
 
     @Column(name = "lname")
-    private String lname;
+    private String lname = "";
 
     @Column(name = "contact")
-    private String contact;
+    private String contact = "";
 
     @Column(name = "email")
-    private String email;
+    private String email = "";
 
     @Column(name = "creation_date",columnDefinition = "TIMESTAMP")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
@@ -62,11 +62,11 @@ public class UserEntity implements Serializable {
 
     @Column(name = "features",columnDefinition = "integer[]")
     @Type(type="com.VideoPlatform.Utils.GenericArrayUserType")
-    private Integer[] features;
+    private Integer[] features = {};
 
     @Column(name = "access_id",columnDefinition = "integer[]")
     @Type(type="com.VideoPlatform.Utils.GenericArrayUserType")
-    private Integer[] accessId;
+    private Integer[] accessId = {};
 
     @Column(name="features_meta",columnDefinition="text")
     @Type(type="com.VideoPlatform.Utils.MapType")
@@ -100,7 +100,9 @@ public class UserEntity implements Serializable {
     }
 
     public void setLoginId(String loginId) {
-        this.loginId = loginId;
+        if(loginId != null) {
+            this.loginId = loginId;
+        }
     }
 
     public String getPassword() {
@@ -108,7 +110,8 @@ public class UserEntity implements Serializable {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        if(password != null)
+            this.password = password;
     }
 
     public String getFname() {
@@ -116,7 +119,8 @@ public class UserEntity implements Serializable {
     }
 
     public void setFname(String fname) {
-        this.fname = fname;
+        if(fname != null)
+            this.fname = fname;
     }
 
     public String getLname() {
@@ -124,7 +128,8 @@ public class UserEntity implements Serializable {
     }
 
     public void setLname(String lname) {
-        this.lname = lname;
+        if(lname != null)
+            this.lname = lname;
     }
 
     public String getContact() {
@@ -132,7 +137,8 @@ public class UserEntity implements Serializable {
     }
 
     public void setContact(String contact) {
-        this.contact = contact;
+        if(contact != null)
+            this.contact = contact;
     }
 
     public String getEmail() {
@@ -140,7 +146,8 @@ public class UserEntity implements Serializable {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if(email != null)
+            this.email = email;
     }
 
     public Date getCreationDate() {
@@ -163,41 +170,60 @@ public class UserEntity implements Serializable {
         return session;
     }
 
-    public void setSession(HashMap<String, Object> session) {
-        this.session = session;
+    public Boolean setSession(HashMap<String, Object> session) {
+        if(session != null) {
+            this.session = session;
+            return true;
+        }
+        return false;
     }
-//
 
     public Integer[] getFeatures() {
         return features;
     }
 
-    public void setFeatures(Integer[] features) {
-        this.features = features;
+    public Boolean setFeatures(Integer[] features) {
+        if(features != null) {
+            this.features = features;
+            return true;
+        }
+        return false;
     }
 
     public Integer[] getAccessId() {
         return accessId;
     }
 
-    public void setAccessId(Integer[] accessId) {
-        this.accessId = accessId;
+    public Boolean setAccessId(Integer[] accessId) {
+        if(accessId != null) {
+            this.accessId = accessId;
+            return true;
+        }
+        return false;
     }
 
     public HashMap<String, Object> getFeaturesMeta() {
         return featuresMeta;
     }
 
-    public void setFeaturesMeta(HashMap<String, Object> featuresMeta) {
-        this.featuresMeta = featuresMeta;
+    public Boolean setFeaturesMeta(HashMap<String, Object> featuresMeta) {
+        if(featuresMeta != null) {
+            this.featuresMeta = featuresMeta;
+            return true;
+        }
+        return false;
     }
 
     public Date getExpDate() {
         return expDate;
     }
 
-    public void setExpDate(Date expDate) {
-        this.expDate = expDate;
+    public Boolean setExpDate(Date expDate) {
+        if(expDate != null){
+            this.expDate = expDate;
+            return true;
+        }
+        return false;
     }
 
     public int getParentId() {
@@ -220,8 +246,12 @@ public class UserEntity implements Serializable {
         return logo;
     }
 
-    public void setLogo(HashMap<String, Object> logo) {
-        this.logo = logo;
+    public Boolean setLogo(HashMap<String, Object> logo) {
+        if(logo!=null) {
+            this.logo = logo;
+            return true;
+        }
+        return false;
     }
 
     @Override

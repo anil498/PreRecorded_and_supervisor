@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -45,8 +47,10 @@ public class UserServiceImpl implements UserService{
     private FeatureRepository featureRepository;
     @Autowired
     private AccessRepository accessRepository;
- //   @Autowired
-//    private DashboardService dashboardService;
+    @Autowired
+    private DashboardService dashboardService;
+    @Autowired
+    private CommonService commonService;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
@@ -69,10 +73,25 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserEntity createUser(UserEntity user,String authKey,String token,int accountId) {
         AccountEntity a = accountRepository.findByAccountId(accountId);
+        if(userRepository.findByLoginId(user.getLoginId()) != null){
+            logger.info("Login Id already exists !");
+            return null;
+        }
         int maxUsers = a.getMaxUser();
-
-        if(maxUsers == 0){
+        if(maxUsers<=(userRepository.usersAccount(accountId)-1)){
             logger.info("No more users are allowed, max limit exceed..!");
+            return null;
+        }
+        Boolean bExp = user.setExpDate(user.getExpDate());
+        Boolean bLogo = user.setLogo(user.getLogo());
+        Boolean bSession = user.setSession(user.getSession());
+        Boolean bMeta = user.setFeaturesMeta(user.getFeaturesMeta());
+        Boolean bAccess = user.setAccessId(user.getAccessId());
+        Boolean bFeatures = user.setFeatures(user.getFeatures());
+        logger.info("ExP : {} ,Features : {} ",user.getExpDate(),user.getFeatures());
+        logger.info("ExP : {} ,Features : {} ",bExp,bFeatures);
+        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false) {
+            logger.info("Please enter valid values, null values not accepted !!!");
             return null;
         }
         logger.info("User details {}",user.toString());
@@ -84,7 +103,6 @@ public class UserServiceImpl implements UserService{
         user.setParentId(u.getUserId());
         String myPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(myPass);
-
         return userRepository.save(user);
     }
     @Override
@@ -95,6 +113,8 @@ public class UserServiceImpl implements UserService{
     @Override
     public ResponseEntity<?> updateUser(String params1,String authKey) {
         logger.info("Params Update : {}",params1);
+
+
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
         ObjectMapper objectMapper=new ObjectMapper();
@@ -105,58 +125,62 @@ public class UserServiceImpl implements UserService{
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
-        if(existing.getAccountId() != accountEntity.getAccountId()){
-            logger.info("Checking parent account !");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        existing.setFname(params.get("fname").getAsString());
-        existing.setLname(params.get("lname").getAsString());
-        try {
-            if(checkIfAllowedFeature(featuresId,objectMapper.readValue(params.get("features").toString(),Integer[].class))){
-                existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-            }
-            else {
-                logger.info("Feature values not present in Account Entity. Not allowed to update !");
-                return new ResponseEntity<>("Invalid feature values !",HttpStatus.NOT_ACCEPTABLE);
-            }
-            if(checkIfAllowedAccess(accessId,objectMapper.readValue(params.get("accessId").toString(),Integer[].class))){
-                existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-            }
-            else {
-                logger.info("Access Id values not present in Account Entity. Not allowed to update !");
-                return new ResponseEntity<>("Invalid access id values !",HttpStatus.NOT_ACCEPTABLE);
-            }
-            if(checkIfAllowedSession(sessionA,objectMapper.readValue(params.get("session").toString(),HashMap.class))){
-                existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-            }
-            else {
-                logger.info("Invalid session values. Not allowed to update !");
-                return new ResponseEntity<>("Invalid session values !",HttpStatus.NOT_ACCEPTABLE);
-            }
-            existing.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
-            existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-            Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
-            existing.setExpDate(expDate);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        existing.setContact(params.get("contact").getAsString());
-        existing.setEmail(params.get("email").getAsString());
-        logger.info("New Entity {}",existing);
-        userRepository.save(existing);
 
-        UserAuthEntity userAuthEntity = userAuthRepository.findByUId(params.get("userId").getAsInt());
-        userAuthEntity.setSystemNames(accessCheck(params.get("userId").getAsInt()));
-        userAuthRepository.save(userAuthEntity);
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "User updated!");
-        return ok(result);
+        if(existing.getAccountId() == accountEntity.getAccountId() || existing.getParentId() == 0) {
+            existing.setFname(params.get("fname").getAsString());
+            existing.setLname(params.get("lname").getAsString());
+            try {
+                Boolean bFeatures, bAccess, bSession;
+                if (checkIfAllowedFeature(featuresId, objectMapper.readValue(params.get("features").toString(), Integer[].class))) {
+                    bFeatures = existing.setFeatures(objectMapper.readValue(params.get("features").toString(), Integer[].class));
+                } else {
+                    logger.info("Feature values not present in Account Entity. Not allowed to update !");
+                    return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
+                }
+                if (checkIfAllowedAccess(accessId, objectMapper.readValue(params.get("accessId").toString(), Integer[].class))) {
+                    bAccess = existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(), Integer[].class));
+                } else {
+                    logger.info("Access Id values not present in Account Entity. Not allowed to update !");
+                    return new ResponseEntity<>("Invalid access id values !", HttpStatus.NOT_ACCEPTABLE);
+                }
+                if (checkIfAllowedSession(sessionA, objectMapper.readValue(params.get("session").toString(), HashMap.class))) {
+                    bSession = existing.setSession(objectMapper.readValue(params.get("session").toString(), HashMap.class));
+                } else {
+                    logger.info("Invalid session values. Not allowed to update !");
+                    return new ResponseEntity<>("Invalid session values !", HttpStatus.NOT_ACCEPTABLE);
+                }
+                Boolean bLogo = existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+                Boolean bMeta = existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(), HashMap.class));
+                Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(), String.class));
+                Boolean bExp = existing.setExpDate(expDate);
+                if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false) {
+                    logger.info("Please enter valid values, null values not accepted !!!");
+                    return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.NOT_ACCEPTABLE);
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+            existing.setContact(params.get("contact").getAsString());
+            existing.setEmail(params.get("email").getAsString());
+            logger.info("New Entity {}", existing);
+
+            userRepository.save(existing);
+
+            UserAuthEntity userAuthEntity = userAuthRepository.findByUId(params.get("userId").getAsInt());
+            userAuthEntity.setSystemNames(accessCheck(params.get("userId").getAsInt()));
+            userAuthRepository.save(userAuthEntity);
+            Map<String, String> result = new HashMap<>();
+            result.put("status_code", "200");
+            result.put("msg", "User updated!");
+            return ok(result);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @Override
     public String deleteUser(Integer userId) {
         userRepository.deleteUser(userId);
+        userAuthRepository.deleteById(userId);
         return "User successfully deleted.";
     }
 
@@ -169,11 +193,17 @@ public class UserServiceImpl implements UserService{
 
         if(userEntity == null){
             logger.info("No user present with given login id !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+            Map<String,String> result = new HashMap<>();
+            result.put("status_code ","401");
+            result.put("msg", "Invalid username or password !");
+            return  new ResponseEntity<>(result,HttpStatus.UNAUTHORIZED);
         }
         if(userEntity.getStatus()!=1){
             logger.info("User does not exist !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.FORBIDDEN);
+            Map<String,String> result = new HashMap<>();
+            result.put("status_code ","401");
+            result.put("msg", "User does not exist !");
+            return  new ResponseEntity<>(result,HttpStatus.UNAUTHORIZED);
         }
 
         logger.info("user "+userEntity);
@@ -199,7 +229,7 @@ public class UserServiceImpl implements UserService{
             response.put("status_message","Login Successful");
             response.put("Features", featureData(userEntity.getUserId()));
             response.put("Access", accessData(userEntity.getUserId()));
-//            response.put("Dashboard",dashboardService.dashboardData(loginId));
+            response.put("Dashboard",dashboardService.dashboardData(loginId,userAuthEntity.getToken()));
             String lastLogin = LocalDateTime.now().format(formatter);
             logger.info("LastLogin1 : {}",lastLogin);
             userEntity.setLastLogin(lastLogin);
@@ -214,7 +244,7 @@ public class UserServiceImpl implements UserService{
                     return new ResponseEntity<>("Account Expired !",HttpStatus.UNAUTHORIZED);
                 }
                 int auth = accountAuthEntity.getAuthId();
-                String token1 = generateToken(userId,"UR");
+                String token1 = commonService.generateToken(userId,"UR");
                 Date now = TimeUtils.getDate();
                 Date newDateTime = TimeUtils.increaseDateTime(now);
                 UserAuthEntity ua = userAuthRepository.findByUId(userId);
@@ -253,7 +283,7 @@ public class UserServiceImpl implements UserService{
                 res.put("status_message","Login Successful");
                 res.put("Features", featureData(userEntity.getUserId()));
                 res.put("Access", accessData(userEntity.getUserId()));
-//                res.put("Dashboard",dashboardService.dashboardData(loginId));
+                res.put("Dashboard",dashboardService.dashboardData(loginId,token1));
                 logger.info(userEntity.toString());
                 return new ResponseEntity<>(res, HttpStatus.OK);
             }
@@ -261,6 +291,14 @@ public class UserServiceImpl implements UserService{
         logger.info("Last login return invoked !");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+    }
+
+    @Override
+    public Boolean checkLoginId(String loginId){
+        if(userRepository.findByLoginId(loginId) == null){
+            return true;
+        }
+        return false;
     }
 //    public String resetPassword(String newPassword, String loginId, Integer userId){
 //        UserEntity userEntity = userRepository.findByUserId(userId);
@@ -276,17 +314,6 @@ public class UserServiceImpl implements UserService{
             return false;
         }
         return true;
-    }
-    public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {
-        String generatedString = RandomStringUtils.randomAlphanumeric(10);
-        logger.info(generatedString);
-        System.out.println(generatedString);
-        return generatedString;
-    }
-    private String generateToken(Integer userId,String type) {
-        String val = String.format("%03d", userId);
-        logger.info("Format val = "+val);
-        return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
 
     private Object featureData(Integer userId) {
@@ -357,5 +384,6 @@ public class UserServiceImpl implements UserService{
 
        return String.valueOf(accessEntities);
     }
+
 }
 

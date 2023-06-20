@@ -50,7 +50,6 @@ public class UserController {
     private int accessTime;
 
     @GetMapping("/GetAll")
-
     public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request){
         logger.info(commonService.getHeaders(request).toString());
         String authKey = request.getHeader("Authorization");
@@ -105,8 +104,9 @@ public class UserController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(userService.createUser(user,authKey,token,accountId)==null){
-            return  new ResponseEntity<UserEntity>(HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
         }
+        //commonService.writeByteToFile(user.getLoginId());
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "User created!");
@@ -157,6 +157,17 @@ public class UserController {
         String password = params.get("password");
 
         return userService.loginService(loginId, password, authId);
+    }
+    @PostMapping("/checkLoginId")
+    public ResponseEntity<?> checkLogin(@RequestBody Map<String, String> params,HttpServletRequest request){
+        String loginId = params.get("loginId");
+        if(!userService.checkLoginId(loginId)){
+            return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "Valid Login Id !");
+        return ok(result);
     }
 //    @PostMapping("/ResetPassword")
 //    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String>params,HttpServletRequest request){

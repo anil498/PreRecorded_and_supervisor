@@ -60,6 +60,16 @@ public class AccountServiceImpl implements AccountService {
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
+        String loginId = params.get("loginId").getAsString();
+        if(userRepository.findByLoginId(loginId) != null){
+            logger.info("Login Id already exist !");
+            return null;
+        }
+        String accountName = params.get("name").getAsString();
+        if(accountRepository.findByAccountName(accountName) != null){
+            logger.info("Account name already exist !");
+            return null;
+        }
         Date creation = TimeUtils.getDate();
         AccountEntity acc = new AccountEntity();
         UserEntity user = new UserEntity();
@@ -80,7 +90,6 @@ public class AccountServiceImpl implements AccountService {
         logger.info("User Data : "+u);
         user.setFname(params.get("fname").getAsString());
         user.setLname(params.get("lname").getAsString());
-        user.setExpDate(expDate);
         user.setLoginId(params.get("loginId").getAsString());
         String pass = params.get("password").getAsString();
         logger.info("Password Check !!! {}",pass);
@@ -91,12 +100,16 @@ public class AccountServiceImpl implements AccountService {
         user.setEmail(params.get("email").getAsString());
         user.setCreationDate(creation);
         user.setParentId(u.getUserId());
-        user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
-        user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-        user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-        user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-        user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-
+        Boolean bExp = user.setExpDate(expDate);
+        Boolean bLogo = user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
+        Boolean bSession = user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+        Boolean bMeta = user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+        Boolean bAccess = user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+        Boolean bFeatures = user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
+            logger.info("Please enter valid values, null values not accepted !!!");
+            return null;
+        }
         createAccount(acc);
         user.setAccountId(acc.getAccountId());
         userService.createUserZero(user);
@@ -152,13 +165,17 @@ public class AccountServiceImpl implements AccountService {
         objectMapper.registerModule(new JavaTimeModule());
         AccountEntity existing = accountRepository.findByAccountId(params.get("accountId").getAsInt());
         try {
-            existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
-            existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-            existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-            existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-            existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+            Boolean bLogo = existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+            Boolean bSession = existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+            Boolean bMeta = existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+            Boolean bAccess = existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+            Boolean bFeatures = existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
             Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
-            existing.setExpDate(expDate);
+            Boolean bExp = existing.setExpDate(expDate);
+            if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
+                logger.info("Please enter valid values, null values not accepted !!!");
+                return null;
+            }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
@@ -171,6 +188,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public String deleteAccount(Integer accountId) {
         accountRepository.deleteAccount(accountId);
+        accountAuthRepository.deleteById(accountId);
         return "Account successfully deleted.";
     }
     public String accessCheck(Integer userId){

@@ -22,7 +22,7 @@ public class AccountEntity {
     @SequenceGenerator(name="account_data_generator", sequenceName = "account_data_seq",allocationSize = 1)
     private int accountId;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Column(name = "address")
@@ -45,7 +45,7 @@ public class AccountEntity {
 
     @Column(name = "features",columnDefinition = "integer[]")
     @Type(type="com.VideoPlatform.Utils.GenericArrayUserType")
-    private Integer[] features;
+    private Integer[] features = {};
 
     @Column(name="features_meta",columnDefinition="text")
     @Type(type="com.VideoPlatform.Utils.MapType")
@@ -53,7 +53,7 @@ public class AccountEntity {
 
     @Column(name = "access_id",columnDefinition = "integer[]")
     @Type(type="com.VideoPlatform.Utils.GenericArrayUserType")
-    private Integer[] accessId;
+    private Integer[] accessId = {};
 
     @Column(name = "status")
     private int status=1;
@@ -74,8 +74,12 @@ public class AccountEntity {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Boolean setName(String name) {
+        if(name != null){
+            this.name = name;
+            return true;
+        }
+        return false;
     }
 
     public String getAddress() {
@@ -83,15 +87,20 @@ public class AccountEntity {
     }
 
     public void setAddress(String address) {
-        this.address = address;
+        if(address != null)
+            this.address = address;
     }
 
     public HashMap<String, Object> getLogo() {
         return logo;
     }
 
-    public void setLogo(HashMap<String, Object> logo) {
-        this.logo = logo;
+    public Boolean setLogo(HashMap<String, Object> logo) {
+        if(logo != null) {
+            this.logo = logo;
+            return true;
+        }
+        return false;
     }
 
     public Date getCreationDate() {
@@ -114,32 +123,48 @@ public class AccountEntity {
         return session;
     }
 
-    public void setSession(HashMap<String, Object> session) {
-        this.session = session;
+    public Boolean setSession(HashMap<String, Object> session) {
+        if(session != null) {
+            this.session = session;
+            return true;
+        }
+        return false;
     }
 
     public Integer[] getFeatures() {
         return features;
     }
 
-    public void setFeatures(Integer[] features) {
-        this.features = features;
+    public Boolean setFeatures(Integer[] features) {
+        if(features != null) {
+            this.features = features;
+            return true;
+        }
+        return false;
     }
 
     public HashMap<String, Object> getFeaturesMeta() {
         return featuresMeta;
     }
 
-    public void setFeaturesMeta(HashMap<String, Object> featuresMeta) {
-        this.featuresMeta = featuresMeta;
+    public Boolean setFeaturesMeta(HashMap<String, Object> featuresMeta) {
+        if(featuresMeta != null) {
+            this.featuresMeta = featuresMeta;
+            return true;
+        }
+        return false;
     }
 
     public Integer[] getAccessId() {
         return accessId;
     }
 
-    public void setAccessId(Integer[] accessId) {
-        this.accessId = accessId;
+    public Boolean setAccessId(Integer[] accessId) {
+        if(accessId != null) {
+            this.accessId = accessId;
+            return false;
+        }
+        return false;
     }
 
     public int getStatus() {
@@ -154,8 +179,12 @@ public class AccountEntity {
         return expDate;
     }
 
-    public void setExpDate(Date expDate) {
-        this.expDate = expDate;
+    public Boolean setExpDate(Date expDate) {
+        if(expDate != null) {
+            this.expDate = expDate;
+            return true;
+        }
+        return false;
     }
 
     @Override
