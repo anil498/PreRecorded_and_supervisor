@@ -126,6 +126,15 @@ public class SessionController {
           participantCookie);
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
         boolean iAmSessionCreator=false;
+        if(sessionProperty.getSettings().getLayoutType()!=null) {
+          int layoutNumber=layoutNumber(sessionProperty.getSettings().getLayoutType());
+          if(layoutNumber==0){
+            sessionProperty.getSettings().setFloatingLayout(false);
+          }
+          sessionProperty.getSettings().setLayoutNumber(layoutNumber);
+        }else{
+          sessionProperty.getSettings().setFloatingLayout(false);
+        }
         if(sessionProperty.getType().equals("Support")){
           iAmSessionCreator=true;
           sessionProperty.setParticipantName(sessionProperty.getSessionName());
@@ -325,7 +334,7 @@ public class SessionController {
   }
   private int layoutNumber(String layoutType){
       if(layoutType.equals("Right Layout")){
-        return 0;
+        return -1;
       }
       if(layoutType.equals("Bottom Layout")){
         return 2;
@@ -333,6 +342,6 @@ public class SessionController {
       if(layoutType.equals("Overlay Layout")){
         return 1;
       }
-      return -1;
+      return 0;
   }
 }
