@@ -209,12 +209,12 @@ export class FloatingLayoutDirective implements AfterViewInit, OnDestroy {
 @Directive({
 	selector: 'ov-videoconference[floatingLayoutType]'
 })
-export class FloatingLayoutTypeDirective implements OnInit {
+export class FloatingLayoutTypeDirective  {
 
 	/**
 	 * @ignore
 	 */
-	@Input() floatingLayoutType: string;
+	@Input() floatingLayoutType: number;
 
 	/**
 	 * @ignore
@@ -239,13 +239,13 @@ export class FloatingLayoutTypeDirective implements OnInit {
 	 * @ignore
 	 */
 	clear() {
-		this.update('');
+		this.update(0);
 	}
 
 	/**
 	 * @ignore
 	 */
-	update(value: string) {
+	update(value: number) {
 		this.libService.floatingLayoutType.next(value);
 	}
 }

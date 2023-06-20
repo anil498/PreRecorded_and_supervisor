@@ -20,7 +20,7 @@ export class LayoutService {
 	private floatingLayoutSub: Subscription;
 	private floatingLayoutTypeSub: Subscription;
 	floatingLayoutEnable:boolean;
-	floatingLayoutType:string;
+	floatingLayoutType:number;
 
 	constructor(private libService:OpenViduAngularConfigService) {
 		this.layoutWidthObs = this.layoutWidth.asObservable();
@@ -39,7 +39,6 @@ export class LayoutService {
 	}
 
 	private getOptions(): OpenViduLayoutOptions {
-		const floatingLayoutTypeValue = Number(this.floatingLayoutType);
 		const options = {
 			maxRatio: 3 / 2, // The narrowest ratio that will be used (default 2x3)
 			minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
@@ -48,7 +47,7 @@ export class LayoutService {
 			bigClass: LayoutClass.BIG_ELEMENT, // The class to add to elements that should be sized bigger
 			smallClass: LayoutClass.SMALL_ELEMENT,
 			ignoredClass: LayoutClass.IGNORED_ELEMENT,
-			bigPercentage: floatingLayoutTypeValue==1 ? 1 : 0.8,// The maximum percentage of space the big ones should take up
+			bigPercentage: this.floatingLayoutType==1 ? 1 : 0.8,// The maximum percentage of space the big ones should take up
 			minBigPercentage: 0, // If this is set then it will scale down the big space if there is left over whitespace down to this minimum size
 			bigFixedRatio: false, // fixedRatio for the big ones
 			bigMaxRatio: 9 / 16, // The narrowest ratio to use for the big elements (default 2x3)
@@ -57,7 +56,7 @@ export class LayoutService {
 			animate: true, // Whether you want to animate the transitions. Deprecated property, to disable it remove the transaction property on OT_publisher css class
 			alignItems: LayoutAlignment.CENTER,
 			bigAlignItems: LayoutAlignment.CENTER,
-			smallAlignItems:floatingLayoutTypeValue==1?LayoutAlignment.END: LayoutAlignment.CENTER,
+			smallAlignItems:this.floatingLayoutType==1?LayoutAlignment.END: LayoutAlignment.CENTER,
 			maxWidth: Infinity, // The maximum width of the elements
 			maxHeight: Infinity, // The maximum height of the elements
 			smallMaxWidth: Infinity,
@@ -67,7 +66,7 @@ export class LayoutService {
 			scaleLastRow: true,
 			bigScaleLastRow: true,
 			floatingLayoutEnable:this.floatingLayoutEnable,
-			floatingLayoutType:floatingLayoutTypeValue
+			floatingLayoutType:this.floatingLayoutType
 		};
 		return options;
 	}
@@ -122,7 +121,7 @@ export class LayoutService {
 			this.floatingLayoutEnable = value;
 			// this.cd.markForCheck();
 		});
-		this.floatingLayoutTypeSub = this.libService.floatingLayoutTypeObs.subscribe((value: string) => {
+		this.floatingLayoutTypeSub = this.libService.floatingLayoutTypeObs.subscribe((value: number) => {
 			this.floatingLayoutType = value;
 			// this.cd.markForCheck();
 		});
