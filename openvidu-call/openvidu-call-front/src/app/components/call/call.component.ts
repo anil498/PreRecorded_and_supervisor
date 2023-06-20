@@ -156,6 +156,9 @@ export class CallComponent implements OnInit {
 			}
 		} catch (error) {
 			console.log(error)
+			if (error.error.settings.landingPage) {
+				this.redirectUrl = error.error.settings.landingPage;
+			}
 			this.actionService.openUrlDialog(this.translateService.translate('ERRORS.EXPIRED'), '', true, this.redirectUrl)
 
 		}
