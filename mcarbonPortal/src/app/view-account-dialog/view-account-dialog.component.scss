@@ -166,3 +166,37 @@ button[type="button"] {
 .grid-item {
   width: 90%;
 }
+
+.grid-item-content {
+  margin-left: 10%;
+}
+
+::ng-deep .tooltip-style.mat-tooltip {
+  color: white !important;
+  background-color: #00a796 !important;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+
+::ng-deep
+  .mat-radio-button.mat-accent.mat-radio-checked
+  .mat-radio-outer-circle {
+  border-color: #009688 !important;
+}
+
+::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: #009688 !important;
+}

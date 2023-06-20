@@ -43,6 +43,8 @@ export class ViewUserDialogComponent implements OnInit {
 
   selectedFeatures: number[] = [];
   topLevelAccess: any[] = [];
+  topLevelAccess1: any[] = [];
+  topLevelAccess2: any[] = [];
   selectedFeaturesMeta = {};
   constructor(
     private router: Router,
@@ -54,9 +56,13 @@ export class ViewUserDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public user: any
   ) {
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
-    const half = Math.ceil(this.featuresData.length / 2);
-    this.featuresData1 = this.featuresData.slice(0, half);
-    this.featuresData2 = this.featuresData.slice(half);
+    const featureHalf = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, featureHalf);
+    this.featuresData2 = this.featuresData.slice(featureHalf);
+
+    const accessHalf = Math.ceil(this.topLevelAccess.length / 2);
+    this.topLevelAccess1 = this.topLevelAccess.slice(0, accessHalf);
+    this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
   }
 
   updateSelectedFeaturesMeta(featureId: string | number, metaValue: any) {

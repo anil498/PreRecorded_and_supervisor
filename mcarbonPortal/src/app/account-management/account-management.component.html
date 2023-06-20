@@ -24,7 +24,7 @@
                     (keyup)="searchData($event)"
                     #input
                   />
-                  <a href="#" class="icon">
+                  <a href=javascript:void(0) class="icon">
                     <i>
                       <mat-icon class="material-icons">search</mat-icon>
                     </i>
@@ -150,7 +150,7 @@
                         class="btn-action"
                         mat-menu-item
                         (click)="updateAccountDialog(account)"
-                        *ngIf="showEdit"
+                        *ngIf="showEdit && account.status !== 2"
                       >
                         <mat-icon style="color: #009688">edit</mat-icon>
                         <span>Edit</span>
@@ -159,7 +159,7 @@
                         class="btn-action"
                         mat-menu-item
                         (click)="deleteAccount(account.accountId)"
-                        *ngIf="showDelete"
+                        *ngIf="showDelete && account.status !== 2"
                       >
                         <mat-icon style="color: #009688"
                           >delete_outline</mat-icon
@@ -170,6 +170,7 @@
                         class="btn-action"
                         mat-menu-item
                         (click)="expireAccount(account)"
+                        *ngIf="account.status !== 2"
                       >
                         <mat-icon style="color: #009688"
                           >power_settings_new</mat-icon

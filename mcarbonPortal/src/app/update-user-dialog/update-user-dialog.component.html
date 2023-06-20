@@ -137,12 +137,9 @@
           </div>
         </div>
 
-        <div class="row">
-          <section class="example-section">
-            <div
-              *ngFor="let topAccess of topLevelAccess"
-              class="col-md-10 offset-md-1"
-            >
+        <section class="feature-section">
+          <div class="grid-container">
+            <div *ngFor="let topAccess of topLevelAccess1" class="grid-item">
               <mat-checkbox
                 [value]="topAccess.accessId"
                 (change)="toggleAccessId(topAccess, $event.checked)"
@@ -151,12 +148,11 @@
                 {{ topAccess.name }}
               </mat-checkbox>
               <div
-                class="row"
+                class="grid-item-content"
                 *ngIf="selectedAccessId.includes(topAccess.accessId)"
               >
                 <div *ngFor="let access of accessData">
                   <mat-checkbox
-                    class="col-md-5 offset-md-1"
                     *ngIf="
                       topAccess.accessId === access.pId && access.pId !== 0
                     "
@@ -169,8 +165,36 @@
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+          <div class="grid-container">
+            <div *ngFor="let topAccess of topLevelAccess2" class="grid-item">
+              <mat-checkbox
+                [value]="topAccess.accessId"
+                (change)="toggleAccessId(topAccess, $event.checked)"
+                [checked]="isCheckAccess(topAccess)"
+              >
+                {{ topAccess.name }}
+              </mat-checkbox>
+              <div
+                class="grid-item-content"
+                *ngIf="selectedAccessId.includes(topAccess.accessId)"
+              >
+                <div *ngFor="let access of accessData">
+                  <mat-checkbox
+                    *ngIf="
+                      topAccess.accessId === access.pId && access.pId !== 0
+                    "
+                    [value]="access.accessId"
+                    (change)="toggleAccessId(access, $event.checked)"
+                    [checked]="isCheckAccess(access)"
+                  >
+                    {{ access.name }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </mat-tab>
 
@@ -266,17 +290,35 @@
                       {{ meta.name }}
                     </mat-slide-toggle>
 
-                    <div *ngSwitchCase="'file'">
-                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                    <div
+                      *ngSwitchCase="'file'"
+                      style="
+                        display: flex;
+                        align-items: baseline;
+                        flex-direction: row;
+                      "
+                    >
+                      <label
+                        class="btn btn-sm btn-photo"
+                        for="{{ meta.key }}{{ feature.featureId }}"
+                      >
+                        Upload Video
+                      </label>
                       <input
                         type="file"
-                        id="{{ meta.key }}"
-                        name="{{ meta.key }}"
+                        id="{{ meta.key }}{{ feature.featureId }}"
+                        name="{{ meta.key }}{{ feature.featureId }}"
                         accept="video/*"
                         (change)="
                           onFileInputChange($event, meta, feature.featureId)
                         "
                       />
+                      <h6
+                        *ngIf="videoSelected(feature.featureId)"
+                        style="margin-left: 10px"
+                      >
+                        {{ videoSelect[feature.featureId] }}
+                      </h6>
                     </div>
 
                     <mat-form-field *ngSwitchCase="'text'">
@@ -346,17 +388,35 @@
                       {{ meta.name }}
                     </mat-slide-toggle>
 
-                    <div *ngSwitchCase="'file'">
-                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                    <div
+                      *ngSwitchCase="'file'"
+                      style="
+                        display: flex;
+                        align-items: baseline;
+                        flex-direction: row;
+                      "
+                    >
+                      <label
+                        class="btn btn-sm btn-photo"
+                        for="{{ meta.key }}{{ feature.featureId }}"
+                      >
+                        Upload Video
+                      </label>
                       <input
                         type="file"
-                        id="{{ meta.key }}"
-                        name="{{ meta.key }}"
+                        id="{{ meta.key }}{{ feature.featureId }}"
+                        name="{{ meta.key }}{{ feature.featureId }}"
                         accept="video/*"
                         (change)="
                           onFileInputChange($event, meta, feature.featureId)
                         "
                       />
+                      <h6
+                        *ngIf="videoSelected(feature.featureId)"
+                        style="margin-left: 10px"
+                      >
+                        {{ videoSelect[feature.featureId] }}
+                      </h6>
                     </div>
 
                     <mat-form-field *ngSwitchCase="'text'">

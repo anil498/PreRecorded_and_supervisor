@@ -123,40 +123,64 @@
           </div>
         </div>
 
-        <div class="row">
-          <section class="example-section">
-            <div
-              *ngFor="let topAccess of topLevelAccess"
-              class="col-md-10 offset-md-1"
-            >
+        <section class="feature-section">
+          <div class="grid-container">
+            <div *ngFor="let topAccess of topLevelAccess1" class="grid-item">
               <mat-checkbox
                 [value]="topAccess.accessId"
+                (change)="toggleAccessId(topAccess, $event.checked)"
                 [checked]="isCheckAccess(topAccess)"
-                [disabled]="true"
               >
                 {{ topAccess.name }}
               </mat-checkbox>
               <div
-                class="row"
+                class="grid-item-content"
                 *ngIf="selectedAccessId.includes(topAccess.accessId)"
               >
                 <div *ngFor="let access of accessData">
                   <mat-checkbox
-                    class="col-md-5 offset-md-1"
                     *ngIf="
                       topAccess.accessId === access.pId && access.pId !== 0
                     "
                     [value]="access.accessId"
+                    (change)="toggleAccessId(access, $event.checked)"
                     [checked]="isCheckAccess(access)"
-                    [disabled]="true"
                   >
                     {{ access.name }}
                   </mat-checkbox>
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+          <div class="grid-container">
+            <div *ngFor="let topAccess of topLevelAccess2" class="grid-item">
+              <mat-checkbox
+                [value]="topAccess.accessId"
+                (change)="toggleAccessId(topAccess, $event.checked)"
+                [checked]="isCheckAccess(topAccess)"
+              >
+                {{ topAccess.name }}
+              </mat-checkbox>
+              <div
+                class="grid-item-content"
+                *ngIf="selectedAccessId.includes(topAccess.accessId)"
+              >
+                <div *ngFor="let access of accessData">
+                  <mat-checkbox
+                    *ngIf="
+                      topAccess.accessId === access.pId && access.pId !== 0
+                    "
+                    [value]="access.accessId"
+                    (change)="toggleAccessId(access, $event.checked)"
+                    [checked]="isCheckAccess(access)"
+                  >
+                    {{ access.name }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </mat-tab>
 

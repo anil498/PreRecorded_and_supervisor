@@ -27,7 +27,33 @@
                     type="text"
                     placeholder="Name"
                     formControlName="name"
+                    [matTooltip]="getErrorMessage('name')"
+                    matTooltipClass="tooltip-style"
                   />
+                  <mat-error
+                    *ngIf="
+                      userForm.get('name').invalid &&
+                      userForm.get('name').errors.required
+                    "
+                  >
+                    Name is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm.get('name').invalid &&
+                      userForm.get('name').errors.minlength
+                    "
+                  >
+                    Name should be at least 4 characters long
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm.get('name').invalid &&
+                      userForm.get('name').errors.maxlength
+                    "
+                  >
+                    Name should not exceed 20 characters
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -39,7 +65,25 @@
                     type="number"
                     placeholder="Max User"
                     formControlName="max_user"
+                    [matTooltip]="getErrorMessage('max_user')"
+                    matTooltipClass="tooltip-style"
                   />
+                  <mat-error
+                    *ngIf="
+                      userForm.get('max_user').invalid &&
+                      userForm.get('max_user').errors.required
+                    "
+                  >
+                    Max User is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm.get('max_user').invalid &&
+                      userForm.get('max_user').errors.min
+                    "
+                  >
+                    Max User should be 0 or greater
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -51,6 +95,8 @@
                     matInput
                     [matDatepicker]="picker"
                     formControlName="acc_exp_date"
+                    [matTooltip]="getErrorMessage('acc_exp_date')"
+                    matTooltipClass="tooltip-style"
                   />
                   <mat-hint>MM/DD/YYYY</mat-hint>
                   <mat-datepicker-toggle
@@ -58,6 +104,22 @@
                     [for]="picker"
                   ></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
+                  <mat-error
+                    *ngIf="
+                      userForm.get('acc_exp_date').invalid &&
+                      userForm.get('acc_exp_date').errors.required
+                    "
+                  >
+                    Account Expiry Date is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm.get('acc_exp_date').invalid &&
+                      userForm.get('acc_exp_date').errors.mismatch
+                    "
+                  >
+                    Account Expiry Date should not be in the past
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -65,15 +127,24 @@
 
           <div class="col-md-5">
             <div class="row justify-content-center align-items-center">
-              <img
-                *ngIf="photoControl"
-                [src]="photoUrl"
-                style="border-radius: 50%"
-                alt="selected logo"
-                height="60%"
-                width="60%"
-              />
+              <ng-template *ngIf="photoControl; else elseBlock"
+                ><img
+                  [src]="photoUrl"
+                  style="border-radius: 50%"
+                  alt="selected logo"
+                  height="60%"
+                  width="60%"
+              /></ng-template>
+              <ng-template #elseBlock
+                ><img
+                  src="../../assets/img/user_profile.png"
+                  style="border-radius: 50%"
+                  alt="selected logo"
+                  height="60%"
+                  width="60%"
+              /></ng-template>
             </div>
+
             <div class="row justify-content-center align-items-center">
               <input
                 #fileInput
@@ -97,7 +168,17 @@
                 type="text"
                 placeholder="Address"
                 formControlName="address"
+                [matTooltip]="getErrorMessage('address')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('address').invalid &&
+                  userForm.get('address').errors.required
+                "
+              >
+                Address is required
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -114,7 +195,23 @@
                 type="number"
                 placeholder="Maximum Active Sessions"
                 formControlName="max_active_sessions"
+                [matTooltip]="getErrorMessage('max_active_sessions')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('max_active_sessions').invalid &&
+                  userForm.get('max_active_sessions').errors.required
+                "
+                >Max Active Sessions is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('max_active_sessions').invalid &&
+                  userForm.get('max_active_sessions').errors.min
+                "
+                >Max Active Sessions should be greater than 0
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="col-md-5">
@@ -124,7 +221,24 @@
                 type="number"
                 placeholder="Maximum Duration (in Minutes)"
                 formControlName="max_duration"
+                [matTooltip]="getErrorMessage('max_duration')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('max_duration').invalid &&
+                  userForm.get('max_duration').errors.required
+                "
+              >
+                Max Duration is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('max_duration').invalid &&
+                  userForm.get('max_duration').errors.min
+                "
+                >Max Durations should be greater than 0
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -137,7 +251,24 @@
                 type="number"
                 placeholder="Maximum Participants"
                 formControlName="max_participants"
+                [matTooltip]="getErrorMessage('max_participants')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('max_participants').invalid &&
+                  userForm.get('max_participants').errors.required
+                "
+              >
+                Max Participants is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('max_participants').invalid &&
+                  userForm.get('max_participants').errors.min
+                "
+                >Max Participants should be greater than 0
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -148,12 +279,9 @@
           </div>
         </div>
 
-        <div class="row">
-          <section class="example-section">
-            <div
-              *ngFor="let topAccess of topLevelAccess"
-              class="col-md-10 offset-md-1"
-            >
+        <section class="feature-section">
+          <div class="grid-container">
+            <div *ngFor="let topAccess of topLevelAccess1" class="grid-item">
               <mat-checkbox
                 [value]="topAccess.accessId"
                 (change)="toggleAccessId(topAccess, $event.checked)"
@@ -161,12 +289,11 @@
                 {{ topAccess.name }}
               </mat-checkbox>
               <div
-                class="row"
+                class="grid-item-content"
                 *ngIf="selectedAccessId.includes(topAccess.accessId)"
               >
                 <div *ngFor="let access of accessData">
                   <mat-checkbox
-                    class="col-md-5 offset-md-1"
                     *ngIf="
                       topAccess.accessId === access.pId && access.pId !== 0
                     "
@@ -179,8 +306,36 @@
                 </div>
               </div>
             </div>
-          </section>
-        </div>
+          </div>
+
+          <div class="grid-container">
+            <div *ngFor="let topAccess of topLevelAccess2" class="grid-item">
+              <mat-checkbox
+                [value]="topAccess.accessId"
+                (change)="toggleAccessId(topAccess, $event.checked)"
+              >
+                {{ topAccess.name }}
+              </mat-checkbox>
+              <div
+                class="grid-item-content"
+                *ngIf="selectedAccessId.includes(topAccess.accessId)"
+              >
+                <div *ngFor="let access of accessData">
+                  <mat-checkbox
+                    *ngIf="
+                      topAccess.accessId === access.pId && access.pId !== 0
+                    "
+                    [value]="access.accessId"
+                    (change)="toggleAccessId(access, $event.checked)"
+                    [checked]="false"
+                  >
+                    {{ access.name }}
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </mat-tab>
 
@@ -192,192 +347,12 @@
           </div>
         </div>
 
-        <!-- <mat-grid-list cols="2" rowHeight="80px" class="container-1">
-          <mat-grid-tile
-            *ngFor="let feature of featuresData"
-            id="{{ feature.featureId }}"
-          >
-            <mat-checkbox
-              [value]="feature.featureId"
-              (change)="toggleFeatureSelection(feature.featureId)"
-            >
-              {{ feature.name }}
-            </mat-checkbox>
-
-            <div
-              class="row meta"
-              *ngIf="
-                selectedFeatures.includes(feature.featureId) &&
-                feature.metaList.length !== 0
-              "
-            >
-              <div *ngFor="let meta of feature.metaList">
-                <ng-container [ngSwitch]="meta.type">
-                  <mat-slide-toggle
-                    *ngSwitchCase="'bool'"
-                    (change)="
-                      setMetaValue(feature.featureId, meta.key, $event.checked)
-                    "
-                  >
-                    {{ meta.name }}
-                  </mat-slide-toggle>
-
-                  <div *ngSwitchCase="'file'">
-                    <label for="{{ meta.key }}">{{ meta.name }}</label>
-                    <input
-                      type="file"
-                      id="{{ meta.key }}"
-                      name="{{ meta.key }}"
-                      accept="video/*"
-                      (change)="
-                        onFileInputChange($event, meta, feature.featureId)
-                      "
-                    />
-                  </div>
-
-                  <mat-form-field *ngSwitchCase="'text'">
-                    <input
-                      matInput
-                      #metaValue
-                      type="text"
-                      placeholder="{{ meta.name }}"
-                      (change)="
-                        setMetaValue(
-                          feature.featureId,
-                          meta.key,
-                          metaValue.value
-                        )
-                      "
-                  /></mat-form-field>
-                </ng-container>
-              </div>
-            </div>
-
-            <mat-grid-list
-              cols="1"
-              rowHeight="1:1"
-              *ngIf="selectedFeatures.includes(feature.featureId)"
-            >
-              {{ feature.name }}
-              <mat-grid-tile *ngFor="let meta of feature.metaList">
-                <ng-container [ngSwitch]="meta.type">
-                  <mat-slide-toggle
-                    *ngSwitchCase="'bool'"
-                    (change)="
-                      setMetaValue(feature.featureId, meta.key, $event.checked)
-                    "
-                  >
-                    {{ meta.name }}
-                  </mat-slide-toggle>
-
-                  <div *ngSwitchCase="'file'">
-                    <label for="{{ meta.key }}">{{ meta.name }}</label>
-                    <input
-                      type="file"
-                      id="{{ meta.key }}"
-                      name="{{ meta.key }}"
-                      accept="video/*"
-                      (change)="
-                        onFileInputChange($event, meta, feature.featureId)
-                      "
-                    />
-                  </div>
-
-                  <mat-form-field *ngSwitchCase="'text'">
-                    <input
-                      matInput
-                      #metaValue
-                      type="text"
-                      placeholder="{{ meta.name }}"
-                      (change)="
-                        setMetaValue(
-                          feature.featureId,
-                          meta.key,
-                          metaValue.value
-                        )
-                      "
-                  /></mat-form-field>
-                </ng-container>
-              </mat-grid-tile>
-            </mat-grid-list>
-          </mat-grid-tile>
-        </mat-grid-list> -->
-
-        <!-- <section class="example-section">
-          <div class="row justify-content-start">
-            <div
-              *ngFor="let feature of featuresData"
-              class="col-md-5 offset-md-1"
-            >
-              <mat-checkbox
-                [value]="feature.featureId"
-                (change)="toggleFeatureSelection(feature.featureId)"
-              >
-                {{ feature.name }}
-              </mat-checkbox>
-
-              <div
-                class="row"
-                *ngIf="selectedFeatures.includes(feature.featureId)"
-              >
-                <div *ngFor="let meta of feature.metaList">
-                  <ng-container [ngSwitch]="meta.type">
-                    <mat-slide-toggle
-                      *ngSwitchCase="'bool'"
-                      (change)="
-                        setMetaValue(
-                          feature.featureId,
-                          meta.key,
-                          $event.checked
-                        )
-                      "
-                    >
-                      {{ meta.name }}
-                    </mat-slide-toggle>
-
-                    <div *ngSwitchCase="'file'">
-                      <label for="{{ meta.key }}">{{ meta.name }}</label>
-                      <input
-                        type="file"
-                        id="{{ meta.key }}"
-                        name="{{ meta.key }}"
-                        accept="video/*"
-                        (change)="
-                          onFileInputChange($event, meta, feature.featureId)
-                        "
-                      />
-                    </div>
-
-                    <mat-form-field *ngSwitchCase="'text'">
-                      <input
-                        matInput
-                        #metaValue
-                        type="text"
-                        placeholder="{{ meta.name }}"
-                        (change)="
-                          setMetaValue(
-                            feature.featureId,
-                            meta.key,
-                            metaValue.value
-                          )
-                        "
-                    /></mat-form-field>
-                  </ng-container>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section> -->
-
         <section class="feature-section">
           <div class="grid-container">
             <div
               *ngFor="let feature of featuresData1"
               class="grid-item"
               id="feature{{ feature.featureId }}"
-              [ngClass]="{
-                expanded: selectedFeatures.includes(feature.featureId)
-              }"
             >
               <mat-checkbox
                 [value]="feature.featureId"
@@ -405,17 +380,35 @@
                       {{ meta.name }}
                     </mat-slide-toggle>
 
-                    <div *ngSwitchCase="'file'">
-                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                    <div
+                      *ngSwitchCase="'file'"
+                      style="
+                        display: flex;
+                        align-items: baseline;
+                        flex-direction: row;
+                      "
+                    >
+                      <label
+                        class="btn btn-sm btn-photo"
+                        for="{{ meta.key }}{{ feature.featureId }}"
+                      >
+                        Upload Video
+                      </label>
                       <input
                         type="file"
-                        id="{{ meta.key }}"
-                        name="{{ meta.key }}"
+                        id="{{ meta.key }}{{ feature.featureId }}"
+                        name="{{ meta.key }}{{ feature.featureId }}"
                         accept="video/*"
                         (change)="
                           onFileInputChange($event, meta, feature.featureId)
                         "
                       />
+                      <h6
+                        *ngIf="videoSelected(feature.featureId)"
+                        style="margin-left: 10px"
+                      >
+                        {{ videoSelect[feature.featureId] }}
+                      </h6>
                     </div>
 
                     <mat-form-field *ngSwitchCase="'text'">
@@ -433,6 +426,29 @@
                         "
                       />
                     </mat-form-field>
+
+                    <ng-container *ngSwitchCase="'radio'">
+                      <mat-radio-group
+                        aria-labelledby="example-radio-group-label"
+                        class="example-radio-group"
+                        [value]="meta.name[0]"
+                        (change)="
+                          setMetaValue(
+                            feature.featureId,
+                            meta.key,
+                            $event.value
+                          )
+                        "
+                      >
+                        <mat-radio-button
+                          class="example-radio-button"
+                          *ngFor="let name of meta.name"
+                          [value]="name"
+                        >
+                          {{ name }}
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>
@@ -474,17 +490,35 @@
                       {{ meta.name }}
                     </mat-slide-toggle>
 
-                    <div *ngSwitchCase="'file'">
-                      <label for="{{ meta.key }}">{{ meta.name }}</label>
+                    <div
+                      *ngSwitchCase="'file'"
+                      style="
+                        display: flex;
+                        align-items: baseline;
+                        flex-direction: row;
+                      "
+                    >
+                      <label
+                        class="btn btn-sm btn-photo"
+                        for="{{ meta.key }}{{ feature.featureId }}"
+                      >
+                        Upload Video
+                      </label>
                       <input
                         type="file"
-                        id="{{ meta.key }}"
-                        name="{{ meta.key }}"
+                        id="{{ meta.key }}{{ feature.featureId }}"
+                        name="{{ meta.key }}{{ feature.featureId }}"
                         accept="video/*"
                         (change)="
                           onFileInputChange($event, meta, feature.featureId)
                         "
                       />
+                      <h6
+                        *ngIf="videoSelected(feature.featureId)"
+                        style="margin-left: 10px"
+                      >
+                        {{ videoSelect[feature.featureId] }}
+                      </h6>
                     </div>
 
                     <mat-form-field *ngSwitchCase="'text'">
@@ -502,6 +536,29 @@
                         "
                       />
                     </mat-form-field>
+
+                    <ng-container *ngSwitchCase="'radio'">
+                      <mat-radio-group
+                        aria-labelledby="example-radio-group-label"
+                        class="example-radio-group"
+                        [value]="meta.name[0]"
+                        (change)="
+                          setMetaValue(
+                            feature.featureId,
+                            meta.key,
+                            $event.value
+                          )
+                        "
+                      >
+                        <mat-radio-button
+                          class="example-radio-button"
+                          *ngFor="let name of meta.name"
+                          [value]="name"
+                        >
+                          {{ name }}
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>
@@ -521,7 +578,33 @@
                 type="text"
                 placeholder="First Name"
                 formControlName="user_fname"
+                [matTooltip]="getErrorMessage('user_fname')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('user_fname').invalid &&
+                  userForm.get('user_fname').errors.required
+                "
+              >
+                First Name is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('user_fname').invalid &&
+                  userForm.get('user_fname').errors.minlength
+                "
+              >
+                First Name should be at least 4 characters long
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('user_fname').invalid &&
+                  userForm.get('user_fname').errors.maxlength
+                "
+              >
+                First Name should not exceed 20 characters
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="col-md-5">
@@ -531,7 +614,33 @@
                 type="text"
                 placeholder="Last Name"
                 formControlName="user_lname"
+                [matTooltip]="getErrorMessage('user_lname')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('user_lname').invalid &&
+                  userForm.get('user_lname').errors.required
+                "
+              >
+                Last Name is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('user_lname').invalid &&
+                  userForm.get('user_lname').errors.minlength
+                "
+              >
+                Last Name should be at least 4 characters long
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('user_lname').invalid &&
+                  userForm.get('user_lname').errors.maxlength
+                "
+              >
+                Last Name should not exceed 20 characters
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -543,7 +652,26 @@
                 type="tel"
                 placeholder="Mobile Number"
                 formControlName="mobile"
+                [matTooltip]="getErrorMessage('mobile')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('mobile').invalid &&
+                  userForm.get('mobile').errors.required
+                "
+              >
+                Mobile Number is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('mobile').invalid &&
+                  (userForm.get('mobile').errors.minlength ||
+                    userForm.get('mobile').errors.maxlength)
+                "
+              >
+                Mobile Number should be of 10-digits
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="col-md-5">
@@ -553,7 +681,20 @@
                 type="email"
                 placeholder="Email"
                 formControlName="email"
+                [matTooltip]="getErrorMessage('email')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('email').invalid &&
+                  userForm.get('email').errors.required
+                "
+              >
+                Email is required
+              </mat-error>
+              <mat-error *ngIf="userForm.get('email').invalid">
+                Invalid Email
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -566,7 +707,33 @@
                 type="text"
                 placeholder="Login ID"
                 formControlName="login_id"
+                [matTooltip]="getErrorMessage('login_id')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('login_id').invalid &&
+                  userForm.get('login_id').errors.required
+                "
+              >
+                Login ID is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('login_id').invalid &&
+                  userForm.get('login_id').errors.minlength
+                "
+              >
+                Login ID should be at least 6 characters long
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('login_id').invalid &&
+                  userForm.get('login_id').errors.maxlength
+                "
+              >
+                Login ID should not exceed 20 characters
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -580,7 +747,37 @@
                 placeholder="Password"
                 formControlName="password"
                 [(ngModel)]="password"
+                [matTooltip]="getErrorMessage('password')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm.get('password').invalid &&
+                  userForm.get('password').errors.required
+                "
+              >
+                Password is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('password').invalid &&
+                  userForm.get('password').errors.minlength
+                "
+              >
+                Password should be at least characters long
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm.get('password').invalid &&
+                  userForm.get('password').errors.maxlength
+                "
+              >
+                Password should not exceed 20 characters
+              </mat-error>
+              <mat-error *ngIf="userForm.get('password').invalid">
+                Password must contain at least a capital letter, a small letter,
+                a digit, and a special character
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="col-md-5">
@@ -594,7 +791,7 @@
               />
               <mat-error
                 *ngIf="userForm.hasError('mismatch', 'confirm_password')"
-                >Passwords do not match</mat-error
+                >Passwords does not match</mat-error
               >
             </mat-form-field>
           </div>
