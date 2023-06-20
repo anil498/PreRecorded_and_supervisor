@@ -41,6 +41,7 @@ import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.c
 import { MatFileUploadModule } from "angular-material-fileupload";
 import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
 import { MatGridListModule } from "@angular/material/grid-list";
+import { MatRadioModule } from "@angular/material/radio";
 @NgModule({
   imports: [
     CommonModule,
@@ -48,6 +49,7 @@ import { MatGridListModule } from "@angular/material/grid-list";
     ReactiveFormsModule,
     MatInputModule,
     MatCheckboxModule,
+    MatRadioModule,
     MatDatepickerModule,
     MatGridListModule,
     MatNativeDateModule,

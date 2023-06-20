@@ -20,7 +20,7 @@
               [type]="hide ? 'password' : 'text'"
               placeholder="Password"
               formControlName="password"
-              (keyUp.Enter) ="login()"
+              (keyUp.Enter)="login()"
             />
             <button
               mat-icon-button
@@ -35,14 +35,28 @@
             Login
           </button>
           <div class="row">
-            <div class="col-8 offset-2 text-center" *ngIf="emptyUname">
+            <div
+              class="col-10 offset-1 text-center"
+              *ngIf="emptyUname && emptyPass"
+            >
               <p class="alert alert-danger">
-                <strong>Enter a Username</strong>
+                <strong>Enter Username & Password</strong>
               </p>
             </div>
-            <div class="col-8 offset-2 text-center" *ngIf="emptyPass">
+            <div
+              class="col-10 offset-1 text-center"
+              *ngIf="emptyUname && !emptyPass"
+            >
               <p class="alert alert-danger">
-                <strong>Enter Password</strong>
+                <strong>Must Enter Username</strong>
+              </p>
+            </div>
+            <div
+              class="col-10 offset-1 text-center"
+              *ngIf="emptyPass && !emptyUname"
+            >
+              <p class="alert alert-danger">
+                <strong>Must Enter Password</strong>
               </p>
             </div>
           </div>

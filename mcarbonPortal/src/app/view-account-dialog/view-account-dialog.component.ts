@@ -53,7 +53,8 @@ export class ViewAccountDialogComponent implements OnInit {
 
   selectedFeatures: number[] = [];
   topLevelAccess: any[] = [];
-
+  topLevelAccess1: any[] = [];
+  topLevelAccess2: any[] = [];
   selectedFeaturesMeta = {};
 
   constructor(
@@ -64,10 +65,14 @@ export class ViewAccountDialogComponent implements OnInit {
     private sanitizer: DomSanitizer,
     @Inject(MAT_DIALOG_DATA) public account: any
   ) {
-    this.loginResponse = this.restService.getToken();
-    const half = Math.ceil(this.featuresData.length / 2);
-    this.featuresData1 = this.featuresData.slice(0, half);
-    this.featuresData2 = this.featuresData.slice(half);
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+    const featureHalf = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, featureHalf);
+    this.featuresData2 = this.featuresData.slice(featureHalf);
+
+    const accessHalf = Math.ceil(this.topLevelAccess.length / 2);
+    this.topLevelAccess1 = this.topLevelAccess.slice(0, accessHalf);
+    this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
   }
 
   updateSelectedFeaturesMeta(featureId, metaValue) {

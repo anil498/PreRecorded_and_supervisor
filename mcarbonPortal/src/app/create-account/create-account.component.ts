@@ -6,9 +6,17 @@ import {
   ChangeDetectorRef,
   Inject,
   OnDestroy,
+  ElementRef,
 } from "@angular/core";
 
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from "@angular/forms";
 import { MatTabGroup } from "@angular/material/tabs";
 import { MatDialogRef } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
@@ -16,6 +24,7 @@ import { Router } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ImageFile } from "app/model/image-file";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
+import { async } from "@angular/core/testing";
 
 @Component({
   selector: "app-create-account",
@@ -51,7 +60,7 @@ export class CreateAccountComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: any;
+  logo: any = {};
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
@@ -77,8 +86,11 @@ export class CreateAccountComponent implements OnInit {
 
   selectedFeatures: number[] = [];
   topLevelAccess: any[] = [];
+  topLevelAccess1: any[] = [];
+  topLevelAccess2: any[] = [];
 
   selectedFeaturesMeta: { [key: string]: any } = {};
+  videoSelect: any = {};
 
   constructor(
     private router: Router,
@@ -86,12 +98,18 @@ export class CreateAccountComponent implements OnInit {
     private restService: RestService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private elementRef: ElementRef
   ) {
     this.loginResponse = this.restService.getToken();
-    const half = Math.ceil(this.featuresData.length / 2);
-    this.featuresData1 = this.featuresData.slice(0, half);
-    this.featuresData2 = this.featuresData.slice(half);
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
+    const featureHalf = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, featureHalf);
+    this.featuresData2 = this.featuresData.slice(featureHalf);
+
+    const accessHalf = Math.ceil(this.topLevelAccess.length / 2);
+    this.topLevelAccess1 = this.topLevelAccess.slice(0, accessHalf);
+    this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
   }
 
   onPhotoSelected(event) {
@@ -108,8 +126,10 @@ export class CreateAccountComponent implements OnInit {
       const reader = new FileReader();
       console.log(file);
       reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        console.log();
+      reader.onloadend = async () => {
+        const arrBuffer: any = await file.arrayBuffer();
+        const buffer = new Uint8Array(arrBuffer);
+        var array = Array.from(buffer);
         this.photoUrl = reader.result;
         this.photoControl = true;
 
@@ -126,27 +146,34 @@ export class CreateAccountComponent implements OnInit {
     if (files && files.length > 0) {
       const file: File = files[0];
       const reader = new FileReader();
-      reader.readAsDataURL(file);
-      //reader.readAsArrayBuffer(file);
-      console.warn(file);
+      reader.readAsArrayBuffer(file);
+      console.log(file);
+      this.videoSelect[featureId] = file.name;
 
-      reader.onloadend = () => {
-        console.warn(reader.result);
-        const blob = { byte: reader.result, type: file.type };
-        console.warn(blob);
+      //reader.readAsArrayBuffer(file);
+      reader.onloadend = async () => {
+        const arrbuffer: any = await file.arrayBuffer();
+        let byteArray = new Uint8Array(arrbuffer);
+        var array = Array.from(byteArray);
+        console.log(typeof byteArray + " " + typeof array);
+        const blob = { byte: array, type: file.type };
+        //this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
         this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
+        // const videoEl = document.createElement("video");
+        // videoEl.src = <string>reader.result;
+        // videoEl.controls = true;
+        // document.body.appendChild(videoEl);
+        console.warn(featureId);
         console.warn(this.selectedFeaturesMeta[featureId]);
       };
-      // reader.onload = () => {
-      //   console.warn([reader.result]);
-      //   const blob = new Blob([reader.result]);
-      //   console.warn(blob);
-      //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
-      //   console.warn(this.selectedFeaturesMeta[featureId]);
-      // };
     }
   }
 
+  videoSelected(featureId: number) {
+    console.log(featureId);
+    console.log(this.videoSelect);
+    return this.videoSelect.hasOwnProperty(featureId);
+  }
   toggleFeatureSelection(featureId: number): void {
     const index = this.selectedFeatures.indexOf(featureId);
     if (index > -1) {
@@ -209,66 +236,106 @@ export class CreateAccountComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.userForm = this.fb.group(
-      {
-        name: ["", Validators.required],
-        address: ["", Validators.required],
-        acc_exp_date: ["", Validators.required],
-        max_admin: ["", Validators.required],
-        max_user: ["", Validators.required],
-        logo: [null, Validators.required],
-        user_fname: ["", Validators.required],
-        user_lname: ["", Validators.required],
-        mobile: ["", Validators.required],
-        email: ["", Validators.required],
-        login_id: ["", Validators.required],
+    this.userForm = this.fb.group({
+      name: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+        ],
+      ],
+      address: ["", Validators.required],
+      acc_exp_date: [new Date(), [Validators.required, this.dateValidator]],
+      max_user: [0, [Validators.required, Validators.min(0)]],
+      logo: [null],
+      user_fname: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+          Validators.pattern("^[a-zA-Z]+$"),
+        ],
+      ],
+      user_lname: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+          Validators.pattern("^[a-zA-Z]+$"),
+        ],
+      ],
+      mobile: [
+        "",
+        Validators.required,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(10),
+          Validators.pattern("^[0-9]{10}$"),
+        ],
+      ],
+      email: ["", [Validators.required, Validators.email]],
+      login_id: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(20),
+        ],
+      ],
 
-        password: ["", Validators.required],
-        confirm_password: ["", Validators.required],
+      password: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.maxLength(20),
+          Validators.pattern(
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+          ),
+        ],
+      ],
+      confirm_password: ["", [Validators.required]],
 
-        accessList: ["", Validators.required],
+      accessList: ["", Validators.required],
 
-        max_duration: ["", Validators.required],
-        max_active_sessions: ["", Validators.required],
-        max_participants: ["", Validators.required],
+      max_duration: ["", [Validators.required, Validators.min(0)]],
+      max_active_sessions: ["", [Validators.required, Validators.min(0)]],
+      max_participants: ["", [Validators.required, Validators.min(1)]],
 
-        featureList: ["", Validators.required],
-      },
-      {
-        validator: this.passwordMatchValidator,
-      }
-    );
+      featureList: [[]],
+    });
     this.accessData.forEach((access) => {
-      console.log(access);
       if (access.systemName == "customer_creation") {
         this.title = access.name;
       }
     });
-    console.log(this.title);
-
-    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
-    console.log(this.topLevelAccess);
   }
 
-  passwordMatchValidator(formGroup: FormGroup) {
-    const password = formGroup.get("password").value;
-    const confirm_password = formGroup.get("confirm_password").value;
+  // passwordMatchValidator(formGroup: FormGroup) {
+  //   const password = formGroup.get("password").value;
+  //   const confirm_password = formGroup.get("confirm_password").value;
 
-    if (password !== confirm_password) {
-      formGroup.get("confirm_password").setErrors({ mismatch: true });
-    } else {
-      formGroup.get("confirm_password").setErrors(null);
-    }
-  }
+  //   if (password !== confirm_password) {
+  //     formGroup.get("confirm_password").setErrors({ mismatch: true });
+  //   } else {
+  //     formGroup.get("confirm_password").setErrors(null);
+  //   }
+  // }
 
-  dateValidator(formGroup: FormGroup) {
-    const expdate = formGroup.get("acc_exp_date").value;
+  dateValidator(control: AbstractControl): ValidationErrors | null {
+    const selectedDate = new Date(control.value);
     const currentDate = new Date();
-    if (expdate < currentDate) {
-      formGroup.get("acc_exp_date").setErrors({ mismatch: true });
-    } else {
-      formGroup.get("confirm_password").setErrors(null);
+    if (
+      selectedDate < currentDate &&
+      selectedDate.toDateString() !== currentDate.toDateString()
+    ) {
+      return { mismatch: true };
     }
+    return null;
   }
 
   previous() {
@@ -304,6 +371,12 @@ export class CreateAccountComponent implements OnInit {
   }
 
   async submit() {
+    if (this.userForm.invalid) {
+      console.warn("CHECKING VALIDATIONS");
+      this.focusOnInvalidFields();
+      return false;
+    }
+
     this.emptyError = false;
 
     this.name = this.userForm.value.name;
@@ -332,6 +405,7 @@ export class CreateAccountComponent implements OnInit {
     console.log("Feature ID: " + this.selectedFeatures);
     console.log("FeatureMetas " + `${this.selectedFeaturesMeta}`);
     console.log(this.logo);
+
     if (
       this.name == null ||
       this.max_user == null ||
@@ -348,10 +422,8 @@ export class CreateAccountComponent implements OnInit {
       this.login_id == null ||
       this.confirm_password == null
     ) {
-      console.warn(this.emptyError);
-      this.emptyError = true;
+      this.openSnackBar("ALL FIELDS ARE MANDATORY", "snackBar");
       this.timeOut(3000);
-      console.warn(this.emptyError);
       return;
     }
 
@@ -403,5 +475,117 @@ export class CreateAccountComponent implements OnInit {
     setTimeout(() => {
       this.emptyError = false;
     }, time);
+  }
+
+  focusOnInvalidFields() {
+    const invalidFields =
+      this.elementRef.nativeElement.querySelectorAll(".ng-invalid");
+
+    if (invalidFields.length > 0) {
+      invalidFields[0].focus();
+    }
+  }
+
+  getErrorMessage(controlName: string): string {
+    const control = this.userForm.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "max_active_sessions") {
+      if (control?.hasError("min")) {
+        return "Max Active Sessions should be greater than 0";
+      }
+    }
+    if (controlName === "max_duration") {
+      if (control?.hasError("min")) {
+        return "Max Duration should be greater than 0";
+      }
+    }
+    if (controlName === "max_participants") {
+      if (control?.hasError("min")) {
+        return "Max Participants should be greater than 0";
+      }
+    }
+    if (controlName === "user_fname") {
+      if (control?.hasError("minlength")) {
+        return "First Name should be at least 4 characters";
+      }
+
+      if (control?.hasError("maxlength")) {
+        return "First Name should not exceed 20 characters";
+      }
+
+      if (control?.hasError("pattern")) {
+        return "First Name should only contain letters";
+      }
+    }
+
+    if (controlName === "user_lname") {
+      if (control?.hasError("minlength")) {
+        return "Last Name should be at least 4 characters";
+      }
+
+      if (control?.hasError("maxlength")) {
+        return "Last Name should not exceed 20 characters";
+      }
+
+      if (control?.hasError("pattern")) {
+        return "Last Name should only contain letters";
+      }
+    }
+
+    if (controlName === "mobile") {
+      if (control?.hasError("minlength") || control?.hasError("maxlength")) {
+        return "Mobile number should be 10 digits";
+      }
+      if (control?.hasError("pattern")) {
+        return "Mobile number should only contain digits";
+      }
+    }
+
+    if (controlName === "email") {
+      if (control?.hasError("email")) {
+        return "Invalid email format";
+      }
+    }
+
+    if (controlName === "login_id") {
+      if (control?.hasError("minlength")) {
+        return "Login ID should be at least 6 characters";
+      }
+
+      if (control?.hasError("maxlength")) {
+        return "Login ID should not exceed 20 characters";
+      }
+    }
+
+    if (controlName === "password") {
+      if (control?.hasError("minlength")) {
+        return "Password should be at least 8 characters";
+      }
+
+      if (control?.hasError("maxlength")) {
+        return "Password should not exceed 20 characters";
+      }
+
+      if (control?.hasError("pattern")) {
+        return "Password must contain at least one capital letter, one small letter, one digit, and one special character";
+      }
+    }
+
+    if (control.hasError("minlength")) {
+      return "Name should be at least 4 characters long";
+    }
+    if (control.hasError("maxlength")) {
+      return "Name should not exceed 20 characters";
+    }
+    if (control.hasError("min")) {
+      return "Max User should be 0 or greater";
+    }
+    if (control.hasError("mismatch")) {
+      return "Account Expiry Date should not be in the past";
+    }
+    return "";
   }
 }

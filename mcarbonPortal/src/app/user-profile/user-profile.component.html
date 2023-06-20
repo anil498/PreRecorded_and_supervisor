@@ -54,12 +54,12 @@
           <div class="card-avatar">
             <a href="javascript:void(0)">
               <img
-                *ngIf="user.logo"
+                *ngIf="isLogo"
                 class="img"
                 src="{{ user.logo.byte }}"
               />
               <img
-                *ngIf="!user.logo"
+                *ngIf="!isLogo"
                 class="img"
                 src="../../assets/img/faces/marc.jpg"
               />
