@@ -7,7 +7,9 @@ import { RecordingActivityRecordingErrorDirective, RecordingActivityRecordingsLi
 import {
 	StreamDisplayAudioDetectionDirective,
 	StreamDisplayParticipantNameDirective,
-	StreamSettingsButtonDirective
+	StreamSettingsButtonDirective,
+	FloatingLayoutDirective,
+	FloatingLayoutTypeDirective
 } from './stream.directive';
 import {
 	ToolbarActivitiesPanelButtonDirective,
@@ -68,6 +70,8 @@ import {
 		StreamDisplayParticipantNameDirective,
 		StreamDisplayAudioDetectionDirective,
 		StreamSettingsButtonDirective,
+		FloatingLayoutDirective,
+		FloatingLayoutTypeDirective,
 		LogoDirective,
 		ParticipantPanelItemMuteButtonDirective,
 		ParticipantNameDirective,
@@ -109,6 +113,8 @@ import {
 		StreamDisplayParticipantNameDirective,
 		StreamDisplayAudioDetectionDirective,
 		StreamSettingsButtonDirective,
+		FloatingLayoutDirective,
+		FloatingLayoutTypeDirective,
 		LogoDirective,
 		ParticipantPanelItemMuteButtonDirective,
 		ParticipantNameDirective,

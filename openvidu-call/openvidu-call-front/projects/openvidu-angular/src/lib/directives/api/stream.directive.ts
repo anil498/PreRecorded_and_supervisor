@@ -151,3 +151,101 @@ export class StreamSettingsButtonDirective implements AfterViewInit, OnDestroy {
 		this.update(true);
 	}
 }
+
+
+/**
+ * The **settingsButton** directive allows show/hide the participants settings button in stream component.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `stream` component:
+ *
+ * @example
+ * <ov-videoconference [streamSettingsButton]="false"></ov-videoconference>
+ *
+ * \
+ * And it also can be used in the {@link StreamComponent}.
+ * @example
+ * <ov-stream [settingsButton]="false"></ov-stream>
+ */
+@Directive({
+	selector: 'ov-videoconference[floatingLayout]'
+})
+export class FloatingLayoutDirective implements AfterViewInit, OnDestroy {
+	@Input() set floatingLayout(value: boolean) {
+		this.floatingLayoutValue = value;
+		this.update(this.floatingLayoutValue);
+	}
+
+	floatingLayoutValue: boolean;
+
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	ngAfterViewInit() {
+		this.update(this.floatingLayoutValue);
+	}
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	update(value: boolean) {
+		if (this.libService.floatingLayout.getValue() !== value) {
+			this.libService.floatingLayout.next(value);
+		}
+	}
+
+	clear() {
+		this.update(true);
+	}
+}
+/**
+ * The **floatingLayout type** directive sets the floatingLayout type.
+ *
+ *
+ * @example
+ * <ov-videoconference [floatingLayoutType]="'OpenVidu'"></ov-videoconference>
+ */
+@Directive({
+	selector: 'ov-videoconference[floatingLayoutType]'
+})
+export class FloatingLayoutTypeDirective implements OnInit {
+
+	/**
+	 * @ignore
+	 */
+	@Input() floatingLayoutType: number;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+	 * @ignore
+	 */
+	ngOnInit(): void {
+		this.update(this.floatingLayoutType);
+	}
+
+	/**
+	 * @ignore
+	 */
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+	 * @ignore
+	 */
+	clear() {
+		this.update(0);
+	}
+
+	/**
+	 * @ignore
+	 */
+	update(value: number) {
+		this.libService.floatingLayoutType.next(value);
+	}
+}

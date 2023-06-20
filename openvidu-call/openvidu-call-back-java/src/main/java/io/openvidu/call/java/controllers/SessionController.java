@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import io.openvidu.call.java.models.RecordingData;
 import io.openvidu.call.java.services.OpenViduService;
+import org.springframework.web.client.HttpClientErrorException;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -89,7 +90,17 @@ public class SessionController {
              sessionProperty = videoPlatformService.getVideoPlatformProperties(authorization, token, sessionKey);
              logger.info("Session Property: {}", sessionProperty);
              sessionId= sessionProperty.getSessionId();
-        }catch (Exception e){
+        }catch (HttpClientErrorException.Forbidden ex) {
+          logger.error("Received 403 Forbidden: {}", ex.getMessage());
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sessionProperty);
+        }
+        catch (HttpClientErrorException.NotFound ex) {
+          logger.error("Received 404 Session Not fount: {}", ex.getMessage());
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(sessionProperty);
+        }
+        catch (Exception e){
           logger.error("Getting Exception while fetching Session property from videoplatform {}",e);
           errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
           errorResponse.setReason("Session not found");
@@ -114,11 +125,14 @@ public class SessionController {
         boolean hasParticipantValidToken = this.openviduService.isParticipantSessionValid(sessionId,
           participantCookie);
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
-        boolean iAmSessionCreator= sessionProperty.getSettings().getModerators();
+        boolean iAmSessionCreator=false;
+        if(sessionProperty.getType().equals("Support")){
+          iAmSessionCreator=true;
+          sessionProperty.setParticipantName(sessionProperty.getSessionName());
+        }
         boolean isSessionCreator = hasModeratorValidToken || iAmSessionCreator;
 
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
-
 
         Connection cameraConnection = null;
         if (validateParticipantJoined(sessionProperty, sessionCreated,sessionIdToSessionContextMap)) {
@@ -308,5 +322,17 @@ public class SessionController {
         }
       }
     return false;
+  }
+  private int layoutNumber(String layoutType){
+      if(layoutType.equals("Right Layout")){
+        return 0;
+      }
+      if(layoutType.equals("Bottom Layout")){
+        return 2;
+      }
+      if(layoutType.equals("Overlay Layout")){
+        return 1;
+      }
+      return -1;
   }
 }

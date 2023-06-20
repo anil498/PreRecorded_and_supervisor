@@ -2,6 +2,7 @@
 FROM node:16.10-alpine AS build
 WORKDIR /opt/videoplatform
 COPY /mcarbonPortal .
+RUN npm install source-map --force
 RUN npm install --force
 
 RUN npm run build

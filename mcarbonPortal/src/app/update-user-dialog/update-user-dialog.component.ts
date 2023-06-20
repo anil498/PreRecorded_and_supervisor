@@ -43,7 +43,9 @@ export class UpdateUserDialogComponent implements OnInit {
   selectedAccessId: number[] = [];
   topLevelAccess: any[] = [];
   selectedFeatures: number[] = [];
-
+  topLevelAccess1: any[] = [];
+  topLevelAccess2: any[] = [];
+  videoSelect: any = {};
   selectedFeaturesMeta = {};
   constructor(
     private router: Router,
@@ -55,9 +57,13 @@ export class UpdateUserDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public user: any
   ) {
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
-    const half = Math.ceil(this.featuresData.length / 2);
-    this.featuresData1 = this.featuresData.slice(0, half);
-    this.featuresData2 = this.featuresData.slice(half);
+    const featureHalf = Math.ceil(this.featuresData.length / 2);
+    this.featuresData1 = this.featuresData.slice(0, featureHalf);
+    this.featuresData2 = this.featuresData.slice(featureHalf);
+
+    const accessHalf = Math.ceil(this.topLevelAccess.length / 2);
+    this.topLevelAccess1 = this.topLevelAccess.slice(0, accessHalf);
+    this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
   }
 
   onPhotoSelected(event) {
@@ -91,25 +97,29 @@ export class UpdateUserDialogComponent implements OnInit {
     if (files && files.length > 0) {
       const file: File = files[0];
       const reader = new FileReader();
-      //reader.readAsArrayBuffer(file);
-      console.warn(file);
 
+      reader.readAsDataURL(file);
+      console.log(file);
+      this.videoSelect[featureId] = file.name;
+
+      //reader.readAsArrayBuffer(file);
       reader.onloadend = () => {
-        console.warn(reader.result);
-        const blob = new Blob([reader.result], { type: file.type });
-        console.warn(blob);
+        const blob = { byte: reader.result, type: file.type };
         this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
+        // const videoEl = document.createElement("video");
+        // videoEl.src = <string>reader.result;
+        // videoEl.controls = true;
+        // document.body.appendChild(videoEl);
+        console.warn(featureId);
         console.warn(this.selectedFeaturesMeta[featureId]);
       };
-      // reader.onload = () => {
-      //   console.warn([reader.result]);
-      //   const blob = new Blob([reader.result]);
-      //   console.warn(blob);
-      //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
-      //   console.warn(this.selectedFeaturesMeta[featureId]);
-      // };
-      reader.readAsArrayBuffer(file);
     }
+  }
+
+  videoSelected(featureId: number) {
+    console.log(featureId);
+    console.log(this.videoSelect);
+    return this.videoSelect.hasOwnProperty(featureId);
   }
 
   toggleFeatureSelection(featureId: number): void {

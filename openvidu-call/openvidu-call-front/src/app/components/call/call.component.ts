@@ -18,24 +18,26 @@ export class CallComponent implements OnInit {
 	isRecording: boolean = true;
 	screenShareEnabled: boolean = true;
 	chatEnabled: boolean = true;
-	showSessionId:boolean=true;
-	broadcastingEnabled: boolean=true;
+	showSessionId: boolean = true;
+	broadcastingEnabled: boolean = true;
 	recordingList: RecordingInfo[] = [];
 	recordingError: any;
 	serverError: string = '';
-	participantNameValue:string
+	participantNameValue: string
 	loading: boolean = true;
-	redirectUrl:string;
-	sessionName:string;
-	showLogo:Boolean;
-	logo:string;
-	activitiesButton:Boolean;
-	displayTicker:Boolean;
-	displayTimer:Boolean;
-	description:string;
-	participantsButton:Boolean;
-	sessionDuration:number;
-	type:string;
+	redirectUrl: string;
+	sessionName: string;
+	showLogo: Boolean;
+	logo: string;
+	activitiesButton: Boolean;
+	displayTicker: Boolean;
+	displayTimer: Boolean;
+	description: string;
+	participantsButton: Boolean;
+	sessionDuration: number;
+	type: string;
+	floatingLayout: boolean;
+	layoutNumber: number;
 	private isDebugSession: boolean = false;
 
 	constructor(
@@ -45,7 +47,7 @@ export class CallComponent implements OnInit {
 		private route: ActivatedRoute,
 		private actionService: ActionService,
 		private translateService: TranslateService
-	) {}
+	) { }
 
 	async ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
@@ -79,9 +81,9 @@ export class CallComponent implements OnInit {
 			// Navigate to a specific URL for customers
 			this.restService.removeSession(this.sessionKey);
 			window.location.replace(this.redirectUrl);
-		  } else {
+		} else {
 			window.location.replace(this.redirectUrl);
-		  }
+		}
 	}
 	async onStartRecordingClicked() {
 		try {
@@ -113,49 +115,52 @@ export class CallComponent implements OnInit {
 			console.warn('DEBUGGING SESSION');
 			nickname = this.participantService.getLocalParticipant().getNickname();
 		}
-		try{
+		try {
 			const response = await this.restService.getTokens(this.sessionKey, nickname);
-		this.isRecording = response.settings.recording;
-		this.broadcastingEnabled=response.settings.broadcast;
-		this.recordingList = response.recordings
-		this.tokens = {
-			webcam: response.cameraToken,
-			screen: response.screenToken
-		};
-		this.screenShareEnabled=response.settings.screenShare;
-		this.chatEnabled=response.settings.chat;
-		this.showSessionId=true;
-		if(response.settings.landingPage){
-			this.redirectUrl=response.settings.landingPage;
-		}else{
-			this.redirectUrl="https://in.linkedin.com/company/mcarbon"
+			if(response.isSessionExpired){
+				throw new Error("Session expired");
+			}
+			this.isRecording = response.settings.recording;
+			this.broadcastingEnabled = response.settings.broadcast;
+			this.recordingList = response.recordings
+			this.tokens = {
+				webcam: response.cameraToken,
+				screen: response.screenToken
+			};
+			this.screenShareEnabled = response.settings.screenShare;
+			this.chatEnabled = response.settings.chat;
+			this.showSessionId = true;
+			if (response.settings.landingPage) {
+				this.redirectUrl = response.settings.landingPage;
+			}
+			this.sessionName = response.sessionName;
+			this.showLogo = response.settings.showLogo;
+			this.logo = response.settings.logo.byte;
+			this.activitiesButton = response.settings.activitiesButton;
+			this.displayTicker = response.settings.displayTicker;
+			this.displayTimer = response.settings.displayTimer;
+			if (response.settings.description) {
+				this.description = response.settings.description;
+			} else {
+				this.description = ''
+			}
+			this.sessionDuration = response.settings.duration;
+			this.participantsButton = response.settings.participantsButton;
+			this.type = response.type;
+			this.floatingLayout = response.settings.floatingLayout;
+			this.layoutNumber=response.settings.layoutNumber;
+			if (response.participantName) {
+				this.participantNameValue = response.participantName;
+			} else {
+				this.participantNameValue = response.type;
+			}
+		} catch (error) {
+			console.log(error)
+			this.actionService.openUrlDialog(this.translateService.translate('ERRORS.EXPIRED'), '', true, this.redirectUrl)
+
 		}
-		this.sessionName=response.sessionName;
-		this.showLogo=response.settings.showLogo;
-		this.logo=response.settings.logo.byte;
-		this.activitiesButton=response.settings.activitiesButton;
-		this.displayTicker=response.settings.displayTicker;
-		this.displayTimer=response.settings.displayTimer;
-		if(response.settings.description){
-		this.description=response.settings.description;
-		}else{
-			this.description=''
-		}
-		this.sessionDuration=response.settings.duration;
-		this.participantsButton=response.settings.participantsButton;
-		this.type=response.type;
-		if(response.participantName){
-			this.participantNameValue=response.participantName;
-		}else{
-			this.participantNameValue=response.type;
-		}
-	}catch(error){
-		console.log(error)
-		this.actionService.openUrlDialog(this.translateService.translate('ERRORS.EXPIRED'), '',true,this.redirectUrl)
-	
 	}
-	}
-	recordingEnabled(){
+	recordingEnabled() {
 		return this.isRecording;
 	}
 

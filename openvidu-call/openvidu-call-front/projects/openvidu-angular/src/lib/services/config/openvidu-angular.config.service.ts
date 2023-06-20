@@ -17,6 +17,9 @@ export class OpenViduAngularConfigService {
 
 	participantName = <BehaviorSubject<string>>new BehaviorSubject('');
 	participantNameObs: Observable<string>;
+	
+	floatingLayoutType = <BehaviorSubject<number>>new BehaviorSubject('');
+	floatingLayoutTypeObs: Observable<number>;
 
 	displayTickerValue = <BehaviorSubject<string>>new BehaviorSubject('');
 	displayTickerValueObs: Observable<string>;
@@ -95,6 +98,8 @@ export class OpenViduAngularConfigService {
 	displayAudioDetectionObs: Observable<boolean>;
 	streamSettingsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	streamSettingsButtonObs: Observable<boolean>;
+	floatingLayout = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	floatingLayoutObs: Observable<boolean>;
 	participantItemMuteButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	participantItemMuteButtonObs: Observable<boolean>;
 	backgroundEffectsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
@@ -118,6 +123,7 @@ export class OpenViduAngularConfigService {
 		if (this.isProduction()) console.log('OpenVidu Angular Production Mode');
 		this.minimalObs = this.minimal.asObservable();
 		this.participantNameObs = this.participantName.asObservable();
+		this.floatingLayoutTypeObs=this.floatingLayoutType.asObservable();
 		this.displayTickerValueObs = this.displayTickerValue.asObservable();
 		this.prejoinObs = this.prejoin.asObservable();
 		this.prefullscreenObs = this.prefullscreen.asObservable();
@@ -149,6 +155,7 @@ export class OpenViduAngularConfigService {
 		this.displayParticipantNameObs = this.displayParticipantName.asObservable();
 		this.displayAudioDetectionObs = this.displayAudioDetection.asObservable();
 		this.streamSettingsButtonObs = this.streamSettingsButton.asObservable();
+		this.floatingLayoutObs = this.floatingLayout.asObservable();
 		// Participant item observables
 		this.participantItemMuteButtonObs = this.participantItemMuteButton.asObservable();
 		// Recording activity observables

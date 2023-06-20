@@ -125,6 +125,14 @@ export interface OpenViduLayoutOptions {
 	 * Scale last row for the big elements
 	 */
 	bigScaleLastRow?: boolean;
+	/**
+	 * Enable Floating layout
+	 */
+	floatingLayoutEnable?: boolean;
+	/**
+	 * Floating layout type
+	 */
+	floatingLayoutType?: number;
 }
 
 /**
@@ -231,6 +239,7 @@ export class OpenViduLayout {
 		//   bigAlignItems: 'center',
 		//   smallAlignItems: 'center'
 		// });
+		
 		this.opts = opts;
 		this.layoutContainer = container;
 		this.updateLayout(container, opts);
@@ -665,7 +674,7 @@ export class OpenViduLayout {
 		height: number,
 		count: number,
 		maxWidth: number,
-		maxHeight: number
+		maxHeight: number,
 	) {
 		let maxArea: number;
 		let targetCols: number;
@@ -694,7 +703,10 @@ export class OpenViduLayout {
 			} else if (tRatio < minRatio) {
 				// We went under decrease the width
 				tRatio = minRatio;
-				tWidth = tHeight / tRatio;
+				if(!this.opts.floatingLayoutEnable)
+				{
+					tWidth = tHeight / tRatio;
+				}
 			}
 
 			tWidth = Math.min(maxWidth, tWidth);
@@ -750,7 +762,9 @@ export class OpenViduLayout {
 			bigMaxWidth = Infinity,
 			bigMaxHeight = Infinity,
 			scaleLastRow = true,
-			bigScaleLastRow = true
+			bigScaleLastRow = true,
+			floatingLayoutEnable=false,
+			floatingLayoutType=0
 		} = opts;
 		const availableRatio = containerHeight / containerWidth;
 		let offsetLeft = 0;
@@ -788,8 +802,8 @@ export class OpenViduLayout {
 			let bigWidth;
 			let bigHeight;
 			let showBigFirst = bigFirst;
-
-			if (availableRatio > this.getVideoRatio(bigOnes[0])) {
+			const LayoutMode=floatingLayoutType==2?true:availableRatio > this.getVideoRatio(bigOnes[0])
+			if (LayoutMode) {
 				// We are tall, going to take up the whole width and arrange small
 				// guys at the bottom
 				bigWidth = containerWidth;
@@ -819,6 +833,7 @@ export class OpenViduLayout {
 							bigMaxWidth,
 							bigMaxHeight
 						);
+						
 					}
 					bigHeight = Math.max(
 						containerHeight * minBigPercentage,
@@ -907,12 +922,22 @@ export class OpenViduLayout {
 					width: bigWidth,
 					height: bigHeight
 				};
+				if(floatingLayoutEnable){
+					areas.small = {
+						top: offsetTop,
+						left: offsetLeft-280,
+						width: containerWidth - offsetLeft,
+						height: containerHeight - offsetTop-217
+					};
+				}else 
+				{
 				areas.small = {
 					top: offsetTop,
 					left: offsetLeft,
 					width: containerWidth - offsetLeft,
 					height: containerHeight - offsetTop
 				};
+			}
 			} else {
 				areas.big = {
 					left: bigOffsetLeft,
@@ -1009,7 +1034,8 @@ export class OpenViduLayout {
 			alignItems = 'center',
 			maxWidth = Infinity,
 			maxHeight = Infinity,
-			scaleLastRow = true
+			scaleLastRow = true,
+			floatingLayoutEnable=false
 		} = opts;
 		const ratios = elements.map((element) => element.height / element.width);
 		const count = ratios.length;

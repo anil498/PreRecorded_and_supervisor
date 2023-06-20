@@ -28,6 +28,7 @@ export interface sessionResponse {
     activitiesButton: boolean;
     participantsButton: boolean;
     floatingLayout: boolean;
+    layoutNumber:number;
     supervisor: boolean;
     preRecorded: boolean;
     broadcast: boolean;
@@ -37,4 +38,5 @@ export interface sessionResponse {
   recordings: RecordingInfo[];
   type: string;
   recordingMode: string;
+  isSessionExpired:boolean;
 }

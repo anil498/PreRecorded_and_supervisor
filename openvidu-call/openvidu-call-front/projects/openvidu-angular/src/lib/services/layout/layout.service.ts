@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable,Subscription } from 'rxjs';
 import { LayoutAlignment, LayoutClass, OpenViduLayout, OpenViduLayoutOptions } from '../../models/layout.model';
+import { OpenViduAngularConfigService } from '../config/openvidu-angular.config.service';
 
 /**
  * @internal
@@ -16,14 +17,18 @@ export class LayoutService {
 	private openviduLayout: OpenViduLayout;
 	private openviduLayoutOptions: OpenViduLayoutOptions;
 	private captionsToggling: BehaviorSubject<boolean> = new BehaviorSubject(false);
+	private floatingLayoutSub: Subscription;
+	floatingLayoutEnable:boolean;
+	floatingLayoutType:number;
 
-	constructor() {
+	constructor(private libService:OpenViduAngularConfigService) {
 		this.layoutWidthObs = this.layoutWidth.asObservable();
 		this.captionsTogglingObs = this.captionsToggling.asObservable();
 	}
 
 	initialize(container: HTMLElement) {
 		this.layoutContainer = container;
+		this.subscribeFloatingLayout();
 		this.openviduLayout = new OpenViduLayout();
 		this.openviduLayoutOptions = this.getOptions();
 		if (this.layoutContainer) {
@@ -41,7 +46,7 @@ export class LayoutService {
 			bigClass: LayoutClass.BIG_ELEMENT, // The class to add to elements that should be sized bigger
 			smallClass: LayoutClass.SMALL_ELEMENT,
 			ignoredClass: LayoutClass.IGNORED_ELEMENT,
-			bigPercentage: 0.8, // The maximum percentage of space the big ones should take up
+			bigPercentage: this.floatingLayoutType==1 ? 1 : 0.8,// The maximum percentage of space the big ones should take up
 			minBigPercentage: 0, // If this is set then it will scale down the big space if there is left over whitespace down to this minimum size
 			bigFixedRatio: false, // fixedRatio for the big ones
 			bigMaxRatio: 9 / 16, // The narrowest ratio to use for the big elements (default 2x3)
@@ -50,7 +55,7 @@ export class LayoutService {
 			animate: true, // Whether you want to animate the transitions. Deprecated property, to disable it remove the transaction property on OT_publisher css class
 			alignItems: LayoutAlignment.CENTER,
 			bigAlignItems: LayoutAlignment.CENTER,
-			smallAlignItems: LayoutAlignment.CENTER,
+			smallAlignItems:this.floatingLayoutType==1?LayoutAlignment.END: LayoutAlignment.CENTER,
 			maxWidth: Infinity, // The maximum width of the elements
 			maxHeight: Infinity, // The maximum height of the elements
 			smallMaxWidth: Infinity,
@@ -58,7 +63,9 @@ export class LayoutService {
 			bigMaxWidth: Infinity,
 			bigMaxHeight: Infinity,
 			scaleLastRow: true,
-			bigScaleLastRow: true
+			bigScaleLastRow: true,
+			floatingLayoutEnable:this.floatingLayoutEnable,
+			floatingLayoutType:this.floatingLayoutType
 		};
 		return options;
 	}
@@ -107,5 +114,11 @@ export class LayoutService {
 			element = element.parentElement;
 		}
 		return null;
+	}
+	private subscribeFloatingLayout(){
+		this.floatingLayoutSub = this.libService.floatingLayoutObs.subscribe((value: boolean) => {
+			this.floatingLayoutEnable = value;
+			// this.cd.markForCheck();
+		});
 	}
 }

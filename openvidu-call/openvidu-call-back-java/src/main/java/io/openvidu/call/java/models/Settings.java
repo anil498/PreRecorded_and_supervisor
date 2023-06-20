@@ -8,9 +8,8 @@ import com.google.gson.JsonObject;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Settings {
   private int duration=0;
-  private boolean showLogo=false;
+  private boolean showLogo=true;
   private Object logo;
-  private Boolean moderators = false;
   private String description="";
   private Boolean displayTicker=false;
   private Boolean displayTimer=false;
@@ -22,6 +21,8 @@ public class Settings {
   private Boolean activitiesButton=false;
   private Boolean participantsButton=false;
   private Boolean floatingLayout=false;
+  private String layoutType;
+  private int layoutNumber=0;
   private Boolean supervisor=false;
   private Boolean preRecorded=false;
   private Object preRecordedDetails;
@@ -43,21 +44,12 @@ public class Settings {
     this.logo = logo;
   }
 
-  public Boolean getModerators() {
-    return moderators;
-  }
-
-  public void setModerators(Boolean moderators) {
-    if(moderators!=null)
-    this.moderators = moderators;
-  }
-
   public String getDescription() {
     return description;
   }
 
   public void setDescription(String description) {
-    if(moderators!=null)
+    if(description!=null)
     this.description = description;
   }
 
@@ -66,7 +58,7 @@ public class Settings {
   }
 
   public void setDisplayTicker(Boolean displayTicker) {
-    if(moderators!=null)
+    if(displayTicker!=null)
     this.displayTicker = displayTicker;
   }
 
@@ -75,7 +67,7 @@ public class Settings {
   }
 
   public void setDisplayTimer(Boolean displayTimer) {
-    if(moderators!=null)
+    if(displayTimer!=null)
     this.displayTimer = displayTimer;
   }
 
@@ -84,7 +76,7 @@ public class Settings {
   }
 
   public void setRecording(Boolean recording) {
-    if(moderators!=null)
+    if(recording!=null)
     this.recording = recording;
   }
 
@@ -101,7 +93,7 @@ public class Settings {
   }
 
   public void setScreenShare(Boolean screenShare) {
-    if(moderators!=null)
+    if(screenShare!=null)
     this.screenShare = screenShare;
   }
 
@@ -110,7 +102,7 @@ public class Settings {
   }
 
   public void setWaitForModerator(Boolean waitForModerator) {
-    if(moderators!=null)
+    if(waitForModerator!=null)
     this.waitForModerator = waitForModerator;
   }
 
@@ -119,7 +111,7 @@ public class Settings {
   }
 
   public void setChat(Boolean chat) {
-    if(moderators!=null)
+    if(chat!=null)
     this.chat = chat;
   }
 
@@ -128,7 +120,7 @@ public class Settings {
   }
 
   public void setActivitiesButton(Boolean activitiesButton) {
-    if(moderators!=null)
+    if(activitiesButton!=null)
     this.activitiesButton = activitiesButton;
   }
 
@@ -137,7 +129,7 @@ public class Settings {
   }
 
   public void setParticipantsButton(Boolean participantsButton) {
-    if(moderators!=null)
+    if(participantsButton!=null)
     this.participantsButton = participantsButton;
   }
 
@@ -146,7 +138,7 @@ public class Settings {
   }
 
   public void setFloatingLayout(Boolean floatingLayout) {
-    if(moderators!=null)
+    if(floatingLayout!=null)
     this.floatingLayout = floatingLayout;
   }
 
@@ -155,7 +147,7 @@ public class Settings {
   }
 
   public void setSupervisor(Boolean supervisor) {
-    if(moderators!=null)
+    if(supervisor!=null)
     this.supervisor = supervisor;
   }
 
@@ -164,7 +156,7 @@ public class Settings {
   }
 
   public void setPreRecorded(Boolean preRecorded) {
-    if(moderators!=null)
+    if(preRecorded!=null)
     this.preRecorded = preRecorded;
   }
 
@@ -181,7 +173,7 @@ public class Settings {
   }
 
   public void setBroadcast(Boolean broadcast) {
-    if(moderators!=null)
+    if(broadcast!=null)
     this.broadcast = broadcast;
   }
 
@@ -190,7 +182,6 @@ public class Settings {
   }
 
   public void setShowLogo(boolean showLogo) {
-    if(moderators!=null)
     this.showLogo = showLogo;
   }
 
@@ -203,32 +194,51 @@ public class Settings {
   }
 
   public void setLandingPage(String landingPage) {
-    if(moderators!=null)
+    if(landingPage!=null)
     this.landingPage = landingPage;
+  }
+
+  public String getLayoutType() {
+    return layoutType;
+  }
+
+  public void setLayoutType(String layoutType) {
+    if(layoutType!=null)
+    this.layoutType = layoutType;
+  }
+
+  public int getLayoutNumber() {
+    return layoutNumber;
+  }
+
+  public void setLayoutNumber(int layoutNumber) {
+    this.layoutNumber = layoutNumber;
   }
 
   @Override
   public String toString() {
     return "Settings{" +
-      "duration=" + duration +
-      ", showLogo=" + showLogo +
-      ", logo=" + logo +
-      ", moderators=" + moderators +
-      ", description='" + description + '\'' +
-      ", displayTicker=" + displayTicker +
-      ", displayTimer=" + displayTimer +
-      ", recording=" + recording +
-      ", recordingDetails=" + recordingDetails +
-      ", screenShare=" + screenShare +
-      ", waitForModerator=" + waitForModerator +
-      ", chat=" + chat +
-      ", activitiesButton=" + activitiesButton +
-      ", participantsButton=" + participantsButton +
-      ", floatingLayout=" + floatingLayout +
-      ", supervisor=" + supervisor +
-      ", preRecorded=" + preRecorded +
-      ", preRecordedDetails='" + preRecordedDetails + '\'' +
-      ", broadcast=" + broadcast +
-      '}';
+            "duration=" + duration +
+            ", showLogo=" + showLogo +
+            ", logo=" + logo +
+            ", description='" + description + '\'' +
+            ", displayTicker=" + displayTicker +
+            ", displayTimer=" + displayTimer +
+            ", recording=" + recording +
+            ", recordingDetails=" + recordingDetails +
+            ", screenShare=" + screenShare +
+            ", waitForModerator=" + waitForModerator +
+            ", chat=" + chat +
+            ", activitiesButton=" + activitiesButton +
+            ", participantsButton=" + participantsButton +
+            ", floatingLayout=" + floatingLayout +
+            ", layoutType='" + layoutType + '\'' +
+            ", layoutNumber=" + layoutNumber +
+            ", supervisor=" + supervisor +
+            ", preRecorded=" + preRecorded +
+            ", preRecordedDetails=" + preRecordedDetails +
+            ", broadcast=" + broadcast +
+            ", landingPage='" + landingPage + '\'' +
+            '}';
   }
 }
