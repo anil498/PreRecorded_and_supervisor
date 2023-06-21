@@ -153,10 +153,10 @@ public class UserServiceImpl implements UserService{
                 Boolean bMeta = existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(), HashMap.class));
                 Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(), String.class));
                 Boolean bExp = existing.setExpDate(expDate);
-                if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false) {
-                    logger.info("Please enter valid values, null values not accepted !!!");
-                    return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.NOT_ACCEPTABLE);
-                }
+//                if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false) {
+//                    logger.info("Please enter valid values, null values not accepted !!!");
+//                    return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.NOT_ACCEPTABLE);
+//                }
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
