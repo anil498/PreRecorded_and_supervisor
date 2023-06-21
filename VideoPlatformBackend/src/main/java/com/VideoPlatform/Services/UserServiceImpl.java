@@ -90,10 +90,10 @@ public class UserServiceImpl implements UserService{
         Boolean bFeatures = user.setFeatures(user.getFeatures());
         logger.info("ExP : {} ,Features : {} ",user.getExpDate(),user.getFeatures());
         logger.info("ExP : {} ,Features : {} ",bExp,bFeatures);
-        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false) {
-            logger.info("Please enter valid values, null values not accepted !!!");
-            return null;
-        }
+//        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false) {
+//            logger.info("Please enter valid values, null values not accepted !!!");
+//            return null;
+//        }
         logger.info("User details {}",user.toString());
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         UserAuthEntity u = userAuthRepository.findByToken(token);

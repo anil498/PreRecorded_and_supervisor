@@ -106,10 +106,10 @@ public class AccountServiceImpl implements AccountService {
         Boolean bMeta = user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
         Boolean bAccess = user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
         Boolean bFeatures = user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
-            logger.info("Please enter valid values, null values not accepted !!!");
-            return null;
-        }
+//        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
+//            logger.info("Please enter valid values, null values not accepted !!!");
+//            return null;
+//        }
         createAccount(acc);
         user.setAccountId(acc.getAccountId());
         userService.createUserZero(user);
