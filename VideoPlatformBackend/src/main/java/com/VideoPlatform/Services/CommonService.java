@@ -8,6 +8,9 @@ import com.VideoPlatform.Repository.AccountAuthRepository;
 import com.VideoPlatform.Repository.UserAuthRepository;
 import com.VideoPlatform.Repository.UserRepository;
 import com.VideoPlatform.Utils.TimeUtils;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
@@ -25,8 +26,8 @@ import java.util.*;
 public class CommonService {
 
     private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
-//    String FILEPATH = "D:\\TestVideoWrite\\";
-//    File file = new File(FILEPATH+"abc.png");
+    String FILEPATH = "D:\\TestVideoWrite\\";
+    File file = new File(FILEPATH+"abcd.png");
 
     @Autowired
     AccountAuthRepository accountAuthRepository;
@@ -103,44 +104,42 @@ public class CommonService {
         return true;
     }
 
-//    public String writeByteToFile(String loginId){
-//        try{
-//            logger.info("loginId : {}",loginId);
-//
-//            UserEntity userEntity = userRepository.findByLoginId(loginId);
-//            logger.info("UserEntity : {}",userEntity);
-//            logger.info("UserEntity userId : {}",userEntity.getUserId());
-//            logger.info("UserEntity logo : {}",userEntity.getLogo());
-//            Object logoByte = userEntity.getLogo().get("byte");
-//            ByteArrayOutputStream output = new ByteArrayOutputStream();
-//            ObjectOutputStream obj;
-//            try {
-//                obj = new ObjectOutputStream(output);
-//                obj.writeObject(logoByte);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//
-//            byte[] bytes = output.toByteArray();
-//            ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-//            BufferedImage bImage2 = ImageIO.read(bis);
-//            ImageIO.write(bImage2, "jpg", new File("output.jpg") );
-////            logger.info("logoByte : {}", bytes);
-////            try {
-////                OutputStream os = new FileOutputStream(file);
-////                os.write(bytes);
-////                logger.info("Bytes written successfully !");
-////                os.close();
-////            }
-////            catch (Exception e) {
-////                logger.info("Exception: " + e);
-////            }
-//        }
-//        catch (Exception e){
-//            logger.info("Exception: {} ",e);
-//        }
-//        return "Written !!!";
-//    }
+    public String writeByteToFile(String loginId){
+        try{
+            logger.info("loginId : {}",loginId);
+
+            UserEntity userEntity = userRepository.findByLoginId(loginId);
+            logger.info("UserEntity : {}",userEntity);
+            logger.info("UserEntity userId : {}",userEntity.getUserId());
+            logger.info("UserEntity logo : {}",userEntity.getLogo());
+            Object logoByte = userEntity.getLogo().get("byte");
+            Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get("4"));
+            Object vidByte = map.get("pre_recorded_video_file");
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
+            ObjectOutputStream obj;
+            try {
+                obj = new ObjectOutputStream(output);
+                obj.writeObject(logoByte);
+                logger.info("Bytes written successfully !");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            byte[] bytes = output.toByteArray();
+            try {
+                OutputStream os = new FileOutputStream(file);
+                os.write(bytes);
+                logger.info("Bytes written successfully !");
+                os.close();
+            }
+            catch (Exception e) {
+                logger.info("Exception: " + e);
+            }
+        }
+        catch (Exception e){
+            logger.info("Exception: {} ",e);
+        }
+        return "Written !!!";
+    }
     public Map<String, String> getHeaders(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaderNames();
         Map<String, String> headerMap = new HashMap<>();
@@ -151,4 +150,58 @@ public class CommonService {
         return headerMap;
     }
 
+    public Boolean checkMandatory(String params1){
+        int f=0;
+        logger.info("Params get : {}",params1);
+        Gson gson=new Gson();
+        JsonObject params=gson.fromJson(params1,JsonObject.class);
+        ObjectMapper objectMapper=new ObjectMapper();
+        logger.info("Params jsonObject : {}",params);
+
+        if(params.has("session")){
+            if(params.get("session").isJsonNull()) f=1;
+        }
+        if(params.has("featuresMeta")){
+            logger.info("params.get {}",params.get("featuresMeta"));
+            if(params.get("featuresMeta").isJsonNull() || params.get("logo").equals("")) {f=1;logger.info("Null from featureMeta!");}
+        }
+        if(params.has("expDate")){
+            if(params.get("expDate").isJsonNull()) f=1;
+        }
+        if(params.has("accessId")){
+            if(params.get("accessId").isJsonNull()) f=1;
+        }
+        if(params.has("features")){
+            if(params.get("features").isJsonNull()) f=1;
+        }
+
+        if(f==0) return true;
+        return false;
+    }
+
+    public Boolean checkMandatoryU(Object params1){
+        int f=0;
+        logger.info("Params get : {}",params1);
+        ObjectMapper objectMapper=new ObjectMapper();
+        Map<String,Object> params = objectMapper.convertValue(params1,Map.class);
+        logger.info("Params Value : {}",params);
+
+        if(params.containsKey("session")){
+            if(params.get("session") == null) f=1;
+        }
+        if(params.containsKey("accessId")){
+            if(params.get("accessId")==null) f=1;
+        }
+        if(params.containsKey("features")){
+            if(params.get("features")==null) f=1;
+        }
+        if(params.containsKey("featuresMeta")){
+            if(params.get("featuresMeta")==null) f=1;
+        }
+        if(params.containsKey("expDate")){
+            if(params.get("expDate")==null) f=1;
+        }
+        if(f==0) return true;
+        return false;
+    }
 }

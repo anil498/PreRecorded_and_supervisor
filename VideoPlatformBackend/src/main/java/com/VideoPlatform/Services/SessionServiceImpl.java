@@ -42,6 +42,11 @@ public class SessionServiceImpl implements SessionService{
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
         UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
+        if(userEntity.getFeaturesMeta()==null || userEntity.getSession()==null || account.getSession()==null)
+        {
+            logger.info("Feature meta null..");
+            return null;
+        }
 
         Gson gson = new Gson();
         if (sessionKey.length()==0)

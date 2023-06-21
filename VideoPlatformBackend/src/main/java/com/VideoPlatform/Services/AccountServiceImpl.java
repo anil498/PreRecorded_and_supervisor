@@ -100,16 +100,13 @@ public class AccountServiceImpl implements AccountService {
         user.setEmail(params.get("email").getAsString());
         user.setCreationDate(creation);
         user.setParentId(u.getUserId());
-        Boolean bExp = user.setExpDate(expDate);
-        Boolean bLogo = user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
-        Boolean bSession = user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-        Boolean bMeta = user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-        Boolean bAccess = user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-        Boolean bFeatures = user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
-            logger.info("Please enter valid values, null values not accepted !!!");
-            return null;
-        }
+        user.setExpDate(expDate);
+        user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
+        user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+        user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+        user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+        user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+
         createAccount(acc);
         user.setAccountId(acc.getAccountId());
         userService.createUserZero(user);
@@ -165,17 +162,13 @@ public class AccountServiceImpl implements AccountService {
         objectMapper.registerModule(new JavaTimeModule());
         AccountEntity existing = accountRepository.findByAccountId(params.get("accountId").getAsInt());
         try {
-            Boolean bLogo = existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
-            Boolean bSession = existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-            Boolean bMeta = existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-            Boolean bAccess = existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-            Boolean bFeatures = existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+            existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+            existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+            existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+            existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+            existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
             Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
-            Boolean bExp = existing.setExpDate(expDate);
-            if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
-                logger.info("Please enter valid values, null values not accepted !!!");
-                return null;
-            }
+            existing.setExpDate(expDate);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

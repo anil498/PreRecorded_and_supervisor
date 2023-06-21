@@ -103,6 +103,9 @@ public class UserController {
             logger.info("Invalid Token !");
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
+//        if(!commonService.checkMandatoryU(user)){
+//            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
+//        }
         if(userService.createUser(user,authKey,token,accountId)==null){
             return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
         }
@@ -123,6 +126,9 @@ public class UserController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
+//        if(!commonService.checkMandatory(params1)){
+//            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
+//        }
         return userService.updateUser(params1,authKey);
     }
 
