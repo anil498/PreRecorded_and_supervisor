@@ -1,7 +1,6 @@
 <div
 	*ngIf="this._stream"
 	class="OV_stream"
-	[class.ticker-exists]="displayTickerValue !== ''"
 	[ngClass]="{'no-size': !showVideo}"
 	[id]="'container-' + this._stream.streamManager?.stream?.streamId"
 	#streamContainer

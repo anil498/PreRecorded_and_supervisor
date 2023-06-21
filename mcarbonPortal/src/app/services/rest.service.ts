@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { catchError, lastValueFrom, Subject } from "rxjs";
-import { environment } from "environments/environment.prod";
 @Injectable({
   providedIn: "root",
 })
@@ -23,11 +22,11 @@ export class RestService {
   constructor(private http: HttpClient, private router: Router) {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
     //this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
-    this.baseHref = environment.url;
     //this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
     this.getHeaders();
     this.http.get<any>("assets/json/headers.json").subscribe((response) => {
       this.authKey = response.authKey;
+      this.baseHref = response.url;
     });
   }
 

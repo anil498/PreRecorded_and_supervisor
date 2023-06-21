@@ -86,7 +86,6 @@ public class VideoPlatform {
     } catch (RestClientException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
     }
-
     if (response.getStatusCode().is2xxSuccessful()) {
       return response.getBody();
     } else {

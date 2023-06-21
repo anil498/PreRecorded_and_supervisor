@@ -14,6 +14,7 @@ import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.ErrorResponse;
 import io.openvidu.call.java.models.SessionProperty;
+import io.openvidu.call.java.models.Settings;
 import io.openvidu.call.java.services.SessionService;
 import io.openvidu.call.java.services.VideoPlatformService;
 import io.openvidu.call.java.util.SessionUtil;
@@ -66,8 +67,8 @@ public class SessionController {
     ConcurrentMap<String,SessionContext> sessionIdToSessionContextMap=SessionUtil.getInstance().getSessionIdToSessionContextMap();
     logger.info("Request API /sessions Headers {} and Parameters {}",headers,params);
     String sessionId=null;
-    SessionProperty sessionProperty =null;
-    ErrorResponse errorResponse=new ErrorResponse();
+    SessionProperty sessionProperty =new SessionProperty();
+    sessionProperty.setSettings(new Settings());
     try {
       if (validateRequest(params)) {
         long date = -1;
@@ -77,13 +78,11 @@ public class SessionController {
           nickname = params.get("nickname").toString();
         }
         if(authorization==null){
-          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
-          errorResponse.setReason("Authorization Key not found");
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         } else if (token==null) {
-          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
-          errorResponse.setReason("Token not found");
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         }
         String sessionKey = params.get("sessionKey").toString();
         try {
@@ -91,29 +90,27 @@ public class SessionController {
              logger.info("Session Property: {}", sessionProperty);
              sessionId= sessionProperty.getSessionId();
         }catch (HttpClientErrorException.Forbidden ex) {
-          logger.error("Received 403 Forbidden: {}", ex.getMessage());
+          logger.error("Received 403 Forbidden: {}", ex.getLocalizedMessage());
           sessionProperty.setSessionExpired(true);
           return ResponseEntity.status(HttpStatus.FORBIDDEN).body(sessionProperty);
         }
         catch (HttpClientErrorException.NotFound ex) {
-          logger.error("Received 404 Session Not fount: {}", ex.getMessage());
+          logger.error("Received 404 Session Not fount: {}", ex.getLocalizedMessage());
           sessionProperty.setSessionExpired(true);
           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(sessionProperty);
         }
         catch (Exception e){
           logger.error("Getting Exception while fetching Session property from videoplatform {}",e);
-          errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
-          errorResponse.setReason("Session not found");
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(sessionProperty);
         }
         Session sessionCreated = null;
         if (validateSession(sessionProperty, sessionKey,sessionIdToSessionContextMap)) {
           logger.info("Going to Create session {} with recordingMode {}",sessionProperty.getSessionId(),sessionProperty.getRecordingMode());
           sessionCreated = this.openviduService.createSession(sessionId, sessionProperty.getRecordingMode());
         } else {
-          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
-          errorResponse.setReason("Session limit exist");
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         }
         String MODERATOR_TOKEN_NAME = OpenViduService.MODERATOR_TOKEN_NAME;
         String PARTICIPANT_TOKEN_NAME = OpenViduService.PARTICIPANT_TOKEN_NAME;
@@ -154,9 +151,8 @@ public class SessionController {
             }
           }
         } else {
-          errorResponse.setStatusCode(HttpStatus.NOT_ACCEPTABLE.toString());
-          errorResponse.setReason("Max participant joined");
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         }
         if(!sessionIdToSessionContextMap.containsKey(sessionId)) {
           SessionContext sessionContext = new SessionContext.Builder().sessionObject(sessionCreated).connectionObject(cameraConnection).sessionRequest(sessionProperty).sessionKey(sessionKey).sessionUniqueID(sessionId).build();
@@ -224,9 +220,8 @@ public class SessionController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(sessionProperty);
       }else {
-        errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
-        errorResponse.setReason("SessionKey not found");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        sessionProperty.setSessionExpired(true);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(sessionProperty);
       }
 
       } catch(OpenViduJavaClientException | OpenViduHttpException e){
@@ -240,9 +235,8 @@ public class SessionController {
         } else {
           e.printStackTrace();
           System.err.println(e.getMessage());
-          errorResponse.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.toString());
-          errorResponse.setReason("Session Expired");
-          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errorResponse);
+          sessionProperty.setSessionExpired(true);
+          return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         }
       }
   }
