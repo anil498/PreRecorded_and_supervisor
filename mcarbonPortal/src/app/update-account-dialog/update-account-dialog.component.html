@@ -10,12 +10,11 @@
 
   <mat-tab-group
     #tabGroup
-    [formGroup]="userForm"
-    *ngIf="userForm"
     [dynamicHeight]="false"
     mat-align-tabs="center"
+    (selectedTabChange)="onTabChanged($event)"
   >
-    <mat-tab label="Account">
+    <mat-tab label="Account" [formGroup]="userForm1" *ngIf="userForm1">
       <div class="container">
         <div class="row">
           <div class="col-md-5 offset-md-1">
@@ -27,7 +26,33 @@
                     type="text"
                     placeholder="Name"
                     formControlName="name"
+                    [matTooltip]="getErrorMessage1('name')"
+                    matTooltipClass="tooltip-style"
                   />
+                  <mat-error
+                    *ngIf="
+                      userForm1.get('name').invalid &&
+                      userForm1.get('name').errors.required
+                    "
+                  >
+                    Name is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm1.get('name').invalid &&
+                      userForm1.get('name').errors.minlength
+                    "
+                  >
+                    Name should be at least 4 characters long
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm1.get('name').invalid &&
+                      userForm1.get('name').errors.maxlength
+                    "
+                  >
+                    Name should not exceed 20 characters
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -39,7 +64,25 @@
                     type="number"
                     placeholder="Max User"
                     formControlName="max_user"
+                    [matTooltip]="getErrorMessage1('max_user')"
+                    matTooltipClass="tooltip-style"
                   />
+                  <mat-error
+                    *ngIf="
+                      userForm1.get('max_user').invalid &&
+                      userForm1.get('max_user').errors.required
+                    "
+                  >
+                    Max User is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm1.get('max_user').invalid &&
+                      userForm1.get('max_user').errors.min
+                    "
+                  >
+                    Max User should be 0 or greater
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -51,6 +94,8 @@
                     matInput
                     [matDatepicker]="picker"
                     formControlName="acc_exp_date"
+                    [matTooltip]="getErrorMessage1('acc_exp_date')"
+                    matTooltipClass="tooltip-style"
                   />
                   <mat-hint>MM/DD/YYYY</mat-hint>
                   <mat-datepicker-toggle
@@ -58,6 +103,22 @@
                     [for]="picker"
                   ></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
+                  <mat-error
+                    *ngIf="
+                      userForm1.get('acc_exp_date').invalid &&
+                      userForm1.get('acc_exp_date').errors.required
+                    "
+                  >
+                    Account Expiry Date is required
+                  </mat-error>
+                  <mat-error
+                    *ngIf="
+                      userForm1.get('acc_exp_date').invalid &&
+                      userForm1.get('acc_exp_date').errors.mismatch
+                    "
+                  >
+                    Account Expiry Date should not be in the past
+                  </mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -65,14 +126,30 @@
 
           <div class="col-md-5 offset-md-1">
             <div class="row justify-content-center align-items-center">
-              <img
+              <!-- <img
                 *ngIf="photoControl"
                 [src]="photoUrl"
                 style="border-radius: 50%"
                 alt="selected logo"
                 height="60%"
                 width="60%"
-              />
+              /> -->
+              <ng-container *ngIf="checkImg()"
+                ><img
+                  [src]="photoUrl"
+                  style="border-radius: 50%"
+                  alt="selected logo"
+                  height="150px"
+                  width="150px"
+              /></ng-container>
+              <ng-container *ngIf="!checkImg()"
+                ><img
+                  src="../../assets/img/user_profile.png"
+                  style="border-radius: 50%"
+                  alt="selected logo"
+                  height="150px"
+                  width="150px"
+              /></ng-container>
             </div>
             <div class="row justify-content-center align-items-center">
               <input
@@ -97,14 +174,24 @@
                 type="text"
                 placeholder="Address"
                 formControlName="address"
+                [matTooltip]="getErrorMessage1('address')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm1.get('address').invalid &&
+                  userForm1.get('address').errors.required
+                "
+              >
+                Address is required
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
       </div>
     </mat-tab>
 
-    <mat-tab label="Account Settings">
+    <mat-tab label="Account Settings" [formGroup]="userForm2" *ngIf="userForm2">
       <div class="container">
         <div class="row">
           <div class="col-md-5 offset-md-1">
@@ -114,7 +201,23 @@
                 type="number"
                 placeholder="Maximum Active Sessions"
                 formControlName="max_active_sessions"
+                [matTooltip]="getErrorMessage2('max_active_sessions')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm2.get('max_active_sessions').invalid &&
+                  userForm2.get('max_active_sessions').errors.required
+                "
+                >Max Active Sessions is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm2.get('max_active_sessions').invalid &&
+                  userForm2.get('max_active_sessions').errors.min
+                "
+                >Max Active Sessions should be greater than 0
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="col-md-5">
@@ -124,7 +227,24 @@
                 type="number"
                 placeholder="Maximum Duration (in Minutes)"
                 formControlName="max_duration"
+                [matTooltip]="getErrorMessage2('max_duration')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm2.get('max_duration').invalid &&
+                  userForm2.get('max_duration').errors.required
+                "
+              >
+                Max Duration is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm2.get('max_duration').invalid &&
+                  userForm2.get('max_duration').errors.min
+                "
+                >Max Durations should be greater than 0
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -137,14 +257,31 @@
                 type="number"
                 placeholder="Maximum Participants"
                 formControlName="max_participants"
+                [matTooltip]="getErrorMessage2('max_participants')"
+                matTooltipClass="tooltip-style"
               />
+              <mat-error
+                *ngIf="
+                  userForm2.get('max_participants').invalid &&
+                  userForm2.get('max_participants').errors.required
+                "
+              >
+                Max Participants is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  userForm2.get('max_participants').invalid &&
+                  userForm2.get('max_participants').errors.min
+                "
+                >Max Participants should be greater than 0
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
 
         <div class="row">
           <div class="col-md-10 offset-md-1">
-            <mat-label class="label">Select the Access you want:</mat-label>
+            <mat-label class="label">Select the Access Permissions:</mat-label>
           </div>
         </div>
 
@@ -209,11 +346,11 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Feature List">
+    <mat-tab label="Feature List" [formGroup]="userForm3" *ngIf="userForm3">
       <div class="container">
         <div class="row">
           <div class="col-md-10 offset-md-1">
-            <mat-label class="label">Select the features you want:</mat-label>
+            <mat-label class="label">Select the Features:</mat-label>
           </div>
         </div>
 
@@ -310,6 +447,24 @@
                         "
                       />
                     </mat-form-field>
+
+                    <ng-container *ngSwitchCase="'radio'">
+                      <mat-radio-group
+                        aria-labelledby="example-radio-group-label"
+                        class="example-radio-group"
+                        [value]="
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        "
+                      >
+                        <mat-radio-button
+                          class="example-radio-button"
+                          *ngFor="let name of meta.name"
+                          [value]="name"
+                        >
+                          {{ name }}
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>
@@ -408,6 +563,24 @@
                         "
                       />
                     </mat-form-field>
+
+                    <ng-container *ngSwitchCase="'radio'">
+                      <mat-radio-group
+                        aria-labelledby="example-radio-group-label"
+                        class="example-radio-group"
+                        [value]="
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        "
+                      >
+                        <mat-radio-button
+                          class="example-radio-button"
+                          *ngFor="let name of meta.name"
+                          [value]="name"
+                        >
+                          {{ name }}
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>

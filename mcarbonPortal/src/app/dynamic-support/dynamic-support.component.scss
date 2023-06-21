@@ -185,4 +185,10 @@
   margin-right: -15px;
 }
 
+::ng-deep .tooltip-style.mat-tooltip {
+  color: white !important;
+  background-color: #00a796 !important;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
 
