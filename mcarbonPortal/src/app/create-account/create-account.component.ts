@@ -148,28 +148,44 @@ export class CreateAccountComponent implements OnInit {
     }
   }
 
+  onPhotoDeselected() {
+    this.photoUrl = {};
+    this.photoControl = false;
+    this.logo = {};
+  }
   onFileInputChange(event: any, meta: any, featureId: number): void {
-    const files: FileList = event.target.files;
-    if (files && files.length > 0) {
-      const file: File = files[0];
-      const reader = new FileReader();
-      reader.readAsBinaryString(file);
-      console.log(file);
-      this.videoSelect[featureId] = file.name;
-      reader.onload = () => {
-        const binaryData = reader.result;
-        console.log(binaryData);
-        const blob = new Blob([binaryData], { type: file.type });
-        console.log(blob);
-        //this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
-        this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
+    const file: File = event.target.files[0];
 
-        // videoEl.controls = true;
-        // document.body.appendChild(videoEl);
-        console.warn(featureId);
-        console.warn(this.selectedFeaturesMeta[featureId]);
-      };
-    }
+    //const file: File = files[0];
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    console.log(file);
+    this.videoSelect[featureId] = file.name;
+    reader.onload = () => {
+      const binaryData = reader.result;
+      console.log(typeof binaryData);
+      console.log(binaryData);
+      // const convertedData = new Uint8Array(binaryData as ArrayBuffer);
+      // console.log(typeof convertedData);
+      // console.log(convertedData);
+      const blob = new Blob([binaryData], { type: file.type });
+      console.log(blob);
+      const formData = new FormData();
+      formData.append("precorded_video_file", blob, file.name);
+      console.log(formData);
+      console.log(formData.get("precorded_video_file"));
+      // this.selectedFeaturesMeta[featureId.toString()] = {
+      //   ...this.selectedFeaturesMeta[featureId.toString()],
+      //   [meta.key]: formData,
+      // };
+      this.selectedFeaturesMeta[featureId.toString()][meta.key] = formData.get(
+        "precorded_video_file"
+      );
+      // videoEl.controls = true;
+      // document.body.appendChild(videoEl);
+      console.warn(featureId);
+      console.warn(this.selectedFeaturesMeta[featureId]);
+    };
   }
 
   videoSelected(featureId: number) {

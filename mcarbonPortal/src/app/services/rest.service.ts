@@ -124,6 +124,7 @@ export class RestService {
       const headers = new HttpHeaders({
         Authorization: `${this.authKey}`,
         Token: `${this._token}`,
+        "Content-Type": "application/json"
       });
       return lastValueFrom(
         this.http.post<any>(this.baseHref + "Account/" + path, body, {
