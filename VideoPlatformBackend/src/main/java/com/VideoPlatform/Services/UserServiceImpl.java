@@ -112,11 +112,10 @@ public class UserServiceImpl implements UserService{
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
 
-        if(existing.getAccountId() == accountEntity.getAccountId() || existing.getParentId() == 0) {
+        if(existing.getAccountId() == accountEntity.getAccountId()) {
             existing.setFname(params.get("fname").getAsString());
             existing.setLname(params.get("lname").getAsString());
             try {
-                Boolean bFeatures, bAccess, bSession;
                 if (checkIfAllowedFeature(featuresId, objectMapper.readValue(params.get("features").toString(), Integer[].class))) {
                     existing.setFeatures(objectMapper.readValue(params.get("features").toString(), Integer[].class));
                 } else {
@@ -176,14 +175,14 @@ public class UserServiceImpl implements UserService{
         if(userEntity == null){
             logger.info("No user present with given login id !");
             Map<String,String> result = new HashMap<>();
-            result.put("status_code ","401");
+            result.put("status_code","401");
             result.put("msg", "Invalid username or password !");
             return  new ResponseEntity<>(result,HttpStatus.UNAUTHORIZED);
         }
         if(userEntity.getStatus()!=1){
             logger.info("User does not exist !");
             Map<String,String> result = new HashMap<>();
-            result.put("status_code ","401");
+            result.put("status_code","401");
             result.put("msg", "User does not exist !");
             return  new ResponseEntity<>(result,HttpStatus.UNAUTHORIZED);
         }

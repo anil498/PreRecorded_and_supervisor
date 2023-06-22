@@ -71,6 +71,20 @@ public class CommonService {
         }
         return true;
     }
+    public Boolean isValidRequestUserUpdate(String token,String authKey,String systemName1,String systemName2){
+        UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
+        if(userAuthEntity == null)return false;
+        String systemNames = userAuthEntity.getSystemNames();
+        logger.info("SystemNames : {}",systemNames);
+
+        if(TimeUtils.isExpire(userAuthEntity.getExpDate()))
+            return false;
+        if(!(systemNames.contains(systemName1) || systemNames.contains(systemName2))){
+            logger.info("Permission Denied. Don't have access for this service!");
+            return false;
+        }
+        return true;
+    }
     public Boolean isAccessAllowed(String token,String systemName){
         UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
         String systemNames = userAuthEntity.getSystemNames();
@@ -97,8 +111,7 @@ public class CommonService {
     public Boolean authorizationCheck(String authKey, String token, String systemName){
 
         if(!isValidRequest(token,authKey,systemName)) {
-            logger.info("Unauthorised user, wrong authorization key !");
-            logger.info("Invalid Token !");
+            logger.info("Unauthorised user, wrong authorization key or Invalid Token !");
             return false;
         }
         return true;
@@ -158,21 +171,18 @@ public class CommonService {
         ObjectMapper objectMapper=new ObjectMapper();
         logger.info("Params jsonObject : {}",params);
 
-        if(params.has("session")){
-            if(params.get("session").isJsonNull()) f=1;
+        if(params.has("address")){
+            if(params.get("address").isJsonNull()) f=1;
         }
-        if(params.has("featuresMeta")){
-            logger.info("params.get {}",params.get("featuresMeta"));
-            if(params.get("featuresMeta").isJsonNull() || params.get("logo").equals("")) {f=1;logger.info("Null from featureMeta!");}
+        if(params.has("maxUser")){
+            logger.info("params.get {}",params.get("maxUser"));
+            if(params.get("maxUser").isJsonNull()) {f=1;logger.info("Null from featureMeta!");}
         }
         if(params.has("expDate")){
             if(params.get("expDate").isJsonNull()) f=1;
         }
-        if(params.has("accessId")){
-            if(params.get("accessId").isJsonNull()) f=1;
-        }
-        if(params.has("features")){
-            if(params.get("features").isJsonNull()) f=1;
+        if(params.has("name")){
+            if(params.get("name").isJsonNull()) f=1;
         }
 
         if(f==0) return true;

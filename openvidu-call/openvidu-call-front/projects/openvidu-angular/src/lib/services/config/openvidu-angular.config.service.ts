@@ -18,8 +18,8 @@ export class OpenViduAngularConfigService {
 	participantName = <BehaviorSubject<string>>new BehaviorSubject('');
 	participantNameObs: Observable<string>;
 	
-	floatingLayoutType = <BehaviorSubject<number>>new BehaviorSubject('');
-	floatingLayoutTypeObs: Observable<number>;
+	floatingLayoutType = <BehaviorSubject<number>>new BehaviorSubject(0);
+	floatingLayoutTypeObs: Observable<Number>;
 
 	displayTickerValue = <BehaviorSubject<string>>new BehaviorSubject('');
 	displayTickerValueObs: Observable<string>;

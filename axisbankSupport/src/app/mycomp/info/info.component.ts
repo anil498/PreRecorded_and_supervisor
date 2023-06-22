@@ -18,9 +18,15 @@ export class InfoComponent {
 
   onsubmit()
   {
+
     console.log("click on login btn by user "+this.username);
-    this.dataService.shareusername=this.username;
+    if(this.username.length>=3)
+    {this.dataService.shareusername=this.username;
    this.router.navigate(['/table']);
+    }else
+    {
+      alert('Enter Name must have atleast 3 character');
+    }
    // this.router.navigate(['/table'], { queryParams: { username: this.username } });
 
   }

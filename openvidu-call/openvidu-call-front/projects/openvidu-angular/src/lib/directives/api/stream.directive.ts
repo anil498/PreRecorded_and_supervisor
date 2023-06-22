@@ -209,7 +209,7 @@ export class FloatingLayoutDirective implements AfterViewInit, OnDestroy {
 @Directive({
 	selector: 'ov-videoconference[floatingLayoutType]'
 })
-export class FloatingLayoutTypeDirective implements OnInit {
+export class FloatingLayoutTypeDirective  {
 
 	/**
 	 * @ignore

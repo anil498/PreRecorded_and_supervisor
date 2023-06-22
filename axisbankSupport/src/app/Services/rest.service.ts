@@ -106,7 +106,7 @@ export class RestService {
     }
   } //call request promise close
   //////////---------------------------------------------
-  async sendSMS(sessionId: string, msisdn: string, callUrl: string,getLink:string,participantName:string,description:string,agentName:string=this.agentname) {
+  async sendSMS(sessionId: string, msisdn: string, callUrl: string,getLink:string,participantName:string,description:string,agentName:string) {
     console.log('sms Sent');
 
     try {
@@ -136,7 +136,7 @@ export class RestService {
     description:string,
     getLink:string,
     participantName:string,
-    agentName:string=this.agentname
+    agentName:string
   ) {
     console.warn('Whatsapp Message Sent');
 
@@ -171,7 +171,7 @@ export class RestService {
     getLink:string,
     description:string,
     participantName:string,
-    agentName:string=this.agentname
+    agentName:string
   ) {
     console.log('sendNotify run Notification Sent by data'+title+body+sessionId+msisdn);
     try {

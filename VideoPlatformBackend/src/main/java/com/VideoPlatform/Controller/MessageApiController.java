@@ -94,9 +94,6 @@ public class MessageApiController {
         }
 
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        if(sessionEntityCustomer == null){
-            return new ResponseEntity<>("Insufficient data to create session !",HttpStatus.UNAUTHORIZED);
-        }
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
         String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",callUrl);
@@ -155,9 +152,6 @@ public class MessageApiController {
             agentName= String.valueOf(params.get("agentName"));
         }
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        if(sessionEntityCustomer == null){
-            return new ResponseEntity<>("Insufficient data to create session !",HttpStatus.UNAUTHORIZED);
-        }
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
         String placeHolder= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",placeHolder);
@@ -226,9 +220,6 @@ public class MessageApiController {
             }
 
             SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-            if(sessionEntityCustomer == null){
-                return new ResponseEntity<>("Insufficient data to create session !",HttpStatus.UNAUTHORIZED);
-            }
             SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
             String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
             logger.info("callUrl : {}",callUrl);

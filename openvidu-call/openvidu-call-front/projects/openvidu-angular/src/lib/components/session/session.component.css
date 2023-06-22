@@ -54,7 +54,9 @@
 	height: inherit;
 	width: inherit;
 }
-
+#layout-container.empty-ticker {
+	height: calc(100% - 40px); /* Height when displayTickerValue is blank */
+}
 .mat-drawer-container {
 	background-color: var(--ov-primary-color);
 }

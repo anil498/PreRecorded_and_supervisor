@@ -25,7 +25,7 @@ FROM maven
 WORKDIR /opt/openvidu-call
 
 COPY --from=openvidu-call-build /openvidu-call/openvidu-call-back-java .
-
+RUN sed -i 's@href="session"@href=""@' /opt/openvidu-call/src/main/resources/static/index.html
 # Install backend dependencies and build it for production
 RUN mvn clean install package
 

@@ -122,13 +122,10 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token,"user_update")){
+        if(!commonService.isValidRequestUserUpdate(authKey,token,"user_update","customer_creation")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 
-//        if(!commonService.checkMandatory(params1)){
-//            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
-//        }
         return userService.updateUser(params1,authKey);
     }
 

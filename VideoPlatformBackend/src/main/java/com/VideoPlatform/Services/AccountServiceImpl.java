@@ -162,19 +162,30 @@ public class AccountServiceImpl implements AccountService {
         objectMapper.registerModule(new JavaTimeModule());
         AccountEntity existing = accountRepository.findByAccountId(params.get("accountId").getAsInt());
         try {
-            existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
-            existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-            existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-            existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-            existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-            Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
-            existing.setExpDate(expDate);
+            if(!params.get("logo").isJsonNull())
+                existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+            if(!params.get("session").isJsonNull())
+                existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+            if(!params.get("featuresMeta").isJsonNull())
+                existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+            if(!params.get("accessId").isJsonNull())
+                existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+            if(!params.get("features").isJsonNull())
+                existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+            if(!params.get("expDate").isJsonNull()){
+                Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
+                existing.setExpDate(expDate);
+            }
+            if(!params.get("maxUser").isJsonNull())
+                existing.setMaxUser(params.get("maxUser").getAsInt());
+            if(!params.get("name").isJsonNull())
+                existing.setName(params.get("name").getAsString());
+            if(!params.get("address").isJsonNull())
+                existing.setAddress(params.get("address").getAsString());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        existing.setMaxUser(params.get("maxUser").getAsInt());
-        existing.setName(params.get("name").getAsString());
-        existing.setAddress(params.get("address").getAsString());
+
         logger.info("New Entity {}",existing);
         return accountRepository.save(existing);
     }

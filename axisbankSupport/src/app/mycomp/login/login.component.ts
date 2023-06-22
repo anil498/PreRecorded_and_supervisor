@@ -17,7 +17,8 @@ export class LoginComponent {
   username: string='';
   headers: any[] = [];
   rows: any[] = [];
-  // keyy:string[]=[];
+
+  storagekey:string="agentNamekey";
   // showTable: boolean = false;
   // address: string = '';
   // upname:string='anil';
@@ -131,7 +132,16 @@ export class LoginComponent {
     // this.rows = this.data;
     // console.log("ro are in constr-->"+this.rows);
     // this.showData();
-    this.username=this.dataService.shareusername;
+    if(this.dataService.shareusername=="")
+    {
+       console.log("if run bec this.dataService.shareusername have not any value use storage");
+       this.username=localStorage.getItem(this.storagekey) || "Support";      
+    }
+    else
+{   console.log("else run bec this.dataService.shareusername have some value so store it ");
+   this.username=this.dataService.shareusername;
+      this.saveInlocalstorage(this.username);
+  }
     console.log("username in table"+this.username);
     this.getData();
     
@@ -143,9 +153,14 @@ export class LoginComponent {
     //   this.username = params['username'];
     // });
     // console.log("username in table"+this.username);
+    console.log("ngOnInit run of table");
+
   }
 ////------------------------------------
-
+saveInlocalstorage(agentName:string):void
+{
+localStorage.setItem(this.storagekey,agentName)
+}
 
 ///---------------------------------------
 getData() {
@@ -296,21 +311,21 @@ getData() {
     
     this.data[index]['Last Interaction Time']=this.getCurrentTime();;
     
-
+     let agentName=this.username;
 
     if (connecttype == 'SMS') {
       console.log('function call for sms');
-      this.SendBySMS(phone_no,this.customername_send,this.userinfo);
+      this.SendBySMS(phone_no,this.customername_send,this.userinfo,agentName);
     } else if (connecttype == 'WhatsApp') {
       console.log('function call for WhatsApp');
-      this.SendByWhatsApp(phone_no,this.customername_send,this.userinfo);
+      this.SendByWhatsApp(phone_no,this.customername_send,this.userinfo,agentName);
     } else if (connecttype == 'CallToApp') {
       console.log('function call for App');
-      this.SendByApp(phone_no,this.customername_send,this.userinfo);
+      this.SendByApp(phone_no,this.customername_send,this.userinfo,agentName);
     }
   }
 
-  async SendBySMS(phone_no: string,customername:string,userdetils:string) {
+  async SendBySMS(phone_no: string,customername:string,userdetils:string,agentName:string) {
     console.log(' call api for sms by no' + phone_no);
 
     const sessionId = 'anilsession';
@@ -330,7 +345,8 @@ getData() {
           callUrl,
           getLink,
           customername,
-          userdetils
+          userdetils,
+          agentName
         );
       
 
@@ -380,7 +396,7 @@ getData() {
   } //###########sendbysms close
 
   /////---------------------------------------------------------
-  async SendByWhatsApp(phone_no: string,customername:string,userdetils:string) {
+  async SendByWhatsApp(phone_no: string,customername:string,userdetils:string,agentName:string) {
     console.log(' call api for  WhatsApp by no' + phone_no);
 
     //------------------
@@ -403,7 +419,8 @@ getData() {
         templateId,
         userdetils,
         getLink,
-        customername
+        customername,
+        agentName
      
       );
     } catch (error) {
@@ -449,7 +466,7 @@ getData() {
     //---------------
   } //SendByWhatsApp close
 
-  async SendByApp(phone_no: string,customername:string,userdetils:string) {
+  async SendByApp(phone_no: string,customername:string,userdetils:string,agentName:string) {
     const getLink="1";
     console.log(' call api for app by no' + phone_no);
     let messageResponse;
@@ -462,7 +479,8 @@ getData() {
         phone_no,
         getLink,
         userdetils,
-        customername
+        customername,
+        agentName
       );
     } catch (error) {
       //this.goTo("/call", sessionId);

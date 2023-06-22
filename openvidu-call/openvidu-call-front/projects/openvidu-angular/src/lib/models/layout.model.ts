@@ -703,7 +703,7 @@ export class OpenViduLayout {
 			} else if (tRatio < minRatio) {
 				// We went under decrease the width
 				tRatio = minRatio;
-				if(!this.opts.floatingLayoutEnable)
+				if(!(this.opts.floatingLayoutType==1))
 				{
 					tWidth = tHeight / tRatio;
 				}
@@ -922,7 +922,7 @@ export class OpenViduLayout {
 					width: bigWidth,
 					height: bigHeight
 				};
-				if(floatingLayoutEnable){
+				if(floatingLayoutType==1){
 					areas.small = {
 						top: offsetTop,
 						left: offsetLeft-280,

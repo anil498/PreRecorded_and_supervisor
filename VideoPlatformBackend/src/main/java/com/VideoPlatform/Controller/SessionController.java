@@ -63,9 +63,6 @@ public class SessionController {
         }
 
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        if(sessionEntityCustomer == null){
-            return new ResponseEntity<>("Insufficient data to create session !",HttpStatus.UNAUTHORIZED);
-        }
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
 
 

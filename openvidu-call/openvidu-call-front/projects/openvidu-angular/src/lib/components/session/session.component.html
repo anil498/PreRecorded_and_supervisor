@@ -16,7 +16,7 @@
 					</div>
 				</div>
 			</div>
-			<div id="layout-container" #layoutContainer>
+			<div id="layout-container" #layoutContainer [ngClass]="{ 'empty-ticker': displayTickerValue }">
 				<ng-container *ngTemplateOutlet="layoutTemplate"></ng-container>
 			</div>
 		</mat-sidenav-content>

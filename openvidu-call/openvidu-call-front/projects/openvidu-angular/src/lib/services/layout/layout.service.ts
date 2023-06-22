@@ -18,6 +18,7 @@ export class LayoutService {
 	private openviduLayoutOptions: OpenViduLayoutOptions;
 	private captionsToggling: BehaviorSubject<boolean> = new BehaviorSubject(false);
 	private floatingLayoutSub: Subscription;
+	private floatingLayoutTypeSub: Subscription;
 	floatingLayoutEnable:boolean;
 	floatingLayoutType:number;
 
@@ -118,6 +119,10 @@ export class LayoutService {
 	private subscribeFloatingLayout(){
 		this.floatingLayoutSub = this.libService.floatingLayoutObs.subscribe((value: boolean) => {
 			this.floatingLayoutEnable = value;
+			// this.cd.markForCheck();
+		});
+		this.floatingLayoutTypeSub = this.libService.floatingLayoutTypeObs.subscribe((value: number) => {
+			this.floatingLayoutType = value;
 			// this.cd.markForCheck();
 		});
 	}
