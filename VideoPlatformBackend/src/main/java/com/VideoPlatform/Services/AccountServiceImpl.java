@@ -161,6 +161,11 @@ public class AccountServiceImpl implements AccountService {
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         AccountEntity existing = accountRepository.findByAccountId(params.get("accountId").getAsInt());
+
+        logger.info("Old Data : {}",existing);
+        logger.info("New Data : {}",params);
+        commonService.compareAndChange(params,existing,params.get("accountId").getAsInt());
+
         try {
             if(!params.get("logo").isJsonNull())
                 existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
@@ -186,8 +191,9 @@ public class AccountServiceImpl implements AccountService {
             e.printStackTrace();
         }
 
+        accountRepository.save(existing);
         logger.info("New Entity {}",existing);
-        return accountRepository.save(existing);
+        return null;
     }
     @Override
     public String deleteAccount(Integer accountId) {

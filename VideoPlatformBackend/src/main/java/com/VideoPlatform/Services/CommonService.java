@@ -1,6 +1,7 @@
 package com.VideoPlatform.Services;
 
 import com.VideoPlatform.Entity.AccountAuthEntity;
+import com.VideoPlatform.Entity.AccountEntity;
 import com.VideoPlatform.Entity.UserAuthEntity;
 import com.VideoPlatform.Entity.UserEntity;
 import com.VideoPlatform.Repository.AccessRepository;
@@ -8,7 +9,9 @@ import com.VideoPlatform.Repository.AccountAuthRepository;
 import com.VideoPlatform.Repository.UserAuthRepository;
 import com.VideoPlatform.Repository.UserRepository;
 import com.VideoPlatform.Utils.TimeUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -213,5 +216,52 @@ public class CommonService {
         }
         if(f==0) return true;
         return false;
+    }
+
+    public void compareAndChange(JsonObject params, AccountEntity storedExisting,Integer accountId) {
+
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        Integer[] existingFeatureId = storedExisting.getFeatures();
+        Integer[] existingAccessId = storedExisting.getAccessId();
+        HashMap<String, Object> existingSession = storedExisting.getSession();
+
+        try {
+            Integer[] newFeatureId = objectMapper.readValue(params.get("features").toString(), Integer[].class);
+            Integer[] newAccessId = objectMapper.readValue(params.get("accessId").toString(), Integer[].class);
+            HashMap<String, Object> newSession = objectMapper.readValue(params.get("session").toString(), HashMap.class);
+
+            Integer[] deletedFeatureValues = findDeletedValues(existingFeatureId,newFeatureId);
+            Integer[] deletedAccessValues = findDeletedValues(existingAccessId,newAccessId);
+
+            for (int value : deletedFeatureValues) {
+                userRepository.deleteFeatureValues(value,accountId);
+            }
+            for (int value : deletedAccessValues) {
+                userRepository.deleteAccessValues(value,accountId);
+            }
+
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Integer[] findDeletedValues(Integer[] existingFeatureId, Integer[] newFeatureId) {
+        HashSet<Integer> set = new HashSet<>();
+        for (int value : newFeatureId) {
+            set.add(value);
+        }
+        HashSet<Integer> deletedValuesSet = new HashSet<>();
+        for (int value : existingFeatureId) {
+            if (!set.contains(value)) {
+                deletedValuesSet.add(value);
+            }
+        }
+        Integer[] deletedValues = new Integer[deletedValuesSet.size()];
+        int index = 0;
+        for (int value : deletedValuesSet) {
+            deletedValues[index++] = value;
+        }
+        return deletedValues;
     }
 }

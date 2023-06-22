@@ -71,27 +71,57 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserEntity createUser(UserEntity user,String authKey,String token,int accountId) {
-        AccountEntity a = accountRepository.findByAccountId(accountId);
+    public ResponseEntity<?> createUser(UserEntity user,String authKey,String token) {
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
+        Integer accountId = accountAuthEntity.getAccountId();
+        AccountEntity accountEntity = accountRepository.findByAccountId(accountId);
         if(userRepository.findByLoginId(user.getLoginId()) != null){
             logger.info("Login Id already exists !");
-            return null;
+            return new ResponseEntity<>("Login Id already exists !",HttpStatus.UNAUTHORIZED);
         }
-        int maxUsers = a.getMaxUser();
+        int maxUsers = accountEntity.getMaxUser();
         if(maxUsers<=(userRepository.usersAccount(accountId)-1)){
             logger.info("No more users are allowed, max limit exceed..!");
-            return null;
+            return new ResponseEntity<>("No more users are allowed, max limit exceed..!",HttpStatus.UNAUTHORIZED);
         }
+        Integer[] featuresId = accountEntity.getFeatures();
+        Integer[] accessId = accountEntity.getAccessId();
+        HashMap<String, Object> sessionA = accountEntity.getSession();
+
+            if (checkIfAllowedFeature(featuresId, user.getFeatures())) {
+                user.setFeatures(user.getFeatures());
+            } else {
+                logger.info("Feature values not present in Account Entity. Not allowed to create !");
+                return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
+            }
+            if (checkIfAllowedAccess(accessId,user.getAccessId())) {
+                user.setAccessId(user.getAccessId());
+            } else {
+                logger.info("Access Id values not present in Account Entity. Not allowed to create !");
+                return new ResponseEntity<>("Invalid access id values !", HttpStatus.NOT_ACCEPTABLE);
+            }
+            if (checkIfAllowedSession(sessionA, user.getSession())) {
+                user.setSession(user.getSession());
+            } else {
+                logger.info("Invalid session values. Not allowed to create !");
+                return new ResponseEntity<>("Invalid session values !", HttpStatus.NOT_ACCEPTABLE);
+            }
+
         logger.info("User details {}",user.toString());
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        UserAuthEntity u = userAuthRepository.findByToken(token);
+
+        UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
         Date creation = TimeUtils.getDate();
-        user.setAccountId(acc.getAccountId());
+        user.setAccountId(accountId);
         user.setCreationDate(creation);
-        user.setParentId(u.getUserId());
+        user.setParentId(userAuthEntity.getUserId());
         String myPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(myPass);
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code ","200");
+        result.put("msg", "User created!");
+        return ok(result);
     }
     @Override
     public UserEntity createUserZero(UserEntity user) {
@@ -101,13 +131,16 @@ public class UserServiceImpl implements UserService{
     @Override
     public ResponseEntity<?> updateUser(String params1,String authKey) {
         logger.info("Params Update : {}",params1);
+
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
+
         AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
         AccountEntity accountEntity = accountRepository.findByAccountId(accountAuthEntity.getAccountId());
         UserEntity existing = userRepository.findByUserId(params.get("userId").getAsInt());
+
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
