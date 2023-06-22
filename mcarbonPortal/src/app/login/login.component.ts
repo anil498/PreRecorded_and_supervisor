@@ -6,7 +6,7 @@ import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { RouteInfo } from "app/model/ROUTE";
 import { HttpClient } from "@angular/common/http";
 
-export var ROUTE : RouteInfo[] = [];
+export var ROUTE: RouteInfo[] = [];
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
@@ -42,11 +42,11 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.http
-    .get<RouteInfo[]>("assets/json/access.json")
-    .subscribe((response: RouteInfo[]) => {
-      console.warn(response);
-      ROUTE = response;
-    });
+      .get<RouteInfo[]>("assets/json/access.json")
+      .subscribe((response: RouteInfo[]) => {
+        console.warn(response);
+        ROUTE = response;
+      });
   }
 
   async login() {
@@ -95,15 +95,22 @@ export class LoginComponent implements OnInit {
       console.warn(loginResponse);
       this.restService.setData(loginResponse);
       this.restService.setToken(this.token);
-      this.restService.setAuthKey(loginResponse.auth_key)
+      this.restService.setAuthKey(loginResponse.auth_key);
       this.restService.setUserId(this.username);
-      const defaultLabel = loginResponse.Access[0].systemName;
+      let defaultLabel: any;
+      if (loginResponse.Access.length === 0) {
+        defaultLabel = "user_profile";
+      } else {
+        defaultLabel = loginResponse.Access[0].systemName;
+      }
       this.router.navigate(["/app/" + `${defaultLabel}`]);
       // this.router.navigate(["/app/dashboard"]);
     } catch (err) {
       console.log(err);
       if (err.status === 0) {
         this.state = "Server Not Responding";
+      } else if (err.error) {
+        this.state = err.error.msg;
       } else if (err.status === 401) {
         this.state = "Unauthorized User";
       } else {

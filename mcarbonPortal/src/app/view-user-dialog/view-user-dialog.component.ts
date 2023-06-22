@@ -27,7 +27,9 @@ export class ViewUserDialogComponent implements OnInit {
   login_id: string;
   acc_exp_date: Date;
   exp_date: string;
-
+  logo: any;
+  photoUrl: string;
+  photoControl: boolean = false;
   password: string;
   confirm_password: string;
 
@@ -63,6 +65,10 @@ export class ViewUserDialogComponent implements OnInit {
     const accessHalf = Math.ceil(this.topLevelAccess.length / 2);
     this.topLevelAccess1 = this.topLevelAccess.slice(0, accessHalf);
     this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
+  }
+
+  checkImg(): boolean {
+    return this.photoControl;
   }
 
   updateSelectedFeaturesMeta(featureId: string | number, metaValue: any) {
@@ -110,7 +116,7 @@ export class ViewUserDialogComponent implements OnInit {
       email: [this.user.email, Validators.required],
       login_id: [this.user.loginId, Validators.required],
       acc_exp_date: [new Date(this.user.expDate), Validators.required],
-
+      logo: [this.user.logo],
       password: ["", Validators.required],
       confirm_password: ["", Validators.required],
       accessList: [this.user.accessId, Validators.required],
@@ -134,7 +140,11 @@ export class ViewUserDialogComponent implements OnInit {
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
-
+    this.logo = this.userForm.value.logo;
+    if (this.logo !== null && Object.keys(this.logo).length !== 0) {
+      this.photoControl = true;
+      this.photoUrl = this.logo.byte;
+    }
     // For diplaying previous checked Access
     for (let i = 0; i < this.accessData.length; i++) {
       var flag = true;
@@ -194,8 +204,10 @@ export class ViewUserDialogComponent implements OnInit {
     }
   }
 
-  onTabChanged(event: MatTabChangeEvent) {
+  onTabChanged(event: any) {
+    console.log("Tab changed from Label" + event.index);
     this.currentTabIndex = event.index;
+    this.tabGroup.selectedIndex = this.currentTabIndex;
   }
 
   isFirstTab(): boolean {

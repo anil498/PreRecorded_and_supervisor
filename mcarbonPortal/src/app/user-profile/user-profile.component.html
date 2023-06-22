@@ -53,15 +53,11 @@
         <div class="card card-profile card-profile-1">
           <div class="card-avatar">
             <a href="javascript:void(0)">
-              <img
-                *ngIf="isLogo"
-                class="img"
-                src="{{ user.logo.byte }}"
-              />
+              <img *ngIf="isLogo" class="img" src="{{ user.logo.byte }}" />
               <img
                 *ngIf="!isLogo"
                 class="img"
-                src="../../assets/img/faces/marc.jpg"
+                src="../../assets/img/user_profile.png"
               />
             </a>
           </div>

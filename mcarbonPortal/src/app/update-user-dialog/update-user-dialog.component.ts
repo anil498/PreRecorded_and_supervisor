@@ -1,5 +1,17 @@
-import { Component, Inject, OnInit, ViewChild } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import {
+  Component,
+  ElementRef,
+  Inject,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ValidationErrors,
+  Validators,
+} from "@angular/forms";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatTabChangeEvent, MatTabGroup } from "@angular/material/tabs";
@@ -17,7 +29,10 @@ export class UpdateUserDialogComponent implements OnInit {
   @ViewChild("tabGroup") tabGroup: MatTabGroup;
   title: string;
   currentTabIndex: number = 0;
-  userForm: FormGroup;
+  userForm1: FormGroup;
+  userForm2: FormGroup;
+  userForm3: FormGroup;
+  userForm4: FormGroup;
   loginResponse: any;
 
   emptyField: boolean = false;
@@ -31,7 +46,7 @@ export class UpdateUserDialogComponent implements OnInit {
   exp_date: string;
   logo: any = null;
   photoUrl: any;
-  photoControl: boolean;
+  photoControl: boolean = false;
   max_duration: number;
   max_active_sessions: number;
   max_participants: number;
@@ -54,6 +69,7 @@ export class UpdateUserDialogComponent implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
+    private elementRef: ElementRef,
     @Inject(MAT_DIALOG_DATA) public user: any
   ) {
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
@@ -64,6 +80,10 @@ export class UpdateUserDialogComponent implements OnInit {
     const accessHalf = Math.ceil(this.topLevelAccess.length / 2);
     this.topLevelAccess1 = this.topLevelAccess.slice(0, accessHalf);
     this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
+  }
+
+  checkImg(): boolean {
+    return this.photoControl;
   }
 
   onPhotoSelected(event) {
@@ -182,35 +202,64 @@ export class UpdateUserDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
-    this.userForm = this.fb.group(
-      {
-        user_fname: [this.user.fname, Validators.required],
-        user_lname: [this.user.lname, Validators.required],
-        mobile: [this.user.contact, Validators.required],
-        email: [this.user.email, Validators.required],
-        login_id: [this.user.loginId, Validators.required],
-        logo: [this.user.logo],
-        acc_exp_date: [new Date(this.user.expDate), Validators.required],
-
-        accessList: [this.user.accessId, Validators.required],
-
-        max_duration: [this.user.session.max_duration, Validators.required],
-        max_active_sessions: [
-          this.user.session.max_active_sessions,
+    this.userForm1 = this.fb.group({
+      user_fname: [
+        this.user.fname,
+        [
           Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+          Validators.pattern("^[a-zA-Z]+$"),
         ],
-        max_participants: [
-          this.user.session.max_participants,
+      ],
+      user_lname: [
+        this.user.lname,
+        [
           Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(20),
+          Validators.pattern("^[a-zA-Z]+$"),
         ],
+      ],
+      mobile: [
+        this.user.contact,
+        [
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(10),
+          Validators.pattern("^[0-9]+$"),
+        ],
+      ],
+      email: [this.user.email, [Validators.required, Validators.email]],
+      login_id: [this.user.loginId],
+      logo: [this.user.logo],
+      acc_exp_date: [
+        new Date(this.user.expDate),
+        [Validators.required, this.dateValidator],
+      ],
+    });
 
-        featureList: [this.user.features, Validators.required],
-        featureMeta: [this.user.featuresMeta, Validators.required],
-      },
-      {
-        validator: [this.dateValidator],
-      }
-    );
+    this.userForm2 = this.fb.group({
+      accessList: [this.user.accessId, Validators.required],
+    });
+    this.userForm3 = this.fb.group({
+      max_duration: [
+        this.user.session.max_duration,
+        [Validators.required, Validators.min(0)],
+      ],
+      max_active_sessions: [
+        this.user.session.max_active_sessions,
+        [Validators.required, Validators.min(0)],
+      ],
+      max_participants: [
+        this.user.session.max_participants,
+        [Validators.required, Validators.min(1)],
+      ],
+    });
+    this.userForm4 = this.fb.group({
+      featureList: [this.user.features],
+      featureMeta: [this.user.featuresMeta],
+    });
 
     this.accessData.forEach((access) => {
       console.log(access);
@@ -218,20 +267,22 @@ export class UpdateUserDialogComponent implements OnInit {
         this.title = access.name;
       }
     });
-    this.userForm.controls["login_id"].disable();
-    this.selectedAccessId = this.userForm.value.accessList;
-    this.selectedFeatures = this.userForm.value.featureList;
-    this.selectedFeaturesMeta = this.userForm.value.featureMeta;
-    this.logo = this.userForm.value.logo;
-    if (this.logo !== null) {
+    this.userForm1.controls["login_id"].disable();
+    this.selectedAccessId = this.userForm2.value.accessList;
+    this.selectedFeatures = this.userForm4.value.featureList;
+    this.selectedFeaturesMeta = this.userForm4.value.featureMeta;
+    this.logo = this.userForm1.value.logo;
+    if (this.logo !== null && Object.keys(this.logo).length !== 0) {
       this.photoControl = true;
       this.photoUrl = this.logo.byte;
     }
     // For diplaying previous checked Access
     for (let i = 0; i < this.accessData.length; i++) {
       var flag = true;
-      for (let j = 0; j < this.userForm.value.accessList.length; j++) {
-        if (this.userForm.value.accessList[j] === this.accessData[i].accessId) {
+      for (let j = 0; j < this.userForm2.value.accessList.length; j++) {
+        if (
+          this.userForm2.value.accessList[j] === this.accessData[i].accessId
+        ) {
           flag = false;
           break;
         }
@@ -241,9 +292,9 @@ export class UpdateUserDialogComponent implements OnInit {
     // for displaying previous checked features
     for (let i = 0; i < this.featuresData.length; i++) {
       var flag = true;
-      for (let j = 0; j < this.userForm.value.featureList.length; j++) {
+      for (let j = 0; j < this.userForm4.value.featureList.length; j++) {
         if (
-          this.userForm.value.featureList[j] === this.featuresData[i].featureId
+          this.userForm4.value.featureList[j] === this.featuresData[i].featureId
         ) {
           flag = false;
           break;
@@ -272,14 +323,16 @@ export class UpdateUserDialogComponent implements OnInit {
     return false;
   }
 
-  dateValidator(formGroup: FormGroup) {
-    const expdate = formGroup.get("acc_exp_date").value;
+  dateValidator(control: AbstractControl): ValidationErrors | null {
+    const selectedDate = new Date(control.value);
     const currentDate = new Date();
-    if (expdate < currentDate) {
-      formGroup.get("acc_exp_date").setErrors({ mismatch: true });
-    } else {
-      formGroup.get("acc_exp_date").setErrors(null);
+    if (
+      selectedDate < currentDate &&
+      selectedDate.toDateString() !== currentDate.toDateString()
+    ) {
+      return { mismatch: true };
     }
+    return null;
   }
 
   previous() {
@@ -290,14 +343,37 @@ export class UpdateUserDialogComponent implements OnInit {
   }
 
   next() {
-    if (this.currentTabIndex < this.tabGroup._tabs.length - 1) {
-      this.currentTabIndex++;
-      this.tabGroup.selectedIndex = this.currentTabIndex;
+    console.warn("Current Tab " + this.tabGroup.selectedIndex);
+    if (this.tabGroup.selectedIndex < this.tabGroup._tabs.length - 1) {
+      if (this.tabGroup.selectedIndex === 0) {
+        if (this.userForm1.invalid) {
+          console.log(this.userForm1.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      } else if (this.tabGroup.selectedIndex === 1) {
+        if (this.userForm2.invalid) {
+          console.log(this.userForm2.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      } else if (this.tabGroup.selectedIndex === 2) {
+        if (this.userForm3.invalid) {
+          console.log(this.userForm3.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      }
+
+      //this.currentTabIndex++;
+      this.tabGroup.selectedIndex = this.tabGroup.selectedIndex + 1;
     }
   }
 
-  onTabChanged(event: MatTabChangeEvent) {
+  onTabChanged(event: any) {
+    console.log("Tab changed from Label" + event.index);
     this.currentTabIndex = event.index;
+    this.tabGroup.selectedIndex = this.currentTabIndex;
   }
 
   isFirstTab(): boolean {
@@ -315,22 +391,27 @@ export class UpdateUserDialogComponent implements OnInit {
   }
 
   async submit() {
+    if (this.userForm4.invalid) {
+      console.log(this.userForm4.invalid);
+      this.focusOnInvalidFields();
+      return;
+    }
     this.emptyField = false;
-    this.user_fname = this.userForm.value.user_fname;
-    this.user_lname = this.userForm.value.user_lname;
-    this.mobile = this.userForm.value.mobile;
-    this.email = this.userForm.value.email;
-    this.login_id = this.userForm.value.login_id;
-    this.acc_exp_date = this.userForm.value.acc_exp_date;
+    this.user_fname = this.userForm1.value.user_fname;
+    this.user_lname = this.userForm1.value.user_lname;
+    this.mobile = this.userForm1.value.mobile;
+    this.email = this.userForm1.value.email;
+    this.login_id = this.userForm1.value.login_id;
+    this.acc_exp_date = this.userForm1.value.acc_exp_date;
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
     this.exp_date =
       this.exp_date +
       " " +
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
 
-    this.max_duration = this.userForm.value.max_duration;
-    this.max_participants = this.userForm.value.max_participants;
-    this.max_active_sessions = this.userForm.value.max_active_sessions;
+    this.max_duration = this.userForm3.value.max_duration;
+    this.max_participants = this.userForm3.value.max_participants;
+    this.max_active_sessions = this.userForm3.value.max_active_sessions;
     console.log(this.logo);
     if (
       this.user_lname === "" ||
@@ -394,5 +475,119 @@ export class UpdateUserDialogComponent implements OnInit {
     setTimeout(() => {
       this.emptyField = false;
     }, time);
+  }
+
+  focusOnInvalidFields() {
+    console.log("focus");
+    const invalidFields =
+      this.elementRef.nativeElement.querySelectorAll(".ng-invalid");
+    console.log(invalidFields);
+    if (invalidFields.length > 0) {
+      invalidFields.forEach((invalid) => {
+        invalid.focus();
+      });
+    }
+  }
+
+  getErrorMessage1(controlName: string): string {
+    const control = this.userForm1.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "user_fname") {
+      if (control?.hasError("minlength")) {
+        return "First Name should be at least 4 characters";
+      }
+
+      if (control?.hasError("maxlength")) {
+        return "First Name should not exceed 20 characters";
+      }
+
+      if (control?.hasError("pattern")) {
+        return "First Name should only contain letters";
+      }
+    }
+
+    if (controlName === "user_lname") {
+      if (control?.hasError("minlength")) {
+        return "Last Name should be at least 4 characters";
+      }
+
+      if (control?.hasError("maxlength")) {
+        return "Last Name should not exceed 20 characters";
+      }
+
+      if (control?.hasError("pattern")) {
+        return "Last Name should only contain letters";
+      }
+    }
+
+    if (controlName === "mobile") {
+      if (control?.hasError("minlength") || control?.hasError("maxlength")) {
+        return "Mobile number should be of 10-digits";
+      }
+      if (control?.hasError("pattern")) {
+        return "Mobile number should only contain digits";
+      }
+    }
+
+    if (controlName === "email") {
+      if (control?.hasError("email")) {
+        return "Invalid email format";
+      }
+    }
+
+    if (controlName === "login_id") {
+      if (control?.hasError("minlength")) {
+        return "Login ID should be at least 6 characters";
+      }
+
+      if (control?.hasError("maxlength")) {
+        return "Login ID should not exceed 20 characters";
+      }
+    }
+    if (control.hasError("mismatch")) {
+      return "Account Expiry Date should not be in the past";
+    }
+    return "";
+  }
+
+  getErrorMessage2(controlName: string): string {
+    const control = this.userForm2.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+    return "";
+  }
+
+  getErrorMessage3(controlName: string): string {
+    const control = this.userForm3.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "max_active_sessions") {
+      if (control?.hasError("min")) {
+        return "Max Active Sessions should be greater than 0";
+      }
+    }
+    if (controlName === "max_duration") {
+      if (control?.hasError("min")) {
+        return "Max Duration should be greater than 0";
+      }
+    }
+    if (controlName === "max_participants") {
+      if (control?.hasError("min")) {
+        return "Max Participants should be greater than 0";
+      }
+    }
+
+    return "";
+  }
+
+  getErrorMessage4(controlName: string): string {
+    const control = this.userForm4.get(controlName);
+    return "";
   }
 }

@@ -37,7 +37,10 @@ export class CreateAccountComponent implements OnInit {
   title: string;
   samePassword = false;
   currentTabIndex: number = 0;
-  userForm: FormGroup;
+  userForm1: FormGroup;
+  userForm2: FormGroup;
+  userForm3: FormGroup;
+  userForm4: FormGroup;
   messageResponse: any;
   loginResponse: any;
 
@@ -112,25 +115,29 @@ export class CreateAccountComponent implements OnInit {
     this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
   }
 
+  checkImg(): boolean {
+    return this.photoControl;
+  }
+
   onPhotoSelected(event) {
     const files: FileList = event.target.files;
     if (files && files.length > 0) {
       const file: File = files[0];
-
       const image: ImageFile = {
         file: file,
         url: this.sanitizer.bypassSecurityTrustUrl(
           window.URL.createObjectURL(file)
         ),
       };
+      console.log(image.url);
       const reader = new FileReader();
       console.log(file);
       reader.readAsDataURL(file);
-      reader.onloadend = async () => {
-        const arrBuffer: any = await file.arrayBuffer();
+      reader.onloadend = () => {
+        const arrBuffer: any = file.arrayBuffer();
         const buffer = new Uint8Array(arrBuffer);
         var array = Array.from(buffer);
-        this.photoUrl = reader.result;
+        this.photoUrl = image.url;
         this.photoControl = true;
 
         this.logo = { byte: reader.result, type: file.type };
@@ -146,21 +153,17 @@ export class CreateAccountComponent implements OnInit {
     if (files && files.length > 0) {
       const file: File = files[0];
       const reader = new FileReader();
-      reader.readAsArrayBuffer(file);
+      reader.readAsBinaryString(file);
       console.log(file);
       this.videoSelect[featureId] = file.name;
-
-      //reader.readAsArrayBuffer(file);
-      reader.onloadend = async () => {
-        const arrbuffer: any = await file.arrayBuffer();
-        let byteArray = new Uint8Array(arrbuffer);
-        var array = Array.from(byteArray);
-        console.log(typeof byteArray + " " + typeof array);
-        const blob = { byte: array, type: file.type };
+      reader.onload = () => {
+        const binaryData = reader.result;
+        console.log(binaryData);
+        const blob = new Blob([binaryData], { type: file.type });
+        console.log(blob);
         //this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
         this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
-        // const videoEl = document.createElement("video");
-        // videoEl.src = <string>reader.result;
+
         // videoEl.controls = true;
         // document.body.appendChild(videoEl);
         console.warn(featureId);
@@ -170,10 +173,9 @@ export class CreateAccountComponent implements OnInit {
   }
 
   videoSelected(featureId: number) {
-    console.log(featureId);
-    console.log(this.videoSelect);
     return this.videoSelect.hasOwnProperty(featureId);
   }
+
   toggleFeatureSelection(featureId: number): void {
     const index = this.selectedFeatures.indexOf(featureId);
     if (index > -1) {
@@ -236,7 +238,7 @@ export class CreateAccountComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.userForm = this.fb.group({
+    this.userForm1 = this.fb.group({
       name: [
         "",
         [
@@ -249,6 +251,21 @@ export class CreateAccountComponent implements OnInit {
       acc_exp_date: [new Date(), [Validators.required, this.dateValidator]],
       max_user: [0, [Validators.required, Validators.min(0)]],
       logo: [null],
+    });
+
+    this.userForm2 = this.fb.group({
+      accessList: [""],
+
+      max_duration: ["", [Validators.required, Validators.min(0)]],
+      max_active_sessions: ["", [Validators.required, Validators.min(0)]],
+      max_participants: ["", [Validators.required, Validators.min(1)]],
+    });
+
+    this.userForm3 = this.fb.group({
+      featureList: [[]],
+    });
+
+    this.userForm4 = this.fb.group({
       user_fname: [
         "",
         [
@@ -268,13 +285,12 @@ export class CreateAccountComponent implements OnInit {
         ],
       ],
       mobile: [
-        "",
-        Validators.required,
+        null,
         [
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(10),
-          Validators.pattern("^[0-9]{10}$"),
+          Validators.pattern("^[0-9]+$"),
         ],
       ],
       email: ["", [Validators.required, Validators.email]],
@@ -299,15 +315,8 @@ export class CreateAccountComponent implements OnInit {
         ],
       ],
       confirm_password: ["", [Validators.required]],
-
-      accessList: ["", Validators.required],
-
-      max_duration: ["", [Validators.required, Validators.min(0)]],
-      max_active_sessions: ["", [Validators.required, Validators.min(0)]],
-      max_participants: ["", [Validators.required, Validators.min(1)]],
-
-      featureList: [[]],
     });
+
     this.accessData.forEach((access) => {
       if (access.systemName == "customer_creation") {
         this.title = access.name;
@@ -346,15 +355,80 @@ export class CreateAccountComponent implements OnInit {
   }
 
   next() {
-    if (this.currentTabIndex < this.tabGroup._tabs.length - 1) {
-      this.currentTabIndex++;
-      this.tabGroup.selectedIndex = this.currentTabIndex;
+    console.warn("Current Tab " + this.tabGroup.selectedIndex);
+    if (this.tabGroup.selectedIndex < this.tabGroup._tabs.length - 1) {
+      if (this.tabGroup.selectedIndex === 0) {
+        if (this.userForm1.invalid) {
+          console.log(this.userForm1.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      } else if (this.tabGroup.selectedIndex === 1) {
+        if (this.userForm2.invalid) {
+          console.log(this.userForm2.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      } else if (this.tabGroup.selectedIndex === 2) {
+        if (this.userForm3.invalid) {
+          console.log(this.userForm3.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      }
+
+      //this.currentTabIndex++;
+      this.tabGroup.selectedIndex = this.tabGroup.selectedIndex + 1;
     }
   }
 
   onTabChanged(event: any) {
+    console.log("Tab changed from Label" + event.index);
     this.currentTabIndex = event.index;
+    this.tabGroup.selectedIndex = this.currentTabIndex;
   }
+
+  // private getTabIndex(tabName: string): number {
+  //   switch (tabName) {
+  //     case "Account":
+  //       return 0;
+  //     case "Account Settings":
+  //       return 1;
+  //     case "Feature List":
+  //       return 2;
+  //     case "User Information":
+  //       return 3;
+  //     default:
+  //       return -1;
+  //   }
+  // }
+
+  // onTabGroupClick(event: MouseEvent) {
+  //   console.log(event);
+  //   const clickedTabIndex = this.getTabIndex(event.toElement.innerText);
+
+  //   if (clickedTabIndex === -1) {
+  //     return;
+  //   }
+
+  //   if (!(this.currentTabIndex === clickedTabIndex)) {
+  //     if (this.currentTabIndex === 0) {
+  //       if (this.userForm1.invalid) return;
+  //       this.currentTabIndex = clickedTabIndex;
+  //     } else if (this.currentTabIndex === 1) {
+  //       if (this.userForm2.invalid) return;
+  //       this.currentTabIndex = clickedTabIndex;
+  //     } else if (this.currentTabIndex === 2) {
+  //       if (this.userForm3.invalid) return;
+  //       this.currentTabIndex = clickedTabIndex;
+  //     } else if (this.currentTabIndex === 3) {
+  //       if (this.userForm4.invalid) return;
+  //       this.currentTabIndex = clickedTabIndex;
+  //     } else {
+  //       return;
+  //     }
+  //   }
+  // }
 
   isFirstTab(): boolean {
     return this.currentTabIndex === 0;
@@ -365,24 +439,27 @@ export class CreateAccountComponent implements OnInit {
       : false;
   }
   showSubmit(): boolean {
-    if (this.tabGroup.selectedIndex == this.tabGroup._tabs.length - 1)
+    if (this.tabGroup.selectedIndex === this.tabGroup._tabs.length - 1)
       return true;
     else return false;
   }
 
   async submit() {
-    if (this.userForm.invalid) {
+    if (this.userForm4.invalid) {
       console.warn("CHECKING VALIDATIONS");
+      console.warn("Selected Feature Meta: ");
+      console.log(this.selectedFeaturesMeta);
       this.focusOnInvalidFields();
+      console.warn("CHECKED");
       return false;
     }
 
     this.emptyError = false;
 
-    this.name = this.userForm.value.name;
-    this.address = this.userForm.value.address;
-    this.max_user = this.userForm.value.max_user;
-    this.acc_exp_date = this.userForm.value.acc_exp_date;
+    this.name = this.userForm1.value.name;
+    this.address = this.userForm1.value.address;
+    this.max_user = this.userForm1.value.max_user;
+    this.acc_exp_date = this.userForm1.value.acc_exp_date;
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
     this.exp_date =
       this.exp_date +
@@ -390,42 +467,42 @@ export class CreateAccountComponent implements OnInit {
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
     //this.logo = this.userForm.value.logo;
 
-    this.max_duration = this.userForm.value.max_duration;
-    this.max_participants = this.userForm.value.max_participants;
-    this.max_active_sessions = this.userForm.value.max_active_sessions;
+    this.max_duration = this.userForm2.value.max_duration;
+    this.max_participants = this.userForm2.value.max_participants;
+    this.max_active_sessions = this.userForm2.value.max_active_sessions;
 
-    this.user_fname = this.userForm.value.user_fname;
-    this.user_lname = this.userForm.value.user_lname;
-    this.mobile = this.userForm.value.mobile;
-    this.email = this.userForm.value.email;
-    this.login_id = this.userForm.value.login_id;
+    this.user_fname = this.userForm4.value.user_fname;
+    this.user_lname = this.userForm4.value.user_lname;
+    this.mobile = this.userForm4.value.mobile;
+    this.email = this.userForm4.value.email;
+    this.login_id = this.userForm4.value.login_id;
 
-    this.password = this.userForm.value.password;
+    this.password = this.userForm4.value.password;
     console.log("Access ID: " + this.selectedAccessId);
     console.log("Feature ID: " + this.selectedFeatures);
     console.log("FeatureMetas " + `${this.selectedFeaturesMeta}`);
     console.log(this.logo);
 
-    if (
-      this.name == null ||
-      this.max_user == null ||
-      this.acc_exp_date == null ||
-      this.address == null ||
-      this.max_active_sessions == null ||
-      this.max_duration == null ||
-      this.max_participants == null ||
-      this.password == null ||
-      this.user_fname == null ||
-      this.user_lname == null ||
-      this.mobile == null ||
-      this.email == null ||
-      this.login_id == null ||
-      this.confirm_password == null
-    ) {
-      this.openSnackBar("ALL FIELDS ARE MANDATORY", "snackBar");
-      this.timeOut(3000);
-      return;
-    }
+    // if (
+    //   this.name == null ||
+    //   this.max_user == null ||
+    //   this.acc_exp_date == null ||
+    //   this.address == null ||
+    //   this.max_active_sessions == null ||
+    //   this.max_duration == null ||
+    //   this.max_participants == null ||
+    //   this.password == null ||
+    //   this.user_fname == null ||
+    //   this.user_lname == null ||
+    //   this.mobile == null ||
+    //   this.email == null ||
+    //   this.login_id == null ||
+    //   this.confirm_password == null
+    // ) {
+    //   this.openSnackBar("ALL FIELDS ARE MANDATORY", "snackBar");
+    //   this.timeOut(3000);
+    //   return;
+    // }
 
     let response: any;
 
@@ -453,16 +530,15 @@ export class CreateAccountComponent implements OnInit {
         this.password
       );
       console.warn(response);
-      if (response.status_code === 200) {
-        this.openSnackBar(response.msg, "snackBar");
-        this.timeOut(3000);
-      }
+      this.openSnackBar(response.msg, "snackBar");
+      this.timeOut(3000);
+      this.dialogRef.close();
+      this.restService.closeDialog();
     } catch (error) {
       console.warn(error);
+      this.openSnackBar("error", "snackBar");
+      this.timeOut(3000);
     }
-    this.messageResponse = response;
-    this.dialogRef.close();
-    this.restService.closeDialog();
   }
 
   openSnackBar(message: string, color: string) {
@@ -478,16 +554,39 @@ export class CreateAccountComponent implements OnInit {
   }
 
   focusOnInvalidFields() {
+    console.log("focus");
     const invalidFields =
       this.elementRef.nativeElement.querySelectorAll(".ng-invalid");
-
+    console.log(invalidFields);
     if (invalidFields.length > 0) {
-      invalidFields[0].focus();
+      invalidFields.forEach((invalid) => {
+        invalid.focus();
+      });
     }
   }
 
-  getErrorMessage(controlName: string): string {
-    const control = this.userForm.get(controlName);
+  getErrorMessage1(controlName: string): string {
+    const control = this.userForm1.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+    if (control.hasError("minlength")) {
+      return "Name should be at least 4 characters long";
+    }
+    if (control.hasError("maxlength")) {
+      return "Name should not exceed 20 characters";
+    }
+    if (control.hasError("min")) {
+      return "Max User should be 0 or greater";
+    }
+    if (control.hasError("mismatch")) {
+      return "Account Expiry Date should not be in the past";
+    }
+    return "";
+  }
+
+  getErrorMessage2(controlName: string): string {
+    const control = this.userForm2.get(controlName);
     if (control.hasError("required")) {
       return "This field is required";
     }
@@ -507,6 +606,25 @@ export class CreateAccountComponent implements OnInit {
         return "Max Participants should be greater than 0";
       }
     }
+
+    return "";
+  }
+
+  getErrorMessage3(controlName: string): string {
+    const control = this.userForm1.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    return "";
+  }
+
+  getErrorMessage4(controlName: string): string {
+    const control = this.userForm4.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
     if (controlName === "user_fname") {
       if (control?.hasError("minlength")) {
         return "First Name should be at least 4 characters";
@@ -537,7 +655,7 @@ export class CreateAccountComponent implements OnInit {
 
     if (controlName === "mobile") {
       if (control?.hasError("minlength") || control?.hasError("maxlength")) {
-        return "Mobile number should be 10 digits";
+        return "Mobile number should be of 10-digits";
       }
       if (control?.hasError("pattern")) {
         return "Mobile number should only contain digits";
@@ -574,18 +692,6 @@ export class CreateAccountComponent implements OnInit {
       }
     }
 
-    if (control.hasError("minlength")) {
-      return "Name should be at least 4 characters long";
-    }
-    if (control.hasError("maxlength")) {
-      return "Name should not exceed 20 characters";
-    }
-    if (control.hasError("min")) {
-      return "Max User should be 0 or greater";
-    }
-    if (control.hasError("mismatch")) {
-      return "Account Expiry Date should not be in the past";
-    }
     return "";
   }
 }
