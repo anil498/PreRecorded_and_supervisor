@@ -35,12 +35,15 @@ export class FormDialogComponent implements OnInit {
   title: string;
   samePassword = false;
   currentTabIndex: number = 0;
-  userForm: FormGroup;
+  userForm1: FormGroup;
+  userForm2: FormGroup;
+  userForm3: FormGroup;
+  userForm4: FormGroup;
   messageResponse: any;
   loginResponse: any;
 
   emptyField: boolean = false;
-  logo: any;
+  logo: any = {};
   photoUrl: any;
   photoControl: boolean = false;
   user_fname: string;
@@ -90,34 +93,38 @@ export class FormDialogComponent implements OnInit {
     this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
   }
 
+  checkImg(): boolean {
+    return this.photoControl;
+  }
   onPhotoSelected(event) {
     const files: FileList = event.target.files;
     if (files && files.length > 0) {
       const file: File = files[0];
-
       const image: ImageFile = {
         file: file,
         url: this.sanitizer.bypassSecurityTrustUrl(
           window.URL.createObjectURL(file)
         ),
       };
+      console.log(image.url);
       const reader = new FileReader();
       console.log(file);
-      reader.readAsArrayBuffer(file);
-      reader.onloadend = async () => {
-        const arrBuffer: any = await file.arrayBuffer();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const arrBuffer: any = file.arrayBuffer();
         const buffer = new Uint8Array(arrBuffer);
         var array = Array.from(buffer);
-        this.photoUrl = reader.result;
+        this.photoUrl = image.url;
         this.photoControl = true;
 
-        this.logo = { byte: array, type: file.type };
+        this.logo = { byte: reader.result, type: file.type };
         console.log(this.logo);
         console.log(this.photoControl);
         console.log(this.photoUrl);
       };
     }
   }
+
   // onFileInputChange(event: any, meta: any, featureId: number): void {
   //   const files: FileList = event.target.files;
   //   if (files && files.length > 0) {
@@ -229,7 +236,7 @@ export class FormDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
-    this.userForm = this.fb.group({
+    this.userForm1 = this.fb.group({
       user_fname: [
         "",
         [
@@ -249,7 +256,7 @@ export class FormDialogComponent implements OnInit {
         ],
       ],
       mobile: [
-        "",
+        null,
         [
           Validators.required,
           Validators.minLength(10),
@@ -267,7 +274,9 @@ export class FormDialogComponent implements OnInit {
         ],
       ],
       acc_exp_date: [new Date(), [Validators.required, this.dateValidator]],
+    });
 
+    this.userForm2 = this.fb.group({
       password: [
         "",
         [
@@ -280,21 +289,25 @@ export class FormDialogComponent implements OnInit {
         ],
       ],
       confirm_password: ["", [Validators.required]],
-      accessList: ["", Validators.required],
+      accessList: [""],
+    });
 
+    this.userForm3 = this.fb.group({
       max_duration: ["", [Validators.required, Validators.min(0)]],
       max_active_sessions: ["", [Validators.required, Validators.min(0)]],
       max_participants: ["", [Validators.required, Validators.min(1)]],
+    });
 
+    this.userForm4 = this.fb.group({
       featureList: [[]],
     });
+
     this.accessData.forEach((access) => {
       console.log(access);
       if (access.systemName == "user_creation") {
         this.title = access.name;
       }
     });
-    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
   }
 
   passwordMatchValidator(formGroup: FormGroup) {
@@ -328,14 +341,37 @@ export class FormDialogComponent implements OnInit {
   }
 
   next() {
-    if (this.currentTabIndex < this.tabGroup._tabs.length - 1) {
-      this.currentTabIndex++;
-      this.tabGroup.selectedIndex = this.currentTabIndex;
+    console.warn("Current Tab " + this.tabGroup.selectedIndex);
+    if (this.tabGroup.selectedIndex < this.tabGroup._tabs.length - 1) {
+      if (this.tabGroup.selectedIndex === 0) {
+        if (this.userForm1.invalid) {
+          console.log(this.userForm1.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      } else if (this.tabGroup.selectedIndex === 1) {
+        if (this.userForm2.invalid) {
+          console.log(this.userForm2.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      } else if (this.tabGroup.selectedIndex === 2) {
+        if (this.userForm3.invalid) {
+          console.log(this.userForm3.invalid);
+          this.focusOnInvalidFields();
+          return;
+        }
+      }
+
+      //this.currentTabIndex++;
+      this.tabGroup.selectedIndex = this.tabGroup.selectedIndex + 1;
     }
   }
 
-  onTabChanged(event: MatTabChangeEvent) {
+  onTabChanged(event: any) {
+    console.log("Tab changed from Label" + event.index);
     this.currentTabIndex = event.index;
+    this.tabGroup.selectedIndex = this.currentTabIndex;
   }
 
   isFirstTab(): boolean {
@@ -353,25 +389,30 @@ export class FormDialogComponent implements OnInit {
   }
 
   async submit() {
+    if (this.userForm4.invalid) {
+      console.log(this.userForm3.invalid);
+      this.focusOnInvalidFields();
+      return;
+    }
     this.emptyField = false;
-    this.user_fname = this.userForm.value.user_fname;
-    this.user_lname = this.userForm.value.user_lname;
-    this.mobile = this.userForm.value.mobile;
-    this.email = this.userForm.value.email;
-    this.login_id = this.userForm.value.login_id;
-    this.acc_exp_date = this.userForm.value.acc_exp_date;
+    this.user_fname = this.userForm1.value.user_fname;
+    this.user_lname = this.userForm1.value.user_lname;
+    this.mobile = this.userForm1.value.mobile;
+    this.email = this.userForm1.value.email;
+    this.login_id = this.userForm1.value.login_id;
+    this.acc_exp_date = this.userForm1.value.acc_exp_date;
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
     this.exp_date =
       this.exp_date +
       " " +
       this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
 
-    this.password = this.userForm.value.password;
-    this.confirm_password = this.userForm.value.confirm_password;
+    this.password = this.userForm2.value.password;
+    this.confirm_password = this.userForm2.value.confirm_password;
 
-    this.max_duration = this.userForm.value.max_duration;
-    this.max_participants = this.userForm.value.max_participants;
-    this.max_active_sessions = this.userForm.value.max_active_sessions;
+    this.max_duration = this.userForm3.value.max_duration;
+    this.max_participants = this.userForm3.value.max_participants;
+    this.max_active_sessions = this.userForm3.value.max_active_sessions;
 
     if (
       this.user_lname === "" ||
@@ -419,16 +460,14 @@ export class FormDialogComponent implements OnInit {
         this.selectedFeaturesMeta
       );
       console.warn(response);
-      if (response.statusCode === 200) {
-        this.dialogRef.close();
-        this.restService.closeDialog();
-      }
+      this.openSnackBar(response.msg, "snackBar");
+      this.dialogRef.close();
+      this.restService.closeDialog();
     } catch (error) {
-      console.warn(error);
+      console.log(error)
+      this.openSnackBar("error", "snackBar");
+      this.timeOut(3000);
     }
-    this.messageResponse = response;
-    this.dialogRef.close();
-    this.restService.closeDialog();
   }
 
   openSnackBar(message: string, color: string) {
@@ -447,35 +486,23 @@ export class FormDialogComponent implements OnInit {
   }
 
   focusOnInvalidFields() {
+    console.log("focus");
     const invalidFields =
       this.elementRef.nativeElement.querySelectorAll(".ng-invalid");
-
+    console.log(invalidFields);
     if (invalidFields.length > 0) {
-      invalidFields[0].focus();
+      invalidFields.forEach((invalid) => {
+        invalid.focus();
+      });
     }
   }
 
-  getErrorMessage(controlName: string): string {
-    const control = this.userForm.get(controlName);
+  getErrorMessage1(controlName: string): string {
+    const control = this.userForm1.get(controlName);
     if (control.hasError("required")) {
       return "This field is required";
     }
 
-    if (controlName === "max_active_sessions") {
-      if (control?.hasError("min")) {
-        return "Max Active Sessions should be greater than 0";
-      }
-    }
-    if (controlName === "max_duration") {
-      if (control?.hasError("min")) {
-        return "Max Duration should be greater than 0";
-      }
-    }
-    if (controlName === "max_participants") {
-      if (control?.hasError("min")) {
-        return "Max Participants should be greater than 0";
-      }
-    }
     if (controlName === "user_fname") {
       if (control?.hasError("minlength")) {
         return "First Name should be at least 4 characters";
@@ -528,6 +555,17 @@ export class FormDialogComponent implements OnInit {
         return "Login ID should not exceed 20 characters";
       }
     }
+    if (control.hasError("mismatch")) {
+      return "Account Expiry Date should not be in the past";
+    }
+    return "";
+  }
+
+  getErrorMessage2(controlName: string): string {
+    const control = this.userForm2.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
 
     if (controlName === "password") {
       if (control?.hasError("minlength")) {
@@ -543,18 +581,36 @@ export class FormDialogComponent implements OnInit {
       }
     }
 
-    if (control.hasError("minlength")) {
-      return "Name should be at least 4 characters long";
+    return "";
+  }
+
+  getErrorMessage3(controlName: string): string {
+    const control = this.userForm3.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
     }
-    if (control.hasError("maxlength")) {
-      return "Name should not exceed 20 characters";
+
+    if (controlName === "max_active_sessions") {
+      if (control?.hasError("min")) {
+        return "Max Active Sessions should be greater than 0";
+      }
     }
-    if (control.hasError("min")) {
-      return "Max User should be 0 or greater";
+    if (controlName === "max_duration") {
+      if (control?.hasError("min")) {
+        return "Max Duration should be greater than 0";
+      }
     }
-    if (control.hasError("mismatch")) {
-      return "Account Expiry Date should not be in the past";
+    if (controlName === "max_participants") {
+      if (control?.hasError("min")) {
+        return "Max Participants should be greater than 0";
+      }
     }
+
+    return "";
+  }
+
+  getErrorMessage4(controlName: string): string {
+    const control = this.userForm4.get(controlName);
     return "";
   }
 }

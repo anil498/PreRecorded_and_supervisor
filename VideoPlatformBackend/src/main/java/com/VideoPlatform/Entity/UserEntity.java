@@ -256,7 +256,7 @@ public class UserEntity implements Serializable {
 
     @Override
     public String toString() {
-        return "UserEntity{" +
+        return "{" +
                 "userId=" + userId +
                 ", accountId=" + accountId +
                 ", loginId='" + loginId + '\'' +

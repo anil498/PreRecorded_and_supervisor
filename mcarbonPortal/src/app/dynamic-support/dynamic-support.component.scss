@@ -1,188 +1,207 @@
 /* CSS for Dynamic Support Call HTML */
 /* Navbar */
-.main-content{
+.main-content {
   margin-top: 60px !important;
 }
 
 .navbar-default {
-    background-color: #f1f3f4;
-    border-top: 1px solid #dddddd;
-    padding: 15px 0;
-  }
-  .demo-logo {
-    max-height: 30px;
-    margin-right: 10px;
+  background-color: #f1f3f4;
+  border-top: 1px solid #dddddd;
+  padding: 15px 0;
+}
+.demo-logo {
+  max-height: 30px;
+  margin-right: 10px;
+}
+.navbar-brand {
+  font-size: 24px;
+  font-weight: 600;
+  color: #222222;
+  display: flex;
+  align-items: center;
+}
+
+/* Form */
+.formDiv {
+  position: relative;
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 800px;
+  padding: 20px;
+  border: 1px solid #dddddd;
+  box-shadow: 0px 0px 10px #dddddd;
+  border-radius: 10px;
+  align-items: center;
+  display: inline-flexbox;
+}
+.row-content {
+  margin-bottom: 20px;
+}
+label {
+  display: block;
+  font-size: 18px;
+  font-weight: 500;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  color: #333333;
+}
+// input[type="text"],
+// select {
+//   width: 100%;
+//   height: 45px;
+//   padding: 10px 15px;
+//   border: 1px solid #cccccc;
+//   border-radius: 5px;
+//   font-size: 16px;
+//   color: #333333;
+//   margin-bottom: 10px;
+//   box-shadow: none;
+// }
+// select {
+//   appearance: none;
+//   -webkit-appearance: none;
+//   -moz-appearance: none;
+//   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1.4 0L0 1.4l6 6 6-6L10.6 0l-6 6z'/%3E%3C/svg%3E");
+//   background-repeat: no-repeat;
+//   background-position-x: 98%;
+//   background-position-y: 50%;
+//   padding-right: 30px;
+// }
+/* Style for the button container */
+
+/* Style for the buttons */
+.fbutton {
+  position: relative;
+  background: linear-gradient(0deg, #009688, #17d1be);
+  border: none;
+  color: rgb(255, 255, 255);
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 1rem;
+  margin: 10px 30px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+/* Hover effect for the buttons */
+.fbutton:hover {
+  background-color: #cde5f9;
+}
+
+/* Alert message */
+.alert {
+  padding: 0.75rem 1.25rem;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.alert-danger {
+  background-color: #e9bdc2;
+  color: #b02a37;
+  border-color: #e7908c;
+  border-radius: 10px;
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
+/* Footer */
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #f1f3f4;
+  border-top: 1px solid #dddddd;
+}
+
+.footer .text-muted {
+  margin: 20px 0;
+  float: left;
+}
+.mcarbon-logo {
+  max-width: 65px;
+}
+.text-muted {
+  font-size: 14px;
+  color: #333333;
+  font-weight: 400;
+  margin-left: 10px;
+}
+@media screen and (max-width: 768px) {
+  /* Navbar */
+  .navbar-default {
+    padding: 10px 0;
   }
   .navbar-brand {
-    font-size: 24px;
-    font-weight: 600;
-    color: #222222;
-    display: flex;
-    align-items: center;
+    font-size: 20px;
   }
-  
+
   /* Form */
   .formDiv {
-    position: relative;
-    margin-top: 100px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 800px;
-    padding: 20px;
-    border: 1px solid #dddddd;
-    box-shadow: 0px 0px 10px #dddddd;
-    border-radius: 10px;
-    align-items: center;
-    display:inline-flexbox;
-  }
-  .row-content {
-    margin-bottom: 20px;
-  }
-  label {
-    display: block;
-    font-size: 18px;
-    font-weight: 500;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    color: #333333;
+    margin-top: 50px;
   }
   input[type="text"],
   select {
-    width: 100%;
-    height: 45px;
-    padding: 10px 15px;
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    font-size: 16px;
-    color: #333333;
-    margin-bottom: 10px;
-    box-shadow: none;
+    height: 40px;
+    font-size: 14px;
   }
-  select {
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1.4 0L0 1.4l6 6 6-6L10.6 0l-6 6z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position-x: 98%;
-    background-position-y: 50%;
-    padding-right: 30px;
-  }
-  /* Style for the button container */
-  
-  /* Style for the buttons */
   .fbutton {
-    position: relative;
-    background: linear-gradient(0deg, #009688, #17d1be);
-    border: none;
-    color: rgb(255, 255, 255);
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 1rem;
-    margin: 10px 30px;
-    cursor: pointer;
-    transition-duration: 0.4s;
-    border-radius: 20px;
-  font-weight: bold;
-  }
-  
-  /* Hover effect for the buttons */
-  .fbutton:hover {
-    background-color: #cde5f9;
-  }
-  
-  /* Alert message */
-  .alert{
-    padding: 0.75rem 1.25rem;
-  }
-
-  .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border-color: #c3e6cb;
-    border-radius: 10px;
-    font-size: 1rem;
-  }
-
-  .alert-danger{
-    background-color: #e9bdc2;
-    color: #B02A37;
-    border-color: #e7908c;
-    border-radius: 10px;
-    font-weight: bolder;
-    font-size: 1rem;
-  }
-  
-  /* Footer */
-  .footer {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-    background-color: #f1f3f4;
-    border-top: 1px solid #dddddd;
-  }
-  
-  .footer .text-muted {
-      margin: 20px 0;
-      float: left;
+    padding: 8px 16px;
+    font-size: 8px;
+    margin: 5px 15px;
+    width: 80px;
   }
   .mcarbon-logo {
-    max-width: 65px;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
   }
   .text-muted {
-    font-size: 14px;
-    color: #333333;
-    font-weight: 400;
-    margin-left: 10px;
+    text-align: center;
   }
-  @media screen and (max-width: 768px) {
-    /* Navbar */
-    .navbar-default {
-      padding: 10px 0;
-    }
-    .navbar-brand {
-      font-size: 20px;
-    }
-    
-    /* Form */
-    .formDiv {
-      margin-top: 50px;
-  
-    }
-    input[type="text"],
-    select {
-      height: 40px;
-      font-size: 14px;
-    }
-    .fbutton {
-      padding: 8px 16px;
-      font-size: 8px;
-      margin: 5px 15px;
-      width: 80px;
-    }
-    .mcarbon-logo {
-      display: block;
-      margin: 0 auto;
-      text-align: center;
-    }
-    .text-muted {
-      text-align: center;
-    }
-  }
-  
-::ng-deep .mat-tab-group.mat-primary .mat-ink-bar, .mat-tab-nav-bar.mat-primary .mat-ink-bar {
-    background-color: #009688;
 }
 
-.row{
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #009688;
+}
+
+.row {
   margin-left: auto;
   margin-right: auto;
 }
 
-.row-1{
+.row-1 {
   margin-left: -15px;
   margin-right: -15px;
 }
 
+::ng-deep .tooltip-style.mat-tooltip {
+  color: white !important;
+  background-color: #00a796 !important;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
 
+form {
+  margin-top: 2%;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+}
+::ng-deep
+  .mat-form-field-appearance-outline.mat-focused
+  .mat-form-field-outline-thick {
+  color: #00a796;
+}

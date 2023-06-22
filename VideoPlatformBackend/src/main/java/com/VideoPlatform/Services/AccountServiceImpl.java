@@ -100,16 +100,13 @@ public class AccountServiceImpl implements AccountService {
         user.setEmail(params.get("email").getAsString());
         user.setCreationDate(creation);
         user.setParentId(u.getUserId());
-        Boolean bExp = user.setExpDate(expDate);
-        Boolean bLogo = user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
-        Boolean bSession = user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-        Boolean bMeta = user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-        Boolean bAccess = user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-        Boolean bFeatures = user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-//        if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
-//            logger.info("Please enter valid values, null values not accepted !!!");
-//            return null;
-//        }
+        user.setExpDate(expDate);
+        user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
+        user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+        user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+        user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+        user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+
         createAccount(acc);
         user.setAccountId(acc.getAccountId());
         userService.createUserZero(user);
@@ -164,26 +161,39 @@ public class AccountServiceImpl implements AccountService {
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         AccountEntity existing = accountRepository.findByAccountId(params.get("accountId").getAsInt());
+
+        logger.info("Old Data : {}",existing);
+        logger.info("New Data : {}",params);
+        commonService.compareAndChange(params,existing,params.get("accountId").getAsInt());
+
         try {
-            Boolean bLogo = existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
-            Boolean bSession = existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-            Boolean bMeta = existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-            Boolean bAccess = existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-            Boolean bFeatures = existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-            Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
-            Boolean bExp = existing.setExpDate(expDate);
-//            if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
-//                logger.info("Please enter valid values, null values not accepted !!!");
-//                return null;
-//            }
+            if(!params.get("logo").isJsonNull())
+                existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+            if(!params.get("session").isJsonNull())
+                existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
+            if(!params.get("featuresMeta").isJsonNull())
+                existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+            if(!params.get("accessId").isJsonNull())
+                existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
+            if(!params.get("features").isJsonNull())
+                existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
+            if(!params.get("expDate").isJsonNull()){
+                Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
+                existing.setExpDate(expDate);
+            }
+            if(!params.get("maxUser").isJsonNull())
+                existing.setMaxUser(params.get("maxUser").getAsInt());
+            if(!params.get("name").isJsonNull())
+                existing.setName(params.get("name").getAsString());
+            if(!params.get("address").isJsonNull())
+                existing.setAddress(params.get("address").getAsString());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        existing.setMaxUser(params.get("maxUser").getAsInt());
-        existing.setName(params.get("name").getAsString());
-        existing.setAddress(params.get("address").getAsString());
+
+        accountRepository.save(existing);
         logger.info("New Entity {}",existing);
-        return accountRepository.save(existing);
+        return null;
     }
     @Override
     public String deleteAccount(Integer accountId) {

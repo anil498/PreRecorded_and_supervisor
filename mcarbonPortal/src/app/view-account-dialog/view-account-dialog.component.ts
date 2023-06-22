@@ -35,12 +35,13 @@ export class ViewAccountDialogComponent implements OnInit {
   emailError: boolean;
   loginIdError: boolean;
   photoUrl: string;
+  photoControl: boolean = false;
   name: string;
   address: string;
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
-
+  logo: any;
   max_duration: number;
   max_active_sessions: number;
   max_participants: number;
@@ -119,6 +120,10 @@ export class ViewAccountDialogComponent implements OnInit {
     });
   }
 
+  checkImg(): boolean {
+    return this.photoControl;
+  }
+
   async ngOnInit(): Promise<void> {
     this.userForm = this.fb.group({
       name: [this.account.name, Validators.required],
@@ -143,14 +148,17 @@ export class ViewAccountDialogComponent implements OnInit {
     });
 
     this.userForm.disable();
-    if (this.userForm.value.logo !== null) {
-      this.photoUrl = this.userForm.value.logo.byte;
+    this.logo = this.userForm.value.logo;
+
+    if (this.logo !== null && Object.keys(this.logo).length !== 0) {
+      this.photoUrl = this.logo.byte;
+      this.photoControl = true;
     }
 
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;
     this.selectedFeaturesMeta = this.userForm.value.featureMeta;
-    this.topLevelAccess = this.accessData.filter(item => item.pId === 0);
+    this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
     // For diplaying previous checked Access
     if (this.accessData) {
       for (let i = 0; i < this.accessData.length; i++) {

@@ -64,4 +64,14 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Query(nativeQuery = true, value = "Select COUNT(*) from user_data where account_id = :accountId")
     Integer usersAccount(@Param("accountId") Integer accountId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET features = array_remove(features, :feature) WHERE account_id = :accountId")
+    Integer deleteFeatureValues(@Param("feature") Integer feature,@Param("accountId") Integer accountId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET access_id = array_remove(access_id, :access) WHERE account_id = :accountId")
+    Integer deleteAccessValues(@Param("access") Integer access,@Param("accountId") Integer accountId);
 }

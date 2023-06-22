@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
 import { Router } from "@angular/router";
 import { RestService } from "../services/rest.service";
 // import { faWhatsappSquare, faSquareWhatsapp } from '@fortawesome/free-brands-svg-icons'
@@ -30,7 +36,9 @@ export class DynamicSupportComponent implements OnInit {
   showWhatsappTab = false;
   showAppTab = false;
 
-  userForm: FormGroup;
+  userForm3: FormGroup;
+  userForm1: FormGroup;
+  userForm2: FormGroup;
   showDescription: boolean;
   failedMessage: boolean;
   state: any;
@@ -43,17 +51,49 @@ export class DynamicSupportComponent implements OnInit {
   constructor(
     private router: Router,
     private restService: RestService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private elementRef: ElementRef
   ) {
     this.accessList = this.restService.getData().Access;
   }
 
   async ngOnInit(): Promise<void> {
     this.show();
-    this.userForm = this.fb.group({
-      title: ["", [Validators.required]],
-      body: ["", [Validators.required]],
-      msisdn: ["", [Validators.required, Validators.pattern("^[0-9]+$")]],
+
+    this.userForm1 = this.fb.group({
+      msisdn: [
+        "",
+        [Validators.required, Validators.pattern(/^(\d{10})(,\d{10})*$/)],
+      ],
+    });
+    this.userForm2 = this.fb.group({
+      msisdn: [
+        "",
+        [Validators.required, Validators.pattern(/^(\d{10})(,\d{10})*$/)],
+      ],
+    });
+
+    this.userForm3 = this.fb.group({
+      title: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(4),
+          Validators.maxLength(16),
+        ],
+      ],
+      body: [
+        "",
+        [
+          Validators.required,
+          Validators.minLength(6),
+          Validators.maxLength(30),
+        ],
+      ],
+      msisdn: [
+        "",
+        [Validators.required, Validators.pattern(/^(\d{10})(,\d{10})*$/)],
+      ],
     });
   }
 
@@ -82,28 +122,22 @@ export class DynamicSupportComponent implements OnInit {
   async submitForm(type: string) {
     this.showDescription = false;
     this.failedMessage = false;
-    this.phoneError = false;
     var numbers: any = [];
-
-    const msisdn = this.userForm.value.msisdn;
-    if (msisdn == null || msisdn == "") {
-      this.phoneError = true;
-      this.timeOut(3000);
-      return;
-    }
-    console.log("Form Submitted with value: ", this.userForm.value.msisdn);
-
-    var splitted = msisdn.split(",");
-    for (let i = 0; i < splitted.length; i++) {
-      numbers.push(splitted[i]);
-    }
-
-    this.titleValue = this.userForm.value.title;
-    this.bodyValue = this.userForm.value.body;
 
     let messageResponse: any;
     const getLink = "1";
+
     if (type == "sms") {
+      if (this.userForm1.invalid) {
+        this.focusOnInvalidFields();
+        return;
+      }
+      const msisdn = this.userForm1.value.msisdn;
+      console.log("Form Submitted with value: ", this.userForm1.value.msisdn);
+      var splitted = msisdn.split(",");
+      for (let i = 0; i < splitted.length; i++) {
+        numbers.push(splitted[i]);
+      }
       try {
         for (let i = 0; i < numbers.length; i++) {
           messageResponse = await this.restService.sendSMS(numbers[i], getLink);
@@ -133,9 +167,20 @@ export class DynamicSupportComponent implements OnInit {
         this.timeOut(3000);
       }
     } else if (type == "whatsapp") {
+      if (this.userForm2.invalid) {
+        this.focusOnInvalidFields();
+        return;
+      }
+      const msisdn = this.userForm2.value.msisdn;
+      console.log("Form Submitted with value: ", this.userForm2.value.msisdn);
+      var splitted = msisdn.split(",");
+      for (let i = 0; i < splitted.length; i++) {
+        numbers.push(splitted[i]);
+      }
       const type = "template";
       const from = "919811026184";
       const templateId = "53571";
+
       try {
         messageResponse = await this.restService.sendWhatsapp(
           msisdn,
@@ -170,6 +215,19 @@ export class DynamicSupportComponent implements OnInit {
         this.goTo(messageResponse.callurl);
       }
     } else if (type == "notify") {
+      if (this.userForm3.invalid) {
+        this.focusOnInvalidFields();
+        return;
+      }
+      const msisdn = this.userForm3.value.msisdn;
+      console.log("Form Submitted with value: ", this.userForm3.value.msisdn);
+      var splitted = msisdn.split(",");
+      for (let i = 0; i < splitted.length; i++) {
+        numbers.push(splitted[i]);
+      }
+
+      this.titleValue = this.userForm3.value.title;
+      this.bodyValue = this.userForm3.value.body;
       try {
         for (let i = 0; i < numbers.length; i++) {
           messageResponse = await this.restService.sendNotify(
@@ -217,5 +275,70 @@ export class DynamicSupportComponent implements OnInit {
       style: "lowerCase",
     };
     return uniqueNamesGenerator(configName).replace(/[^\w-]/g, "");
+  }
+
+  focusOnInvalidFields() {
+    console.log("focus");
+    const invalidFields =
+      this.elementRef.nativeElement.querySelectorAll(".ng-invalid");
+    console.log(invalidFields);
+    if (invalidFields.length > 0) {
+      invalidFields.forEach((invalid) => {
+        invalid.focus();
+      });
+    }
+  }
+
+  getErrorMessage1(controlName: string): string {
+    const control = this.userForm1.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "msisdn") {
+      if (control?.hasError("pattern")) {
+        return "Enter Valid mobile numbers";
+      }
+    }
+
+    return "";
+  }
+  getErrorMessage2(controlName: string): string {
+    const control = this.userForm2.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "msisdn") {
+      if (control?.hasError("pattern")) {
+        return "Enter Valid mobile numbers";
+      }
+    }
+
+    return "";
+  }
+  getErrorMessage3(controlName: string): string {
+    const control = this.userForm3.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "msisdn") {
+      if (control?.hasError("pattern")) {
+        return "Enter Valid mobile numbers";
+      }
+    }
+    if (controlName === "title") {
+      if (control?.hasError("minlength") || control?.hasError("maxlength")) {
+        return "Title length should be between 4-16 characters";
+      }
+    }
+    if (controlName === "body") {
+      if (control?.hasError("minlength") || control?.hasError("maxlength")) {
+        return "Body length should be between 6-30 characters";
+      }
+    }
+
+    return "";
   }
 }

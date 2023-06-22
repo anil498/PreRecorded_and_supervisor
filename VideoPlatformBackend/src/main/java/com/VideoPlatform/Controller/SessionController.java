@@ -65,6 +65,7 @@ public class SessionController {
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
 
+
         Map<String,String> result = new HashMap<>();
         result.put("status_code ","200");
         result.put("msg", "Session created!");

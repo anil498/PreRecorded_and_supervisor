@@ -88,29 +88,15 @@ public class UserController {
     }
 
     @PostMapping("/Create")
-    public ResponseEntity<?> createUser(@RequestBody UserEntity user, HttpServletRequest request) {
+    public ResponseEntity<?> createUser(@RequestBody UserEntity userEntity, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        int accountId = commonService.isValidAuthKeyU(authKey);
-        if(accountId == 0){
-            logger.info("Unauthorised user, wrong authorization key !");
+        if(!commonService.authorizationCheck(authKey,token,"user_creation")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        int authId = commonService.isValidAuthKey(authKey);
-        if(!commonService.isValidRequest(token,authKey,"user_creation")) {
-            logger.info("Invalid Token !");
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        if(userService.createUser(user,authKey,token,accountId)==null){
-            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
-        }
-        //commonService.writeByteToFile(user.getLoginId());
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
-        result.put("msg", "User created!");
-        return ok(result);
+        return userService.createUser(userEntity,authKey,token);
     }
 
     @PutMapping("/Update")
@@ -119,7 +105,7 @@ public class UserController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token,"user_update")){
+        if(!commonService.isValidRequestUserUpdate(authKey,token,"user_update","customer_creation")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
 

@@ -66,13 +66,29 @@
           <div class="col-md-5 offset-md-1">
             <div class="row justify-content-center align-items-center">
               <div class="col-md-12"><label>Logo Image</label></div>
-              <img
+              <!-- <img
                 [src]="photoUrl"
                 class="logo"
                 alt="selected logo"
                 height="60%"
                 width="60%"
-              />
+              /> -->
+              <ng-container *ngIf="checkImg()"
+                ><img
+                  [src]="photoUrl"
+                  style="border-radius: 50%"
+                  alt="selected logo"
+                  height="150px"
+                  width="150px"
+              /></ng-container>
+              <ng-container *ngIf="!checkImg()"
+                ><img
+                  src="../../assets/img/user_profile.png"
+                  style="border-radius: 50%"
+                  alt="default"
+                  height="150px"
+                  width="150px"
+              /></ng-container>
             </div>
           </div>
         </div>
@@ -135,7 +151,7 @@
 
         <div class="row">
           <div class="col-md-10 offset-md-1">
-            <mat-label class="label">Select the Access you want:</mat-label>
+            <mat-label class="label">Access Permissions:</mat-label>
           </div>
         </div>
 
@@ -146,6 +162,7 @@
                 [value]="topAccess.accessId"
                 (change)="toggleAccessId(topAccess, $event.checked)"
                 [checked]="isCheckAccess(topAccess)"
+                disabled
               >
                 {{ topAccess.name }}
               </mat-checkbox>
@@ -161,6 +178,7 @@
                     [value]="access.accessId"
                     (change)="toggleAccessId(access, $event.checked)"
                     [checked]="isCheckAccess(access)"
+                    disabled
                   >
                     {{ access.name }}
                   </mat-checkbox>
@@ -174,6 +192,7 @@
                 [value]="topAccess.accessId"
                 (change)="toggleAccessId(topAccess, $event.checked)"
                 [checked]="isCheckAccess(topAccess)"
+                disabled
               >
                 {{ topAccess.name }}
               </mat-checkbox>
@@ -189,6 +208,7 @@
                     [value]="access.accessId"
                     (change)="toggleAccessId(access, $event.checked)"
                     [checked]="isCheckAccess(access)"
+                    disabled
                   >
                     {{ access.name }}
                   </mat-checkbox>
@@ -204,7 +224,7 @@
       <div class="container">
         <div class="row">
           <div class="col-md-10 offset-md-1">
-            <mat-label class="label">Select the features you want:</mat-label>
+            <mat-label class="label">Features:</mat-label>
           </div>
         </div>
 
@@ -266,6 +286,28 @@
                         disabled
                       />
                     </mat-form-field>
+
+                    <ng-container *ngSwitchCase="'radio'">
+                      <mat-radio-group
+                        aria-labelledby="example-radio-group-label"
+                        class="example-radio-group"
+                        (change)="
+                          setMetaValue(
+                            feature.featureId,
+                            meta.key,
+                            $event.value
+                          )
+                        "
+                      >
+                        <mat-radio-button
+                          class="example-radio-button"
+                          *ngFor="let name of meta.name"
+                          [value]="name"
+                        >
+                          {{ name }}
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>
@@ -324,6 +366,25 @@
                         disabled
                       />
                     </mat-form-field>
+
+                    <ng-container *ngSwitchCase="'radio'">
+                      <mat-radio-group
+                        aria-labelledby="example-radio-group-label"
+                        class="example-radio-group"
+                        [value]="
+                          selectedFeaturesMeta[feature.featureId][meta.key]
+                        "
+                        disabled
+                      >
+                        <mat-radio-button
+                          class="example-radio-button"
+                          *ngFor="let name of meta.name"
+                          [value]="name"
+                        >
+                          {{ name }}
+                        </mat-radio-button>
+                      </mat-radio-group>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>
