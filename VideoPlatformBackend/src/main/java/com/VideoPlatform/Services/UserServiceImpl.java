@@ -140,11 +140,7 @@ public class UserServiceImpl implements UserService{
 
                 existing.setExpDate(expDate);
 
-                Boolean bExp = existing.setExpDate(expDate);
-//                if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false) {
-//                    logger.info("Please enter valid values, null values not accepted !!!");
-//                    return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.NOT_ACCEPTABLE);
-//                }
+                existing.setExpDate(expDate);
 
             } catch (JsonProcessingException e) {
                 e.printStackTrace();

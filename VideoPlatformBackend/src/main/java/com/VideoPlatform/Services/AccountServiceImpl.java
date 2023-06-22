@@ -182,18 +182,6 @@ public class AccountServiceImpl implements AccountService {
                 existing.setName(params.get("name").getAsString());
             if(!params.get("address").isJsonNull())
                 existing.setAddress(params.get("address").getAsString());
-
-            Boolean bLogo = existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
-            Boolean bSession = existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
-            Boolean bMeta = existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
-            Boolean bAccess = existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
-            Boolean bFeatures = existing.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
-            Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
-            Boolean bExp = existing.setExpDate(expDate);
-//            if(bExp == false || bLogo == false || bSession == false || bMeta == false || bAccess == false || bFeatures == false){
-//                logger.info("Please enter valid values, null values not accepted !!!");
-//                return null;
-//            }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
