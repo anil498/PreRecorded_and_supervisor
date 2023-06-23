@@ -277,6 +277,21 @@ export class UpdateAccountDialogComponent implements OnInit {
       }
     });
 
+    if (
+      !this.userForm2.value.accessList ||
+      this.userForm2.value.accessList.length == 0
+    ) {
+      this.userForm2.value.accessList = [];
+    }
+    if (
+      !this.userForm3.value.featureList ||
+      this.userForm3.value.featureList.length == 0
+    ) {
+      this.userForm3.value.featureList = [];
+    }
+    if (!this.userForm3.value.featureMeta) {
+      this.userForm3.value.featureMeta = {};
+    }
     this.selectedAccessId = this.userForm2.value.accessList;
     this.selectedFeatures = this.userForm3.value.featureList;
     this.selectedFeaturesMeta = this.userForm3.value.featureMeta;
@@ -451,7 +466,7 @@ export class UpdateAccountDialogComponent implements OnInit {
       console.warn(response);
       if (response.statusCode === 200) {
         this.dialogRef.close();
-        this.restService.uploadVideo(this.name,"",this.formData)
+        this.restService.uploadVideo(this.name, "", this.formData);
         this.restService.closeDialog();
       }
     } catch (error) {

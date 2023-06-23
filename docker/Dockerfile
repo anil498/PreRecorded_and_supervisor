@@ -16,6 +16,7 @@ COPY --from=video-platform-build /VideoPlatformBackend .
 # Install backend dependencies and build it for production
 RUN mvn clean install package
 RUN mv  target/*.jar target/openvidu_db-backend.jar
+RUN ls -ltrh target
 # Entrypoint
 COPY ./java-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN cat /usr/local/bin/entrypoint.sh

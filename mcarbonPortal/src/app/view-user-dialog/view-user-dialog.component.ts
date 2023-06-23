@@ -136,6 +136,21 @@ export class ViewUserDialogComponent implements OnInit {
     });
 
     this.userForm.disable();
+    if (
+      !this.userForm.value.accessList ||
+      this.userForm.value.accessList.length == 0
+    ) {
+      this.userForm.value.accessList = [];
+    }
+    if (
+      !this.userForm.value.featureList ||
+      this.userForm.value.featureList.length == 0
+    ) {
+      this.userForm.value.featureList = [];
+    }
+    if(!this.userForm.value.featureMeta){
+      this.userForm.value.featureMeta = {};
+    }
 
     this.selectedAccessId = this.userForm.value.accessList;
     this.selectedFeatures = this.userForm.value.featureList;

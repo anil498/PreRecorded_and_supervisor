@@ -273,6 +273,21 @@ export class UpdateUserDialogComponent implements OnInit {
         this.title = access.name;
       }
     });
+    if (
+      !this.userForm2.value.accessList ||
+      this.userForm2.value.accessList.length == 0
+    ) {
+      this.userForm2.value.accessList = [];
+    }
+    if (
+      !this.userForm4.value.featureList ||
+      this.userForm4.value.featureList.length == 0
+    ) {
+      this.userForm4.value.featureList = [];
+    }
+    if (!this.userForm4.value.featureMeta) {
+      this.userForm4.value.featureMeta = {};
+    }
     this.userForm1.controls["login_id"].disable();
     this.selectedAccessId = this.userForm2.value.accessList;
     this.selectedFeatures = this.userForm4.value.featureList;
@@ -283,6 +298,7 @@ export class UpdateUserDialogComponent implements OnInit {
       this.photoUrl = this.logo.byte;
     }
     // For diplaying previous checked Access
+
     for (let i = 0; i < this.accessData.length; i++) {
       var flag = true;
       for (let j = 0; j < this.userForm2.value.accessList.length; j++) {
