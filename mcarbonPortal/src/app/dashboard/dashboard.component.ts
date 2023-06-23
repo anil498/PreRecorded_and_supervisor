@@ -165,11 +165,17 @@ export class DashboardComponent implements OnInit {
         },
       ],
     ];
-    var websiteViewsChart = new Chartist.Bar(
+    // var websiteViewsChart = new Chartist.Bar(
+    //   "#websiteViewsChart",
+    //   monthUserCreation,
+    //   optionswebsiteViewsChart,
+    //   responsiveOptions
+    // );
+
+    var websiteViewsChart = new Chartist.Line(
       "#websiteViewsChart",
       monthUserCreation,
-      optionswebsiteViewsChart,
-      responsiveOptions
+      optionswebsiteViewsChart
     );
 
     //start animation for the Emails Subscription Chart

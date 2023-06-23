@@ -150,6 +150,22 @@ export class ViewAccountDialogComponent implements OnInit {
     this.userForm.disable();
     this.logo = this.userForm.value.logo;
 
+    if (
+      !this.userForm.value.accessList ||
+      this.userForm.value.accessList.length == 0
+    ) {
+      this.userForm.value.accessList = [];
+    }
+    if (
+      !this.userForm.value.featureList ||
+      this.userForm.value.featureList.length == 0
+    ) {
+      this.userForm.value.featureList = [];
+    }
+    if (!this.userForm.value.featureMeta) {
+      this.userForm.value.featureMeta = {};
+    }
+
     if (this.logo !== null && Object.keys(this.logo).length !== 0) {
       this.photoUrl = this.logo.byte;
       this.photoControl = true;
