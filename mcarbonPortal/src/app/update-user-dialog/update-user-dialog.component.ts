@@ -61,6 +61,7 @@ export class UpdateUserDialogComponent implements OnInit {
   topLevelAccess1: any[] = [];
   topLevelAccess2: any[] = [];
   videoSelect: any = {};
+  formData: FormData;
   selectedFeaturesMeta = {};
   constructor(
     private router: Router,
@@ -112,33 +113,38 @@ export class UpdateUserDialogComponent implements OnInit {
       };
     }
   }
+
+  onPhotoDeselected() {
+    this.photoUrl = {};
+    this.photoControl = false;
+    this.logo = {};
+  }
+
   onFileInputChange(event: any, meta: any, featureId: number): void {
-    const files: FileList = event.target.files;
-    if (files && files.length > 0) {
-      const file: File = files[0];
-      const reader = new FileReader();
+    const file: File = event.target.files[0];
+    //const file: File = files[0];
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    console.log(file);
+    this.videoSelect[featureId] = file.name;
 
-      reader.readAsDataURL(file);
-      console.log(file);
-      this.videoSelect[featureId] = file.name;
-
-      //reader.readAsArrayBuffer(file);
-      reader.onloadend = () => {
-        const blob = { byte: reader.result, type: file.type };
-        this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
-        // const videoEl = document.createElement("video");
-        // videoEl.src = <string>reader.result;
-        // videoEl.controls = true;
-        // document.body.appendChild(videoEl);
-        console.warn(featureId);
-        console.warn(this.selectedFeaturesMeta[featureId]);
-      };
-    }
+    reader.onload = () => {
+      const binaryData = reader.result;
+      console.log(typeof binaryData);
+      console.log(binaryData);
+      const blob = new Blob([binaryData], { type: file.type });
+      console.log(blob);
+      this.formData = new FormData();
+      this.formData.append("prerecorded_video_file", blob, file.name);
+      console.log(this.formData);
+      console.log(this.formData.get("prerecorded_video_file"));
+      this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+      console.warn(featureId);
+      console.warn(this.selectedFeaturesMeta[featureId]);
+    };
   }
 
   videoSelected(featureId: number) {
-    console.log(featureId);
-    console.log(this.videoSelect);
     return this.videoSelect.hasOwnProperty(featureId);
   }
 
@@ -413,22 +419,6 @@ export class UpdateUserDialogComponent implements OnInit {
     this.max_participants = this.userForm3.value.max_participants;
     this.max_active_sessions = this.userForm3.value.max_active_sessions;
     console.log(this.logo);
-    if (
-      this.user_lname === "" ||
-      this.user_fname === "" ||
-      this.mobile == null ||
-      this.email === "" ||
-      this.login_id === "" ||
-      this.max_active_sessions === null ||
-      this.max_duration === null ||
-      this.max_participants === null
-    ) {
-      //this.emptyField = true;
-      this.openSnackBar("ALL FIELDS ARE MANDATORY", "snackBar");
-      this.timeOut(3000);
-      //this.timeOut(3000);
-      return;
-    }
 
     let response: any;
     try {
@@ -455,13 +445,14 @@ export class UpdateUserDialogComponent implements OnInit {
       if (response.status_code === 200) {
         console.warn(response);
         this.openSnackBar(response.msg, "snackBar");
+        this.restService.uploadVideo("", this.login_id, this.formData);
         this.timeOut(3000);
+        this.dialogRef.close();
+        this.restService.closeDialog();
       }
     } catch (error) {
       console.warn(error);
     }
-    this.dialogRef.close();
-    this.restService.closeDialog();
   }
 
   openSnackBar(message: string, color: string) {

@@ -14,6 +14,7 @@
     *ngIf="userForm"
     [dynamicHeight]="false"
     mat-align-tabs="center"
+    (selectedTabChange)="onTabChanged($event)"
   >
     <mat-tab label="Account">
       <div class="container">

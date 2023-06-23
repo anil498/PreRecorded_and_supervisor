@@ -68,6 +68,32 @@ export class RestService {
     this.dialogClosedSource.next(true);
   }
 
+  uploadVideo(name: string, login_id: string, formData: FormData) {
+    console.log("Uploading Video");
+    try {
+      const headers = new HttpHeaders({
+        name: `${name}`,
+        loginId: `${login_id}`,
+      });
+
+      this.http
+        .post(this.baseHref + "User/getVideo", formData, {
+          headers,
+        })
+        .subscribe(
+          (response) => {
+            console.log("video Uploaded");
+          },
+          (error) => {
+            console.log("video not uploaded");
+          }
+        );
+    } catch (error) {
+      console.log("VIDEO ERROR");
+      console.log(error);
+    }
+  }
+
   private loginRequest(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "/" + path);
     console.warn(this.authKey);
@@ -124,7 +150,7 @@ export class RestService {
       const headers = new HttpHeaders({
         Authorization: `${this.authKey}`,
         Token: `${this._token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       });
       return lastValueFrom(
         this.http.post<any>(this.baseHref + "Account/" + path, body, {
