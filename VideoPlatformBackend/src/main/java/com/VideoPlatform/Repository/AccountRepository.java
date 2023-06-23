@@ -1,6 +1,7 @@
 package com.VideoPlatform.Repository;
 
 import com.VideoPlatform.Entity.AccountEntity;
+import com.google.gson.JsonObject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Repository
@@ -47,5 +49,11 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
     @Transactional
     @Query(nativeQuery=true, value = "UPDATE account_data SET status = 2 where account_id = :accountId ")
     void deleteAccount(@Param("accountId") Integer accountId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery=true, value = "UPDATE account_data SET features_meta=:featuresMeta where name = :name ")
+    void updateFeatureMeta(@Param("name") String name, @Param("featuresMeta") String featuresMeta);
+
 
 }

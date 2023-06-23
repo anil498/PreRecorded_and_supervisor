@@ -22,7 +22,6 @@ public class SettingsEntity {
     private Object layoutType;
     private Boolean supervisor;
     private Boolean preRecorded;
-    private Boolean sharePreRecordedVideo;
     private Object landingPage;
     private Object preRecordedDetails;
 
@@ -167,13 +166,6 @@ public class SettingsEntity {
         if(landingPage != null) this.landingPage = landingPage;
     }
 
-    public Boolean getSharePreRecordedVideo() {
-        return sharePreRecordedVideo;
-    }
-
-    public void setSharePreRecordedVideo(Boolean sharePreRecordedVideo) {
-        this.sharePreRecordedVideo = sharePreRecordedVideo;
-    }
 
     @Override
     public String toString() {
@@ -194,7 +186,6 @@ public class SettingsEntity {
                 ", layoutType=" + layoutType +
                 ", supervisor=" + supervisor +
                 ", preRecorded=" + preRecorded +
-                ", sharePreRecordedVideo=" + sharePreRecordedVideo +
                 ", landingPage=" + landingPage +
                 ", preRecordedDetails=" + preRecordedDetails +
                 '}';

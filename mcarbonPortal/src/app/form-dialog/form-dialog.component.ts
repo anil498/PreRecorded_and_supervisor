@@ -23,6 +23,7 @@ import { RestService } from "app/services/rest.service";
 import { Router } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ImageFile } from "app/model/image-file";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-form-dialog",
@@ -74,6 +75,7 @@ export class FormDialogComponent implements OnInit {
   videoSelect: any = {};
 
   selectedFeaturesMeta = {};
+  formData: FormData;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<FormDialogComponent>,
@@ -81,7 +83,8 @@ export class FormDialogComponent implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private http: HttpClient
   ) {
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
     const featureHalf = Math.ceil(this.featuresData.length / 2);
@@ -96,6 +99,7 @@ export class FormDialogComponent implements OnInit {
   checkImg(): boolean {
     return this.photoControl;
   }
+
   onPhotoSelected(event) {
     const files: FileList = event.target.files;
     if (files && files.length > 0) {
@@ -125,54 +129,37 @@ export class FormDialogComponent implements OnInit {
     }
   }
 
-  // onFileInputChange(event: any, meta: any, featureId: number): void {
-  //   const files: FileList = event.target.files;
-  //   if (files && files.length > 0) {
-  //     const file: File = files[0];
-  //     const reader = new FileReader();
-  //     //reader.readAsArrayBuffer(file);
-  //     reader.readAsDataURL(file);
-  //     console.log(file);
-  //     this.videoSelect[featureId] = file.name;
-
-  //     reader.onloadend = () => {
-  //       const blob = { byte: reader.result, type: file.type, name: file.name };
-  //       this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
-  //           //    const videoEl = document.createElement("video");
-  //             //    videoEl.src = <string>reader.result;
-  //           //      videoEl.controls = true;
-  //           //    document.body.appendChild(videoEl);
-  //       console.warn(featureId);
-  //       console.warn(this.selectedFeaturesMeta[featureId]);
-  //     };
-  //   }
-  // }
+  onPhotoDeselected() {
+    this.photoUrl = {};
+    this.photoControl = false;
+    this.logo = {};
+  }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
-    const files: FileList = event.target.files;
-    if (files && files.length > 0) {
-      const file: File = files[0];
-      const reader = new FileReader();
+    const file: File = event.target.files[0];
+    //const file: File = files[0];
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    console.log(file);
+    this.videoSelect[featureId] = file.name;
 
-      reader.readAsBinaryString(file);
-      reader.onload = () => {
-        const binaryData = reader.result;
-        const blob = new Blob([binaryData], { type: file.type });
-
-        const formData = new FormData();
-        formData.append("file", blob, file.name);
-        console.log(blob);
-        console.warn(formData);
-        this.selectedFeaturesMeta[featureId.toString()][meta.key] = formData;
-        console.warn(featureId);
-        console.warn(this.selectedFeaturesMeta[featureId]);
-      };
-    }
+    reader.onload = () => {
+      const binaryData = reader.result;
+      console.log(typeof binaryData);
+      console.log(binaryData);
+      const blob = new Blob([binaryData], { type: file.type });
+      console.log(blob);
+      this.formData = new FormData();
+      this.formData.append("prerecorded_video_file", blob, file.name);
+      console.log(this.formData);
+      console.log(this.formData.get("prerecorded_video_file"));
+      this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+      console.warn(featureId);
+      console.warn(this.selectedFeaturesMeta[featureId]);
+    };
   }
 
   videoSelected(featureId: number) {
-    console.log(featureId);
-    console.log(this.videoSelect);
     return this.videoSelect.hasOwnProperty(featureId);
   }
 
@@ -389,7 +376,12 @@ export class FormDialogComponent implements OnInit {
   }
 
   async submit() {
-    if (this.userForm4.invalid) {
+    if (
+      this.userForm4.invalid &&
+      this.userForm1 &&
+      this.userForm2 &&
+      this.userForm3
+    ) {
       console.log(this.userForm3.invalid);
       this.focusOnInvalidFields();
       return;
@@ -413,28 +405,6 @@ export class FormDialogComponent implements OnInit {
     this.max_duration = this.userForm3.value.max_duration;
     this.max_participants = this.userForm3.value.max_participants;
     this.max_active_sessions = this.userForm3.value.max_active_sessions;
-
-    if (
-      this.user_lname === "" ||
-      this.user_fname === "" ||
-      this.mobile == null ||
-      this.email === "" ||
-      this.login_id === "" ||
-      this.password === "" ||
-      this.confirm_password === "" ||
-      this.max_active_sessions === null ||
-      this.max_duration === null ||
-      this.max_participants === null
-    ) {
-      //this.emptyField = true;
-      this.openSnackBar("All fields are mandatory", "snackBar");
-      //this.timeOut(3000);
-      return;
-    }
-
-    if (this.password !== this.confirm_password) {
-      return;
-    }
 
     let response: any;
     try {
@@ -461,10 +431,15 @@ export class FormDialogComponent implements OnInit {
       );
       console.warn(response);
       this.openSnackBar(response.msg, "snackBar");
+      this.timeOut(3000);
+
+      console.log("uploading file");
+      console.log(this.formData);
+      this.restService.uploadVideo("",this.login_id,this.formData)
       this.dialogRef.close();
       this.restService.closeDialog();
     } catch (error) {
-      console.log(error)
+      console.log(error);
       this.openSnackBar("error", "snackBar");
       this.timeOut(3000);
     }

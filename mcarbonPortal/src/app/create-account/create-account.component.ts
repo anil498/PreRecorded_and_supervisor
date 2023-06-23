@@ -25,6 +25,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { ImageFile } from "app/model/image-file";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { async } from "@angular/core/testing";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: "app-create-account",
@@ -94,7 +95,7 @@ export class CreateAccountComponent implements OnInit {
 
   selectedFeaturesMeta: { [key: string]: any } = {};
   videoSelect: any = {};
-
+  formData: FormData;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<CreateAccountComponent>,
@@ -102,7 +103,8 @@ export class CreateAccountComponent implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private http: HttpClient
   ) {
     this.loginResponse = this.restService.getToken();
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
@@ -155,34 +157,23 @@ export class CreateAccountComponent implements OnInit {
   }
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const file: File = event.target.files[0];
-
     //const file: File = files[0];
     const reader = new FileReader();
     reader.readAsBinaryString(file);
     console.log(file);
     this.videoSelect[featureId] = file.name;
+
     reader.onload = () => {
       const binaryData = reader.result;
       console.log(typeof binaryData);
       console.log(binaryData);
-      // const convertedData = new Uint8Array(binaryData as ArrayBuffer);
-      // console.log(typeof convertedData);
-      // console.log(convertedData);
       const blob = new Blob([binaryData], { type: file.type });
       console.log(blob);
-      const formData = new FormData();
-      formData.append("precorded_video_file", blob, file.name);
-      console.log(formData);
-      console.log(formData.get("precorded_video_file"));
-      // this.selectedFeaturesMeta[featureId.toString()] = {
-      //   ...this.selectedFeaturesMeta[featureId.toString()],
-      //   [meta.key]: formData,
-      // };
-      this.selectedFeaturesMeta[featureId.toString()][meta.key] = formData.get(
-        "precorded_video_file"
-      );
-      // videoEl.controls = true;
-      // document.body.appendChild(videoEl);
+      this.formData = new FormData();
+      this.formData.append("prerecorded_video_file", blob, file.name);
+      console.log(this.formData);
+      console.log(this.formData.get("prerecorded_video_file"));
+      this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
       console.warn(featureId);
       console.warn(this.selectedFeaturesMeta[featureId]);
     };
@@ -214,6 +205,7 @@ export class CreateAccountComponent implements OnInit {
     this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
     console.warn(this.selectedFeaturesMeta[featureId]);
   }
+
   showMetaList(feature: any, isChecked: boolean) {
     if (isChecked) {
       this.selectedFeatures.push(feature.featureId);
@@ -548,6 +540,10 @@ export class CreateAccountComponent implements OnInit {
       console.warn(response);
       this.openSnackBar(response.msg, "snackBar");
       this.timeOut(3000);
+
+      console.log("uploading file");
+      console.log(this.formData);
+      this.restService.uploadVideo(this.name,this.login_id,this.formData)
       this.dialogRef.close();
       this.restService.closeDialog();
     } catch (error) {

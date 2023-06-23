@@ -213,4 +213,25 @@ public class AccountServiceImpl implements AccountService {
 
         return String.valueOf(accessEntities);
     }
+
+    @Override
+    public void saveFilePathToFeature(String filePath, String loginId, String name){
+
+        AccountEntity accountEntity= accountRepository.findByAccountName(name);
+
+        HashMap<String,Object> featuresMeta=accountEntity.getFeaturesMeta();
+        HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
+        map.replace("pre_recorded_video_file",filePath);
+        featuresMeta.replace("4",map);
+        logger.info("Features Meta {}",featuresMeta);
+        accountEntity.setFeaturesMeta(featuresMeta);
+        logger.info("Pre recorded val : {}",map.get("pre_recorded_video_file"));
+        logger.info("getFeatureMeta1 {} ", accountEntity.getFeaturesMeta());
+        Gson gson=new Gson();
+        String json=gson.toJson(featuresMeta);
+        logger.info("Json {}",json);
+        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
+        accountRepository.updateFeatureMeta(name,json);
+        logger.info("getFeatureMeta2 {} ", accountEntity.getFeaturesMeta());
+    }
 }
