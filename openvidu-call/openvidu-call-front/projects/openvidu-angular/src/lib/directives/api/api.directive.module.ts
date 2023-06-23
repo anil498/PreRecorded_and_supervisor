@@ -29,7 +29,8 @@ import {
 	ToolbarVideoControlButtonDirective,
 	ToolbarDisplayTimereDirective,
 	SessionDurationDirective,
-	SessionNameDirective
+	SessionNameDirective,
+	ToolbarVideoFilePathDirective
 } from './toolbar.directive';
 import {
 	AudioMutedDirective,
@@ -84,7 +85,8 @@ import {
 		AdminLoginDirective,
 		SessionDurationDirective,
 		SessionNameDirective,
-		ToolbarDisplayTimereDirective
+		ToolbarDisplayTimereDirective,
+		ToolbarVideoFilePathDirective
 	],
 	exports: [
 		MinimalDirective,
@@ -127,7 +129,8 @@ import {
 		AdminLoginDirective,
 		SessionDurationDirective,
 		SessionNameDirective,
-		ToolbarDisplayTimereDirective
+		ToolbarDisplayTimereDirective,
+		ToolbarVideoFilePathDirective
 	]
 })
 export class ApiDirectiveModule {}

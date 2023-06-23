@@ -31,6 +31,10 @@ export interface sessionResponse {
     layoutNumber:number;
     supervisor: boolean;
     preRecorded: boolean;
+    preRecordedDetails:{
+      pre_recorded_video_file:string;
+      share_pre_recorded_video:boolean;
+    }
     broadcast: boolean;
   };
   cameraToken: string;
