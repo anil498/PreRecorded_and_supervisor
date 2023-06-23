@@ -211,13 +211,19 @@ public class CommonService {
             e.printStackTrace();
         }
     }
-    private void removeFromFeatureMeta(Integer[] featureId){
+    private void removeFromFeatureMeta(Integer[] featureId, Integer accountId){
+        
+        List<UserEntity> list = userRepository.findUsersByAccountId(accountId);
+        logger.info("Users : {}",list);
+        for(UserEntity entity : list) {
+            HashMap<String, Object> map = new HashMap<>();
 
+        }
     }
 
     private void changeUserSession(HashMap<String, Object> existingSession, HashMap<String, Object> newSession, Integer accountId) {
         List<UserEntity> list = userRepository.findUsersByAccountId(accountId);
-        logger.info("Session Object : {}",list);
+        logger.info("Users : {}",list);
         for(UserEntity entity : list){
             HashMap<String,Object> map = new HashMap<>();
             if(Integer.valueOf(String.valueOf(existingSession.get("max_duration"))) > Integer.valueOf(String.valueOf(newSession.get("max_duration")))){
