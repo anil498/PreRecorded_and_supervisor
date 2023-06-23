@@ -23,6 +23,7 @@ RUN rm openvidu-call-front/package-lock.json && \
 FROM maven
 
 WORKDIR /opt/openvidu-call
+RUN mkdir /videoplatform/assets/prerecorded
 
 COPY --from=openvidu-call-build /openvidu-call/openvidu-call-back-java .
 RUN sed -i 's@href="session"@href=""@' /opt/openvidu-call/src/main/resources/static/index.html
