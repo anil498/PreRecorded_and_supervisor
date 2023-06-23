@@ -2,6 +2,7 @@ package com.VideoPlatform.Controller;
 
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
+import com.VideoPlatform.Services.AccountService;
 import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Services.UserService;
@@ -14,8 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -29,6 +35,8 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private AccountService accountService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -48,6 +56,8 @@ public class UserController {
     private String secret;
     @Value("${access.time}")
     private int accessTime;
+    @Value("${file.path}")
+    private String FILE_DIRECTORY;
 
     @GetMapping("/GetAll")
     public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request){
@@ -124,11 +134,40 @@ public class UserController {
         userService.deleteUser(id);
 
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "User deleted!");
 
         return ok(result);
     }
+
+    @PostMapping("/getVideo")
+    public ResponseEntity<String> handleFileUpload(@RequestParam(value = "prerecorded_video_file", required = false) MultipartFile file,HttpServletRequest request) throws IOException {
+        System.out.println(file);
+        try{
+            if(file.isEmpty()){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Request must contain file");
+            }
+        }
+        catch(Exception e){
+        }
+        Files.copy(file.getInputStream(), Paths.get(FILE_DIRECTORY,file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+        logger.info("File Path : {}",(FILE_DIRECTORY+file.getOriginalFilename()));
+        String filePath = FILE_DIRECTORY+file.getOriginalFilename();
+        logger.info("File Path : {}",filePath);
+
+        String loginId = request.getHeader("loginId");
+        String name = request.getHeader("name");
+
+        if(request.getHeader("name").isEmpty()){
+            userService.saveFilePathToFeature(filePath,loginId,name);
+        }
+        else{
+            userService.saveFilePathToFeature(filePath,loginId,name);
+            accountService.saveFilePathToFeature(filePath,loginId,name);
+        }
+        return ResponseEntity.ok("File Uploaded Successfully");
+    }
+
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> params,HttpServletRequest request) {

@@ -12,4 +12,5 @@ public interface AccountService {
     AccountEntity createAccount(AccountEntity account);
     AccountEntity updateAccount(String params1);
     String deleteAccount(Integer accountId);
+    void saveFilePathToFeature(String filePath, String loginId, String name);
 }

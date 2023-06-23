@@ -15,5 +15,6 @@ public interface UserService {
     String deleteUser(Integer userId);
     ResponseEntity<?> loginService(String loginId, String password, int authId);
     Boolean checkLoginId(String loginId);
+    void saveFilePathToFeature(String filePath,String loginId,String name);
 //    String resetPassword(String newPassword, String loginId, Integer userId);
 }

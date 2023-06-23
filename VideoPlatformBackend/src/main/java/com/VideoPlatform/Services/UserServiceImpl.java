@@ -117,9 +117,8 @@ public class UserServiceImpl implements UserService{
         String myPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(myPass);
         userRepository.save(user);
-
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "User created!");
         return ok(result);
     }
@@ -137,9 +136,9 @@ public class UserServiceImpl implements UserService{
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
-        AccountEntity accountEntity = accountRepository.findByAccountId(accountAuthEntity.getAccountId());
         UserEntity existing = userRepository.findByUserId(params.get("userId").getAsInt());
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(params.get("accountId").getAsInt());
+        AccountEntity accountEntity = accountRepository.findByAccountId(params.get("accountId").getAsInt());
 
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
@@ -309,6 +308,27 @@ public class UserServiceImpl implements UserService{
         logger.info("Last login return invoked !");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+    }
+
+    @Override
+    public void saveFilePathToFeature(String filePath, String loginId, String name){
+
+        UserEntity userEntity = userRepository.findByLoginId(loginId);
+        HashMap<String,Object> featuresMeta=userEntity.getFeaturesMeta();
+        ObjectMapper objectMapper=new ObjectMapper();
+        HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
+        map.replace("pre_recorded_video_file",filePath);
+        featuresMeta.replace("4",map);
+        logger.info("Features Meta {}",featuresMeta);
+        userEntity.setFeaturesMeta(featuresMeta);
+        logger.info("Pre recorded val : {}",map.get("pre_recorded_video_file"));
+        logger.info("getFeatureMeta1 {} ", userEntity.getFeaturesMeta());
+        Gson gson=new Gson();
+        String json=gson.toJson(featuresMeta);
+        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
+        logger.info("Json {}",json);
+        userRepository.updateFeaturesMeta(loginId,json);
+        logger.info("getFeatureMeta2 {} ", userEntity.getFeaturesMeta());
     }
 
     @Override

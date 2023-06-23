@@ -98,12 +98,9 @@ public class SessionServiceImpl implements SessionService{
             else if (4 == featureId) {
                 settingsEntity.setPreRecorded(true);
                 try{
-                    Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    logger.info("Pre recorded val : {}",map.get("pre_recorded_video_file"));
-                    settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
-                    if(map.containsKey("share_pre_recorded_video")){
-                        settingsEntity.setSharePreRecordedVideo(true);
-                    }
+                   // Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    logger.info("Pre recorded val : {}",userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
                 catch (Exception e){
                     logger.info("Getting null value from pre_recorded_video_file 1 !",e);

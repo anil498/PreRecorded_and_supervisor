@@ -79,7 +79,7 @@ public class AccountController {
         }
 
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "Account created!");
 
         return new ResponseEntity<>(result,HttpStatus.CREATED);

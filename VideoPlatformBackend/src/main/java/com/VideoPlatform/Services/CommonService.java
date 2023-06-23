@@ -29,8 +29,8 @@ import java.util.*;
 public class CommonService {
 
     private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
-    String FILEPATH = "D:\\TestVideoWrite\\";
-    File file = new File(FILEPATH+"abcd.png");
+//    String FILEPATH = "D:\\TestVideoWrite\\";
+//    File file = new File(FILEPATH+"abcd.png");
 
     @Autowired
     AccountAuthRepository accountAuthRepository;
@@ -74,8 +74,9 @@ public class CommonService {
         }
         return true;
     }
-    public Boolean isValidRequestUserUpdate(String token,String authKey,String systemName1,String systemName2){
+    public Boolean isValidRequestUserUpdate(String authKey,String token,String systemName1,String systemName2){
         UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
+        logger.info("UserAuthEntity : {} ",userAuthEntity);
         if(userAuthEntity == null)return false;
         String systemNames = userAuthEntity.getSystemNames();
         logger.info("SystemNames : {}",systemNames);
@@ -120,42 +121,6 @@ public class CommonService {
         return true;
     }
 
-    public String writeByteToFile(String loginId){
-        try{
-            logger.info("loginId : {}",loginId);
-
-            UserEntity userEntity = userRepository.findByLoginId(loginId);
-            logger.info("UserEntity : {}",userEntity);
-            logger.info("UserEntity userId : {}",userEntity.getUserId());
-            logger.info("UserEntity logo : {}",userEntity.getLogo());
-            Object logoByte = userEntity.getLogo().get("byte");
-            Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get("4"));
-            Object vidByte = map.get("pre_recorded_video_file");
-            ByteArrayOutputStream output = new ByteArrayOutputStream();
-            ObjectOutputStream obj;
-            try {
-                obj = new ObjectOutputStream(output);
-                obj.writeObject(logoByte);
-                logger.info("Bytes written successfully !");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            byte[] bytes = output.toByteArray();
-            try {
-                OutputStream os = new FileOutputStream(file);
-                os.write(bytes);
-                logger.info("Bytes written successfully !");
-                os.close();
-            }
-            catch (Exception e) {
-                logger.info("Exception: " + e);
-            }
-        }
-        catch (Exception e){
-            logger.info("Exception: {} ",e);
-        }
-        return "Written !!!";
-    }
     public Map<String, String> getHeaders(HttpServletRequest request) {
         Enumeration<String> headers = request.getHeaderNames();
         Map<String, String> headerMap = new HashMap<>();
@@ -192,31 +157,31 @@ public class CommonService {
         return false;
     }
 
-    public Boolean checkMandatoryU(Object params1){
-        int f=0;
-        logger.info("Params get : {}",params1);
-        ObjectMapper objectMapper=new ObjectMapper();
-        Map<String,Object> params = objectMapper.convertValue(params1,Map.class);
-        logger.info("Params Value : {}",params);
-
-        if(params.containsKey("session")){
-            if(params.get("session") == null) f=1;
-        }
-        if(params.containsKey("accessId")){
-            if(params.get("accessId")==null) f=1;
-        }
-        if(params.containsKey("features")){
-            if(params.get("features")==null) f=1;
-        }
-        if(params.containsKey("featuresMeta")){
-            if(params.get("featuresMeta")==null) f=1;
-        }
-        if(params.containsKey("expDate")){
-            if(params.get("expDate")==null) f=1;
-        }
-        if(f==0) return true;
-        return false;
-    }
+//    public Boolean checkMandatoryU(Object params1){
+//        int f=0;
+//        logger.info("Params get : {}",params1);
+//        ObjectMapper objectMapper=new ObjectMapper();
+//        Map<String,Object> params = objectMapper.convertValue(params1,Map.class);
+//        logger.info("Params Value : {}",params);
+//
+//        if(params.containsKey("session")){
+//            if(params.get("session") == null) f=1;
+//        }
+//        if(params.containsKey("accessId")){
+//            if(params.get("accessId")==null) f=1;
+//        }
+//        if(params.containsKey("features")){
+//            if(params.get("features")==null) f=1;
+//        }
+//        if(params.containsKey("featuresMeta")){
+//            if(params.get("featuresMeta")==null) f=1;
+//        }
+//        if(params.containsKey("expDate")){
+//            if(params.get("expDate")==null) f=1;
+//        }
+//        if(f==0) return true;
+//        return false;
+//    }
 
     public void compareAndChange(JsonObject params, AccountEntity storedExisting,Integer accountId) {
 
@@ -240,9 +205,44 @@ public class CommonService {
             for (int value : deletedAccessValues) {
                 userRepository.deleteAccessValues(value,accountId);
             }
-
+//            removeFromFeatureMeta(deletedFeatureValues);
+//            changeUserSession(existingSession,newSession,accountId);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        }
+    }
+    private void removeFromFeatureMeta(Integer[] featureId){
+
+    }
+
+    private void changeUserSession(HashMap<String, Object> existingSession, HashMap<String, Object> newSession, Integer accountId) {
+        List<UserEntity> list = userRepository.findUsersByAccountId(accountId);
+        logger.info("Session Object : {}",list);
+        for(UserEntity entity : list){
+            HashMap<String,Object> map = new HashMap<>();
+            if(Integer.valueOf(String.valueOf(existingSession.get("max_duration"))) > Integer.valueOf(String.valueOf(newSession.get("max_duration")))){
+                if(Integer.valueOf(String.valueOf(entity.getSession().get("max_duration"))) > Integer.valueOf(String.valueOf(newSession.get("max_duration")))){
+                    map.put("max_duration",newSession.get("max_duration"));
+                }
+                map.put("max_duration",entity.getSession().get("max_duration"));
+            }
+            else map.put("max_duration",entity.getSession().get("max_duration"));
+            if(Integer.valueOf(String.valueOf(existingSession.get("max_participants"))) > Integer.valueOf(String.valueOf(newSession.get("max_participants")))){
+                if(Integer.valueOf(String.valueOf(entity.getSession().get("max_participants"))) > Integer.valueOf(String.valueOf(newSession.get("max_participants")))){
+                    map.put("max_participants",newSession.get("max_participants"));
+                }
+                map.put("max_participants",entity.getSession().get("max_participants"));
+            }
+            else map.put("max_participants",entity.getSession().get("max_participants"));
+            if(Integer.valueOf(String.valueOf(existingSession.get("max_active_sessions"))) > Integer.valueOf(String.valueOf(newSession.get("max_active_sessions")))){
+                if(Integer.valueOf(String.valueOf(entity.getSession().get("max_active_sessions"))) > Integer.valueOf(String.valueOf(newSession.get("max_active_sessions")))){
+                    map.put("max_active_sessions",newSession.get("max_active_sessions"));
+                }
+                map.put("max_active_sessions",entity.getSession().get("max_active_sessions"));
+            }
+            else map.put("max_active_sessions",entity.getSession().get("max_active_sessions"));
+            entity.setSession(map);
+            userRepository.save(entity);
         }
     }
 
@@ -264,4 +264,42 @@ public class CommonService {
         }
         return deletedValues;
     }
+//       public String writeByteToFile(String loginId){
+//        try{
+//            logger.info("loginId : {}",loginId);
+//
+//            UserEntity userEntity = userRepository.findByLoginId(loginId);
+//            logger.info("UserEntity : {}",userEntity);
+//            logger.info("UserEntity userId : {}",userEntity.getUserId());
+//            logger.info("UserEntity logo : {}",userEntity.getLogo());
+//            Object logoByte = userEntity.getLogo().get("byte");
+//            Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get("4"));
+//            Object vidByte = map.get("pre_recorded_video_file");
+//            logger.info("VidByte : {}",vidByte);
+//            ByteArrayOutputStream output = new ByteArrayOutputStream();
+//            ObjectOutputStream obj;
+//            try {
+//                obj = new ObjectOutputStream(output);
+//                obj.writeObject(vidByte);
+//                logger.info("Bytes written successfully !");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            byte[] bytes = output.toByteArray();
+//            try {
+//                OutputStream os = new FileOutputStream(file);
+//                os.write(bytes);
+//                logger.info("Bytes written successfully !");
+//                os.close();
+//            }
+//            catch (Exception e) {
+//                logger.info("Exception: " + e);
+//            }
+//        }
+//        catch (Exception e){
+//            logger.info("Exception: {} ",e);
+//        }
+//        return "Written !!!";
+//    }
+
 }

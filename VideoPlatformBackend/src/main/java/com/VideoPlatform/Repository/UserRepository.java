@@ -10,25 +10,26 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
-    @Query(nativeQuery=true, value = "select * from user_data")
+    @Query(nativeQuery=true, value = "SELECT * from user_data")
     List<UserEntity> findAll();
 
-    @Query(nativeQuery=true, value = "select * from user_data where login_id = :loginId ")
+    @Query(nativeQuery=true, value = "SELECT * from user_data where login_id = :loginId ")
     UserEntity findByLoginId(@Param("loginId") String loginId);
 
-    @Query(nativeQuery=true, value = "select * from user_data where user_id = :userId ")
+    @Query(nativeQuery=true, value = "SELECT * from user_data where user_id = :userId ")
     UserEntity findByUserId(@Param("userId") Integer userId);
 
-    @Query(nativeQuery=true, value = "select * from user_data where account_id = :accountId ")
+    @Query(nativeQuery=true, value = "SELECT * from user_data where account_id = :accountId ")
     UserEntity findByAccountId(@Param("accountId") Integer accountId);
 
-    @Query(nativeQuery=true, value = "select * from user_data where parent_id = :userId ")
+    @Query(nativeQuery=true, value = "SELECT * from user_data where parent_id = :userId ")
     List<UserEntity> findAllChild(@Param("userId") int userId);
 
     @Query(nativeQuery=true, value = "select features from user_data where user_id = :userId ")
@@ -44,7 +45,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(nativeQuery=true, value = "UPDATE user_data SET status = 2 where user_id = :userId ")
     void deleteUser(@Param("userId") Integer userId);
 
-    @Query(nativeQuery=true, value = "select session from user_data where user_id = :userId ")
+    @Query(nativeQuery=true, value = "SELECT session from user_data where user_id = :userId ")
     JsonObject getSession(@Param("userId") Integer userId);
 
     @Query(nativeQuery = true,value = "SELECT COUNT(*) FROM user_data")
@@ -62,7 +63,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(nativeQuery = true, value = "SELECT EXTRACT('year' FROM y.year) AS year,COUNT(a.creation_date) AS count FROM (SELECT generate_series(DATE '2023-01-01',DATE '2025-12-01', interval '1 year') AS year) AS y LEFT JOIN user_data a ON DATE_TRUNC('year', a.creation_date\\:\\:date) = y.year GROUP BY y.year ORDER BY y.year;")
     List<Object[]> yearlyUserCreation();
 
-    @Query(nativeQuery = true, value = "Select COUNT(*) from user_data where account_id = :accountId")
+    @Query(nativeQuery = true, value = "SELECT COUNT(*) from user_data where account_id = :accountId")
     Integer usersAccount(@Param("accountId") Integer accountId);
 
     @Modifying
@@ -74,4 +75,18 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Transactional
     @Query(nativeQuery = true, value = "UPDATE user_data SET access_id = array_remove(access_id, :access) WHERE account_id = :accountId")
     Integer deleteAccessValues(@Param("access") Integer access,@Param("accountId") Integer accountId);
+
+    @Query(nativeQuery = true, value = "SELECT * from user_data where account_id=:accountId")
+    List<UserEntity> findUsersByAccountId(@Param("accountId") Integer accountId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET session = :session WHERE user_id = :userId")
+    void updateSessionValue(@Param("session") HashMap<String,Object> session,@Param("userId") Integer userId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET features_meta = :featuresMeta WHERE login_id = :loginId")
+    void updateFeaturesMeta(@Param("loginId") String loginId,@Param("featuresMeta") String featuresMeta);
+
 }
