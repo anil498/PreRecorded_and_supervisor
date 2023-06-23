@@ -47,7 +47,9 @@ export class OpenViduService {
 	sessionTimerObs: Observable<{time?: Date }>;
 	private sessionTimerStatus = <BehaviorSubject<{time?: Date }>>new BehaviorSubject(null);
 	private sessionTimerSub: Subscription;
+	private videoFilePathSubs:Subscription;
 	showSessionTimer:boolean;
+	videoFilePath:string;
 
 	private sessionTime: Date;
 	private sessionTimeInterval: NodeJS.Timer;
@@ -224,6 +226,9 @@ export class OpenViduService {
 				this.participantService.setMyCameraConnectionId(this.webcamSession.connection.connectionId);
 				this.sessionTimerSub = this.libService.displayTimer.subscribe((value: boolean) => {
 					this.showSessionTimer = value;
+				});
+				this.videoFilePathSubs = this.libService.videoFilePath.subscribe((value: string) => {
+					this.videoFilePath = value;
 				});
 				if(this.showSessionTimer){
 					this.startSessionTime()
@@ -717,7 +722,7 @@ export class OpenViduService {
 				// Create a custom video element with the video and audio streams
 				this.videoElement = document.createElement('video');
 				// videoElement.src = 'assets/video/music.mp4';
-				this.videoElement.src = './assets/video/1.mp4';
+				this.videoElement.src = this.videoFilePath;
 				this.videoElement.controls = true;
 				this.videoElement.setAttribute('controls', true.toString()); // or use setAttribute
 
@@ -774,7 +779,6 @@ export class OpenViduService {
 	playVideo(){
 		try{
 			this.log.d("Playing")
-			console.log(this.videoElement)
 			this.isVideoPlaying=!this.isVideoPlaying
 		}catch(error){
 			this.log.d("Getting error while playing video",error)
@@ -783,7 +787,6 @@ export class OpenViduService {
 	pauseVideo(){
 		try{
 			this.log.d("Pausing")
-			console.log(this.videoElement)
 			this.isVideoPlaying=!this.isVideoPlaying
 		}catch(error){
 			this.log.d("Getting error while pausing video",error)

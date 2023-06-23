@@ -38,6 +38,8 @@ export class CallComponent implements OnInit {
 	type: string;
 	floatingLayout: boolean;
 	layoutNumber: number;
+	preRecorded:boolean;
+	preRecordedFilePath:string;
 	private isDebugSession: boolean = false;
 
 	constructor(
@@ -149,6 +151,9 @@ export class CallComponent implements OnInit {
 			this.type = response.type;
 			this.floatingLayout = response.settings.floatingLayout;
 			this.layoutNumber=response.settings.layoutNumber;
+			this.preRecorded=response.settings.preRecordedDetails.share_pre_recorded_video;
+			this.preRecordedFilePath=response.settings.preRecordedDetails.pre_recorded_video_file;
+
 			if (response.participantName) {
 				this.participantNameValue = response.participantName;
 			} else {

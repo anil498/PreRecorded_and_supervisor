@@ -124,24 +124,22 @@
             </div>
           </div>
 
-          <div class="col-md-5 offset-md-1">
+          <div class="col-md-5">
             <div class="row justify-content-center align-items-center">
-              <!-- <img
-                *ngIf="photoControl"
-                [src]="photoUrl"
-                style="border-radius: 50%"
-                alt="selected logo"
-                height="60%"
-                width="60%"
-              /> -->
-              <ng-container *ngIf="checkImg()"
-                ><img
-                  [src]="photoUrl"
-                  style="border-radius: 50%"
-                  alt="selected logo"
-                  height="150px"
-                  width="150px"
-              /></ng-container>
+              <ng-container *ngIf="checkImg()">
+                <div class="photo-container">
+                  <img
+                    [src]="photoUrl"
+                    style="border-radius: 50%"
+                    alt="selected logo"
+                    height="150px"
+                    width="150px"
+                  />
+                  <mat-icon class="btn-close" (click)="onPhotoDeselected()">
+                    close
+                  </mat-icon>
+                </div>
+              </ng-container>
               <ng-container *ngIf="!checkImg()"
                 ><img
                   src="../../assets/img/user_profile.png"
@@ -151,6 +149,7 @@
                   width="150px"
               /></ng-container>
             </div>
+
             <div class="row justify-content-center align-items-center">
               <input
                 #fileInput
@@ -160,7 +159,7 @@
                 formControlName="logo"
               />
               <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
-                Change Logo
+                Select a Logo
               </button>
             </div>
           </div>

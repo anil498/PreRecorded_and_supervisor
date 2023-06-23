@@ -1057,3 +1057,48 @@ private update(value: string) {
 	}
 }
 }
+/**
+ * The **videoFilePath** directive .
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarVideoFilePath]=""></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarVideoFilePath]'
+})
+export class ToolbarVideoFilePathDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 * */
+
+@Input() set toolbarVIdeoFilePath(value: string) {
+	this.videoFilePath = value;
+	this.update(this.videoFilePath);
+}
+private videoFilePath: string;
+
+constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+ngAfterViewInit() {
+	this.update(this.videoFilePath);
+}
+
+ngOnDestroy(): void {
+	this.clear();
+}
+private clear() {
+	this.videoFilePath = '';
+	this.update('');
+}
+
+private update(value: string) {
+	if (this.libService.videoFilePath.getValue() !== value) {
+		this.libService.videoFilePath.next(value);
+	}
+}
+}

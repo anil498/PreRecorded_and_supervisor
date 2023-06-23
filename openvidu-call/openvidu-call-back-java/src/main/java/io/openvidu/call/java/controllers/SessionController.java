@@ -154,6 +154,13 @@ public class SessionController {
           sessionProperty.setSessionExpired(true);
           return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         }
+//      Pre-Recorded implementation
+        if(sessionProperty.getSettings().getPreRecorded()){
+          HashMap<String,Object> map= (HashMap<String, Object>) sessionProperty.getSettings().getPreRecordedDetails();
+          if(!Boolean.TRUE.equals(map.get("share_pre_recorded_video"))){
+            sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(),"prerecorded");
+          }
+        }
         if(!sessionIdToSessionContextMap.containsKey(sessionId)) {
           SessionContext sessionContext = new SessionContext.Builder().sessionObject(sessionCreated).connectionObject(cameraConnection).sessionRequest(sessionProperty).sessionKey(sessionKey).sessionUniqueID(sessionId).build();
           sessionIdToSessionContextMap.put(sessionKey, sessionContext);

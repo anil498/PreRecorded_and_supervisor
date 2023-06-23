@@ -217,7 +217,9 @@ export class ViewAccountDialogComponent implements OnInit {
   }
 
   onTabChanged(event: any) {
+    console.log("Tab changed from Label" + event.index);
     this.currentTabIndex = event.index;
+    this.tabGroup.selectedIndex = this.currentTabIndex;
   }
 
   isFirstTab(): boolean {

@@ -76,7 +76,7 @@ export class UpdateAccountDialogComponent implements OnInit {
   topLevelAccess1: any[] = [];
   topLevelAccess2: any[] = [];
   selectedFeaturesMeta = {};
-
+  formData: FormData;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<UpdateAccountDialogComponent>,
@@ -95,6 +95,10 @@ export class UpdateAccountDialogComponent implements OnInit {
     const accessHalf = Math.ceil(this.topLevelAccess.length / 2);
     this.topLevelAccess1 = this.topLevelAccess.slice(0, accessHalf);
     this.topLevelAccess2 = this.topLevelAccess.slice(accessHalf);
+  }
+
+  checkImg(): boolean {
+    return this.photoControl;
   }
 
   onPhotoSelected(event) {
@@ -122,38 +126,37 @@ export class UpdateAccountDialogComponent implements OnInit {
       };
     }
   }
-
-  onFileInputChange(event: any, meta: any, featureId: number): void {
-    const files: FileList = event.target.files;
-    if (files && files.length > 0) {
-      const file: File = files[0];
-      const reader = new FileReader();
-
-      reader.readAsDataURL(file);
-      console.log(file);
-      this.videoSelect[featureId] = file.name;
-
-      //reader.readAsArrayBuffer(file);
-      reader.onloadend = () => {
-        const blob = { byte: reader.result, type: file.type };
-        this.selectedFeaturesMeta[featureId.toString()][meta.key] = blob;
-        // const videoEl = document.createElement("video");
-        // videoEl.src = <string>reader.result;
-        // videoEl.controls = true;
-        // document.body.appendChild(videoEl);
-        console.warn(featureId);
-        console.warn(this.selectedFeaturesMeta[featureId]);
-      };
-    }
+  onPhotoDeselected() {
+    this.photoUrl = {};
+    this.photoControl = false;
+    this.logo = {};
   }
 
-  checkImg(): boolean {
-    return this.photoControl;
+  onFileInputChange(event: any, meta: any, featureId: number): void {
+    const file: File = event.target.files[0];
+    //const file: File = files[0];
+    const reader = new FileReader();
+    reader.readAsBinaryString(file);
+    console.log(file);
+    this.videoSelect[featureId] = file.name;
+
+    reader.onload = () => {
+      const binaryData = reader.result;
+      console.log(typeof binaryData);
+      console.log(binaryData);
+      const blob = new Blob([binaryData], { type: file.type });
+      console.log(blob);
+      this.formData = new FormData();
+      this.formData.append("prerecorded_video_file", blob, file.name);
+      console.log(this.formData);
+      console.log(this.formData.get("prerecorded_video_file"));
+      this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+      console.warn(featureId);
+      console.warn(this.selectedFeaturesMeta[featureId]);
+    };
   }
 
   videoSelected(featureId: number) {
-    console.log(featureId);
-    console.log(this.videoSelect);
     return this.videoSelect.hasOwnProperty(featureId);
   }
 
@@ -448,14 +451,13 @@ export class UpdateAccountDialogComponent implements OnInit {
       console.warn(response);
       if (response.statusCode === 200) {
         this.dialogRef.close();
+        this.restService.uploadVideo(this.name,"",this.formData)
         this.restService.closeDialog();
       }
     } catch (error) {
       console.warn(error);
     }
     this.messageResponse = response;
-    this.dialogRef.close();
-    this.restService.closeDialog();
   }
 
   private timeOut(time: number) {

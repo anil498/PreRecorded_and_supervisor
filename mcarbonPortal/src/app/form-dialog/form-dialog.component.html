@@ -244,14 +244,20 @@
             </div>
 
             <div class="row justify-content-center align-items-center">
-              <ng-container *ngIf="checkImg()"
-                ><img
-                  [src]="photoUrl"
-                  style="border-radius: 50%"
-                  alt="selected logo"
-                  height="150px"
-                  width="150px"
-              /></ng-container>
+              <ng-container *ngIf="checkImg()">
+                <div class="photo-container">
+                  <img
+                    [src]="photoUrl"
+                    style="border-radius: 50%"
+                    alt="selected logo"
+                    height="150px"
+                    width="150px"
+                  />
+                  <mat-icon class="btn-close" (click)="onPhotoDeselected()">
+                    close
+                  </mat-icon>
+                </div>
+              </ng-container>
               <ng-container *ngIf="!checkImg()"
                 ><img
                   src="../../assets/img/user_profile.png"
@@ -261,12 +267,14 @@
                   width="150px"
               /></ng-container>
             </div>
+
             <div class="row justify-content-center align-items-center">
               <input
                 #fileInput
                 type="file"
                 accept="image/*"
                 (change)="onPhotoSelected($event)"
+                formControlName="logo"
               />
               <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
                 Select a Logo
