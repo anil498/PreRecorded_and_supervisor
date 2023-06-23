@@ -10,7 +10,6 @@ COPY . .
 FROM maven
 
 WORKDIR /opt/videoplatform
-RUN mkdir /videoplatform/assets/prerecorded
 
 COPY --from=video-platform-build /VideoPlatformBackend .
 
