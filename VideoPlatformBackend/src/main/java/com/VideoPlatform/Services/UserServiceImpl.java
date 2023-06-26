@@ -18,9 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -76,28 +73,26 @@ public class UserServiceImpl implements UserService{
         Integer accountId = accountAuthEntity.getAccountId();
         AccountEntity accountEntity = accountRepository.findByAccountId(accountId);
         if(userRepository.findByLoginId(user.getLoginId()) != null){
-            logger.info("Login Id already exists !");
+            logger.info("Login Id {} already exists !",user.getLoginId());
             return new ResponseEntity<>("Login Id already exists !",HttpStatus.UNAUTHORIZED);
         }
         int maxUsers = accountEntity.getMaxUser();
         if(maxUsers<=(userRepository.usersAccount(accountId)-1)){
-            logger.info("No more users are allowed, max limit exceed..!");
+            logger.info("No more users are allowed for account {} having login id {} , max limit exceed..!",accountId,user.getLoginId());
             return new ResponseEntity<>("No more users are allowed, max limit exceed..!",HttpStatus.UNAUTHORIZED);
         }
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
 
-            if (checkIfAllowedFeature(featuresId, user.getFeatures())) {
+            if (checkIfAllowedFeature(featuresId, user.getFeatures(),accountId)) {
                 user.setFeatures(user.getFeatures());
             } else {
-                logger.info("Feature values not present in Account Entity. Not allowed to create !");
                 return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
             }
-            if (checkIfAllowedAccess(accessId,user.getAccessId())) {
+            if (checkIfAllowedAccess(accessId,user.getAccessId(),accountId)) {
                 user.setAccessId(user.getAccessId());
             } else {
-                logger.info("Access Id values not present in Account Entity. Not allowed to create !");
                 return new ResponseEntity<>("Invalid access id values !", HttpStatus.NOT_ACCEPTABLE);
             }
             if (checkIfAllowedSession(sessionA, user.getSession())) {
@@ -148,13 +143,13 @@ public class UserServiceImpl implements UserService{
             existing.setFname(params.get("fname").getAsString());
             existing.setLname(params.get("lname").getAsString());
             try {
-                if (checkIfAllowedFeature(featuresId, objectMapper.readValue(params.get("features").toString(), Integer[].class))) {
+                if (checkIfAllowedFeature(featuresId, objectMapper.readValue(params.get("features").toString(), Integer[].class),accountEntity.getAccountId())) {
                     existing.setFeatures(objectMapper.readValue(params.get("features").toString(), Integer[].class));
                 } else {
                     logger.info("Feature values not present in Account Entity. Not allowed to update !");
                     return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
                 }
-                if (checkIfAllowedAccess(accessId, objectMapper.readValue(params.get("accessId").toString(), Integer[].class))) {
+                if (checkIfAllowedAccess(accessId, objectMapper.readValue(params.get("accessId").toString(), Integer[].class),accountEntity.getAccountId())) {
                     existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(), Integer[].class));
                 } else {
                     logger.info("Access Id values not present in Account Entity. Not allowed to update !");
@@ -315,7 +310,6 @@ public class UserServiceImpl implements UserService{
 
         UserEntity userEntity = userRepository.findByLoginId(loginId);
         HashMap<String,Object> featuresMeta=userEntity.getFeaturesMeta();
-        ObjectMapper objectMapper=new ObjectMapper();
         HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
         map.replace("pre_recorded_video_file",filePath);
         featuresMeta.replace("4",map);
@@ -325,7 +319,7 @@ public class UserServiceImpl implements UserService{
         logger.info("getFeatureMeta1 {} ", userEntity.getFeaturesMeta());
         Gson gson=new Gson();
         String json=gson.toJson(featuresMeta);
-        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
+//        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
         logger.info("Json {}",json);
         userRepository.updateFeaturesMeta(loginId,json);
         logger.info("getFeatureMeta2 {} ", userEntity.getFeaturesMeta());
@@ -383,23 +377,25 @@ public class UserServiceImpl implements UserService{
         }
         return objectMapper.convertValue(accessEntities, JsonNode.class);
     }
-    public Boolean checkIfAllowedFeature(Integer[] featureA, Integer[] featureU){
+    public Boolean checkIfAllowedFeature(Integer[] featureA, Integer[] featureU,Integer accountId){
         if(featureA==null || featureU==null) return false;
         int f=0;
         List<Integer> intList = new ArrayList<>(Arrays.asList(featureA));
         for(int i=0;i<featureU.length;i++) {
             if (!intList.contains(featureU[i])) {
+                logger.info("Feature value {} not present in Account Entity {}. Not allowed to create !",featureU[i],accountId);
                 return false;
             }
         }
         return true;
     }
-    public Boolean checkIfAllowedAccess(Integer[] accessA, Integer[] accessU){
+    public Boolean checkIfAllowedAccess(Integer[] accessA, Integer[] accessU, Integer accountId){
         if(accessA==null || accessU==null) return false;
         int f=0;
         List<Integer> intList = new ArrayList<>(Arrays.asList(accessA));
         for(int i=0;i<accessU.length;i++) {
             if (!intList.contains(accessU[i])) {
+                logger.info("Access Id value {} not present in Account Entity {}. Not allowed to create !",accessU[i],accountId);
                 return false;
             }
         }
@@ -407,7 +403,7 @@ public class UserServiceImpl implements UserService{
     }
     public Boolean checkIfAllowedSession(HashMap<String,Object> sessionA, HashMap<String,Object> sessionU){
         if(sessionA == null || sessionU == null) return false;
-        if(Integer.valueOf(String.valueOf(sessionA.get("max_duration"))) < Integer.valueOf(String.valueOf(sessionU.get("max_duration"))) || Integer.valueOf(String.valueOf(sessionA.get("max_participants"))) < Integer.valueOf(String.valueOf(sessionU.get("max_participants"))) || Integer.valueOf(String.valueOf(sessionA.get("max_active_sessions"))) < Integer.valueOf(String.valueOf(sessionU.get("max_active_sessions")))){
+        if((Integer) sessionA.get("max_duration") < (Integer) sessionU.get("max_duration") || (Integer)sessionA.get("max_participants") < (Integer) sessionU.get("max_participants") || (Integer)sessionA.get("max_active_sessions") < (Integer) sessionU.get("max_active_sessions")){
             return false;
         }
         return true;

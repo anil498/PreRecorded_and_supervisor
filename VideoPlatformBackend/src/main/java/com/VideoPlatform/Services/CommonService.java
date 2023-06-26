@@ -22,15 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.*;
 import java.util.*;
 
 @Service
 public class CommonService {
 
     private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
-//    String FILEPATH = "D:\\TestVideoWrite\\";
-//    File file = new File(FILEPATH+"abcd.png");
 
     @Autowired
     AccountAuthRepository accountAuthRepository;
@@ -205,50 +202,63 @@ public class CommonService {
             for (int value : deletedAccessValues) {
                 userRepository.deleteAccessValues(value,accountId);
             }
-//            removeFromFeatureMeta(deletedFeatureValues);
-//            changeUserSession(existingSession,newSession,accountId);
+            removeFromFeatureMeta(deletedFeatureValues,accountId);
+            changeUserSession(existingSession,newSession,accountId);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
     }
     private void removeFromFeatureMeta(Integer[] featureId, Integer accountId){
-        
         List<UserEntity> list = userRepository.findUsersByAccountId(accountId);
         logger.info("Users : {}",list);
-        for(UserEntity entity : list) {
-            HashMap<String, Object> map = new HashMap<>();
-
+        for(UserEntity userEntity : list) {
+            HashMap<String, Object> map = userEntity.getFeaturesMeta();
+            for(int i=0;i<featureId.length;i++){
+                if(map.containsKey(featureId[i].toString())){
+                    logger.info("Removed : {} ",featureId[i]);
+                    map.remove(featureId[i].toString());
+                }
+            }
+            Gson gson=new Gson();
+            String jsonMeta=gson.toJson(map);
+            userRepository.updateFeaturesMeta(userEntity.getLoginId(),jsonMeta);
         }
     }
 
     private void changeUserSession(HashMap<String, Object> existingSession, HashMap<String, Object> newSession, Integer accountId) {
         List<UserEntity> list = userRepository.findUsersByAccountId(accountId);
         logger.info("Users : {}",list);
-        for(UserEntity entity : list){
+        for(UserEntity userEntity : list){
             HashMap<String,Object> map = new HashMap<>();
-            if(Integer.valueOf(String.valueOf(existingSession.get("max_duration"))) > Integer.valueOf(String.valueOf(newSession.get("max_duration")))){
-                if(Integer.valueOf(String.valueOf(entity.getSession().get("max_duration"))) > Integer.valueOf(String.valueOf(newSession.get("max_duration")))){
+            logger.info("existingSession.get(\"max_duration\") : {} ",existingSession.get("max_duration"));
+            logger.info("newSession.get(\"max_duration\") : {} ",newSession.get("max_duration"));
+            if((Integer)existingSession.get("max_duration") > (Integer)newSession.get("max_duration")){
+                logger.info("existing  > new => true");
+                if((Integer)userEntity.getSession().get("max_duration") > (Integer)newSession.get("max_duration")){
+                    logger.info("user > new  => true");
                     map.put("max_duration",newSession.get("max_duration"));
                 }
-                map.put("max_duration",entity.getSession().get("max_duration"));
+                else map.put("max_duration",userEntity.getSession().get("max_duration"));
             }
-            else map.put("max_duration",entity.getSession().get("max_duration"));
-            if(Integer.valueOf(String.valueOf(existingSession.get("max_participants"))) > Integer.valueOf(String.valueOf(newSession.get("max_participants")))){
-                if(Integer.valueOf(String.valueOf(entity.getSession().get("max_participants"))) > Integer.valueOf(String.valueOf(newSession.get("max_participants")))){
+            else map.put("max_duration",userEntity.getSession().get("max_duration"));
+            if((Integer)existingSession.get("max_participants") > (Integer)newSession.get("max_participants")){
+                if((Integer)userEntity.getSession().get("max_participants") > (Integer)newSession.get("max_participants")){
                     map.put("max_participants",newSession.get("max_participants"));
                 }
-                map.put("max_participants",entity.getSession().get("max_participants"));
+                else map.put("max_participants",userEntity.getSession().get("max_participants"));
             }
-            else map.put("max_participants",entity.getSession().get("max_participants"));
-            if(Integer.valueOf(String.valueOf(existingSession.get("max_active_sessions"))) > Integer.valueOf(String.valueOf(newSession.get("max_active_sessions")))){
-                if(Integer.valueOf(String.valueOf(entity.getSession().get("max_active_sessions"))) > Integer.valueOf(String.valueOf(newSession.get("max_active_sessions")))){
+            else map.put("max_participants",userEntity.getSession().get("max_participants"));
+            if((Integer)existingSession.get("max_active_sessions") > (Integer)newSession.get("max_active_sessions")){
+                if((Integer)userEntity.getSession().get("max_active_sessions") > (Integer)newSession.get("max_active_sessions")){
                     map.put("max_active_sessions",newSession.get("max_active_sessions"));
                 }
-                map.put("max_active_sessions",entity.getSession().get("max_active_sessions"));
+                else map.put("max_active_sessions",userEntity.getSession().get("max_active_sessions"));
             }
-            else map.put("max_active_sessions",entity.getSession().get("max_active_sessions"));
-            entity.setSession(map);
-            userRepository.save(entity);
+            else map.put("max_active_sessions",userEntity.getSession().get("max_active_sessions"));
+
+            Gson gson=new Gson();
+            String jsonSession=gson.toJson(map);
+            userRepository.updateSession(userEntity.getLoginId(),jsonSession);
         }
     }
 

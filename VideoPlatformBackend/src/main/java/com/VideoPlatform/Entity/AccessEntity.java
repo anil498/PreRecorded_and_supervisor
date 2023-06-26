@@ -15,7 +15,7 @@ import javax.persistence.Table;
 public class AccessEntity {
     @Id
     @Column(name = "access_id")
-    private int accessId;
+    private Integer accessId;
 
     @Column(name = "name")
     private String name;
@@ -24,19 +24,19 @@ public class AccessEntity {
     private String systemName;
 
     @Column(name = "seq")
-    private int seq;
+    private Integer seq;
 
     @Column(name = "p_id")
-    private int pId;
+    private Integer pId;
 
     @Column(name = "status")
-    private int status;
+    private Integer status=1;
 
-    public int getAccessId() {
+    public Integer getAccessId() {
         return accessId;
     }
 
-    public void setAccessId(int accessId) {
+    public void setAccessId(Integer accessId) {
         this.accessId = accessId;
     }
 
@@ -52,19 +52,19 @@ public class AccessEntity {
         return seq;
     }
 
-    public void setSeq(int seq) {
+    public void setSeq(Integer seq) {
         this.seq = seq;
     }
 
-    public int getpId() {
+    public Integer getpId() {
         return pId;
     }
 
-    public void setpId(int pId) {
+    public void setpId(Integer pId) {
         this.pId = pId;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 

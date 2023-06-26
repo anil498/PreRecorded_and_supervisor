@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
@@ -88,5 +87,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Transactional
     @Query(nativeQuery = true, value = "UPDATE user_data SET features_meta = :featuresMeta WHERE login_id = :loginId")
     void updateFeaturesMeta(@Param("loginId") String loginId,@Param("featuresMeta") String featuresMeta);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET session = :session WHERE login_id = :loginId")
+    void updateSession(@Param("loginId") String loginId,@Param("session") String session);
 
 }
