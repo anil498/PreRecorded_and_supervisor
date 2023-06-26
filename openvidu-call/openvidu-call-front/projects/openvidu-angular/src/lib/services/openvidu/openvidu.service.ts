@@ -716,7 +716,8 @@ export class OpenViduService {
 				// Unpublishing video 
 				console.log("unpublish")
 				this.participantService.disablePublishVideoStream();
-				this.unpublish(this.participantService.getMyVideoPublisher());
+				this.isVideoPlaying = !this.isVideoPlaying
+				this.screenSession.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
 				console.log("publish")
 				// Create a custom video element with the video and audio streams
