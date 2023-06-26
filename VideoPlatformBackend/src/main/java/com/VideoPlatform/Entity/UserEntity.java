@@ -170,60 +170,46 @@ public class UserEntity implements Serializable {
         return session;
     }
 
-    public Boolean setSession(HashMap<String, Object> session) {
-        if(session != null) {
+    public void setSession(HashMap<String, Object> session) {
+        if(session != null)
             this.session = session;
-            return true;
-        }
-        return false;
+
     }
 
     public Integer[] getFeatures() {
         return features;
     }
 
-    public Boolean setFeatures(Integer[] features) {
-        if(features != null) {
+    public void setFeatures(Integer[] features) {
+        if(features != null)
             this.features = features;
-            return true;
-        }
-        return false;
     }
 
     public Integer[] getAccessId() {
         return accessId;
     }
 
-    public Boolean setAccessId(Integer[] accessId) {
-        if(accessId != null) {
+    public void setAccessId(Integer[] accessId) {
+        if(accessId != null)
             this.accessId = accessId;
-            return true;
-        }
-        return false;
     }
 
     public HashMap<String, Object> getFeaturesMeta() {
         return featuresMeta;
     }
 
-    public Boolean setFeaturesMeta(HashMap<String, Object> featuresMeta) {
-        if(featuresMeta != null) {
+    public void setFeaturesMeta(HashMap<String, Object> featuresMeta) {
+        if(featuresMeta != null)
             this.featuresMeta = featuresMeta;
-            return true;
-        }
-        return false;
     }
 
     public Date getExpDate() {
         return expDate;
     }
 
-    public Boolean setExpDate(Date expDate) {
-        if(expDate != null){
+    public void setExpDate(Date expDate) {
+        if(expDate != null)
             this.expDate = expDate;
-            return true;
-        }
-        return false;
     }
 
     public int getParentId() {
@@ -246,12 +232,9 @@ public class UserEntity implements Serializable {
         return logo;
     }
 
-    public Boolean setLogo(HashMap<String, Object> logo) {
-        if(logo!=null) {
+    public void setLogo(HashMap<String, Object> logo) {
+        if(logo!=null)
             this.logo = logo;
-            return true;
-        }
-        return false;
     }
 
     @Override

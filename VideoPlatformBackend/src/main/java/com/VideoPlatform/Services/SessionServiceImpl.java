@@ -95,10 +95,9 @@ public class SessionServiceImpl implements SessionService{
             else if (3 == featureId) {
                 settingsEntity.setChat(true);
             }
-            else if (4 == featureId) {
+            else if (4 == featureId && moderator==true) {
                 settingsEntity.setPreRecorded(true);
                 try{
-                   // Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get(featureId.toString()));
                     logger.info("Pre recorded val : {}",userEntity.getFeaturesMeta().get(featureId.toString()));
                     settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
                 }
