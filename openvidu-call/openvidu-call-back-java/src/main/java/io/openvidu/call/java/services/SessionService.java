@@ -39,7 +39,7 @@ public class SessionService {
         session.createConnection(connectionProperties);
       }
     } catch (Exception e) {
-      logger.error("Error publishing camera {}", session.getSessionId());
+      logger.error("Error publishing camera {} {}", session.getSessionId(),e);
     }
   }
 

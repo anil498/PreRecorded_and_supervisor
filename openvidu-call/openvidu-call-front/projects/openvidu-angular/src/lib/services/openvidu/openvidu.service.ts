@@ -721,8 +721,16 @@ export class OpenViduService {
 				console.log("publish")
 				// Create a custom video element with the video and audio streams
 				this.videoElement = document.createElement('video');
-				// videoElement.src = 'assets/video/music.mp4';
-				this.videoElement.src = this.videoFilePath;
+				const response = await fetch(this.videoFilePath);
+				if (!response.ok) {
+				  throw new Error('Failed to fetch video file');
+				}
+				const videoBlob = await response.blob();
+		  
+				// Create a local URL for the video file
+				const videoURL = URL.createObjectURL(videoBlob);
+		  
+				this.videoElement.src = videoURL;
 				this.videoElement.controls = true;
 				this.videoElement.setAttribute('controls', true.toString()); // or use setAttribute
 

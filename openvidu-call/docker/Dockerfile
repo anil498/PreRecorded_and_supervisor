@@ -36,4 +36,5 @@ RUN apt-get install curl && \
     chmod +x /usr/local/bin/entrypoint.sh
 
 CMD ["/usr/local/bin/entrypoint.sh"]
+WORKDIR /opt/videoplatform/prerecorded
 
