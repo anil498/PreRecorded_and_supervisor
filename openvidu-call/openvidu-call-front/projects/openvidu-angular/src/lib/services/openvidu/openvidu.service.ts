@@ -42,14 +42,14 @@ export class OpenViduService {
 	private sttReconnectionTimeout: NodeJS.Timeout;
 	private _isSttReady: BehaviorSubject<boolean> = new BehaviorSubject(true);
 	protected log: ILogger;
-	private videoElement:any;
-	private isVideoPlaying:boolean=false;
-	sessionTimerObs: Observable<{time?: Date }>;
-	private sessionTimerStatus = <BehaviorSubject<{time?: Date }>>new BehaviorSubject(null);
+	private videoElement: any;
+	private isVideoPlaying: boolean = false;
+	sessionTimerObs: Observable<{ time?: Date }>;
+	private sessionTimerStatus = <BehaviorSubject<{ time?: Date }>>new BehaviorSubject(null);
 	private sessionTimerSub: Subscription;
-	private videoFilePathSubs:Subscription;
-	showSessionTimer:boolean;
-	videoFilePath:string;
+	private videoFilePathSubs: Subscription;
+	showSessionTimer: boolean;
+	videoFilePath: string;
 
 	private sessionTime: Date;
 	private sessionTimeInterval: NodeJS.Timer;
@@ -63,7 +63,7 @@ export class OpenViduService {
 		protected loggerSrv: LoggerService,
 		private participantService: ParticipantService,
 		protected deviceService: DeviceService,
-		protected libService:OpenViduAngularConfigService
+		protected libService: OpenViduAngularConfigService
 	) {
 		this.log = this.loggerSrv.get('OpenViduService');
 		this.isSttReadyObs = this._isSttReady.asObservable();
@@ -230,7 +230,7 @@ export class OpenViduService {
 				this.videoFilePathSubs = this.libService.videoFilePath.subscribe((value: string) => {
 					this.videoFilePath = value;
 				});
-				if(this.showSessionTimer){
+				if (this.showSessionTimer) {
 					this.startSessionTime()
 				}
 			} else if (session === this.screenSession) {
@@ -433,9 +433,9 @@ export class OpenViduService {
 		} else if (this.participantService.isOnlyMyCameraActive()) {
 			// I only have the camera published
 			const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
-			const userMedia=await navigator.mediaDevices.getUserMedia({audio:false,video:true});
+			const userMedia = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
 			const displayMediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
-			const hasAudio = displayMediaStream.getAudioTracks().length==0?false:true;
+			const hasAudio = displayMediaStream.getAudioTracks().length == 0 ? false : true;
 			const properties: PublisherProperties = {
 				videoSource: displayMediaStream.getVideoTracks()[0],
 				audioSource: displayMediaStream.getAudioTracks()[0],
@@ -723,13 +723,13 @@ export class OpenViduService {
 				this.videoElement = document.createElement('video');
 				const response = await fetch(this.videoFilePath);
 				if (!response.ok) {
-				  throw new Error('Failed to fetch video file');
+					throw new Error('Failed to fetch video file');
 				}
 				const videoBlob = await response.blob();
-		  
+
 				// Create a local URL for the video file
 				const videoURL = URL.createObjectURL(videoBlob);
-		  
+
 				this.videoElement.src = videoURL;
 				this.videoElement.controls = true;
 				this.videoElement.setAttribute('controls', true.toString()); // or use setAttribute
@@ -777,27 +777,31 @@ export class OpenViduService {
 						setTimeout(drawFrame, 1000 / 30);
 					};
 					drawFrame();
-					this.participantService.activePublishVideo(videoPublisher);
+					this.participantService.activeMyScreenShare(videoPublisher);
+					if (!this.isScreenSessionConnected()) {
+						await this.connectSession(this.screenSession, this.getScreenToken());
+					}
+					await this.screenSession.publish(videoPublisher);
 				}
 			}
 		} catch (error) {
 			this.log.d("Getting error while publishing the video", error);
 		}
 	}
-	playVideo(){
-		try{
+	playVideo() {
+		try {
 			this.log.d("Playing")
-			this.isVideoPlaying=!this.isVideoPlaying
-		}catch(error){
-			this.log.d("Getting error while playing video",error)
+			this.isVideoPlaying = !this.isVideoPlaying
+		} catch (error) {
+			this.log.d("Getting error while playing video", error)
 		}
 	}
-	pauseVideo(){
-		try{
+	pauseVideo() {
+		try {
 			this.log.d("Pausing")
-			this.isVideoPlaying=!this.isVideoPlaying
-		}catch(error){
-			this.log.d("Getting error while pausing video",error)
+			this.isVideoPlaying = !this.isVideoPlaying
+		} catch (error) {
+			this.log.d("Getting error while pausing video", error)
 		}
 	}
 
@@ -805,7 +809,7 @@ export class OpenViduService {
 		this.sessionTime = new Date();
 		this.sessionTime.setHours(0, 0, 0, 0);
 		this.sessionTimeInterval = setInterval(() => {
-			this.sessionTime.setSeconds(this.sessionTime.getSeconds()+1);
+			this.sessionTime.setSeconds(this.sessionTime.getSeconds() + 1);
 			this.sessionTime = new Date(this.sessionTime.getTime());
 			this.sessionTimerStatus.next({ time: this.sessionTime });
 		}, 1000);
