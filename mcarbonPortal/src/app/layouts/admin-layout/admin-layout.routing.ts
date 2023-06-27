@@ -6,6 +6,8 @@ import { UserManagementComponent } from "../../user-management/user-management.c
 import { SessionManagementComponent } from "../../session-management/session-management.component";
 import { DynamicSupportComponent } from "../../dynamic-support/dynamic-support.component";
 import { AccountManagementComponent } from "app/account-management/account-management.component";
+import { AccessManagementComponent } from "app/access-management/access-management.component";
+import { FeatureManagementComponent } from "app/feature-management/feature-management.component";
 
 export const AdminLayoutRoutes: Routes = [
   { path: "dashboard", component: DashboardComponent },
@@ -14,4 +16,6 @@ export const AdminLayoutRoutes: Routes = [
   { path: "my_users", component: UserManagementComponent },
   { path: "my_sessions", component: SessionManagementComponent },
   { path: "dynamic_links", component: DynamicSupportComponent },
+  { path: "manage_platform_access", component: AccessManagementComponent },
+  { path: "manage_platform_feature", component: FeatureManagementComponent },
 ];

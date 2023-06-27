@@ -46,6 +46,7 @@ public class FeatureServiceImpl implements FeatureService{
             existing.setName(objectMapper.readValue(params.get("name").toString(),String.class));
             logger.info("MetaList val {}",params.get("metaList").toString());
             existing.setMetaList(objectMapper.readValue(params.get("metaList").toString(), JsonNode.class));
+            existing.setStatus(params.get("status").getAsInt());
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();

@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Inject,
@@ -61,7 +62,7 @@ export class UpdateUserDialogComponent implements OnInit {
   topLevelAccess1: any[] = [];
   topLevelAccess2: any[] = [];
   videoSelect: any = {};
-  formData: FormData;
+  formData: FormData = null;
   selectedFeaturesMeta = {};
   constructor(
     private router: Router,
@@ -71,6 +72,7 @@ export class UpdateUserDialogComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     private elementRef: ElementRef,
+    private changeDetectorRef: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public user: any
   ) {
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
@@ -110,6 +112,7 @@ export class UpdateUserDialogComponent implements OnInit {
         console.log(this.logo);
         console.log(this.photoControl);
         console.log(this.photoUrl);
+        this.changeDetectorRef.detectChanges();
       };
     }
   }
@@ -122,26 +125,35 @@ export class UpdateUserDialogComponent implements OnInit {
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const file: File = event.target.files[0];
-    //const file: File = files[0];
-    const reader = new FileReader();
-    reader.readAsBinaryString(file);
     console.log(file);
     this.videoSelect[featureId] = file.name;
+    this.formData = new FormData();
+    this.formData.append("prerecorded_video_file", file, file.name);
+    console.log(this.formData);
+    this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+    console.warn(featureId);
+    console.warn(this.selectedFeaturesMeta[featureId]);
+    // const file: File = event.target.files[0];
+    // //const file: File = files[0];
+    // const reader = new FileReader();
+    // reader.readAsBinaryString(file);
+    // console.log(file);
+    // this.videoSelect[featureId] = file.name;
 
-    reader.onload = () => {
-      const binaryData = reader.result;
-      console.log(typeof binaryData);
-      console.log(binaryData);
-      const blob = new Blob([binaryData], { type: file.type });
-      console.log(blob);
-      this.formData = new FormData();
-      this.formData.append("prerecorded_video_file", blob, file.name);
-      console.log(this.formData);
-      console.log(this.formData.get("prerecorded_video_file"));
-      this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
-      console.warn(featureId);
-      console.warn(this.selectedFeaturesMeta[featureId]);
-    };
+    // reader.onload = () => {
+    //   const binaryData = reader.result;
+    //   console.log(typeof binaryData);
+    //   console.log(binaryData);
+    //   const blob = new Blob([binaryData], { type: file.type });
+    //   console.log(blob);
+    //   this.formData = new FormData();
+    //   this.formData.append("prerecorded_video_file", blob, file.name);
+    //   console.log(this.formData);
+    //   console.log(this.formData.get("prerecorded_video_file"));
+    //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+    //   console.warn(featureId);
+    //   console.warn(this.selectedFeaturesMeta[featureId]);
+    // };
   }
 
   videoSelected(featureId: number) {
@@ -423,7 +435,7 @@ export class UpdateUserDialogComponent implements OnInit {
     this.user_lname = this.userForm1.value.user_lname;
     this.mobile = this.userForm1.value.mobile;
     this.email = this.userForm1.value.email;
-    this.login_id = this.userForm1.value.login_id;
+    this.login_id = this.user.loginId;
     this.acc_exp_date = this.userForm1.value.acc_exp_date;
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
     this.exp_date =
@@ -440,6 +452,7 @@ export class UpdateUserDialogComponent implements OnInit {
     try {
       response = await this.restService.updateUser(
         "Update",
+        this.user.accountId,
         this.user.userId,
         this.user_fname,
         this.user_lname,
@@ -458,14 +471,15 @@ export class UpdateUserDialogComponent implements OnInit {
         this.selectedFeaturesMeta
       );
       console.warn(response);
-      if (response.status_code === 200) {
-        console.warn(response);
-        this.openSnackBar(response.msg, "snackBar");
+      console.warn(response);
+      console.log(this.login_id);
+      if (this.formData !== null) {
         this.restService.uploadVideo("", this.login_id, this.formData);
-        this.timeOut(3000);
-        this.dialogRef.close();
-        this.restService.closeDialog();
       }
+      this.openSnackBar(response.msg, "snackBar");
+      this.timeOut(3000);
+      this.dialogRef.close();
+      this.restService.closeDialog();
     } catch (error) {
       console.warn(error);
     }

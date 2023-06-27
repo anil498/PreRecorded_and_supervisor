@@ -160,7 +160,13 @@ public class MessageApiController {
         SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateId);
         responseSms.setCallUrl(placeHolder);
         HashMap<String,String> res=new HashMap<>();
-        String returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
+        String returnUrl="";
+//        if(sessionEntitySupport==null){
+//            returnUrl = callPrefix+sessionEntityCustomer.getSessionKey();
+//        }
+//        else {
+            returnUrl = callPrefix + sessionEntitySupport.getSessionKey();
+//        }
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
             if(getLink.equals("0")){

@@ -19,9 +19,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.util.*;
 
 @Service
@@ -280,30 +282,46 @@ public class CommonService {
         }
         return deletedValues;
     }
+//    public void writeByteToFile(String encodedString) {
+//
+//        logger.info("Encoded String : {}",encodedString);
+//        String newStr = encodedString.substring(0,100);
+//        logger.info("Substr : {}",newStr);
+//        byte[] decodedBytes = Base64.getMimeDecoder().decode(encodedString.getBytes());
+//        try {
+//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//            FileOutputStream out = new FileOutputStream("/home/Vatsala.Vats/vid-content/test.mp4");
+//            out.write(decodedBytes);
+//            out.close();
+//        } catch (Exception e) {
+//            logger.info("Error {}", e.toString());
+//        }
+//    }
 //       public String writeByteToFile(String loginId){
 //        try{
 //            logger.info("loginId : {}",loginId);
 //
 //            UserEntity userEntity = userRepository.findByLoginId(loginId);
-//            logger.info("UserEntity : {}",userEntity);
-//            logger.info("UserEntity userId : {}",userEntity.getUserId());
-//            logger.info("UserEntity logo : {}",userEntity.getLogo());
-//            Object logoByte = userEntity.getLogo().get("byte");
+////            logger.info("UserEntity : {}",userEntity);
+////            logger.info("UserEntity userId : {}",userEntity.getUserId());
+////            logger.info("UserEntity logo : {}",userEntity.getLogo());
+//           // Object logoByte = userEntity.getLogo().get("byte");
 //            Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get("4"));
-//            Object vidByte = map.get("pre_recorded_video_file");
-//            logger.info("VidByte : {}",vidByte);
+//            HashMap<String,Object> vidByte = (HashMap<String, Object>) map.get("pre_recorded_video_file");
+//            String encodedByte = (String) vidByte.get("byte");
+//            //logger.info("VidByte : {}",vidByte);
 //            ByteArrayOutputStream output = new ByteArrayOutputStream();
 //            ObjectOutputStream obj;
 //            try {
 //                obj = new ObjectOutputStream(output);
-//                obj.writeObject(vidByte);
+//                obj.writeObject(encodedByte);
 //                logger.info("Bytes written successfully !");
 //            } catch (IOException e) {
 //                e.printStackTrace();
 //            }
 //            byte[] bytes = output.toByteArray();
 //            try {
-//                OutputStream os = new FileOutputStream(file);
+//                OutputStream os = new FileOutputStream("/home/Vatsala.Vats/vid-content/test.mp4");
 //                os.write(bytes);
 //                logger.info("Bytes written successfully !");
 //                os.close();
@@ -317,5 +335,29 @@ public class CommonService {
 //        }
 //        return "Written !!!";
 //    }
+//
 
+    public void base64ToMultiPart(Object base64){
+
+        byte[] decodedBytes = Base64.getDecoder().decode(base64.toString());
+        String decodedString = new String(decodedBytes);
+        logger.info("Decoded String is : {}",decodedString);
+
+    }
+    public void removeFeatureMetaVideo(UserEntity userEntity){
+//        logger.info("userEntity : {}",userEntity);
+        HashMap<String,Object> featureMeta = userEntity.getFeaturesMeta();
+        logger.info("feature meta : {}",featureMeta);
+        if(featureMeta==null){
+            return;
+        }
+        Gson gson=new Gson();
+        String jsonFeature=gson.toJson(featureMeta);
+        if(jsonFeature.contains("pre_recorded_video_file")){
+            featureMeta.replace("pre_recorded_video_file",null);
+            logger.info("Updated features meta : {}",featureMeta);
+            userEntity.setFeaturesMeta(featureMeta);
+            logger.info("Updated userEntity : {}",userEntity);
+        }
+    }
 }

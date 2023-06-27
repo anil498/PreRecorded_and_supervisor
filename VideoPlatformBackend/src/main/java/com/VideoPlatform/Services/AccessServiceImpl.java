@@ -9,7 +9,6 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +46,7 @@ public class AccessServiceImpl implements AccessService {
             existing.setSystemName(objectMapper.readValue(params.get("systemName").toString(),String.class));
             existing.setpId(objectMapper.readValue(params.get("pId").toString(),Integer.class));
             existing.setSeq(objectMapper.readValue(params.get("seq").toString(),Integer.class));
+            existing.setStatus(params.get("status").getAsInt());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

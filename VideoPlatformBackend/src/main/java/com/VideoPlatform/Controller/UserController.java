@@ -64,11 +64,9 @@ public class UserController {
         logger.info(commonService.getHeaders(request).toString());
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-
         if(!commonService.authorizationCheck(authKey,token,"my_users")){
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
         return ok(userService.getAllUsers());
     }
 
@@ -76,13 +74,10 @@ public class UserController {
     public ResponseEntity<List<UserEntity>> getAllChild(HttpServletRequest request) {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-
         if(!commonService.authorizationCheck(authKey,token,"my_users")){
             return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
-        UserAuthEntity user = userAuthRepository.findByToken(token);
-        return ResponseEntity.ok(userService.getAllChild(user.getUserId()));
+        return ResponseEntity.ok(userService.getAllChild(token));
     }
 
     @GetMapping("/GetById/{id}")
@@ -90,7 +85,6 @@ public class UserController {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-
         if(!commonService.authorizationCheck(authKey,token,"my_users")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -102,7 +96,6 @@ public class UserController {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-
         if(!commonService.authorizationCheck(authKey,token,"user_creation")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
@@ -114,11 +107,9 @@ public class UserController {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-
         if(!commonService.isValidRequestUserUpdate(authKey,token,"user_update","customer_creation")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-
         return userService.updateUser(params1,authKey);
     }
 
@@ -127,21 +118,24 @@ public class UserController {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-
         if(!commonService.authorizationCheck(authKey,token,"user_delete")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         userService.deleteUser(id);
-
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "User deleted!");
-
         return ok(result);
     }
 
     @PostMapping("/getVideo")
     public ResponseEntity<String> handleFileUpload(@RequestParam(value = "prerecorded_video_file", required = false) MultipartFile file,HttpServletRequest request) throws IOException {
+        String loginId = request.getHeader("loginId");
+        String name = request.getHeader("name");
+        logger.info("loginId : {}",loginId);
+        if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
+            return new ResponseEntity<String>("Invalid credentials !",HttpStatus.UNAUTHORIZED);
+        }
         System.out.println(file);
         try{
             if(file.isEmpty()){
@@ -150,20 +144,26 @@ public class UserController {
         }
         catch(Exception e){
         }
+
         Files.copy(file.getInputStream(), Paths.get(FILE_DIRECTORY,file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-        logger.info("File Path : {}",(FILE_DIRECTORY+file.getOriginalFilename()));
-        String filePath = FILE_DIRECTORY+file.getOriginalFilename();
-        logger.info("File Path : {}",filePath);
+        String fileName = file.getOriginalFilename();
+        logger.info("File Path : {}",(FILE_DIRECTORY+fileName));
+        String filePath = FILE_DIRECTORY+fileName;
+        logger.info("fileName : {}",fileName);
 
-        String loginId = request.getHeader("loginId");
-        String name = request.getHeader("name");
-
+        logger.info("loginId : {}",loginId);
+        if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
+            return ResponseEntity.ok("File Uploaded but not updated to database !");
+        }
         if(request.getHeader("name").isEmpty()){
-            userService.saveFilePathToFeature(filePath,loginId,name);
+            userService.saveFilePathToFeature(fileName,loginId,name);
+        }
+        else if(request.getHeader("loginId").isEmpty()){
+            accountService.saveFilePathToFeature(fileName,loginId,name);
         }
         else{
-            userService.saveFilePathToFeature(filePath,loginId,name);
-            accountService.saveFilePathToFeature(filePath,loginId,name);
+            userService.saveFilePathToFeature(fileName,loginId,name);
+            accountService.saveFilePathToFeature(fileName,loginId,name);
         }
         return ResponseEntity.ok("File Uploaded Successfully");
     }
@@ -190,7 +190,7 @@ public class UserController {
             return new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "Valid Login Id !");
         return ok(result);
     }

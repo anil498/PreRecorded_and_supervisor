@@ -109,10 +109,8 @@ export class LoginComponent implements OnInit {
       console.log(err);
       if (err.status === 0) {
         this.state = "Server Not Responding";
-      } else if (err.error) {
-        this.state = err.error.msg;
       } else if (err.status === 401) {
-        this.state = "Unauthorized User";
+        this.state = err.error.msg;
       } else {
         this.state = err.error.error;
       }

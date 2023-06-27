@@ -40,8 +40,14 @@ import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account
 import { ViewUserDialogComponent } from "app/view-user-dialog/view-user-dialog.component";
 import { MatFileUploadModule } from "angular-material-fileupload";
 import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
+import { AccessManagementComponent } from "app/access-management/access-management.component";
+import { FeatureManagementComponent } from "app/feature-management/feature-management.component";
+import { CreateFeatureDialogComponent } from "app/create-feature-dialog/create-feature-dialog.component";
+import { CreateAccessDialogComponent } from "app/create-access-dialog/create-access-dialog.component";
 import { MatGridListModule } from "@angular/material/grid-list";
 import { MatRadioModule } from "@angular/material/radio";
+import { UpdateAccessDialogComponent } from "app/update-access-dialog/update-access-dialog.component";
+import { UpdateFeatureDialogComponent } from "app/update-feature-dialog/update-feature-dialog.component";
 @NgModule({
   imports: [
     CommonModule,
@@ -89,6 +95,12 @@ import { MatRadioModule } from "@angular/material/radio";
     ViewAccessDialogComponent,
     ViewFeatureDialogComponent,
     ViewSessionSettingDialogComponent,
+    AccessManagementComponent,
+    FeatureManagementComponent,
+    CreateFeatureDialogComponent,
+    CreateAccessDialogComponent,
+    UpdateAccessDialogComponent,
+  UpdateFeatureDialogComponent
   ],
   entryComponents: [FormDialogComponent, DeleteDialogComponent],
 })
