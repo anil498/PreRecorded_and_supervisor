@@ -67,7 +67,7 @@ public class SessionController {
 
 
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "Session created!");
         return ok(result);
     }
@@ -114,7 +114,7 @@ public class SessionController {
         sessionService.deleteSession(key);
 
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "Session deleted!");
 
         return ok(result);

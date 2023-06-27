@@ -43,6 +43,12 @@ public class SessionServiceImpl implements SessionService{
         AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
         UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
 
+//        HashMap<String,Object> fMeta = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("4");
+//        if(moderator==true)
+//        if(fMeta.get("share_pre_recorded_video").equals(false)){
+//            return null;
+//        }
+
         Gson gson = new Gson();
         if (sessionKey.length()==0)
             sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
@@ -104,7 +110,6 @@ public class SessionServiceImpl implements SessionService{
                 catch (Exception e){
                     logger.info("Getting null value from pre_recorded_video_file 1 !",e);
                 }
-
             }
             else if (5 == featureId && moderator==false) {
                 settingsEntity.setDisplayTicker(true);

@@ -58,8 +58,15 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public List<UserEntity> getAllChild(Integer id) {
-         return userRepository.findAllChild(id);
+    public List<UserEntity> getAllChild(String token) {
+
+         UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
+//         List<UserEntity> listUser= userRepository.findAllChild(userAuthEntity.getUserId());
+//         for(UserEntity userEntity : listUser){
+//             commonService.removeFeatureMetaVideo(userEntity);
+//         }
+//         return listUser;
+         return userRepository.findAllChild(userAuthEntity.getUserId());
     }
 
     @Override
@@ -81,6 +88,18 @@ public class UserServiceImpl implements UserService{
             logger.info("No more users are allowed for account {} having login id {} , max limit exceed..!",accountId,user.getLoginId());
             return new ResponseEntity<>("No more users are allowed, max limit exceed..!",HttpStatus.UNAUTHORIZED);
         }
+
+        logger.info("feature_meta 4 val {}",user.getFeaturesMeta().get("4"));
+        if(user.getFeaturesMeta().get("4") != null) {
+//            Map<String, Object> map = (Map<String, Object>) (user.getFeaturesMeta().get("4"));
+//            HashMap<String,Object> vidByte = (HashMap<String, Object>) map.get("pre_recorded_video_file");
+//            logger.info("VidByte : {}", vidByte);
+//
+//            String encodedString = (String) vidByte.get("byte");
+////            HashMap<String,Object> map = (HashMap<String, Object>) user.getFeaturesMeta().get("4");
+//            commonService.writeByteToFile(user.getLoginId());
+        }
+
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
@@ -112,6 +131,8 @@ public class UserServiceImpl implements UserService{
         String myPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(myPass);
         userRepository.save(user);
+
+
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "User created!");
@@ -143,37 +164,46 @@ public class UserServiceImpl implements UserService{
             existing.setFname(params.get("fname").getAsString());
             existing.setLname(params.get("lname").getAsString());
             try {
-                if (checkIfAllowedFeature(featuresId, objectMapper.readValue(params.get("features").toString(), Integer[].class),accountEntity.getAccountId())) {
-                    existing.setFeatures(objectMapper.readValue(params.get("features").toString(), Integer[].class));
-                } else {
-                    logger.info("Feature values not present in Account Entity. Not allowed to update !");
-                    return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
+                if(!params.get("features").isJsonNull()) {
+                    if (checkIfAllowedFeature(featuresId, objectMapper.readValue(params.get("features").toString(), Integer[].class), accountEntity.getAccountId())) {
+                        existing.setFeatures(objectMapper.readValue(params.get("features").toString(), Integer[].class));
+                    } else {
+                        logger.info("Feature values not present in Account Entity. Not allowed to update !");
+                        return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
+                    }
                 }
-                if (checkIfAllowedAccess(accessId, objectMapper.readValue(params.get("accessId").toString(), Integer[].class),accountEntity.getAccountId())) {
-                    existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(), Integer[].class));
-                } else {
-                    logger.info("Access Id values not present in Account Entity. Not allowed to update !");
-                    return new ResponseEntity<>("Invalid access id values !", HttpStatus.NOT_ACCEPTABLE);
+                if(!params.get("accessId").isJsonNull()){
+                    if (checkIfAllowedAccess(accessId, objectMapper.readValue(params.get("accessId").toString(), Integer[].class),accountEntity.getAccountId())) {
+                        existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(), Integer[].class));
+                    } else {
+                        logger.info("Access Id values not present in Account Entity. Not allowed to update !");
+                        return new ResponseEntity<>("Invalid access id values !", HttpStatus.NOT_ACCEPTABLE);
+                    }
                 }
-                if (checkIfAllowedSession(sessionA, objectMapper.readValue(params.get("session").toString(), HashMap.class))) {
-                    existing.setSession(objectMapper.readValue(params.get("session").toString(), HashMap.class));
-                } else {
-                    logger.info("Invalid session values. Not allowed to update !");
-                    return new ResponseEntity<>("Invalid session values !", HttpStatus.NOT_ACCEPTABLE);
+                if(!params.get("session").isJsonNull()){
+                    if (checkIfAllowedSession(sessionA, objectMapper.readValue(params.get("session").toString(), HashMap.class))) {
+                        existing.setSession(objectMapper.readValue(params.get("session").toString(), HashMap.class));
+                    } else {
+                        logger.info("Invalid session values. Not allowed to update !");
+                        return new ResponseEntity<>("Invalid session values !", HttpStatus.NOT_ACCEPTABLE);
+                    }
                 }
-                existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
-                existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(), HashMap.class));
-                Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(), String.class));
+                if(!params.get("logo").isJsonNull())
+                    existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
 
-                existing.setExpDate(expDate);
-
-                existing.setExpDate(expDate);
-
+                if(!params.get("featuresMeta").isJsonNull())
+                    existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(), HashMap.class));
+                if(!params.get("expDate").isJsonNull()) {
+                    Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(), String.class));
+                    existing.setExpDate(expDate);
+                }
+                if(!params.get("contact").isJsonNull())
+                    existing.setContact(params.get("contact").getAsString());
+                if(!params.get("email").isJsonNull())
+                    existing.setEmail(params.get("email").getAsString());
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
-            existing.setContact(params.get("contact").getAsString());
-            existing.setEmail(params.get("email").getAsString());
             logger.info("New Entity {}", existing);
 
             userRepository.save(existing);
@@ -306,12 +336,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void saveFilePathToFeature(String filePath, String loginId, String name){
+    public void saveFilePathToFeature(String fileName, String loginId, String name){
 
         UserEntity userEntity = userRepository.findByLoginId(loginId);
         HashMap<String,Object> featuresMeta=userEntity.getFeaturesMeta();
         HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
-        map.replace("pre_recorded_video_file",filePath);
+        map.replace("pre_recorded_video_file",fileName);
         featuresMeta.replace("4",map);
         logger.info("Features Meta {}",featuresMeta);
         userEntity.setFeaturesMeta(featuresMeta);

@@ -98,7 +98,7 @@ public class AccountController {
         accountService.updateAccount(params1);
 
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "Account updated!");
         return ok(result);
     }
@@ -115,9 +115,20 @@ public class AccountController {
         accountService.deleteAccount(id);
 
         Map<String,String> result = new HashMap<>();
-        result.put("status_code ","200");
+        result.put("status_code","200");
         result.put("msg", "Account deleted!");
 
+        return ok(result);
+    }
+    @PostMapping("/checkAccountName")
+    public ResponseEntity<?> checkAccountName(@RequestBody Map<String, String> params,HttpServletRequest request){
+        String accountName = params.get("accountName");
+        if(!accountService.checkAccountName(accountName)){
+            return new ResponseEntity<>("Invalid Account name!",HttpStatus.UNAUTHORIZED);
+        }
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code","200");
+        result.put("msg", "Valid Account name !");
         return ok(result);
     }
 }

@@ -23,14 +23,20 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping(RequestMappings.APICALLACCESS)
 public class AccessController {
     @Autowired
-    AccessRepository accessRepository;
+    private AccessRepository accessRepository;
     @Autowired
-    CommonService commonService;
+    private CommonService commonService;
     @Autowired
-    AccessService accessService;
+    private AccessService accessService;
 
     @PostMapping("/Create")
     public ResponseEntity<?> createUser(@RequestBody AccessEntity accessEntity, HttpServletRequest request, HttpServletResponse response) {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_access")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         accessService.createAccess(accessEntity);
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
@@ -40,16 +46,33 @@ public class AccessController {
 
     @GetMapping("/GetAll")
     public ResponseEntity<?> getAllAccess(HttpServletRequest request){
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_access")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         return ok(accessService.getAllAccess());
     }
 
     @PutMapping("/Update")
     public ResponseEntity<?> updateUser(@RequestBody String accessEntity, HttpServletRequest request){
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_access")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         return accessService.updateAccess(accessEntity);
     }
 
     @DeleteMapping("/Delete/{accessId}")
     public ResponseEntity<?> deleteAccess(@PathVariable Integer accessId, HttpServletRequest request){
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_access")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         accessService.deleteAccess(accessId);
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");

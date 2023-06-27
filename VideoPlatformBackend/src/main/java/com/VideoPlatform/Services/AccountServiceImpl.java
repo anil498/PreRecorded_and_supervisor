@@ -201,6 +201,14 @@ public class AccountServiceImpl implements AccountService {
         accountAuthRepository.deleteById(accountId);
         return "Account successfully deleted.";
     }
+    @Override
+    public Boolean checkAccountName(String accountName){
+        if(accountRepository.findByAccountName(accountName) == null){
+            return true;
+        }
+        return false;
+    }
+
     public String accessCheck(Integer userId){
         UserEntity userEntity = userRepository.findByUserId(userId);
         Integer[] accessId = userEntity.getAccessId();
@@ -214,14 +222,15 @@ public class AccountServiceImpl implements AccountService {
         return String.valueOf(accessEntities);
     }
 
+
     @Override
-    public void saveFilePathToFeature(String filePath, String loginId, String name){
+    public void saveFilePathToFeature(String fileName, String loginId, String name){
 
         AccountEntity accountEntity= accountRepository.findByAccountName(name);
 
         HashMap<String,Object> featuresMeta=accountEntity.getFeaturesMeta();
         HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
-        map.replace("pre_recorded_video_file",filePath);
+        map.replace("pre_recorded_video_file",fileName);
         featuresMeta.replace("4",map);
         logger.info("Features Meta {}",featuresMeta);
         accountEntity.setFeaturesMeta(featuresMeta);

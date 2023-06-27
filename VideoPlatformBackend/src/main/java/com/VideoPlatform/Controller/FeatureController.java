@@ -1,5 +1,7 @@
 package com.VideoPlatform.Controller;
 
+import com.VideoPlatform.Entity.UserEntity;
+import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Services.FeatureService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.VideoPlatform.Constant.RequestMappings;
@@ -7,6 +9,7 @@ import com.VideoPlatform.Entity.FeatureEntity;
 import com.VideoPlatform.Repository.FeatureRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +28,20 @@ import static org.springframework.http.ResponseEntity.ok;
 public class FeatureController {
 
     @Autowired
-    FeatureRepository featureRepository;
+    private FeatureRepository featureRepository;
     @Autowired
-    FeatureService featureService;
+    private FeatureService featureService;
+    @Autowired
+    private CommonService commonService;
 
     @PostMapping("/Create")
     public ResponseEntity<?> createFeature(@RequestBody FeatureEntity featureEntity, HttpServletRequest request) {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_feature")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
         featureService.createFeature(featureEntity);
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
@@ -39,6 +50,12 @@ public class FeatureController {
     }
     @GetMapping("/GetAll")
     public ResponseEntity<List<FeatureEntity>> featureList(HttpServletRequest request , HttpServletResponse response) {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_feature")){
+            return  new ResponseEntity<List<FeatureEntity>>(HttpStatus.UNAUTHORIZED);
+        }
         return ResponseEntity.ok(featureService.getAllFeatures());
     }
     @GetMapping("/GetList")
@@ -53,11 +70,23 @@ public class FeatureController {
 
     @PutMapping("/Update")
     public ResponseEntity<?> updateFeature(@RequestBody String featureEntity, HttpServletRequest request){
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_feature")){
+            return  new ResponseEntity<List<FeatureEntity>>(HttpStatus.UNAUTHORIZED);
+        }
         return featureService.updateFeature(featureEntity);
     }
 
     @DeleteMapping("/Delete/{featureId}")
     public ResponseEntity<?> deleteAccess(@PathVariable Integer featureId, HttpServletRequest request){
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"manage_platform_feature")){
+            return  new ResponseEntity<List<FeatureEntity>>(HttpStatus.UNAUTHORIZED);
+        }
         featureService.deleteFeature(featureId);
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
