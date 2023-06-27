@@ -69,13 +69,14 @@ export class RestService {
   }
 
   uploadVideo(name: string, login_id: string, formData: FormData) {
+    console.log(name + login_id);
     console.log("Uploading Video");
     try {
       const headers = new HttpHeaders({
         name: `${name}`,
         loginId: `${login_id}`,
       });
-
+      console.log(headers);
       this.http
         .post(this.baseHref + "User/getVideo", formData, {
           headers,
@@ -118,6 +119,29 @@ export class RestService {
     }
   }
 
+  private postRequest(path: string, body: any): Promise<any> {
+    console.warn(this.baseHref + path);
+    console.warn(body);
+    console.warn(this.authKey);
+    try {
+      const headers = new HttpHeaders({
+        Authorization: `${this.authKey}`,
+        Token: `${this._token}`,
+      });
+      return lastValueFrom(
+        this.http.post<any>(this.baseHref + path, body, { headers })
+      );
+    } catch (error) {
+      console.warn(error);
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
   private postRequest1(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "User/" + path);
     console.warn(body);
@@ -169,6 +193,29 @@ export class RestService {
     }
   }
 
+  private putRequest(path: string, body: any): Promise<any> {
+    console.warn(this.baseHref + path);
+    console.warn(body);
+    console.warn(this.authKey);
+    try {
+      const headers = new HttpHeaders({
+        Authorization: `${this.authKey}`,
+        Token: `${this._token}`,
+      });
+      return lastValueFrom(
+        this.http.put<any>(this.baseHref + path, body, { headers })
+      );
+    } catch (error) {
+      console.warn(error);
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
   private putRequest1(path: string, body: any): Promise<any> {
     console.warn(this.baseHref + "User/" + path);
     console.warn(body);
@@ -325,6 +372,7 @@ export class RestService {
 
   async updateUser(
     type: string,
+    accountId: number,
     userId: number,
     fname: string,
     lname: string,
@@ -344,6 +392,7 @@ export class RestService {
     featuresMeta: any
   ) {
     return this.putRequest1(type, {
+      accountId,
       userId,
       fname,
       lname,
@@ -454,31 +503,6 @@ export class RestService {
     });
   }
 
-  // async getUserById(token: string) {
-  //   console.warn(token + "\n");
-  //   const headers = new HttpHeaders({
-  //     Token: `${token}`,
-  //     Authorization: `${this.authKey}`,
-  //   });
-  //   try {
-  //     return lastValueFrom(
-  //       this.http.get<any>(
-  //         this.baseHref +
-  //           "User/getById/" +
-  //           `${this._response.user_data.userId}`,
-  //         { headers }
-  //       )
-  //     );
-  //   } catch (error) {
-  //     if (error.status === 404) {
-  //       throw {
-  //         status: error.status,
-  //         message: "Cannot connect with backend. " + error.url + " not found",
-  //       };
-  //     }
-  //   }
-  // }
-
   async getUserList(token: string, id: string) {
     console.warn(token + "\n" + id);
     const headers = new HttpHeaders({
@@ -539,6 +563,99 @@ export class RestService {
       }
       throw error;
     }
+  }
+
+  async getFeatureList(token: string, id: string) {
+    console.warn(token + "\n" + id);
+    const headers = new HttpHeaders({
+      Token: `${token}`,
+      Authorization: `${this.authKey}`,
+    });
+    try {
+      return lastValueFrom(
+        this.http.get<any>(this.baseHref + "Feature/GetAll/", { headers })
+      );
+    } catch (error) {
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
+  async getAccessList(token: string, id: string) {
+    console.warn(token + "\n" + id);
+    const headers = new HttpHeaders({
+      Token: `${token}`,
+      Authorization: `${this.authKey}`,
+    });
+    try {
+      return lastValueFrom(
+        this.http.get<any>(this.baseHref + "Access/GetAll/", { headers })
+      );
+    } catch (error) {
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
+  async createAccess(
+    type: string,
+    pId: number,
+    accessId: number,
+    seq: number,
+    name: string,
+    systemName: string
+  ) {
+    return this.postRequest(type, {
+      pId,
+      accessId,
+      seq,
+      name,
+      systemName,
+    });
+  }
+
+  async updateAccess(
+    type: string,
+    pId: number,
+    accessId: number,
+    seq: number,
+    name: string,
+    systemName: string
+  ) {
+    return this.putRequest(type, {
+      pId,
+      accessId,
+      seq,
+      name,
+      systemName,
+    });
+  }
+  async createFeature(
+    type: string,
+    featureId: number,
+    name: string,
+    metaList: any[]
+  ) {
+    return this.postRequest(type, {
+      featureId,
+      name,
+      metaList,
+    });
+  }
+
+  async deleteAccess(accessId: number) {
+    this.deleteRequest(`Access/Delete/${accessId}`);
+  }
+  async deleteFeature(featureId: number) {
+    this.deleteRequest(`Feature/Delete/${featureId}`);
   }
 
   async deleteAccount(id: number) {

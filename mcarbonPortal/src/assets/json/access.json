@@ -102,5 +102,21 @@
     "class": "",
     "show": false,
     "systemName": "group_delete"
+  },
+  {
+    "path": "/app/manage_platform_feature",
+    "title": "Platform Feature",
+    "icon": "star",
+    "class": "",
+    "show": false,
+    "systemName": "manage_platform_feature"
+  },
+  {
+    "path": "/app/manage_platform_access",
+    "title": "Platform Access",
+    "icon": "star",
+    "class": "",
+    "show": false,
+    "systemName": "manage_platform_access"
   }
 ]
