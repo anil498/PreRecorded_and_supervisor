@@ -8,8 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.models.ErrorResponse;
@@ -292,8 +295,19 @@ public class SessionController {
   private boolean validateParticipantJoined(SessionProperty sessionProperty, Session session, ConcurrentMap<String,SessionContext> sessionContextConcurrentMap){
     if(session!=null) {
       List<Connection> connectionList=session.getActiveConnections();
-      logger.info("Active Participant for sessionId is {} and max Participant allowed for this session is {} ", connectionList.size(), sessionProperty.getTotalParticipants());
-      if (connectionList.size() < sessionProperty.getTotalParticipants()) {
+      List<Connection> filteredConnectionList = connectionList.stream()
+              .filter(connection -> {
+                String clientData = connection.getClientData();
+                if (clientData != null) {
+                  JsonObject clientDataJson = JsonParser.parseString(clientData).getAsJsonObject();
+                  String type = clientDataJson.get("type").getAsString();
+                  return !type.equalsIgnoreCase("SCREEN");
+                }
+                return true;
+              })
+              .collect(Collectors.toList());
+      logger.info("Active Participant for sessionId is {} and max Participant allowed for this session is {} ", filteredConnectionList.size(), sessionProperty.getTotalParticipants());
+      if (filteredConnectionList.size() < sessionProperty.getTotalParticipants()) {
             return true;
         } else {
           return false;
