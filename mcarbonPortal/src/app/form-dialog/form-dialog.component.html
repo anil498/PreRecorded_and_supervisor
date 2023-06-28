@@ -521,7 +521,7 @@
             >
               <mat-checkbox
                 [value]="feature.featureId"
-                (change)="toggleFeatureSelection(feature.featureId)"
+                (change)="toggleFeatureSelection(feature)"
               >
                 {{ feature.name }}
               </mat-checkbox>
@@ -623,7 +623,7 @@
             >
               <mat-checkbox
                 [value]="feature.featureId"
-                (change)="toggleFeatureSelection(feature.featureId)"
+                (change)="toggleFeatureSelection(feature)"
               >
                 {{ feature.name }}
               </mat-checkbox>

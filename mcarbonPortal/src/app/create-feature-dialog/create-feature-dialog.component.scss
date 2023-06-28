@@ -1,0 +1,238 @@
+.card-1 {
+  box-shadow: none;
+  margin-bottom: 0px;
+}
+
+::ng-deep .mat-dialog-container {
+  height: auto !important;
+}
+
+.card-header {
+  margin-bottom: 10px;
+}
+
+#tabGroup {
+  background-color: #e63b37;
+}
+
+/* Alert message */
+.alert {
+  padding: 0.75rem 1.25rem;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #c3e6cb;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.alert-danger {
+  background-color: #e9bdc2;
+  color: #b02a37;
+  border-color: #e7908c;
+  border-radius: 10px;
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
+.btn-photo {
+  background: linear-gradient(60deg, #009688, #17d1be);
+  color: white;
+}
+.btn-1 {
+  background: linear-gradient(60deg, #009688, #17d1be);
+  color: white;
+  width: 120px;
+}
+.prev-btn {
+  background: linear-gradient(60deg, #17d1be, #009688);
+  color: white;
+  width: 120px;
+}
+
+.submit-btn {
+  background: linear-gradient(60deg, #069c1a, #09ec28);
+  color: white;
+  width: 120px;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.row {
+  margin-left: auto;
+  margin-right: auto;
+}
+// mat-tab-group {
+//   min-height: 350px;
+// }
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+::ng-deep
+  .mat-checkbox-indeterminate
+  .mat-checkbox-background
+  .mat-checkbox-ripple.mat-ripple-active
+  .mat-ripple-element {
+  background-color: #17d1be !important;
+  border-color: #17d1be !important;
+}
+
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+  background-color: #17d1be !important;
+}
+::ng-deep .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+  background-color: #bbfff8 !important;
+}
+.container {
+  padding-top: 10px;
+}
+
+.example-section {
+  margin-top: 10px;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+  opacity: 0.5;
+  height: 1px;
+  background: #009688;
+}
+
+::ng-deep .mat-form-field-label-wrapper {
+  font-size: 0.75rem;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #009688;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+button[type="button"] {
+  border-radius: 50%;
+}
+
+img {
+  border-radius: 50%;
+}
+
+::ng-deep .mat-datepicker-content {
+  margin-top: 100px !important;
+}
+
+.close-btn {
+  position: absolute;
+  right: 1px;
+  top: 10px;
+}
+
+.col-custom {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.example-section {
+  width: 100%;
+}
+
+.label {
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
+::ng-deep .mat-grid-tile-content {
+  flex-direction: column !important;
+  justify-content: start !important;
+  align-items: self-start !important;
+}
+
+.container-1 {
+  margin-top: 20px;
+  justify-content: start;
+  align-items: self-start;
+  margin-left: 8.33333333% !important;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: self-start;
+  margin-left: 0 !important;
+}
+
+.feature-section {
+  display: flex;
+  padding-left: 10%;
+}
+
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: min-content;
+  width: 50%;
+}
+
+.grid-item {
+  width: 90%;
+}
+
+.grid-item-content {
+  margin-left: 10%;
+}
+
+::ng-deep .tooltip-style.mat-tooltip {
+  color: white !important;
+  background-color: #00a796 !important;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+
+::ng-deep
+  .mat-radio-button.mat-accent.mat-radio-checked
+  .mat-radio-outer-circle {
+  border-color: #009688 !important;
+}
+
+::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: #009688 !important;
+}
+
+::ng-deep .mat-form-field-infix {
+  display: flex;
+  flex-direction: row;
+}
+
+.photo-container {
+  position: relative;
+}
+.btn-close {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  color: red;
+  cursor: pointer;
+}
+
+.card-footer {
+  justify-content: end !important;
+}

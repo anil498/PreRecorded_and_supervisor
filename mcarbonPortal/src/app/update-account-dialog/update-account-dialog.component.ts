@@ -4,6 +4,7 @@ import {
   ViewChild,
   Inject,
   ElementRef,
+  ChangeDetectorRef,
 } from "@angular/core";
 import {
   AbstractControl,
@@ -76,7 +77,7 @@ export class UpdateAccountDialogComponent implements OnInit {
   topLevelAccess1: any[] = [];
   topLevelAccess2: any[] = [];
   selectedFeaturesMeta = {};
-  formData: FormData;
+  formData: FormData = null;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<UpdateAccountDialogComponent>,
@@ -84,6 +85,7 @@ export class UpdateAccountDialogComponent implements OnInit {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private elementRef: ElementRef,
+    private changeDetectorRef: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public account: any
   ) {
     this.loginResponse = this.restService.getToken();
@@ -123,6 +125,7 @@ export class UpdateAccountDialogComponent implements OnInit {
         console.log(this.logo);
         console.log(this.photoControl);
         console.log(this.photoUrl);
+        this.changeDetectorRef.detectChanges();
       };
     }
   }
@@ -134,26 +137,35 @@ export class UpdateAccountDialogComponent implements OnInit {
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const file: File = event.target.files[0];
-    //const file: File = files[0];
-    const reader = new FileReader();
-    reader.readAsBinaryString(file);
     console.log(file);
     this.videoSelect[featureId] = file.name;
+    this.formData = new FormData();
+    this.formData.append("prerecorded_video_file", file, file.name);
+    console.log(this.formData);
+    this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+    console.warn(featureId);
+    console.warn(this.selectedFeaturesMeta[featureId]);
+    // const file: File = event.target.files[0];
+    // //const file: File = files[0];
+    // const reader = new FileReader();
+    // reader.readAsBinaryString(file);
+    // console.log(file);
+    // this.videoSelect[featureId] = file.name;
 
-    reader.onload = () => {
-      const binaryData = reader.result;
-      console.log(typeof binaryData);
-      console.log(binaryData);
-      const blob = new Blob([binaryData], { type: file.type });
-      console.log(blob);
-      this.formData = new FormData();
-      this.formData.append("prerecorded_video_file", blob, file.name);
-      console.log(this.formData);
-      console.log(this.formData.get("prerecorded_video_file"));
-      this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
-      console.warn(featureId);
-      console.warn(this.selectedFeaturesMeta[featureId]);
-    };
+    // reader.onload = () => {
+    //   const binaryData = reader.result;
+    //   console.log(typeof binaryData);
+    //   console.log(binaryData);
+    //   const blob = new Blob([binaryData], { type: file.type });
+    //   console.log(blob);
+    //   this.formData = new FormData();
+    //   this.formData.append("prerecorded_video_file", blob, file.name);
+    //   console.log(this.formData);
+    //   console.log(this.formData.get("prerecorded_video_file"));
+    //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+    //   console.warn(featureId);
+    //   console.warn(this.selectedFeaturesMeta[featureId]);
+    // };
   }
 
   videoSelected(featureId: number) {
@@ -464,9 +476,9 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.selectedFeaturesMeta
       );
       console.warn(response);
-      if (response.statusCode === 200) {
-        this.dialogRef.close();
+      if (this.formData !== null && response.status_code == 200) {
         this.restService.uploadVideo(this.name, "", this.formData);
+        this.dialogRef.close();
         this.restService.closeDialog();
       }
     } catch (error) {

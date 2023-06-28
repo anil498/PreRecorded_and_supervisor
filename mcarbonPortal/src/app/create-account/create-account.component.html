@@ -361,7 +361,7 @@
             >
               <mat-checkbox
                 [value]="feature.featureId"
-                (change)="toggleFeatureSelection(feature.featureId)"
+                (change)="toggleFeatureSelection(feature)"
               >
                 {{ feature.name }}
               </mat-checkbox>
@@ -436,6 +436,7 @@
                       <mat-radio-group
                         aria-labelledby="example-radio-group-label"
                         class="example-radio-group"
+                        [value]="meta.name[0]"
                         (change)="
                           setMetaValue(
                             feature.featureId,
@@ -470,7 +471,7 @@
             >
               <mat-checkbox
                 [value]="feature.featureId"
-                (change)="toggleFeatureSelection(feature.featureId)"
+                (change)="toggleFeatureSelection(feature)"
               >
                 {{ feature.name }}
               </mat-checkbox>
@@ -545,6 +546,7 @@
                       <mat-radio-group
                         aria-labelledby="example-radio-group-label"
                         class="example-radio-group"
+                        [value]="meta.name[0]"
                         (change)="
                           setMetaValue(
                             feature.featureId,

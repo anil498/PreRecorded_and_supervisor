@@ -1,0 +1,99 @@
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      Access Update
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+  <div class="card-body">
+    <div class="container" [formGroup]="accessForm" *ngIf="accessForm">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-12 col-custom">
+              <mat-form-field appearance="outline">
+                <mat-label>Parent</mat-label>
+                <mat-select formControlName="parentId">
+                  <mat-option [value]="0">0</mat-option>
+                  <mat-option
+                    *ngFor="let access of parentAccess"
+                    [value]="access.accessId"
+                  >
+                    {{ access.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-12 col-custom">
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Access ID"
+                  formControlName="accessId"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-12 col-custom">
+              <mat-form-field>
+                <input
+                  matInput
+                  type="number"
+                  placeholder="Sequence"
+                  formControlName="seq"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-12 col-custom">
+              <mat-form-field>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="Name"
+                  formControlName="name"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-12 col-custom">
+              <mat-form-field>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="System Name"
+                  formControlName="systemName"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="submit-btn" mat-raised-button (click)="submit()">
+      Update
+    </button>
+  </div>
+</div>

@@ -95,7 +95,7 @@ export class CreateAccountComponent implements OnInit {
 
   selectedFeaturesMeta: { [key: string]: any } = {};
   videoSelect: any = {};
-  formData: FormData;
+  formData: FormData = null;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<CreateAccountComponent>,
@@ -104,7 +104,8 @@ export class CreateAccountComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private snackBar: MatSnackBar,
     private elementRef: ElementRef,
-    private http: HttpClient
+    private http: HttpClient,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.loginResponse = this.restService.getToken();
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
@@ -136,9 +137,6 @@ export class CreateAccountComponent implements OnInit {
       console.log(file);
       reader.readAsDataURL(file);
       reader.onloadend = () => {
-        const arrBuffer: any = file.arrayBuffer();
-        const buffer = new Uint8Array(arrBuffer);
-        var array = Array.from(buffer);
         this.photoUrl = image.url;
         this.photoControl = true;
 
@@ -146,6 +144,7 @@ export class CreateAccountComponent implements OnInit {
         console.log(this.logo);
         console.log(this.photoControl);
         console.log(this.photoUrl);
+        this.changeDetectorRef.detectChanges();
       };
     }
   }
@@ -157,40 +156,71 @@ export class CreateAccountComponent implements OnInit {
   }
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const file: File = event.target.files[0];
-    //const file: File = files[0];
-    const reader = new FileReader();
-    reader.readAsBinaryString(file);
     console.log(file);
     this.videoSelect[featureId] = file.name;
-
-    reader.onload = () => {
-      const binaryData = reader.result;
-      console.log(typeof binaryData);
-      console.log(binaryData);
-      const blob = new Blob([binaryData], { type: file.type });
-      console.log(blob);
-      this.formData = new FormData();
-      this.formData.append("prerecorded_video_file", blob, file.name);
-      console.log(this.formData);
-      console.log(this.formData.get("prerecorded_video_file"));
-      this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
-      console.warn(featureId);
-      console.warn(this.selectedFeaturesMeta[featureId]);
-    };
+    this.formData = new FormData();
+    this.formData.append("prerecorded_video_file", file, file.name);
+    console.log(this.formData);
+    this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+    console.warn(featureId);
+    console.warn(this.selectedFeaturesMeta[featureId]);
+    //const file: File = files[0];
+    //const reader = new FileReader();
+    // reader.readAsBinaryString(file);
+    // console.log(file);
+    // this.videoSelect[featureId] = file.name;
+    // reader.onload = () => {
+    //   const binaryData = reader.result;
+    //   console.log(typeof binaryData);
+    //   console.log(binaryData);
+    //   const blob = new Blob([binaryData], { type: file.type });
+    //   console.log(blob);
+    //   this.formData = new FormData();
+    //   this.formData.append("prerecorded_video_file", blob, file.name);
+    //   console.log(this.formData);
+    //   console.log(this.formData.get("prerecorded_video_file"));
+    //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
+    //   console.warn(featureId);
+    //   console.warn(this.selectedFeaturesMeta[featureId]);
+    // };
+    // reader.readAsDataURL(file);
+    // console.log(file);
+    // this.videoSelect[featureId] = file.name;
+    // reader.onload = () => {
+    //   const binaryData = reader.result;
+    //   console.log(typeof binaryData);
+    //   console.log(binaryData);
+    //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = {
+    //     byte: binaryData,
+    //     type: file.type,
+    //   };
+    //   console.warn(featureId);
+    //   console.warn(this.selectedFeaturesMeta[featureId]);
+    // };
   }
 
   videoSelected(featureId: number) {
     return this.videoSelect.hasOwnProperty(featureId);
   }
 
-  toggleFeatureSelection(featureId: number): void {
-    const index = this.selectedFeatures.indexOf(featureId);
+  toggleFeatureSelection(feature: any): void {
+    console.log(feature);
+    const index = this.selectedFeatures.indexOf(feature.featureId);
     if (index > -1) {
       this.selectedFeatures.splice(index, 1);
-      delete this.selectedFeaturesMeta[featureId.toString()];
+      delete this.selectedFeaturesMeta[feature.featureId.toString()];
     } else {
-      this.selectedFeatures.push(featureId);
-      this.selectedFeaturesMeta[featureId.toString()] = {};
+      this.selectedFeatures.push(feature.featureId);
+      this.selectedFeaturesMeta[feature.featureId.toString()] = {};
+      feature.metaList.forEach((meta) => {
+        if (meta.type == "bool")
+          this.setMetaValue(feature.featureId, meta.key, false);
+        else if (meta.type == "text")
+          this.setMetaValue(feature.featureId, meta.key, "");
+        else if (meta.type == "radio")
+          this.setMetaValue(feature.featureId, meta.key, meta.name[0]);
+        //this.selectedFeaturesMeta[feature.featureId.toString()] = {};
+      });
       console.log(this.selectedFeaturesMeta);
     }
   }
@@ -202,7 +232,8 @@ export class CreateAccountComponent implements OnInit {
   }
 
   setMetaValue(featureId, metaKey, metaValue) {
-    this.selectedFeaturesMeta[featureId][metaKey] = metaValue;
+    console.log(featureId + metaKey + metaValue);
+    this.selectedFeaturesMeta[featureId.toString()][metaKey] = metaValue;
     console.warn(this.selectedFeaturesMeta[featureId]);
   }
 
@@ -453,7 +484,16 @@ export class CreateAccountComponent implements OnInit {
   }
 
   async submit() {
-    if (this.userForm4.invalid) {
+    console.log(this.userForm1.invalid);
+    console.log(this.userForm2.invalid);
+    console.log(this.userForm3.invalid);
+    console.log(this.userForm4.invalid);
+    if (
+      this.userForm4.invalid ||
+      this.userForm1.invalid ||
+      this.userForm2.invalid ||
+      this.userForm3.invalid
+    ) {
       console.warn("CHECKING VALIDATIONS");
       console.warn("Selected Feature Meta: ");
       console.log(this.selectedFeaturesMeta);
@@ -543,7 +583,14 @@ export class CreateAccountComponent implements OnInit {
 
       console.log("uploading file");
       console.log(this.formData);
-      this.restService.uploadVideo(this.name,this.login_id,this.formData)
+      if (this.formData !== null) {
+        const videoresponse = this.restService.uploadVideo(
+          this.name,
+          this.login_id,
+          this.formData
+        );
+        console.log(videoresponse);
+      }
       this.dialogRef.close();
       this.restService.closeDialog();
     } catch (error) {
