@@ -156,7 +156,7 @@ public class SessionController {
           return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         }
 //      Pre-Recorded implementation
-        if(sessionProperty.getSettings().getPreRecorded()){
+        if(sessionProperty.getSettings().getPreRecorded() && "null".equals(sessionProperty.getSettings().getPreRecordedDetails())){
           HashMap<String,Object> map= (HashMap<String, Object>) sessionProperty.getSettings().getPreRecordedDetails();
           if(!Boolean.TRUE.equals(map.get("share_pre_recorded_video")) && map!=null){
             sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(),"prerecorded");
