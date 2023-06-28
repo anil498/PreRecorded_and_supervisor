@@ -45,21 +45,19 @@ public class SessionController {
 
 	@Value("${CALL_BROADCAST}")
 	private String CALL_BROADCAST;
-  @Value(("${Authorization}"))
-  String authorization;
-  @Value(("${Token}"))
-  String token;
-
-
+    @Value(("${Authorization}"))
+    String authorization;
+    @Value(("${Token}"))
+    String token;
+    @Value(("${OPENVIDU_URL}"))
+    String OPENVIDU_URL;
 	@Autowired
 	private OpenViduService openviduService;
-  @Autowired
-  private VideoPlatformService videoPlatformService;
-
-	private final int cookieAdminMaxAge = 24 * 60 * 60;
-  @Autowired
-  SessionService sessionService;
-
+    @Autowired
+    private VideoPlatformService videoPlatformService;
+    private final int cookieAdminMaxAge = 24 * 60 * 60;
+    @Autowired
+    SessionService sessionService;
 	@PostMapping("/sessions")
 	public ResponseEntity<?> createConnection(
 			@RequestBody(required = false) Map<String, Object> params,
@@ -127,7 +125,7 @@ public class SessionController {
         boolean hasValidToken = hasModeratorValidToken || hasParticipantValidToken;
         boolean iAmSessionCreator=false;
         if(sessionProperty.getSettings().getLayoutType()!=null) {
-          int layoutNumber=layoutNumber(sessionProperty.getSettings().getLayoutType());
+          int layoutNumber=layoutNumber(sessionProperty.getSettings().getLayoutType(),sessionProperty.getTotalParticipants());
           if(layoutNumber==0){
             sessionProperty.getSettings().setFloatingLayout(false);
           }
@@ -164,6 +162,8 @@ public class SessionController {
             sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(),"prerecorded");
             Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
             sessionProperty.setScreenToken(screenConnection.getToken());
+          }else{
+           sessionProperty.getSettings().setFileUrl(OPENVIDU_URL+"/downloadFile/"+map.get("pre_recorded_video_file").toString());
           }
         }
         if(!sessionIdToSessionContextMap.containsKey(sessionId)) {
@@ -349,14 +349,14 @@ public class SessionController {
       }
     return false;
   }
-  private int layoutNumber(String layoutType){
+  private int layoutNumber(String layoutType,int maxParticipant){
       if(layoutType.equals("Right Layout")){
         return -1;
       }
       if(layoutType.equals("Bottom Layout")){
         return 2;
       }
-      if(layoutType.equals("Overlay Layout")){
+      if(layoutType.equals("Overlay Layout") && maxParticipant<=2){
         return 1;
       }
       return 0;

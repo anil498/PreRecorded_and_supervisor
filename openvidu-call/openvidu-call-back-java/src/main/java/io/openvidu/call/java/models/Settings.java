@@ -28,6 +28,7 @@ public class Settings {
   private Object preRecordedDetails;
   private Boolean broadcast=false;
   private String landingPage="https://in.linkedin.com/company/mcarbon";
+  private String fileUrl;
   public Integer getDuration() {
     return duration;
   }
@@ -215,6 +216,13 @@ public class Settings {
     this.layoutNumber = layoutNumber;
   }
 
+  public String getFileUrl() {
+    return fileUrl;
+  }
+
+  public void setFileUrl(String fileUrl) {
+    this.fileUrl = fileUrl;
+  }
   @Override
   public String toString() {
     return "Settings{" +
@@ -239,6 +247,7 @@ public class Settings {
             ", preRecordedDetails=" + preRecordedDetails +
             ", broadcast=" + broadcast +
             ", landingPage='" + landingPage + '\'' +
+            ", fileUrl='" + fileUrl + '\'' +
             '}';
   }
 }
