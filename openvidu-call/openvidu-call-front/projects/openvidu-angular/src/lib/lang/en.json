@@ -47,7 +47,7 @@
 		"CHAT": "Chat",
 		"ACTIVITIES": "Activities",
 		"PUBLISH_VIDEO": "Publish video",
-		"STOP_VIDEO":"Stop video",
+		"STOP_VIDEO":"STOP_VIDEO",
 		"PLAY_VIDEO": "Play video",
 		"PAUSE_VIDEO": "Pause video"
 	},

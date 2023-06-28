@@ -36,6 +36,7 @@ export interface sessionResponse {
       share_pre_recorded_video:boolean;
     }
     broadcast: boolean;
+    fileUrl:string;
   };
   cameraToken: string;
   screenToken: string;

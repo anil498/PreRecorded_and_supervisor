@@ -1092,8 +1092,7 @@ ngOnDestroy(): void {
 	this.clear();
 }
 private clear() {
-	this.videoFilePath = '';
-	this.update('');
+	this.update('')
 }
 
 private update(value: string) {
