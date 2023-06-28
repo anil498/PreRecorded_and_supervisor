@@ -89,8 +89,8 @@ public class UserServiceImpl implements UserService{
             return new ResponseEntity<>("No more users are allowed, max limit exceed..!",HttpStatus.UNAUTHORIZED);
         }
 
-        logger.info("feature_meta 4 val {}",user.getFeaturesMeta().get("4"));
-        if(user.getFeaturesMeta().get("4") != null) {
+//        logger.info("feature_meta 4 val {}",user.getFeaturesMeta().get("4"));
+//        if(user.getFeaturesMeta().get("4") != null) {
 //            Map<String, Object> map = (Map<String, Object>) (user.getFeaturesMeta().get("4"));
 //            HashMap<String,Object> vidByte = (HashMap<String, Object>) map.get("pre_recorded_video_file");
 //            logger.info("VidByte : {}", vidByte);
@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService{
 //            String encodedString = (String) vidByte.get("byte");
 ////            HashMap<String,Object> map = (HashMap<String, Object>) user.getFeaturesMeta().get("4");
 //            commonService.writeByteToFile(user.getLoginId());
-        }
+//        }
 
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
@@ -132,15 +132,19 @@ public class UserServiceImpl implements UserService{
         user.setPassword(myPass);
         userRepository.save(user);
 
-
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "User created!");
         return ok(result);
     }
     @Override
-    public UserEntity createUserZero(UserEntity user) {
-        return userRepository.save(user);
+    public ResponseEntity<?> createUserZero(UserEntity user) {
+
+        userRepository.save(user);
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code","200");
+        result.put("msg", "User created!");
+        return ok(result);
     }
 
     @Override
@@ -209,8 +213,10 @@ public class UserServiceImpl implements UserService{
             userRepository.save(existing);
 
             UserAuthEntity userAuthEntity = userAuthRepository.findByUId(params.get("userId").getAsInt());
-            userAuthEntity.setSystemNames(accessCheck(params.get("userId").getAsInt()));
-            userAuthRepository.save(userAuthEntity);
+            if(userAuthEntity != null) {
+                userAuthEntity.setSystemNames(accessCheck(params.get("userId").getAsInt()));
+                userAuthRepository.save(userAuthEntity);
+            }
             Map<String, String> result = new HashMap<>();
             result.put("status_code", "200");
             result.put("msg", "User updated!");

@@ -9,13 +9,17 @@ import com.VideoPlatform.Services.SessionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import static org.springframework.http.ResponseEntity.ok;
@@ -43,6 +47,8 @@ public class SessionController {
     SessionRepository sessionRepository;
     @Autowired
     CommonService commonService;
+    @Value("${file.path}")
+    private String FILE_DIRECTORY;
 
     @PostMapping("/Create")
     public ResponseEntity<?> createSession(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
@@ -118,5 +124,20 @@ public class SessionController {
         result.put("msg", "Session deleted!");
 
         return ok(result);
+    }
+    @GetMapping("/Download/{filename}")
+    public ResponseEntity<byte[]> handleFileDownload(@PathVariable("filename") String filename) throws IOException {
+        Path file = Paths.get(FILE_DIRECTORY, filename);
+        byte[] bytes = new byte[0];
+        try {
+            bytes = Files.readAllBytes(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        headers.setContentDisposition(ContentDisposition.attachment().filename(filename).build());
+        headers.setContentLength(bytes.length);
+        return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
     }
 }

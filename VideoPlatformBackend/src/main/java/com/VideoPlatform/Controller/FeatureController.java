@@ -42,7 +42,9 @@ public class FeatureController {
         if(!commonService.authorizationCheck(authKey,token,"manage_platform_feature")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        featureService.createFeature(featureEntity);
+        if(featureService.createFeature(featureEntity)==null){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "Feature created!");
