@@ -42,4 +42,8 @@ public interface SessionRepository extends JpaRepository<SessionEntity,String> {
 
     @Query(nativeQuery = true, value = "SELECT EXTRACT('year' FROM y.year) AS year,COUNT(a.creation_date) AS count FROM (SELECT generate_series(DATE '2023-01-01',DATE '2025-12-01', interval '1 year') AS year) AS y LEFT JOIN sessions a ON DATE_TRUNC('year', a.creation_date\\:\\:date) = y.year GROUP BY y.year ORDER BY y.year;")
     List<Object[]> yearlySessionCreation();
+
+    @Query(nativeQuery = true,value = "select * from sessions where session_id=:sessionId limit 1")
+    SessionEntity findBySessionId(@Param("sessionId") String sessionId);
+
 }
