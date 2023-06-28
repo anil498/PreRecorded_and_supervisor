@@ -1,7 +1,6 @@
 package com.VideoPlatform.Controller;
 
 import com.VideoPlatform.Entity.UserEntity;
-import com.VideoPlatform.Repository.AccessRepository;
 import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Entity.AccessEntity;
 import com.VideoPlatform.Services.AccessService;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,21 +21,21 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping(RequestMappings.APICALLACCESS)
 public class AccessController {
     @Autowired
-    private AccessRepository accessRepository;
-    @Autowired
     private CommonService commonService;
     @Autowired
     private AccessService accessService;
 
     @PostMapping("/Create")
-    public ResponseEntity<?> createUser(@RequestBody AccessEntity accessEntity, HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> createUser(@RequestBody AccessEntity accessEntity, HttpServletRequest request) {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
         if(!commonService.authorizationCheck(authKey,token,"manage_platform_access")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        accessService.createAccess(accessEntity);
+        if(accessService.createAccess(accessEntity)==null){
+            return  new ResponseEntity<>("Access Entity already exist !",HttpStatus.UNAUTHORIZED);
+        }
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "Access created!");

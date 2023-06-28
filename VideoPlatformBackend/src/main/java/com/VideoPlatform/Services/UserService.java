@@ -10,7 +10,7 @@ public interface UserService {
     List<UserEntity> getAllChild(String token);
     UserEntity getUserById(Integer id);
     ResponseEntity<?> createUser(UserEntity user,String authKey,String token);
-    UserEntity createUserZero(UserEntity user);
+    ResponseEntity<?> createUserZero(UserEntity user);
     ResponseEntity<?> updateUser(String params,String authKey);
     String deleteUser(Integer userId);
     ResponseEntity<?> loginService(String loginId, String password, int authId);

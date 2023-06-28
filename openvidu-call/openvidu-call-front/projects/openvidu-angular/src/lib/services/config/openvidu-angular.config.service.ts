@@ -92,7 +92,7 @@ export class OpenViduAngularConfigService {
 	displayLogoValue = <BehaviorSubject<string>>new BehaviorSubject('');
 	displayLogoValueObs: Observable<string>;
 
-	videoFilePath = <BehaviorSubject<string>>new BehaviorSubject('');
+	videoFilePath = <BehaviorSubject<string>><unknown>new BehaviorSubject('');
 	videoFilePathObs: Observable<string>;
 
 	displayParticipantName = <BehaviorSubject<boolean>>new BehaviorSubject(true);

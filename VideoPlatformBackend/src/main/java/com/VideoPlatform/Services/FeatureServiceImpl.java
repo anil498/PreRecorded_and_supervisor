@@ -28,6 +28,7 @@ public class FeatureServiceImpl implements FeatureService{
 
     @Override
     public FeatureEntity createFeature(FeatureEntity featureEntity){
+        if(featureRepository.findByFeatureId(featureEntity.getFeatureId())!=null) return null;
         return featureRepository.save(featureEntity);
     }
     @Override

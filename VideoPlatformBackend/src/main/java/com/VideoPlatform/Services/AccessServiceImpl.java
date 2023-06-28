@@ -27,6 +27,7 @@ public class AccessServiceImpl implements AccessService {
 
     @Override
     public AccessEntity createAccess(AccessEntity accessEntity){
+        if(accessRepository.findByAccessId(accessEntity.getAccessId())!=null) return null;
         return accessRepository.save(accessEntity);
     }
     @Override
