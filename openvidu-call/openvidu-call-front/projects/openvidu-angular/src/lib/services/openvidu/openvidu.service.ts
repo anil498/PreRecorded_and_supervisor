@@ -445,7 +445,8 @@ export class OpenViduService {
 			// Disabling screenShare
 			this.participantService.disableScreenStream();
 			this.unpublish(this.participantService.getMyScreenPublisher());
-		}const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
+		} else if (this.participantService.isOnlyMyCameraActive()) {
+		const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
 		const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
 		const hasAudio = willWebcamBePresent ? false : hasAudioDevicesAvailable && this.participantService.isMyAudioActive();
 
