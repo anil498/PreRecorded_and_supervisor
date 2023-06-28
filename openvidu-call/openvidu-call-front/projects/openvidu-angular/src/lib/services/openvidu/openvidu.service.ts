@@ -457,7 +457,7 @@ export class OpenViduService {
 			publishAudio: hasAudio,
 			mirror: false
 		};
-		const screenPublisher = await this.initPublisher(properties);
+		const screenPublisher = await this.initPublisher(undefined,properties);
 
 		screenPublisher.once('accessAllowed', async () => {
 			// Listen to event fired when native stop button is clicked
