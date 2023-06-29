@@ -142,15 +142,15 @@
 				<span>{{ 'TOOLBAR.SETTINGS' | translate }}</span>
 			</button>
 			<!-- Default participants button -->
-			<button *ngIf="screenSize == 'xs'" mat-icon-button id="participants-panel-btn"
-				*ngIf="!isMinimal && showParticipantsPanelButton" matTooltip="{{ 'TOOLBAR.PARTICIPANTS' | translate }}"
+			<button mat-icon-button id="participants-panel-btn"
+				*ngIf="!isMinimal && showParticipantsPanelButton && screenSize == 'xs'" matTooltip="{{ 'TOOLBAR.PARTICIPANTS' | translate }}"
 				(click)="toggleParticipantsPanel()" [disabled]="isConnectionLost"
 				[class.active-btn]="isParticipantsOpened">
 				<mat-icon>people</mat-icon>
 			</button>
 			<!-- Default activities button -->
-			<button *ngIf="screenSize == 'xs'" mat-icon-button id="activities-panel-btn"
-				*ngIf="!isMinimal && showActivitiesPanelButton" matTooltip="{{ 'TOOLBAR.ACTIVITIES' | translate }}"
+			<button mat-icon-button id="activities-panel-btn"
+				*ngIf="!isMinimal && showActivitiesPanelButton && screenSize == 'xs'" matTooltip="{{ 'TOOLBAR.ACTIVITIES' | translate }}"
 				(click)="toggleActivitiesPanel()" [disabled]="isConnectionLost" [class.active-btn]="isActivitiesOpened">
 				<mat-icon>category</mat-icon>
 			</button>
@@ -171,15 +171,15 @@
 			{{ sessionTime | date: 'H:mm:ss'}}
 		</div>
 		<!-- Default activities button -->
-		<button *ngIf="screenSize !== 'xs'" mat-icon-button id="activities-panel-btn"
-			*ngIf="!isMinimal && showActivitiesPanelButton" matTooltip="{{ 'TOOLBAR.ACTIVITIES' | translate }}"
+		<button mat-icon-button id="activities-panel-btn"
+			*ngIf="!isMinimal && showActivitiesPanelButton && screenSize !== 'xs'" matTooltip="{{ 'TOOLBAR.ACTIVITIES' | translate }}"
 			(click)="toggleActivitiesPanel()" [disabled]="isConnectionLost" [class.active-btn]="isActivitiesOpened">
 			<mat-icon>category</mat-icon>
 		</button>
 
 		<!-- Default participants button -->
-		<button *ngIf="screenSize !== 'xs'" mat-icon-button id="participants-panel-btn"
-			*ngIf="!isMinimal && showParticipantsPanelButton" matTooltip="{{ 'TOOLBAR.PARTICIPANTS' | translate }}"
+		<button mat-icon-button id="participants-panel-btn"
+			*ngIf="!isMinimal && showParticipantsPanelButton && screenSize !== 'xs'" matTooltip="{{ 'TOOLBAR.PARTICIPANTS' | translate }}"
 			(click)="toggleParticipantsPanel()" [disabled]="isConnectionLost" [class.active-btn]="isParticipantsOpened">
 			<mat-icon>people</mat-icon>
 		</button>
