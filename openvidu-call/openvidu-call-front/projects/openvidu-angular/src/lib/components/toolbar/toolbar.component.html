@@ -52,8 +52,9 @@
 		</button>
 
 		<!-- VideoPublish button -->
-		<button mat-icon-button *ngIf="!isMinimal && showPublishVideoButton && screenSize !== 'xs'" id="videopublish-btn"
-			(click)="togglePublishVideo()" [disabled]="isConnectionLost" [class.active-btn]="isPublishVideoActive">
+		<button mat-icon-button *ngIf="!isMinimal && showPublishVideoButton && screenSize !== 'xs'"
+			id="videopublish-btn" (click)="togglePublishVideo()" [disabled]="isConnectionLost"
+			[class.active-btn]="isPublishVideoActive">
 			<mat-icon *ngIf="!isPublishVideoActive"
 				matTooltip="{{ 'TOOLBAR.PUBLISH_VIDEO' | translate }}">publish</mat-icon>
 			<mat-icon *ngIf="isPublishVideoActive" matTooltip="{{ 'TOOLBAR.STOP_VIDEO' | translate }}">stop</mat-icon>
@@ -75,21 +76,24 @@
 		</button>
 		<mat-menu #menu="matMenu" id="more-options-menu">
 			<!-- VideoPublish button -->
-		<button mat-icon-button *ngIf="!isMinimal && showPublishVideoButton && screenSize == 'xs'" id="videopublish-btn"
-		(click)="togglePublishVideo()" [disabled]="isConnectionLost" [class.active-btn]="isPublishVideoActive">
-		<mat-icon *ngIf="!isPublishVideoActive"
-			matTooltip="{{ 'TOOLBAR.PUBLISH_VIDEO' | translate }}">publish</mat-icon>
-		<mat-icon *ngIf="isPublishVideoActive" matTooltip="{{ 'TOOLBAR.STOP_VIDEO' | translate }}">stop</mat-icon>
-	</button>
+			<button mat-icon-button *ngIf="!isMinimal && showPublishVideoButton && screenSize == 'xs'"
+				id="videopublish-btn" (click)="togglePublishVideo()" [disabled]="isConnectionLost"
+				[class.active-btn]="isPublishVideoActive">
+				<mat-icon *ngIf="!isPublishVideoActive"
+					matTooltip="{{ 'TOOLBAR.PUBLISH_VIDEO' | translate }}">publish</mat-icon>
+				<mat-icon *ngIf="isPublishVideoActive"
+					matTooltip="{{ 'TOOLBAR.STOP_VIDEO' | translate }}">stop</mat-icon>
+			</button>
 
-	<!-- VideoPlay button -->
-	<button mat-icon-button *ngIf="!isMinimal && showVideoControlButton && screenSize == 'xs'" id="videoplay-btn"
-		(click)="toggleVideoPlay()" [disabled]="isConnectionLost" [class.active-btn]="isVideoControlActive">
-		<mat-icon *ngIf="!isVideoControlActive"
-			matTooltip="{{ 'TOOLBAR.PLAY_VIDEO' | translate }}">play_circle_filled</mat-icon>
-		<mat-icon *ngIf="isVideoControlActive"
-			matTooltip="{{ 'TOOLBAR.PAUSE_VIDEO' | translate }}">pause_circle_filled</mat-icon>
-	</button>
+			<!-- VideoPlay button -->
+			<button mat-icon-button *ngIf="!isMinimal && showVideoControlButton && screenSize == 'xs'"
+				id="videoplay-btn" (click)="toggleVideoPlay()" [disabled]="isConnectionLost"
+				[class.active-btn]="isVideoControlActive">
+				<mat-icon *ngIf="!isVideoControlActive"
+					matTooltip="{{ 'TOOLBAR.PLAY_VIDEO' | translate }}">play_circle_filled</mat-icon>
+				<mat-icon *ngIf="isVideoControlActive"
+					matTooltip="{{ 'TOOLBAR.PAUSE_VIDEO' | translate }}">pause_circle_filled</mat-icon>
+			</button>
 			<!-- show Fullscreen button -->
 			<button *ngIf="showFullscreenButton" mat-menu-item id="fullscreen-btn" (click)="toggleFullscreen()">
 				<mat-icon *ngIf="!isFullscreenActive">fullscreen</mat-icon>

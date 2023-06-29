@@ -160,12 +160,16 @@ public class SessionController {
 //      Pre-Recorded implementation
         if(sessionProperty.getSettings().getPreRecorded() && "null".equals(sessionProperty.getSettings().getPreRecordedDetails())){
           HashMap<String,Object> map= (HashMap<String, Object>) sessionProperty.getSettings().getPreRecordedDetails();
-          if(!Boolean.TRUE.equals(map.get("share_pre_recorded_video")) && map!=null){
-            sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(),"prerecorded");
-            Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
-            sessionProperty.setScreenToken(screenConnection.getToken());
-          }else{
-           sessionProperty.getSettings().setFileUrl(OPENVIDU_URL+"/downloadFile/"+map.get("pre_recorded_video_file").toString());
+          if(map!=null) {
+            if (!Boolean.TRUE.equals(map.get("share_pre_recorded_video"))) {
+              sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(), "prerecorded");
+              Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
+              sessionProperty.setScreenToken(screenConnection.getToken());
+            } else {
+              sessionProperty.getSettings().setFileUrl(OPENVIDU_URL + "/downloadFile/" + map.get("pre_recorded_video_file").toString());
+            }
+          }else {
+            sessionProperty.getSettings().setPreRecorded(false);
           }
         }
         if(!sessionIdToSessionContextMap.containsKey(sessionId)) {
