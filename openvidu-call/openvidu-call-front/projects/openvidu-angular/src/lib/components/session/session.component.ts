@@ -198,6 +198,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			await this.connectToSession();
 			// ios devices appear with blank video. Muting and unmuting it fix this problem
 			if (this.platformService.isIos() && this.participantService.isMyCameraActive()) {
+				this.libService.videoMuted().next(true);
 				await this.openviduService.publishVideo(false);
 				await this.openviduService.publishVideo(true);
 			}
