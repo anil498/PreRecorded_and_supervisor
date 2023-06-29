@@ -189,7 +189,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.chatService.subscribeToChat();
 			this.subscribeToReconnection();
 			this.subscribeToDisplayTrickerDirectives();
-			if(!this.participantService.isMyCameraActive()){
+			if(this.participantService.isMyCameraActive()){
 				this.libService.videoMuted.next(false);
 			}
 			const recordingEnabled = this.libService.recordingButton.getValue() && this.libService.recordingActivity.getValue();
