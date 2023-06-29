@@ -22,7 +22,7 @@ export class PlatformService {
 	}
 
 	isIos(): boolean {
-		return this.isIPhoneOrIPad(navigator?.userAgent);
+		return this.isIPhoneOrIPad(navigator?.userAgent) || this.isSafariIos();
 	}
 	private isIPhoneOrIPad(userAgent): boolean {
 		const isIPad = /\b(\w*Macintosh\w*)\b/.test(userAgent);
