@@ -151,7 +151,7 @@ export class OpenViduAngularConfigService {
 		this.publishVideoeButtonObs = this.publishVideoButton.asObservable();
 		this.videoControlButtonObs = this.videoControlButton.asObservable();
 		this.fullscreenButtonObs = this.fullscreenButton.asObservable();
-		this.autoFullScreenObs=this.autoFullScreen.asObservable
+		this.autoFullScreenObs=this.autoFullScreen.asObservable();
 		this.backgroundEffectsButtonObs = this.backgroundEffectsButton.asObservable();
 		this.leaveButtonObs = this.leaveButton.asObservable();
 		this.participantsPanelButtonObs = this.participantsPanelButton.asObservable();

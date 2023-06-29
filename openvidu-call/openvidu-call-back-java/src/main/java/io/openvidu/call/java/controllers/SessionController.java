@@ -1,5 +1,6 @@
 package io.openvidu.call.java.controllers;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
@@ -22,6 +23,7 @@ import io.openvidu.call.java.services.SessionService;
 import io.openvidu.call.java.services.VideoPlatformService;
 import io.openvidu.call.java.util.SessionUtil;
 import io.openvidu.java.client.*;
+import org.apache.hc.core5.http.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -251,6 +253,17 @@ public class SessionController {
           return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(sessionProperty);
         }
       }
+  }
+  @PostMapping("/sendLink")
+  public ResponseEntity<?> sendLink(@RequestBody(required = false) Map<String, Object> params,HttpServletRequest request,HttpServletResponse res) throws HttpException, IOException {
+    Map<String,String> headers=getHeaders(request);
+    logger.info("Request API /sendLink Headers {} and Parameters {}",headers,params);
+    String sessionId=" ";
+    if (params.containsKey("sessionId")){
+      sessionId=params.get("sessionId").toString();
+    }
+    ResponseEntity<?> response=videoPlatformService.sendLink(authorization,token,sessionId);
+    return response;
   }
   @DeleteMapping("/sessions/{sessionId}")
   public ResponseEntity<?> deleteSession(@PathVariable String sessionId) {

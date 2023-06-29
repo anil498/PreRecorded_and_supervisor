@@ -669,7 +669,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleFullscreen() {
 		this.isFullscreenActive = !this.isFullscreenActive;
-		if(this.participantService.someoneIsSharingScreen() &&  ){
+		this.log.d("Someone has shared screen",this.participantService.someoneIsSharingScreen())
+		if(this.participantService.someoneIsSharingScreen()){
 			this.openviduService.toggleShareFullscreen()
 		}else{
 		this.documentService.toggleFullscreen('session-container');

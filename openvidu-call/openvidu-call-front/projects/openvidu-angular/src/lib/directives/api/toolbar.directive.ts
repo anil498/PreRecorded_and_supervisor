@@ -1064,8 +1064,8 @@ private clear() {
 }
 
 private update(value: boolean) {
-	if (this.libService.videoFilePath.getValue() !== value) {
-		this.libService.videoFilePath.next(value);
+	if (this.libService.screenShareWithAudio.getValue() !== value) {
+		this.libService.screenShareWithAudio.next(value);
 	}
 }
 }

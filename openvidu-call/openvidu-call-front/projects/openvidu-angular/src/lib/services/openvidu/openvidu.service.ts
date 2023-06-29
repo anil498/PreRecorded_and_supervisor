@@ -236,7 +236,7 @@ export class OpenViduService {
 				this.videoFilePathSubs = this.libService.videoFilePath.subscribe((value: string) => {
 					this.videoFilePath = value;
 				});
-				this.screenShareWithAudioSubs = this.libService.videoFilePath.subscribe((value: boolean) => {
+				this.screenShareWithAudioSubs = this.libService.screenShareWithAudio.subscribe((value: boolean) => {
 					this.screenShareWithAudio = value;
 				});
 				if (this.showSessionTimer) {
