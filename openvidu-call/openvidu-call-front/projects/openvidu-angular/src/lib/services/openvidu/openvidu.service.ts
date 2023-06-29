@@ -569,6 +569,7 @@ export class OpenViduService {
 	 * @ignore
 	 */
 	toggleShareFullscreen() {
+		try{
 		let screenPublisher: any;
 		const screenSession=this.getScreenRemoteConnections();
 		screenSession.forEach((remoteConnection) =>{	
@@ -576,6 +577,9 @@ export class OpenViduService {
 			})
 		const screenVideoElement=screenPublisher.videos[0].video;
 		this.documentService.toggleFullscreenByVideo(screenVideoElement);
+		}catch(error){
+			this.log.d("Getting Error while toggling Full screen",error)
+		}
 	}
 	/**
 	 * @internal

@@ -174,6 +174,7 @@ export class StreamComponent implements OnInit {
 
 	ngOnInit() {
 		this.subscribeToStreamDirectives();
+		console.log("Avatar stream",this._stream)
 	}
 
 	ngOnDestroy() {
@@ -188,6 +189,7 @@ export class StreamComponent implements OnInit {
 	 * @ignore
 	 */
 	toggleVideoEnlarged() {
+		console.log("Avatar stream1",this._stream)
 		if (!!this._stream.streamManager?.stream?.connection?.connectionId) {
 			if (this.openviduService.isMyOwnConnection(this._stream.streamManager?.stream?.connection?.connectionId)) {
 				this.participantService.toggleMyVideoEnlarged(this._stream.streamManager?.stream?.connection?.connectionId);
