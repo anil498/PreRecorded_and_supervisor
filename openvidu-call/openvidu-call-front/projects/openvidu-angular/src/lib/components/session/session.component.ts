@@ -333,7 +333,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 		this.session.on('streamCreated', async (event: StreamEvent) => {
 			const connectionId = event.stream?.connection?.connectionId;
 			const data = event.stream?.connection?.data;
+			this.log.d("Stream Created event",event.stream)
 			if(this.participantService.getTypeConnectionData(data) === VideoType.SCREEN && this.openviduService.isMyOwnConnection(connectionId)){
+				this.log.d("Toggling Full Screen",connectionId)
 				this.openviduService.toggleShareFullscreen();
 			}
 			const isCameraType: boolean = this.participantService.getTypeConnectionData(data) === VideoType.CAMERA;

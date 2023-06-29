@@ -561,8 +561,8 @@ export class OpenViduService {
 			this.participantService.enableWebcamStream();
 
 			// Disabling screenshare
-			// this.participantService.disableScreenStream();
-			// this.unpublish(this.participantService.getMyScreenPublisher());
+			this.participantService.disableScreenStream();
+			this.unpublish(this.participantService.getMyScreenPublisher());
 		}
 	}
 	/**
