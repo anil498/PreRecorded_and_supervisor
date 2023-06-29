@@ -79,20 +79,20 @@
 			<button mat-icon-button *ngIf="!isMinimal && showPublishVideoButton && screenSize == 'xs'"
 				id="videopublish-btn" (click)="togglePublishVideo()" [disabled]="isConnectionLost"
 				[class.active-btn]="isPublishVideoActive">
-				<mat-icon *ngIf="!isPublishVideoActive"
-					matTooltip="{{ 'TOOLBAR.PUBLISH_VIDEO' | translate }}">publish</mat-icon>
-				<mat-icon *ngIf="isPublishVideoActive"
-					matTooltip="{{ 'TOOLBAR.STOP_VIDEO' | translate }}">stop</mat-icon>
+				<mat-icon *ngIf="!isPublishVideoActive">publish</mat-icon>
+					<span *ngIf="!isPublishVideoActive">{{ 'TOOLBAR.PUBLISH_VIDEO' | translate }}</span>
+				<mat-icon *ngIf="isPublishVideoActive">stop</mat-icon>
+					<span *ngIf="isPublishVideoActive">{{ 'TOOLBAR.STOP_VIDEO' | translate }}</span>
 			</button>
 
 			<!-- VideoPlay button -->
 			<button mat-icon-button *ngIf="!isMinimal && showVideoControlButton && screenSize == 'xs'"
 				id="videoplay-btn" (click)="toggleVideoPlay()" [disabled]="isConnectionLost"
 				[class.active-btn]="isVideoControlActive">
-				<mat-icon *ngIf="!isVideoControlActive"
-					matTooltip="{{ 'TOOLBAR.PLAY_VIDEO' | translate }}">play_circle_filled</mat-icon>
-				<mat-icon *ngIf="isVideoControlActive"
-					matTooltip="{{ 'TOOLBAR.PAUSE_VIDEO' | translate }}">pause_circle_filled</mat-icon>
+				<mat-icon *ngIf="!isVideoControlActive">play_circle_filled</mat-icon>
+					<span *ngIf="!isVideoControlActive">{{ 'TOOLBAR.PLAY_VIDEO' | translate }}</span>
+				<mat-icon *ngIf="isVideoControlActive">pause_circle_filled</mat-icon>
+					<span *ngIf="isVideoControlActive">{{ 'TOOLBAR.PAUSE_VIDEO' | translate }}</span>
 			</button>
 			<!-- show Fullscreen button -->
 			<button *ngIf="showFullscreenButton" mat-menu-item id="fullscreen-btn" (click)="toggleFullscreen()">
@@ -143,16 +143,18 @@
 			</button>
 			<!-- Default participants button -->
 			<button mat-icon-button id="participants-panel-btn"
-				*ngIf="!isMinimal && showParticipantsPanelButton && screenSize == 'xs'" matTooltip="{{ 'TOOLBAR.PARTICIPANTS' | translate }}"
+				*ngIf="!isMinimal && showParticipantsPanelButton && screenSize == 'xs'"
 				(click)="toggleParticipantsPanel()" [disabled]="isConnectionLost"
 				[class.active-btn]="isParticipantsOpened">
 				<mat-icon>people</mat-icon>
+				<span>{{ 'TOOLBAR.PARTICIPANTS' | translate }}</span>
 			</button>
 			<!-- Default activities button -->
 			<button mat-icon-button id="activities-panel-btn"
-				*ngIf="!isMinimal && showActivitiesPanelButton && screenSize == 'xs'" matTooltip="{{ 'TOOLBAR.ACTIVITIES' | translate }}"
+				*ngIf="!isMinimal && showActivitiesPanelButton && screenSize == 'xs'"
 				(click)="toggleActivitiesPanel()" [disabled]="isConnectionLost" [class.active-btn]="isActivitiesOpened">
 				<mat-icon>category</mat-icon>
+				<span>{{ 'TOOLBAR.ACTIVITIES' | translate }}</span>
 			</button>
 		</mat-menu>
 
