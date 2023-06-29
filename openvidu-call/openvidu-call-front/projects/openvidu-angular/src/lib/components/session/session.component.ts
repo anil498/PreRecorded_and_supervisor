@@ -189,6 +189,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.chatService.subscribeToChat();
 			this.subscribeToReconnection();
 			this.subscribeToDisplayTrickerDirectives();
+			if(!this.participantService.isMyCameraActive()){
+				this.libService.videoMuted.next(false);
+			}
 			const recordingEnabled = this.libService.recordingButton.getValue() && this.libService.recordingActivity.getValue();
 			if (recordingEnabled) {
 				this.subscribeToRecordingEvents();
@@ -196,9 +199,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.onSessionCreated.emit(this.session);
 
 			await this.connectToSession();
-			if(!this.participantService.isMyCameraActive()){
-				this.libService.videoMuted.next(false);
-			}
 			// ios devices appear with blank video. Muting and unmuting it fix this problem
 			if (this.platformService.isIos() && this.participantService.isMyCameraActive()) {
 				await this.openviduService.publishVideo(false);
