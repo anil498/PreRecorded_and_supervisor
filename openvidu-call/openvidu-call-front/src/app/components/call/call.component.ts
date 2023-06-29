@@ -155,7 +155,9 @@ export class CallComponent implements OnInit {
 			this.type = response.type;
 			this.floatingLayout = response.settings.floatingLayout;
 			this.layoutNumber=response.settings.layoutNumber;
-			this.preRecorded=response.settings.preRecordedDetails.share_pre_recorded_video;
+			if(response.settings.preRecorded){
+				this.preRecorded=response.settings.preRecordedDetails.share_pre_recorded_video;
+			}
 			this.preRecordedFilePath=response.settings.fileUrl;
 			this.isScreenShareWithAudio=response.settings.isScreenShareWithAudio;
 			this.isAutoFullScreen=response.settings.isAutoFullScreen;

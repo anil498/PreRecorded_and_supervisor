@@ -168,6 +168,7 @@ public class Settings {
   }
 
   public void setPreRecordedDetails(Object preRecordedDetails) {
+    if(preRecordedDetails!=null)
     this.preRecordedDetails = preRecordedDetails;
   }
 
