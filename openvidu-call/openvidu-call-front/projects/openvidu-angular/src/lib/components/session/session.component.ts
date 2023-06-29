@@ -221,7 +221,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 	leaveSession() {
 		this.log.d('Leaving session...');
 		this.openviduService.disconnect();
-		this.ngOnInit();
 	}
 
 	protected subscribeToTogglingMenu() {
