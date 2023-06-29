@@ -1,15 +1,24 @@
 package com.VideoPlatform.Services;
 
 import com.VideoPlatform.Entity.*;
+import com.VideoPlatform.Models.SubmitResponse;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import com.google.gson.Gson;
+import io.openvidu.java.client.OpenViduHttpException;
+import io.openvidu.java.client.OpenViduJavaClientException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.*;
 
 @Service
@@ -29,6 +38,10 @@ public class SessionServiceImpl implements SessionService{
     private AccountRepository accountRepository;
     @Autowired
     private AccountAuthRepository accountAuthRepository;
+    @Autowired
+    MessagingService messagingService;
+    @Value("${call.prefix}")
+    private String callPrefix;
 
     @Override
     public SessionEntity createSession(String authKey, String token,Boolean moderator, String sessionId, String sessionKey, String description, String participantName) {
@@ -144,7 +157,7 @@ public class SessionServiceImpl implements SessionService{
                     logger.info("Getting null value from custom layout !");
                 }
             }
-            else if (9 == featureId) {
+            else if (9 == featureId && moderator==true) {
                 settingsEntity.setSupervisor(true);
             }
 //            else if (10 == featureId) {
@@ -212,6 +225,70 @@ public class SessionServiceImpl implements SessionService{
     public String deleteSession(String sessionKey) {
         sessionRepository.deleteSession(sessionKey);
         return "Session deleted";
+    }
+
+    @Override
+    public ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response){
+        logger.info("Params Values : {} ",params);
+        String sessionId = (String) params.get("sessionId");
+        String type = "Customer";
+        if(params.containsKey("type")) {
+            type = (String) params.get("type");
+        }
+        SessionEntity sessionEntity = sessionRepository.findBySessionId(sessionId);
+        List<String> contactArray = new ArrayList<>(){};
+        if(params.containsKey("contactArray")){
+            contactArray = (List<String>) params.get("contactArray");
+            logger.info("Contact list is : {}",contactArray);
+        }
+        else{
+            UserEntity userEntity = userRepository.findByUserId(sessionEntity.getUserId());
+            HashMap<String,Object> map = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("9");
+            if(map.containsKey("supervisor_contacts")){
+                contactArray = (List<String>) map.get("supervisor_contacts");
+            }
+
+        }
+        String sendTo = "whatsapp";
+        if(params.containsKey("sendTo")){
+            sendTo = (String) params.get("sendTo");
+        }
+        String callUrl = callPrefix+sessionEntity.getSessionKey();
+        if(sendTo.equals("sms")){
+            for(String contact : contactArray){
+                try {
+                    SubmitResponse responseSms = messagingService.sendSms(request,response,contact,callUrl);
+                    responseSms.setCallUrl(callUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        String type1 = "template";
+        String from = "919811026184";
+        String templateId = "53571";
+        if(sendTo.equals("whatsapp")) {
+            for (String contact : contactArray) {
+
+                try {
+                    SubmitResponse responseSms = messagingService.sendWA(request,response,contact,callUrl,from,type1,templateId);
+                    responseSms.setCallUrl(callUrl);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                } catch (OpenViduJavaClientException e) {
+                    e.printStackTrace();
+                } catch (OpenViduHttpException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+        return ResponseEntity.ok("Link sent successfully !");
     }
 
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {

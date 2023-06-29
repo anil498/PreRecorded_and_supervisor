@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
@@ -122,6 +122,25 @@ public class SessionController {
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "Session deleted!");
+
+        return ok(result);
+    }
+
+    @PostMapping("/sendLink")
+    public ResponseEntity<?> sendLink(@RequestBody(required = false)  Map<String,?> params, HttpServletRequest request,HttpServletResponse response) {
+
+//        String authKey = request.getHeader("Authorization");
+//        String token = request.getHeader("Token");
+//
+//        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
+//            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+//        }
+
+        sessionService.sendLink(params,request,response);
+
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code","200");
+        result.put("msg", "Link sent successfully !");
 
         return ok(result);
     }
