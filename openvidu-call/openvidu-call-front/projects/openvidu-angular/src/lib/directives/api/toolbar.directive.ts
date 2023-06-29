@@ -164,82 +164,6 @@ export class SessionDurationDirective implements OnInit {
 		this.libService.sessionDuration.next(value);
 	}
 }
-/**
- * The **screenshareButton** directive allows show/hide the screenshare toolbar button.
- *
- * Default: `true`
- *
- * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
- *
- * @example
- * <ov-videoconference [toolbarScreenshareButton]="false"></ov-videoconference>
- *
- * \
- * And it also can be used in the {@link ToolbarComponent}.
- * @example
- * <ov-toolbar [screenshareButton]="false"></ov-toolbar>
- */
-@Directive({
-	selector: 'ov-videoconference[toolbarFullScreenButton], ov-toolbar[fullScreenshareButton]'
-})
-export class ToolbarFullScreenButtonDirective implements AfterViewInit, OnDestroy {
-	/**
-	 * @ignore
-	 */
-	@Input() set toolbarFullScreenButton(value: boolean) {
-		this.fullScreenValue = value;
-		this.update(this.fullScreenValue);
-	}
-
-	/**
-	 * @ignore
-	 */
-	@Input() set fullScreenButton(value: boolean) {
-		this.fullScreenValue = value;
-		this.update(this.fullScreenValue);
-	}
-
-	private fullScreenValue: boolean = true;
-
-	/**
-	 * @ignore
-	 */
-	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
-
-	ngAfterViewInit() {
-		this.update(this.fullScreenValue);
-	}
-
-	ngOnDestroy(): void {
-		this.clear();
-	}
-
-	private clear() {
-		this.fullScreenValue = true;
-		this.update(true);
-	}
-
-	private update(value: boolean) {
-		if (this.libService.fullScreenshareButton.getValue() !== value) {
-			this.libService.fullScreenshareButton.next(value);
-		}
-	}
-}
-/**
- * The **Publish/Sop Button** directive allows show/hide the publish/stop toolbar button.
- *
- * Default: `true`
- *
- * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
- *
- * @example
- * <ov-videoconference [toolbarPublishVideoButton]="false"></ov-videoconference>
- *
- * \
- * And it also can be used in the {@link ToolbarComponent}.
- * @example
- * <ov-toolbar [publishVideoButton]="false"></ov-toolbar>
- */
 @Directive({
 	selector: 'ov-videoconference[toolbarPublishVideoButton], ov-toolbar[publishButton]'
 })
@@ -1076,7 +1000,7 @@ export class ToolbarVideoFilePathDirective implements AfterViewInit, OnDestroy {
 	 * @ignore
 	 * */
 
-@Input() set toolbarVIdeoFilePath(value: string) {
+@Input() set toolbarVideoFilePath(value: string) {
 	this.videoFilePath = value;
 	this.update(this.videoFilePath);
 }
@@ -1101,3 +1025,93 @@ private update(value: string) {
 	}
 }
 }
+/**
+ * The **screen share with audio** directive .
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarScreenShareWithAudio]=""></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarScreenShareWithAudio]'
+})
+export class ToolbarScreenShareWithAudioDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 * */
+
+@Input() set toolbarScreenShareWithAudio(value: boolean) {
+	this.screenShareWithAudio = value;
+	this.update(this.screenShareWithAudio);
+}
+private screenShareWithAudio: boolean;
+
+constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+ngAfterViewInit() {
+	this.update(this.screenShareWithAudio);
+}
+
+ngOnDestroy(): void {
+	this.clear();
+}
+private clear() {
+	this.update(false)
+}
+
+private update(value: boolean) {
+	if (this.libService.videoFilePath.getValue() !== value) {
+		this.libService.videoFilePath.next(value);
+	}
+}
+}
+
+/**
+ * The **Auto Full screen** directive .
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarAutoFullScreen]=""></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarAutoFullScreen]'
+})
+export class ToolbarAutoFullScreenDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 * */
+
+@Input() set toolbarAutoFullScreen(value: boolean) {
+	this.autoFullScreen = value;
+	this.update(this.autoFullScreen);
+}
+private autoFullScreen: boolean;
+
+constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+ngAfterViewInit() {
+	this.update(this.autoFullScreen);
+}
+
+ngOnDestroy(): void {
+	this.clear();
+}
+private clear() {
+	this.update(false)
+}
+
+private update(value: boolean) {
+	if (this.libService.autoFullScreen.getValue() !== value) {
+		this.libService.autoFullScreen.next(value);
+	}
+}
+}
+

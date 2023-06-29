@@ -16,6 +16,8 @@ public class Settings {
   private Boolean recording=false;
   private Object recordingDetails;
   private Boolean screenShare=false;
+  private Boolean isScreenShareWithAudio=false;
+  private Boolean isAutoFullScreen=true;
   private Boolean waitForModerator=false;
   private Boolean chat=false;
   private Boolean activitiesButton=false;
@@ -223,6 +225,23 @@ public class Settings {
   public void setFileUrl(String fileUrl) {
     this.fileUrl = fileUrl;
   }
+
+  public Boolean getScreenShareWithAudio() {
+    return isScreenShareWithAudio;
+  }
+
+  public void setScreenShareWithAudio(Boolean screenShareWithAudio) {
+    isScreenShareWithAudio = screenShareWithAudio;
+  }
+
+  public Boolean getAutoFullScreen() {
+    return isAutoFullScreen;
+  }
+
+  public void setAutoFullScreen(Boolean autoFullScreen) {
+    isAutoFullScreen = autoFullScreen;
+  }
+
   @Override
   public String toString() {
     return "Settings{" +
@@ -235,6 +254,8 @@ public class Settings {
             ", recording=" + recording +
             ", recordingDetails=" + recordingDetails +
             ", screenShare=" + screenShare +
+            ", isScreenShareWithAudio=" + isScreenShareWithAudio +
+            ", isAutoFullScreen=" + isAutoFullScreen +
             ", waitForModerator=" + waitForModerator +
             ", chat=" + chat +
             ", activitiesButton=" + activitiesButton +

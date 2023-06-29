@@ -42,6 +42,8 @@ export class CallComponent implements OnInit {
 	preRecordedFilePath:string;
 	isVideoMuted:boolean;
 	isAudioMuted:boolean;
+	isScreenShareWithAudio:boolean;
+	isAutoFullScreen:boolean;
 	private isDebugSession: boolean = false;
 
 	constructor(
@@ -155,6 +157,8 @@ export class CallComponent implements OnInit {
 			this.layoutNumber=response.settings.layoutNumber;
 			this.preRecorded=response.settings.preRecordedDetails.share_pre_recorded_video;
 			this.preRecordedFilePath=response.settings.fileUrl;
+			this.isScreenShareWithAudio=response.settings.isScreenShareWithAudio;
+			this.isAutoFullScreen=response.settings.isAutoFullScreen;
 
 			if (response.participantName) {
 				this.participantNameValue = response.participantName;

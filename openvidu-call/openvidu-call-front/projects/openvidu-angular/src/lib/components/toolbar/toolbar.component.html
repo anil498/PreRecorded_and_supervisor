@@ -14,28 +14,6 @@
 		</div>
 	</div>
 	<div fxFlex="60%" fxFlexOrder="2" fxLayoutAlign="center center" id="media-buttons-container">
-		<!-- Full Screen button -->
-		<button
-			id="mic-btn"
-			mat-icon-button
-			(click)="toggleShareFullscreen()"
-			*ngIf="!isMinimal && showShareFullScreenButton"
-			[disabled]="isConnectionLost "
-			[class.active-btn]="isShareFullscreenActive"
-		>
-			<mat-icon
-				*ngIf="!isShareFullscreenActive"
-				matTooltip="{{ 'TOOLBAR.FULLSCREEN' | translate }}"
-				id="mic"
-			>fullscreen
-			</mat-icon>
-			<mat-icon
-				*ngIf="isShareFullscreenActive"
-				matTooltip="{{ 'TOOLBAR.EXIT_FULLSCREEN' | translate }}"
-				id="mic_off"
-			>fullscreen_exit
-			</mat-icon>
-		</button>
 		<!-- Microphone button -->
 		<button
 			id="mic-btn"

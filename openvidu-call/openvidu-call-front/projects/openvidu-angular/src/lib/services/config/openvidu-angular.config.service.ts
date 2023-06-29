@@ -45,9 +45,6 @@ export class OpenViduAngularConfigService {
 	videoControlButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	videoControlButtonObs: Observable<boolean>;
 
-	fullScreenshareButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
-	fullScreenshareButtonObs: Observable<boolean>;
-
 	fullscreenButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	fullscreenButtonObs: Observable<boolean>;
 
@@ -92,31 +89,48 @@ export class OpenViduAngularConfigService {
 	displayLogoValue = <BehaviorSubject<string>>new BehaviorSubject('');
 	displayLogoValueObs: Observable<string>;
 
-	videoFilePath = <BehaviorSubject<string>><unknown>new BehaviorSubject('');
+	videoFilePath = <BehaviorSubject<string>>new BehaviorSubject('');
 	videoFilePathObs: Observable<string>;
+
+	screenShareWithAudio = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+	screenShareWithAudioObs: Observable<boolean>;
+
+	autoFullScreen = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+	autoFullScreenObs: Observable<boolean>;
 
 	displayParticipantName = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayParticipantNameObs: Observable<boolean>;
+
 	displayAudioDetection = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayAudioDetectionObs: Observable<boolean>;
+
 	streamSettingsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	streamSettingsButtonObs: Observable<boolean>;
+
 	floatingLayout = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	floatingLayoutObs: Observable<boolean>;
+
 	participantItemMuteButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	participantItemMuteButtonObs: Observable<boolean>;
+
 	backgroundEffectsButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	backgroundEffectsButtonObs: Observable<boolean>;
+
 	recordingsList = <BehaviorSubject<RecordingInfo[]>>new BehaviorSubject([]);
 	recordingsListObs: Observable<RecordingInfo[]>;
+
 	recordingButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	recordingButtonObs: Observable<boolean>;
+
 	recordingActivity = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	recordingActivityObs: Observable<boolean>;
+
 	recordingError = <BehaviorSubject<any>>new BehaviorSubject(null);
 	recordingErrorObs: Observable<any>;
+
 	adminRecordingsList = <BehaviorSubject<RecordingInfo[]>>new BehaviorSubject([]);
 	adminRecordingsListObs: Observable<RecordingInfo[]>;
+
 	adminLoginError = <BehaviorSubject<any>>new BehaviorSubject(null);
 	adminLoginErrorObs: Observable<any>;
 
@@ -136,8 +150,8 @@ export class OpenViduAngularConfigService {
 		this.screenshareButtonObs = this.screenshareButton.asObservable();
 		this.publishVideoeButtonObs = this.publishVideoButton.asObservable();
 		this.videoControlButtonObs = this.videoControlButton.asObservable();
-		this.fullScreenshareButtonObs=this.fullScreenshareButton.asObservable();
 		this.fullscreenButtonObs = this.fullscreenButton.asObservable();
+		this.autoFullScreenObs=this.autoFullScreen.asObservable
 		this.backgroundEffectsButtonObs = this.backgroundEffectsButton.asObservable();
 		this.leaveButtonObs = this.leaveButton.asObservable();
 		this.participantsPanelButtonObs = this.participantsPanelButton.asObservable();
@@ -151,6 +165,7 @@ export class OpenViduAngularConfigService {
 		this.displayLogoObs = this.displayLogo.asObservable();
 		this.displayLogoValueObs = this.displayLogoValue.asObservable();
 		this.videoFilePathObs = this.videoFilePath.asObservable();
+		this.screenShareWithAudioObs = this.screenShareWithAudio.asObservable();
 		this.recordingButtonObs = this.recordingButton.asObservable();
 		this.toolbarSettingsButtonObs = this.toolbarSettingsButton.asObservable();
 		this.captionsButtonObs = this.captionsButton.asObservable();
