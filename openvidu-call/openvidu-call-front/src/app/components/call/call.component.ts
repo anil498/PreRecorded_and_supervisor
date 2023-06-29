@@ -169,7 +169,7 @@ export class CallComponent implements OnInit {
 			}
 			if (this.type === "Support"){
 				this.isAudioMuted=false;
-				this.isVideoMuted=false;
+				this.isVideoMuted=true;
 			}else{
 				this.isAudioMuted=false;
 				this.isVideoMuted=false;
