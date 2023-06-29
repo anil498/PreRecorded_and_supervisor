@@ -13,6 +13,7 @@ export * from './lib/services/layout/layout.service';
 export * from './lib/services/panel/panel.service';
 export * from './lib/services/recording/recording.service';
 export * from './lib/services/translate/translate.service';
+export * from './lib/services/platform/platform.service'
 
 // Components
 export * from './lib/components/videoconference/videoconference.component';

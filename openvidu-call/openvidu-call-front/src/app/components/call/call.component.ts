@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ActionService, ParticipantService, RecordingInfo, TokenModel } from 'openvidu-angular';
 import { RestService } from '../../services/rest.service';
-import { TranslateService } from 'openvidu-angular';
+import { TranslateService,PlatformService } from 'openvidu-angular';
 
 @Component({
 	selector: 'app-call',
@@ -52,7 +52,8 @@ export class CallComponent implements OnInit {
 		private router: Router,
 		private route: ActivatedRoute,
 		private actionService: ActionService,
-		private translateService: TranslateService
+		private translateService: TranslateService,
+		private platformService:PlatformService
 	) { }
 
 	async ngOnInit() {
@@ -169,7 +170,11 @@ export class CallComponent implements OnInit {
 			}
 			if (this.type === "Support"){
 				this.isAudioMuted=false;
-				this.isVideoMuted=false;
+				if(this.platformService.isIos()){
+					this.isVideoMuted=false
+				}else{
+					this.isVideoMuted=true;
+				}
 			}else{
 				this.isAudioMuted=false;
 				this.isVideoMuted=false;
@@ -186,5 +191,4 @@ export class CallComponent implements OnInit {
 	recordingEnabled() {
 		return this.isRecording;
 	}
-
 }
