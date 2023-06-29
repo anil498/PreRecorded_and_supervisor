@@ -77,7 +77,7 @@
 		<mat-menu #menu="matMenu" id="more-options-menu">
 			<!-- VideoPublish button -->
 			<button mat-icon-button *ngIf="!isMinimal && showPublishVideoButton && screenSize == 'xs'"
-				id="videopublish-btn" (click)="togglePublishVideo()" [disabled]="isConnectionLost"
+			mat-menu-item id="videopublish-btn" (click)="togglePublishVideo()" [disabled]="isConnectionLost"
 				[class.active-btn]="isPublishVideoActive">
 				<mat-icon *ngIf="!isPublishVideoActive">publish</mat-icon>
 					<span *ngIf="!isPublishVideoActive">{{ 'TOOLBAR.PUBLISH_VIDEO' | translate }}</span>
@@ -87,7 +87,7 @@
 
 			<!-- VideoPlay button -->
 			<button mat-icon-button *ngIf="!isMinimal && showVideoControlButton && screenSize == 'xs'"
-				id="videoplay-btn" (click)="toggleVideoPlay()" [disabled]="isConnectionLost"
+			mat-menu-item id="videoplay-btn" (click)="toggleVideoPlay()" [disabled]="isConnectionLost"
 				[class.active-btn]="isVideoControlActive">
 				<mat-icon *ngIf="!isVideoControlActive">play_circle_filled</mat-icon>
 					<span *ngIf="!isVideoControlActive">{{ 'TOOLBAR.PLAY_VIDEO' | translate }}</span>
@@ -142,7 +142,7 @@
 				<span>{{ 'TOOLBAR.SETTINGS' | translate }}</span>
 			</button>
 			<!-- Default participants button -->
-			<button mat-icon-button id="participants-panel-btn"
+			<button mat-icon-button mat-menu-item id="participants-panel-btn"
 				*ngIf="!isMinimal && showParticipantsPanelButton && screenSize == 'xs'"
 				(click)="toggleParticipantsPanel()" [disabled]="isConnectionLost"
 				[class.active-btn]="isParticipantsOpened">
@@ -150,7 +150,7 @@
 				<span>{{ 'TOOLBAR.PARTICIPANTS' | translate }}</span>
 			</button>
 			<!-- Default activities button -->
-			<button mat-icon-button id="activities-panel-btn"
+			<button mat-icon-button mat-menu-item id="activities-panel-btn"
 				*ngIf="!isMinimal && showActivitiesPanelButton && screenSize == 'xs'"
 				(click)="toggleActivitiesPanel()" [disabled]="isConnectionLost" [class.active-btn]="isActivitiesOpened">
 				<mat-icon>category</mat-icon>
