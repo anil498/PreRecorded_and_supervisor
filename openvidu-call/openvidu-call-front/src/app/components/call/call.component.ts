@@ -40,6 +40,8 @@ export class CallComponent implements OnInit {
 	layoutNumber: number;
 	preRecorded:boolean;
 	preRecordedFilePath:string;
+	isVideoMuted:boolean;
+	isAudioMuted:boolean;
 	private isDebugSession: boolean = false;
 
 	constructor(
@@ -158,6 +160,13 @@ export class CallComponent implements OnInit {
 				this.participantNameValue = response.participantName;
 			} else {
 				this.participantNameValue = response.type;
+			}
+			if (this.type === "Support"){
+				this.isAudioMuted=false;
+				this.isVideoMuted=true;
+			}else{
+				this.isAudioMuted=false;
+				this.isVideoMuted=false;
 			}
 		} catch (error) {
 			console.log(error)
