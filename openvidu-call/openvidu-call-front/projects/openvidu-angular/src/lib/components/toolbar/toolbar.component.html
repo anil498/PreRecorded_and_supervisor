@@ -16,7 +16,7 @@
 	</div>
 	<div fxFlex="60%" fxFlexOrder="2" fxLayoutAlign="center center" id="media-buttons-container">
 		<!-- Microphone button -->
-		<button id="mic-btn" mat-icon-button (click)="toggleMicrophone()"
+		<button id="mic-btn" mat-icon-button *ngIf="showMuteCameraButton" (click)="toggleMicrophone()"
 			[disabled]="isConnectionLost || !hasAudioDevices" [class.warn-btn]="!isAudioActive">
 			<mat-icon *ngIf="isAudioActive" [matTooltipDisabled]="!hasAudioDevices"
 				matTooltip="{{ 'TOOLBAR.MUTE_AUDIO' | translate }}" id="mic">
@@ -29,7 +29,7 @@
 		</button>
 
 		<!-- Camera button -->
-		<button id="camera-btn" mat-icon-button (click)="toggleCamera()"
+		<button id="camera-btn" mat-icon-button *ngIf="showMuteCameraButton" (click)="toggleCamera()"
 			[disabled]="isConnectionLost || !hasVideoDevices || videoMuteChanging"
 			[class.warn-btn]="!isWebcamVideoActive">
 			<mat-icon *ngIf="isWebcamVideoActive" [matTooltipDisabled]="!hasVideoDevices"
@@ -67,6 +67,15 @@
 				matTooltip="{{ 'TOOLBAR.PLAY_VIDEO' | translate }}">play_circle_filled</mat-icon>
 			<mat-icon *ngIf="isVideoControlActive"
 				matTooltip="{{ 'TOOLBAR.PAUSE_VIDEO' | translate }}">pause_circle_filled</mat-icon>
+		</button>
+
+		<!-- Supervisor button -->
+		<button mat-icon-button *ngIf="!isMinimal && showSupervisorButton && screenSize !== 'xs'" id="supervisor-btn"
+			(click)="toggleSupervisor()" [disabled]="isConnectionLost" [class.active-btn]="isSupervisorActive">
+			<mat-icon *ngIf="!isSupervisorActive"
+				matTooltip="{{ 'TOOLBAR.ADD_SUPERVISOR' | translate }}">account_circle</mat-icon>
+			<mat-icon *ngIf="isSupervisorActive"
+				matTooltip="{{ 'TOOLBAR.MERGE_CALL' | translate }}">call_merge</mat-icon>
 		</button>
 
 		<!-- More options button -->

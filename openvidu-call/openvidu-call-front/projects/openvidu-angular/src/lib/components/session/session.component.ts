@@ -81,6 +81,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 	preparing: boolean = true;
 	displayTickerValue:string;
 	displayTicker:boolean=true;
+	hold:boolean=false;
 
 	protected readonly SIDENAV_WIDTH_LIMIT_MODE = 790;
 
@@ -189,12 +190,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.chatService.subscribeToChat();
 			this.subscribeToReconnection();
 			this.subscribeToDisplayTrickerDirectives();
-			if(this.participantService.isMyCameraActive()){
-				this.libService.videoMuted.next(false);
-			}
+			this.subscribeToSupervisor();
 			const recordingEnabled = this.libService.recordingButton.getValue() && this.libService.recordingActivity.getValue();
 			if (recordingEnabled) {
 				this.subscribeToRecordingEvents();
+			}
+			if(this.participantService.isMyCameraActive()){
+				console.log("turn on camera")
+				this.libService.videoMuted.next(true);
 			}
 			this.onSessionCreated.emit(this.session);
 
@@ -335,16 +338,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 		this.session.on('streamCreated', async (event: StreamEvent) => {
 			const connectionId = event.stream?.connection?.connectionId;
 			const data = event.stream?.connection?.data;
-			this.log.d("Stream Created event",event.stream)
-			if(this.participantService.getTypeConnectionData(data) === VideoType.SCREEN && this.openviduService.isMyOwnConnection(connectionId)){
-				this.log.d("Toggling Full Screen",connectionId)
+			if(this.participantService.getTypeConnectionData(data) === VideoType.SCREEN && !this.openviduService.isMyOwnConnection(connectionId)){
 				this.openviduService.toggleShareFullscreen();
 			}
 			const isCameraType: boolean = this.participantService.getTypeConnectionData(data) === VideoType.CAMERA;
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
 			const lang = this.captionService.getLangSelected().ISO;
 
-			if (isRemoteConnection) {
+			if (isRemoteConnection && !this.hold) {
 				const subscriber: Subscriber = this.session.subscribe(event.stream, undefined);
 				this.participantService.addRemoteConnection(connectionId, data, subscriber);
 				// this.oVSessionService.sendNicknameSignal(event.stream.connection);
@@ -415,6 +416,37 @@ export class SessionComponent implements OnInit, OnDestroy {
 			if (isRemoteConnection) {
 				const nickname = this.participantService.getNicknameFromConnectionData(event.data);
 				this.participantService.setRemoteNickname(connectionId, nickname);
+			}
+		});
+	}
+	private subscribeToSupervisor() {
+		this.session.on(`signal:${Signal.SUPERVISOR}`, (event: any) => {
+			
+			const data = JSON.parse(event.data);
+			this.log.d("Signal Event",data.message)
+			const connectionId = event.from.connectionId;
+			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
+			const participantAdded = this.participantService.getRemoteParticipantByConnectionId(connectionId);
+
+			if (isRemoteConnection) {
+				if(data.message.includes("Add supervisor")){
+					this.hold=true;
+					this.openviduService.publishVideo(false);
+					this.openviduService.publishAudio(false);
+					if(this.libService.MuteCameraButton.getValue()){
+						this.libService.MuteCameraButton.next(false);
+					}
+					this.log.d("Unsubcribing remote participant",participantAdded)
+					this.session.unsubscribe(participantAdded?.streams[0].stream)
+				}
+				if(data.message.includes("Merge call")){
+					this.hold=false;
+					if(!this.libService.MuteCameraButton.getValue()){
+						this.libService.MuteCameraButton.next(true);
+					}
+					this.log.d("Subcribing remote participant",participantAdded)
+					this.session.subscribe(participantAdded?.streams[0].stream,undefined)
+				}
 			}
 		});
 	}

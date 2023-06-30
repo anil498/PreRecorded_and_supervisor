@@ -31,7 +31,8 @@ import {
 	SessionNameDirective,
 	ToolbarVideoFilePathDirective,
 	ToolbarScreenShareWithAudioDirective,
-	ToolbarAutoFullScreenDirective
+	ToolbarAutoFullScreenDirective,
+	ToolbarSupervisorButtonDirective
 } from './toolbar.directive';
 import {
 	AudioMutedDirective,
@@ -68,6 +69,7 @@ import {
 		ToolbarDisplayLogoValueDirective,
 		ToolbarSettingsButtonDirective,
 		ToolbarScreenShareWithAudioDirective,
+		ToolbarSupervisorButtonDirective,
 		StreamDisplayParticipantNameDirective,
 		StreamDisplayAudioDetectionDirective,
 		StreamSettingsButtonDirective,
@@ -112,6 +114,7 @@ import {
 		ToolbarDisplayLogoValueDirective,
 		ToolbarSettingsButtonDirective,
 		ToolbarScreenShareWithAudioDirective,
+		ToolbarSupervisorButtonDirective,
 		StreamDisplayParticipantNameDirective,
 		StreamDisplayAudioDetectionDirective,
 		StreamSettingsButtonDirective,

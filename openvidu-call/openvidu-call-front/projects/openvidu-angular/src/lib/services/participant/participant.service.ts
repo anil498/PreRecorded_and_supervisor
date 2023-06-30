@@ -404,6 +404,12 @@ export class ParticipantService {
 	someoneIsSharingScreen(): boolean {
 		return this.remoteParticipants.some((p) => p.someHasVideoEnlarged());
 	}
+	/**
+	 * @internal
+	 */
+	isSupervisorInCall(): boolean {
+		return this.remoteParticipants.some((p) => p.isSupervisorInCall());
+	}
 
 	/**
 	 * @internal

@@ -1114,4 +1114,48 @@ private update(value: boolean) {
 	}
 }
 }
+/**
+ * The **Supervisor Button** directive .
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarSupervisorButton]=""></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarSupervisorButton]'
+})
+export class ToolbarSupervisorButtonDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 * */
+
+@Input() set toolbarSupervisorButton(value: boolean) {
+	this.supervisorButton = value;
+	this.update(this.supervisorButton);
+}
+private supervisorButton: boolean;
+
+constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+ngAfterViewInit() {
+	this.update(this.supervisorButton);
+}
+
+ngOnDestroy(): void {
+	this.clear();
+}
+private clear() {
+	this.update(false)
+}
+
+private update(value: boolean) {
+	if (this.libService.supervisorButton.getValue() !== value) {
+		this.libService.supervisorButton.next(value);
+	}
+}
+}
 

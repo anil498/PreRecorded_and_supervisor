@@ -379,20 +379,18 @@ export class OpenViduService {
 		if (this.participantService.haveICameraAndScreenActive()) {
 			this.log.d("Publishing video1")
 			await this.publishVideoAux(this.participantService.getMyCameraPublisher(), publish);
-			//this comment for screenshare with audio
+			//this commented for screenshare with audio
 			this.participantService.disableWebcamStream();
 			this.unpublish(this.participantService.getMyCameraPublisher());
 			this.publishAudioAux(this.participantService.getMyScreenPublisher(), publishAudio);
 			//
 		} else if (this.participantService.isOnlyMyScreenActive()) {
 			// Enabling webcam
-			this.log.d("Publishing video2")
 			const hasAudio = this.participantService.hasScreenAudioActive();
 			if (!this.isWebcamSessionConnected()) {
-				this.log.d("Publishing video3")
 				await this.connectSession(this.getWebcamSession(), this.getWebcamToken());
 			}
-			//this comment for screen share audio
+			//this commented for screenshare with audio
 			await this.publish(this.participantService.getMyCameraPublisher());
 			this.participantService.enableWebcamStream();
 			await this.publishVideoAux(this.participantService.getMyCameraPublisher(), true);
@@ -429,12 +427,11 @@ export class OpenViduService {
 	 */
 	async publishAudio(publish: boolean): Promise<void> {
 		if (this.participantService.isMyCameraActive()) {
-			//this comment for screen share with audio
+			//this commented for screenshare with audio
 			if (this.participantService.isMyScreenActive() && this.participantService.hasScreenAudioActive()) {
 				this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
 			}
 			//
-
 			this.publishAudioAux(this.participantService.getMyCameraPublisher(), publish);
 		} else {
 			this.publishAudioAux(this.participantService.getMyScreenPublisher(), publish);
@@ -460,6 +457,7 @@ export class OpenViduService {
 		} 
 		// this screen share without audio
 		else if (this.participantService.isOnlyMyCameraActive() && !this.screenShareWithAudio) {
+			console.log("Screen share without audio")
 		const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
 		const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
 		const hasAudio = willWebcamBePresent ? false : hasAudioDevicesAvailable && this.participantService.isMyAudioActive();
@@ -503,6 +501,7 @@ export class OpenViduService {
 		//this screen share with audio
 		} else if (this.participantService.isOnlyMyCameraActive()) {
 			// I only have the camera published
+			console.log("Screen share with	 audio")
 			const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
 			const userMedia = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
 			const displayMediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
@@ -583,7 +582,7 @@ export class OpenViduService {
 		const screenVideoElement=screenPublisher.videos[0].video;
 		this.documentService.toggleFullscreenByVideo(screenVideoElement);
 		}catch(error){
-			this.log.d("Getting Error while toggling Full screen",error)
+			this.log.d("Getting error while toggling full screen",error)
 		}
 	}
 	/**

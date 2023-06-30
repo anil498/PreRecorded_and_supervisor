@@ -253,6 +253,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	isVideoControlActive: boolean=false;
+	/**
+	 * @ignore
+	 */
+	isSupervisorActive: boolean=false;
 
 	/**
 	 * @ignore
@@ -310,6 +314,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	showMuteCameraButton: boolean = true;
+
+	/**
+	 * @ignore
+	 */
 	showSettingsButton: boolean = true;
 
 	/**
@@ -326,6 +335,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	showActivitiesPanelButton: boolean = true;
+	/**
+	 * @ignore
+	 */
+	showSupervisorButton: boolean = false;
 	/**
 	 * @ignore
 	 */
@@ -421,6 +434,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private sessionNameSub: Subscription;
 	private displayTimerSub: Subscription;
 	private sessionDurationSub: Subscription;
+	private supervisorButtonSub:Subscription;
+	private MuteCameraButtonSub:Subscription;
 	/**
 	 * @ignore
 	 */
@@ -697,6 +712,31 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error,true);
 		}
 	}
+	/**
+	 * @ignore
+	 */
+	toggleSupervisor(){
+		try{
+			this.isSupervisorActive=this.participantService.isSupervisorInCall();
+			this.log.d("Sending signal for supervisor",this.isSupervisorActive)
+			if(!this.isSupervisorActive){
+				const data = {
+					message: "Add supervisor",
+					nickname: this.participantService.getMyNickname()
+				};
+				this.openviduService.sendSignal(Signal.SUPERVISOR,undefined,data)
+			}else if(this.isSupervisorActive){
+				const data = {
+					message: "Merge supervisor",
+					nickname: this.participantService.getMyNickname()
+				};
+				this.openviduService.sendSignal(Signal.SUPERVISOR,undefined,)
+			}
+
+		}catch(error){
+			this.log.d("Getting error while adding supervisor",error.message)
+		}
+	}
 
 
 	private toggleActivitiesPanel(expandPanel: string) {
@@ -856,6 +896,14 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 		this.sessionDurationSub = this.libService.sessionDurationObs.subscribe((value: number) => {
 			this.sessionDuration = value;
+			this.cd.markForCheck();
+		});
+		this.supervisorButtonSub = this.libService.supervisorButtonObs.subscribe((value: boolean) => {
+			this.showSupervisorButton = value;
+			this.cd.markForCheck();
+		});
+		this.MuteCameraButtonSub = this.libService.MuteCameraButtonObs.subscribe((value: boolean) => {
+			this.showMuteCameraButton = value;
 			this.cd.markForCheck();
 		});
 	}
