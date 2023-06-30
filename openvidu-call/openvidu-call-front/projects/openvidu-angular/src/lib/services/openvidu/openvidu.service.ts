@@ -379,9 +379,11 @@ export class OpenViduService {
 		if (this.participantService.haveICameraAndScreenActive()) {
 			this.log.d("Publishing video1")
 			await this.publishVideoAux(this.participantService.getMyCameraPublisher(), publish);
-			// this.participantService.disableWebcamStream();
-			// this.unpublish(this.participantService.getMyCameraPublisher());
-			// this.publishAudioAux(this.participantService.getMyScreenPublisher(), publishAudio);
+			//this comment for screenshare with audio
+			this.participantService.disableWebcamStream();
+			this.unpublish(this.participantService.getMyCameraPublisher());
+			this.publishAudioAux(this.participantService.getMyScreenPublisher(), publishAudio);
+			//
 		} else if (this.participantService.isOnlyMyScreenActive()) {
 			// Enabling webcam
 			this.log.d("Publishing video2")
@@ -390,7 +392,8 @@ export class OpenViduService {
 				this.log.d("Publishing video3")
 				await this.connectSession(this.getWebcamSession(), this.getWebcamToken());
 			}
-			// await this.publish(this.participantService.getMyCameraPublisher());
+			//this comment for screen share audio
+			await this.publish(this.participantService.getMyCameraPublisher());
 			this.participantService.enableWebcamStream();
 			await this.publishVideoAux(this.participantService.getMyCameraPublisher(), true);
 			this.publishAudioAux(this.participantService.getMyScreenPublisher(), true);
@@ -426,9 +429,11 @@ export class OpenViduService {
 	 */
 	async publishAudio(publish: boolean): Promise<void> {
 		if (this.participantService.isMyCameraActive()) {
-			// if (this.participantService.isMyScreenActive() && this.participantService.hasScreenAudioActive()) {
-			// 	this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
-			// }
+			//this comment for screen share with audio
+			if (this.participantService.isMyScreenActive() && this.participantService.hasScreenAudioActive()) {
+				this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
+			}
+			//
 
 			this.publishAudioAux(this.participantService.getMyCameraPublisher(), publish);
 		} else {
