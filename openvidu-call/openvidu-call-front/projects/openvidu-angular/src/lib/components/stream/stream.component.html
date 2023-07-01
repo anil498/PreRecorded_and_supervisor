@@ -36,6 +36,7 @@
 		*ngIf="!_stream.streamManager?.stream?.videoActive && _stream.type === 'CAMERA'"
 		[name]="_stream.participant.nickname"
 		[color]="_stream.participant.colorProfile"
+		[isOnHold]="isOnHold && !_stream.participant.local"
 	></ov-avatar-profile>
 
 	<ov-video
@@ -44,7 +45,7 @@
 		[mutedSound]="_stream?.participant?.isMutedForcibly"
 	></ov-video>
 
-	<div class="status-icons">
+	<div class="status-icons" *ngIf="!isOnHold || _stream.participant.local">
 		<button mat-icon-button id="statusMic" *ngIf="!this._stream.streamManager?.stream?.audioActive" disabled>
 			<mat-icon>mic_off</mat-icon>
 		</button>

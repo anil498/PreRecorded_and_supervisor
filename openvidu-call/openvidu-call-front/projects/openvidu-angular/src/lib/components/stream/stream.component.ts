@@ -117,6 +117,7 @@ export class StreamComponent implements OnInit {
 	showSettingsButton: boolean = true;
 	showVideo: boolean;
 	displayTickerValue:string;
+	isOnHold:boolean;
 
 	/**
 	 * @ignore
@@ -159,6 +160,7 @@ export class StreamComponent implements OnInit {
 	private displayAudioDetectionSub: Subscription;
 	private settingsButtonSub: Subscription;
 	private displayTickerValueSub: Subscription;
+	private isOnHoldSubs:Subscription;
 
 	/**
 	 * @ignore
@@ -275,6 +277,15 @@ export class StreamComponent implements OnInit {
 		});
 		this.displayTickerValueSub = this.libService.displayTickerValueObs.subscribe((value: string) => {
 			this.displayTickerValue = value;
+			// this.cd.markForCheck();
+		});
+		this.displayTickerValueSub = this.libService.displayTickerValueObs.subscribe((value: string) => {
+			this.displayTickerValue = value;
+			// this.cd.markForCheck();
+		});
+		this.isOnHoldSubs = this.libService.isOnHoldObs.subscribe((value: boolean) => {
+			this.isOnHold = value;
+			console.error("p",this._stream.participant.local,this.isOnHold)
 			// this.cd.markForCheck();
 		});
 	}

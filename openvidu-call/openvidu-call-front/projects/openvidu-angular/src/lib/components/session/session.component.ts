@@ -47,6 +47,7 @@ import { PlatformService } from '../../services/platform/platform.service';
 import { RecordingService } from '../../services/recording/recording.service';
 import { TranslateService } from '../../services/translate/translate.service';
 import { VirtualBackgroundService } from '../../services/virtual-background/virtual-background.service';
+import { Howl } from 'howler';
 
 /**
  * @internal
@@ -402,8 +403,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 		this.session.on('streamPropertyChanged', (event: StreamPropertyChangedEvent) => {
 			const connectionId = event.stream.connection.connectionId;
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
-			if (isRemoteConnection) {
+		
+			if (isRemoteConnection && !this.hold) {
 				this.participantService.updateRemoteParticipants();
+			}else{
+				const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
+				const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
+				subscriber.subscribeToAudio(false);
+				subscriber.subscribeToVideo(false);
 			}
 		});
 	}
@@ -420,32 +427,61 @@ export class SessionComponent implements OnInit, OnDestroy {
 		});
 	}
 	private subscribeToSupervisor() {
-		this.session.on(`signal:${Signal.SUPERVISOR}`, (event: any) => {
+		let tune: Howl | null = null;
+		this.session.on(`signal:${Signal.SUPERVISOR}`, async (event: any) => {
 			
 			const data = JSON.parse(event.data);
 			this.log.d("Signal Event",data.message)
 			const connectionId = event.from.connectionId;
+			const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
+		    const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
-			const participantAdded = this.participantService.getRemoteParticipantByConnectionId(connectionId);
 
 			if (isRemoteConnection) {
 				if(data.message.includes("Add supervisor")){
 					this.hold=true;
+					this.libService.isOnHold.next(true);
 					this.openviduService.publishVideo(false);
 					this.openviduService.publishAudio(false);
 					if(this.libService.MuteCameraButton.getValue()){
 						this.libService.MuteCameraButton.next(false);
 					}
 					this.log.d("Unsubcribing remote participant",participantAdded)
-					this.session.unsubscribe(participantAdded?.streams[0].stream)
+					subscriber.subscribeToAudio(false);
+					subscriber.subscribeToVideo(false);
+					this.layoutService.update();
+					try {
+						const response = await fetch('./assets/audio/tune.mp3'); // Replace with the actual path to your tune file
+						const tuneBlob = await response.blob();
+						const tuneUrl = URL.createObjectURL(tuneBlob);
+			  
+						tune = new Howl({
+						  src: [tuneUrl],
+						  format: 'mp3',
+						  autoplay: true,
+						  onend: () => {
+							// Restart the tune when it ends
+							tune?.play();
+						  },
+						});
+					  } catch (error) {
+						console.error('Failed to fetch and play tune:', error);
+					  }
 				}
 				if(data.message.includes("Merge call")){
+					if (tune) {
+						// Stop playing the tune
+						tune.stop();
+						tune = null;
+					  }
 					this.hold=false;
+					this.libService.isOnHold.next(false);
 					if(!this.libService.MuteCameraButton.getValue()){
 						this.libService.MuteCameraButton.next(true);
 					}
 					this.log.d("Subcribing remote participant",participantAdded)
-					this.session.subscribe(participantAdded?.streams[0].stream,undefined)
+					subscriber.subscribeToAudio(false);
+					subscriber.subscribeToVideo(false);
 				}
 			}
 		});

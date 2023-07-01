@@ -24,6 +24,9 @@ export class OpenViduAngularConfigService {
 	displayTickerValue = <BehaviorSubject<string>>new BehaviorSubject('');
 	displayTickerValueObs: Observable<string>;
 
+	isOnHold = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+	isOnHoldObs: Observable<boolean>;
+
 	prejoin = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	prejoinObs: Observable<boolean>;
 
@@ -148,6 +151,7 @@ export class OpenViduAngularConfigService {
 		this.participantNameObs = this.participantName.asObservable();
 		this.floatingLayoutTypeObs=this.floatingLayoutType.asObservable();
 		this.displayTickerValueObs = this.displayTickerValue.asObservable();
+		this.isOnHoldObs = this.isOnHold.asObservable();
 		this.prejoinObs = this.prejoin.asObservable();
 		this.prefullscreenObs = this.prefullscreen.asObservable();
 		this.videoMutedObs = this.videoMuted.asObservable();
