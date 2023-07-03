@@ -14,6 +14,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { MatTabGroup } from "@angular/material/tabs";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
@@ -35,21 +36,6 @@ export class UpdateAccountDialogComponent implements OnInit {
   userForm3: FormGroup;
   messageResponse: any;
   loginResponse: any;
-
-  emptyError = false;
-  maxUserError: boolean;
-  expDateError: boolean;
-  addressError: boolean;
-
-  maxSessionError: boolean;
-  maxDurationError: boolean;
-  maxParticiapntsError: boolean;
-
-  fNameError: boolean;
-  lNameError: boolean;
-  contactError: boolean;
-  emailError: boolean;
-  loginIdError: boolean;
 
   name: string;
   address: string;
@@ -84,6 +70,7 @@ export class UpdateAccountDialogComponent implements OnInit {
     private restService: RestService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
+    private snackBar: MatSnackBar,
     private elementRef: ElementRef,
     private changeDetectorRef: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public account: any
@@ -435,8 +422,15 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async submit() {
-    this.emptyError = false;
-
+    if (
+      this.userForm3.invalid ||
+      this.userForm1.invalid ||
+      this.userForm2.invalid
+    ) {
+      console.log(this.userForm3.invalid);
+      this.focusOnInvalidFields();
+      return;
+    }
     this.name = this.userForm1.value.name;
     this.address = this.userForm1.value.address;
     this.max_user = this.userForm1.value.max_user;
@@ -476,21 +470,44 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.selectedFeaturesMeta
       );
       console.warn(response);
+      let videoResponse;
       if (this.formData !== null && response.status_code == 200) {
-        this.restService.uploadVideo(this.name, "", this.formData);
+         videoResponse = await this.restService.uploadVideo(
+          this.name,
+          "",
+          this.formData
+        );
+        console.log(videoResponse);
+        this.openSnackBar(response.msg, "snackBar");
+        this.timeOut(3000);
         this.dialogRef.close();
         this.restService.closeDialog();
+      } else if (this.formData === null && response.status_code == 200) {
+        this.openSnackBar(response.msg, "snackBar");
+        this.timeOut(3000);
+        this.dialogRef.close();
+        this.restService.closeDialog();
+      } else {
+        this.openSnackBar(response.msg, "snackBar");
+        this.timeOut(3000);
       }
     } catch (error) {
       console.warn(error);
+      this.openSnackBar(error.error.error, "snackBar");
+      this.timeOut(3000);
     }
     this.messageResponse = response;
   }
 
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    this.snackBar.open(message, "Dismiss", snackBarConfig);
+  }
+
   private timeOut(time: number) {
-    setTimeout(() => {
-      this.emptyError = false;
-    }, time);
+    setTimeout(() => {}, time);
   }
 
   focusOnInvalidFields() {

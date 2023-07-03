@@ -164,39 +164,6 @@ export class CreateAccountComponent implements OnInit {
     this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
     console.warn(featureId);
     console.warn(this.selectedFeaturesMeta[featureId]);
-    //const file: File = files[0];
-    //const reader = new FileReader();
-    // reader.readAsBinaryString(file);
-    // console.log(file);
-    // this.videoSelect[featureId] = file.name;
-    // reader.onload = () => {
-    //   const binaryData = reader.result;
-    //   console.log(typeof binaryData);
-    //   console.log(binaryData);
-    //   const blob = new Blob([binaryData], { type: file.type });
-    //   console.log(blob);
-    //   this.formData = new FormData();
-    //   this.formData.append("prerecorded_video_file", blob, file.name);
-    //   console.log(this.formData);
-    //   console.log(this.formData.get("prerecorded_video_file"));
-    //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = this.formData;
-    //   console.warn(featureId);
-    //   console.warn(this.selectedFeaturesMeta[featureId]);
-    // };
-    // reader.readAsDataURL(file);
-    // console.log(file);
-    // this.videoSelect[featureId] = file.name;
-    // reader.onload = () => {
-    //   const binaryData = reader.result;
-    //   console.log(typeof binaryData);
-    //   console.log(binaryData);
-    //   this.selectedFeaturesMeta[featureId.toString()][meta.key] = {
-    //     byte: binaryData,
-    //     type: file.type,
-    //   };
-    //   console.warn(featureId);
-    //   console.warn(this.selectedFeaturesMeta[featureId]);
-    // };
   }
 
   videoSelected(featureId: number) {
@@ -531,27 +498,6 @@ export class CreateAccountComponent implements OnInit {
     console.log("FeatureMetas " + `${this.selectedFeaturesMeta}`);
     console.log(this.logo);
 
-    // if (
-    //   this.name == null ||
-    //   this.max_user == null ||
-    //   this.acc_exp_date == null ||
-    //   this.address == null ||
-    //   this.max_active_sessions == null ||
-    //   this.max_duration == null ||
-    //   this.max_participants == null ||
-    //   this.password == null ||
-    //   this.user_fname == null ||
-    //   this.user_lname == null ||
-    //   this.mobile == null ||
-    //   this.email == null ||
-    //   this.login_id == null ||
-    //   this.confirm_password == null
-    // ) {
-    //   this.openSnackBar("ALL FIELDS ARE MANDATORY", "snackBar");
-    //   this.timeOut(3000);
-    //   return;
-    // }
-
     let response: any;
 
     try {
@@ -578,25 +524,44 @@ export class CreateAccountComponent implements OnInit {
         this.password
       );
       console.warn(response);
-      this.openSnackBar(response.msg, "snackBar");
-      this.timeOut(3000);
-
+      if (response.status_code == 200) {
+        this.openSnackBar(response.msg, "snackBar");
+        console.log("Feature Created");
+        this.dialogRef.close();
+        this.restService.closeDialog();
+      }
       console.log("uploading file");
       console.log(this.formData);
       if (this.formData !== null) {
-        const videoresponse = this.restService.uploadVideo(
-          this.name,
-          this.login_id,
-          this.formData
-        );
-        console.log(videoresponse);
+        let videoResponse;
+        try {
+          videoResponse = await this.restService.uploadVideo(
+            this.name,
+            this.login_id,
+            this.formData
+          );
+          console.log(videoResponse);
+          if (videoResponse.status_code == 200) {
+            this.openSnackBar(videoResponse.msg, "snackBar");
+            console.log("Account Created");
+            this.dialogRef.close();
+            this.restService.closeDialog();
+          }
+        } catch (error) {
+          this.openSnackBar(error.error.error, "snackBar");
+        }
       }
-      this.dialogRef.close();
-      this.restService.closeDialog();
     } catch (error) {
       console.warn(error);
-      this.openSnackBar("error", "snackBar");
-      this.timeOut(3000);
+      if (error.status == 401) {
+        this.openSnackBar(error.error, "snackBar");
+        this.timeOut(3000);
+      }
+      else{
+        this.openSnackBar(error.error.error, "snackBar");
+        this.timeOut(3000);
+
+      }
     }
   }
 

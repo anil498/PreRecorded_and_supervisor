@@ -127,7 +127,6 @@ export class UserManagementComponent implements OnInit {
 
   openSnackBar(message: string, color: string) {
     console.warn(this.token + "\n" + this.userId);
-    //this.viewTable()
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;
     snackBarConfig.panelClass = [color];
@@ -143,6 +142,7 @@ export class UserManagementComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
 
@@ -232,6 +232,7 @@ export class UserManagementComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
 
@@ -245,6 +246,7 @@ export class UserManagementComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
 }
