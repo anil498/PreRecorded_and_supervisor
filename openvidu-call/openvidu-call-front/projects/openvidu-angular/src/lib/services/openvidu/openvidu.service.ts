@@ -85,9 +85,7 @@ export class OpenViduService {
 			publisherSpeakingEventsOptions: {
 				interval: 50
 			},
-			forceMediaReconnectionAfterNetworkDrop:true,
-			noStreamPlayingEventExceptionTimeout:10000,
-			iceConnectionDisconnectedExceptionTimeout:10000
+			forceMediaReconnectionAfterNetworkDrop:true
 		});
 		if (this.openviduAngularConfigSrv.isProduction()) this.OV.enableProdMode();
 		this.webcamSession = this.OV.initSession();
