@@ -165,10 +165,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * Provides event notifications that fire when screen microphone toolbar button has been clicked.
 	 */
-	@Output() onShareFullScreenClicked: EventEmitter<void> = new EventEmitter<any>();
-	/**
-	 * Provides event notifications that fire when screen microphone toolbar button has been clicked.
-	 */
 	@Output() onFullScreenClicked: EventEmitter<void> = new EventEmitter<any>();
 
 	/**
@@ -260,7 +256,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	isShareFullscreenActive: boolean = false;
+	isSupervisorActive: boolean=false;
+
 	/**
 	 * @ignore
 	 */
@@ -298,12 +295,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	showShareFullScreenButton: boolean=false;
-	/**
-	 * @ignore
-	 */
-	showFullscreenButton: boolean = false;
-
+	showFullscreenButton:boolean;
 	/**
 	 * @ignore
 	 */
@@ -318,6 +310,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	showRecordingButton: boolean = true;
+
+	/**
+	 * @ignore
+	 */
+	showMuteCameraButton: boolean = true;
 
 	/**
 	 * @ignore
@@ -338,6 +335,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	showActivitiesPanelButton: boolean = true;
+	/**
+	 * @ignore
+	 */
+	showSupervisorButton: boolean = false;
 	/**
 	 * @ignore
 	 */
@@ -400,10 +401,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	isSessionCreator: boolean = false;
-	/**
-	 * @ignore
-	 */
-	autoFullScreen: boolean = false;
 
 	/**
 	 * @ignore
@@ -418,7 +415,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private screenshareButtonSub: Subscription;
 	private publishVideoButtonSub: Subscription;
 	private videoControlButtonSub: Subscription;
-	private fullScreenshareButtonSub: Subscription;
 	private fullscreenButtonSub: Subscription;
 	private backgroundEffectsButtonSub: Subscription;
 	private leaveButtonSub: Subscription;
@@ -435,11 +431,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private settingsButtonSub: Subscription;
 	private captionsSubs: Subscription;
 	private currentWindowHeight = window.innerHeight;
-	private prefullscreenSub: Subscription;
-	private showfullscreenbuttonsub: Subscription;
 	private sessionNameSub: Subscription;
 	private displayTimerSub: Subscription;
 	private sessionDurationSub: Subscription;
+	private supervisorButtonSub:Subscription;
+	private MuteCameraButtonSub:Subscription;
 	/**
 	 * @ignore
 	 */
@@ -470,7 +466,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.currentWindowHeight >= window.innerHeight) {
 			// The user has exit the fullscreen mode
 			this.isFullscreenActive = false;
-			this.isShareFullscreenActive=false;
 			this.currentWindowHeight = window.innerHeight;
 		}
 	}
@@ -503,7 +498,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.subscribeToRecordingStatus();
 		this.subscribeToScreenSize();
 		this.subscribeToCaptionsToggling();
-		this.subscribeToScreenActive();
 		this.subscribeToSessionTimergStatus();
 	}
 
@@ -519,7 +513,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.chatMessagesSubscription) this.chatMessagesSubscription.unsubscribe();
 		if (this.localParticipantSubscription) this.localParticipantSubscription.unsubscribe();
 		if (this.screenshareButtonSub) this.screenshareButtonSub.unsubscribe();
-		if (this.fullScreenshareButtonSub) this.fullScreenshareButtonSub.unsubscribe();
 		if (this.fullscreenButtonSub) this.fullscreenButtonSub.unsubscribe();
 		if (this.backgroundEffectsButtonSub) this.backgroundEffectsButtonSub.unsubscribe();
 		if (this.leaveButtonSub) this.leaveButtonSub.unsubscribe();
@@ -581,10 +574,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
 		try {
 			await this.openviduService.toggleScreenshare();
-			if(this.isScreenShareActive && this.showShareFullScreenButton)
-			{
-				this.showShareFullScreenButton=true;
-			}
 		} catch (error) {
 			this.log.e('There was an error toggling screen share', error.code, error.message);
 			if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
@@ -695,7 +684,12 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleFullscreen() {
 		this.isFullscreenActive = !this.isFullscreenActive;
+		this.log.d("Someone has shared screen",this.participantService.someoneIsSharingScreen())
+		if(this.participantService.someoneIsSharingScreen()){
+			this.openviduService.toggleShareFullscreen()
+		}else{
 		this.documentService.toggleFullscreen('session-container');
+		}
 		this.onFullscreenButtonClicked.emit();
 	}
 	/**
@@ -718,40 +712,32 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error,true);
 		}
 	}
-
 	/**
 	 * @ignore
 	 */
-	toggleShareFullscreen() {
-		let screenPublisher: any;
-		if(this.participantService.isMyScreenActive()){
-			screenPublisher=this.participantService.getMyScreenPublisher();
-		}else{
-			const screenSession=this.openviduService.getScreenRemoteConnections();
-			screenSession.forEach((remoteConnection) =>{
-				console.log(remoteConnection.stream?.streamManager.videos[0].video)
-				const nickname = JSON.parse(remoteConnection.data.split('%/%')[0]).nickname;
-				
-			    screenPublisher=remoteConnection.stream?.streamManager
-				
-			})
-			console.log(screenPublisher)
+	toggleSupervisor(){
+		try{
+			this.isSupervisorActive=this.participantService.isSupervisorInCall();
+			this.log.d("Sending signal for supervisor",this.isSupervisorActive)
+			if(!this.isSupervisorActive){
+				const data = {
+					message: "Add supervisor",
+					nickname: this.participantService.getMyNickname()
+				};
+				this.openviduService.sendSignal(Signal.SUPERVISOR,undefined,data)
+			}else if(this.isSupervisorActive){
+				const data = {
+					message: "Merge supervisor",
+					nickname: this.participantService.getMyNickname()
+				};
+				this.openviduService.sendSignal(Signal.SUPERVISOR,undefined,)
+			}
+
+		}catch(error){
+			this.log.d("Getting error while adding supervisor",error.message)
 		}
-		
-		console.log(screenPublisher.videos[0].video);
-		const screenVideoElement=screenPublisher.videos[0].video;
-		if(!this.isShareFullscreenActive && !this.showFullscreenButton){
-			this.documentService.toggleFullscreenByVideo(screenVideoElement);
-			this.isShareFullscreenActive=true;
-		}else{
-			this.isShareFullscreenActive=false;
-		}
-		this.onShareFullScreenClicked.emit();
-		
 	}
-	getLogoPath():string{
-		return "assets/images/"+this.session.sessionId+".png"
-	}
+
 
 	private toggleActivitiesPanel(expandPanel: string) {
 		this.onActivitiesPanelButtonClicked.emit();
@@ -846,10 +832,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.showVideoControlButton = value
 			this.cd.markForCheck();
 		});
-		this.fullScreenshareButtonSub = this.libService.fullScreenshareButtonObs.subscribe((value: boolean) => {
-			this.showFullscreenButton = value
-			this.cd.markForCheck();
-		});
 		this.fullscreenButtonSub = this.libService.fullscreenButtonObs.subscribe((value: boolean) => {
 			this.showFullscreenButton = value;
 			this.checkDisplayMoreOptions();
@@ -916,6 +898,14 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.sessionDuration = value;
 			this.cd.markForCheck();
 		});
+		this.supervisorButtonSub = this.libService.supervisorButtonObs.subscribe((value: boolean) => {
+			this.showSupervisorButton = value;
+			this.cd.markForCheck();
+		});
+		this.MuteCameraButtonSub = this.libService.MuteCameraButtonObs.subscribe((value: boolean) => {
+			this.showMuteCameraButton = value;
+			this.cd.markForCheck();
+		});
 	}
 
 	private subscribeToScreenSize() {
@@ -936,31 +926,5 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private checkDisplayMoreOptions() {
 		this.showMoreOptionsButton =
 			this.showFullscreenButton || this.showBackgroundEffectsButton || this.showRecordingButton || this.showSettingsButton;
-	}
-	subscribeToScreenActive() {
-		const session = this.openviduService.getWebcamSession();
-		session.on(`signal:${Signal.SCREEN}`, async (event: any) => {
-			this.prefullscreenSub = this.libService.prefullscreen.subscribe((value: boolean) => {
-				this.autoFullScreen = value;
-				// this.cd.markForCheck();
-			});
-			this.showfullscreenbuttonsub = this.libService.fullScreenshareButton.subscribe((value: boolean) => {
-				this.showFullscreenButton = value;
-				// this.cd.markForCheck();
-			});
-			if(!this.isShareFullscreenActive && !this.showFullscreenButton){
-			   console.log("Full screen")
-			   this.toggleShareFullscreen();
-			}else if(this.showShareFullScreenButton){
-				const data = JSON.parse(event.data);
-			if (data=='enable') {
-				this.showShareFullScreenButton=true;
-				this.cd.markForCheck();
-			}else if(data=='disable'){
-				this.showShareFullScreenButton=false;
-				this.cd.markForCheck();
-			}
-		}
-		});
 	}
 }

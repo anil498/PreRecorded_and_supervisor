@@ -381,6 +381,12 @@ export abstract class ParticipantAbstractModel {
 	someHasVideoEnlarged(): boolean {
 		return Array.from(this.streams.values()).some((conn) => conn.videoEnlarged);
 	}
+	/**
+	 * @internal
+	 */
+	isSupervisorInCall(): boolean {
+		return Array.from(this.streams.values()).some((conn) => conn.participant?.getNickname().toUpperCase().includes("SUPERVISOR"));
+	}
 
 	/**
 	 * @internal

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { ActionService, ParticipantService, RecordingInfo, TokenModel } from 'openvidu-angular';
 import { RestService } from '../../services/rest.service';
-import { TranslateService } from 'openvidu-angular';
+import { TranslateService,PlatformService } from 'openvidu-angular';
 
 @Component({
 	selector: 'app-call',
@@ -40,6 +40,10 @@ export class CallComponent implements OnInit {
 	layoutNumber: number;
 	preRecorded:boolean;
 	preRecordedFilePath:string;
+	isVideoMuted:boolean;
+	isAudioMuted:boolean;
+	isScreenShareWithAudio:boolean;
+	isAutoFullScreen:boolean;
 	private isDebugSession: boolean = false;
 
 	constructor(
@@ -48,7 +52,8 @@ export class CallComponent implements OnInit {
 		private router: Router,
 		private route: ActivatedRoute,
 		private actionService: ActionService,
-		private translateService: TranslateService
+		private translateService: TranslateService,
+		private platformService:PlatformService
 	) { }
 
 	async ngOnInit() {
@@ -151,13 +156,28 @@ export class CallComponent implements OnInit {
 			this.type = response.type;
 			this.floatingLayout = response.settings.floatingLayout;
 			this.layoutNumber=response.settings.layoutNumber;
-			this.preRecorded=response.settings.preRecordedDetails.share_pre_recorded_video;
+			if(response.settings.preRecorded){
+				this.preRecorded=response.settings.preRecordedDetails.share_pre_recorded_video;
+			}
 			this.preRecordedFilePath=response.settings.fileUrl;
+			this.isScreenShareWithAudio=response.settings.isScreenShareWithAudio;
+			this.isAutoFullScreen=response.settings.isAutoFullScreen;
 
 			if (response.participantName) {
 				this.participantNameValue = response.participantName;
 			} else {
 				this.participantNameValue = response.type;
+			}
+			if (this.type === "Support"){
+				this.isAudioMuted=false;
+				if(this.platformService.isIos()){
+					this.isVideoMuted=false
+				}else{
+					this.isVideoMuted=true;
+				}
+			}else{
+				this.isAudioMuted=false;
+				this.isVideoMuted=false;
 			}
 		} catch (error) {
 			console.log(error)
@@ -171,5 +191,4 @@ export class CallComponent implements OnInit {
 	recordingEnabled() {
 		return this.isRecording;
 	}
-
 }

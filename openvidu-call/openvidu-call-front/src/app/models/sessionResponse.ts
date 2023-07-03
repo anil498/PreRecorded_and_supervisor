@@ -23,6 +23,8 @@ export interface sessionResponse {
       max_dur: number;
     };
     screenShare: boolean;
+    isScreenShareWithAudio:boolean;
+    isAutoFullScreen:boolean;
     waitForModerator: boolean;
     chat: boolean;
     activitiesButton: boolean;

@@ -404,6 +404,12 @@ export class ParticipantService {
 	someoneIsSharingScreen(): boolean {
 		return this.remoteParticipants.some((p) => p.someHasVideoEnlarged());
 	}
+	/**
+	 * @internal
+	 */
+	isSupervisorInCall(): boolean {
+		return this.remoteParticipants.some((p) => p.isSupervisorInCall());
+	}
 
 	/**
 	 * @internal
@@ -455,7 +461,6 @@ export class ParticipantService {
 		if(this.floatingLayoutEnable){
 			const remoteModel=this.remoteParticipants[0].streams.get(VideoType.CAMERA);
 			if(remoteModel){
-			console.log(remoteModel)
 			this.remoteParticipants[0].streams.clear();
 			this.remoteParticipants[0].streams.set(VideoType.SCREEN, remoteModel);
 			}

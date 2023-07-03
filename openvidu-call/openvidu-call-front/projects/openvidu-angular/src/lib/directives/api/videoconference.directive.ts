@@ -443,55 +443,6 @@ export class PrejoinDirective implements OnDestroy {
 		}
 	}
 }
-/**
- * The **show full screen button** directive allows show/hide the prejoin page for selecting media devices.
- *
- * It is only available for {@link VideoconferenceComponent}.
- *
- * Default: `true`
- *
- * @example
- * <ov-videoconference [showfullscreenbutton]="false"></ov-videoconference>
- */
-@Directive({
-	selector: 'ov-videoconference[showfullscreenbutton]'
-})
-export class ShowFullScreenButtonDirective implements OnDestroy {
-	/**
-	 * @ignore
-	 */
-	@Input() set showfullscreenbutton(value: boolean) {
-		this.update(value);
-	}
-
-	/**
-	 * @ignore
-	 */
-	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
-
-	/**
-	 * @ignore
-	 */
-	ngOnDestroy(): void {
-		this.clear();
-	}
-
-	/**
-	 * @ignore
-	 */
-	clear() {
-		this.update(true);
-	}
-
-	/**
-	 * @ignore
-	 */
-	update(value: boolean) {
-		if (this.libService.fullScreenshareButton.getValue() !== value) {
-			this.libService.fullScreenshareButton.next(value);
-		}
-	}
-}
 
 /**
  * The **videoMuted** directive allows to join the session with camera muted/unmuted.

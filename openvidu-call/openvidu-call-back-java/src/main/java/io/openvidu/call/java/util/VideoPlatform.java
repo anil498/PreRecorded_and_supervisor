@@ -38,6 +38,7 @@ public class VideoPlatform {
   protected static final String API_FEATURES = "/GetByKey";
   protected static final String API_SESSION = "/sessionDetails";
   protected static final String API_CALLBACK = "/sessionCallback";
+  protected static final String API_LINK="/sendLink";
 
   public VideoPlatform() {
 
@@ -92,7 +93,31 @@ public class VideoPlatform {
       throw new HttpException(String.valueOf(response.getStatusCodeValue()));
     }
   }
+  public ResponseEntity<?> sendLink(String authorization, String token, String sessionId) throws HttpException {
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("Authorization", authorization);
+    headers.set("Token", token);
 
+    JsonObject json = new JsonObject();
+    json.addProperty("sessionId", sessionId);
+    HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
+
+    String url = this.hostname + API_PATH + API_LINK;
+
+    ResponseEntity<String> response;
+    try {
+      response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+    } catch (RestClientException e) {
+      throw new RuntimeException(e.getMessage(), e.getCause());
+    }
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    } else {
+      throw new HttpException(String.valueOf(response.getStatusCodeValue()));
+    }
+  }
   protected static IOException HttpException(int status) {
     JsonObject json = new JsonObject();
     json.addProperty("openviduExceptionType", OpenViduHttpException.class.getSimpleName());

@@ -47,9 +47,11 @@
 		"CHAT": "Chat",
 		"ACTIVITIES": "Activities",
 		"PUBLISH_VIDEO": "Publish video",
-		"STOP_VIDEO":"STOP_VIDEO",
+		"STOP_VIDEO":"Stop video",
 		"PLAY_VIDEO": "Play video",
-		"PAUSE_VIDEO": "Pause video"
+		"PAUSE_VIDEO": "Pause video",
+		"ADD_SUPERVISOR": "Add Supervisor",
+		"MERGE_CALL": "Merge call"
 	},
 	"STREAM": {
 		"SETTINGS": "Settings",
