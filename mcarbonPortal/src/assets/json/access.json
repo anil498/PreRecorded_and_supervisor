@@ -118,5 +118,13 @@
     "class": "",
     "show": false,
     "systemName": "manage_platform_access"
+  },
+  {
+    "path": "/app/feedback_form",
+    "title": "Feedback Form",
+    "icon": "receipt",
+    "class": "",
+    "show": true,
+    "systemName": "feedback_form"
   }
 ]

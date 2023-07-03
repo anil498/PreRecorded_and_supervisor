@@ -48,6 +48,7 @@ import { MatGridListModule } from "@angular/material/grid-list";
 import { MatRadioModule } from "@angular/material/radio";
 import { UpdateAccessDialogComponent } from "app/update-access-dialog/update-access-dialog.component";
 import { UpdateFeatureDialogComponent } from "app/update-feature-dialog/update-feature-dialog.component";
+import { FeedbackFormComponent } from "app/feedback-form/feedback-form.component";
 @NgModule({
   imports: [
     CommonModule,
@@ -76,6 +77,7 @@ import { UpdateFeatureDialogComponent } from "app/update-feature-dialog/update-f
     MatMenuModule,
     MatSlideToggleModule,
     MatFileUploadModule,
+
     RouterModule.forChild(AdminLayoutRoutes),
   ],
   declarations: [
@@ -100,7 +102,8 @@ import { UpdateFeatureDialogComponent } from "app/update-feature-dialog/update-f
     CreateFeatureDialogComponent,
     CreateAccessDialogComponent,
     UpdateAccessDialogComponent,
-  UpdateFeatureDialogComponent
+    UpdateFeatureDialogComponent,
+    FeedbackFormComponent,
   ],
   entryComponents: [FormDialogComponent, DeleteDialogComponent],
 })
