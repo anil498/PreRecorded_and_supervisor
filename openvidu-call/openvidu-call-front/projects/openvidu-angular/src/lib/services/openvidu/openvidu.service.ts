@@ -84,7 +84,8 @@ export class OpenViduService {
 		this.OV.setAdvancedConfiguration({
 			publisherSpeakingEventsOptions: {
 				interval: 50
-			}
+			},
+			forceMediaReconnectionAfterNetworkDrop:true
 		});
 		if (this.openviduAngularConfigSrv.isProduction()) this.OV.enableProdMode();
 		this.webcamSession = this.OV.initSession();

@@ -24,6 +24,14 @@
                     {{ access.name }}
                   </mat-option>
                 </mat-select>
+                <mat-error
+                  *ngIf="
+                    accessForm.get('parentId').invalid &&
+                    accessForm.get('parentId').required
+                  "
+                >
+                  Parent ID is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -31,13 +39,29 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-12 col-custom">
-              <mat-form-field>
+              <mat-form-field appearance="outline">
                 <input
                   matInput
                   type="number"
                   placeholder="Access ID"
                   formControlName="accessId"
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('accessId').invalid &&
+                    accessForm.get('accessId').required
+                  "
+                >
+                  Access ID  is Required
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    accessForm.get('accessId').invalid &&
+                    accessForm.get('accessId').errors.existingAccessId
+                  "
+                >
+                  Access ID already exist!!!
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -47,13 +71,21 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-12 col-custom">
-              <mat-form-field>
+              <mat-form-field appearance="outline">
                 <input
                   matInput
                   type="number"
                   placeholder="Sequence"
                   formControlName="seq"
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('seq').invalid &&
+                    accessForm.get('seq').required
+                  "
+                >
+                  Sequence is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -61,13 +93,21 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-12 col-custom">
-              <mat-form-field>
+              <mat-form-field appearance="outline">
                 <input
                   matInput
                   type="text"
                   placeholder="Name"
                   formControlName="name"
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('name').invalid &&
+                    accessForm.get('name').required
+                  "
+                >
+                  Access Name is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -77,13 +117,29 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-12 col-custom">
-              <mat-form-field>
+              <mat-form-field appearance="outline">
                 <input
                   matInput
                   type="text"
                   placeholder="System Name"
                   formControlName="systemName"
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('systemName').invalid &&
+                    accessForm.get('systemName').required
+                  "
+                >
+                  System Name is Required
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    accessForm.get('systemName').invalid &&
+                    accessForm.get('systemName').errors.existingSystemName
+                  "
+                >
+                  System Name already exist!!!
+                </mat-error>
               </mat-form-field>
             </div>
           </div>

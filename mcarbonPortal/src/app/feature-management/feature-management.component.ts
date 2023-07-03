@@ -24,7 +24,7 @@ import { UpdateFeatureDialogComponent } from "app/update-feature-dialog/update-f
   styleUrls: ["./feature-management.component.scss"],
 })
 export class FeatureManagementComponent implements OnInit {
-  search: String = "";
+  search: string = "";
   token: string;
   userId: string;
   showCreate: boolean = false;
@@ -111,9 +111,6 @@ export class FeatureManagementComponent implements OnInit {
   }
 
   openSnackBar(message: string, color: string) {
-    console.warn(this.token + "\n" + this.userId);
-    this.viewTable();
-
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;
     snackBarConfig.panelClass = [color];
@@ -128,6 +125,7 @@ export class FeatureManagementComponent implements OnInit {
   createDialog() {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "50%";
+    dialogConfig.maxHeight = "70%";
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(
       CreateFeatureDialogComponent,
@@ -143,6 +141,7 @@ export class FeatureManagementComponent implements OnInit {
   updateFeature(feature: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "50%";
+    dialogConfig.maxHeight = "70%";
     dialogConfig.data = feature;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(
@@ -152,25 +151,31 @@ export class FeatureManagementComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
-  deleteAccess(featureId: number) {
+  async deleteFeature(featureId: number) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "25%";
     console.log("Confirm Delete");
 
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       console.log(confirmed);
+      let response: any;
       if (confirmed) {
-        this.restService.deleteAccess(featureId);
-        console.log("access Deleted");
+        response = await this.restService.deleteFeature(featureId);
+        console.log(response);
+        if (response.status_code === 200) {
+          console.log("Feature Deleted");
+          this.openSnackBar(response.msg, "snackBar");
+        }
       } else {
-        console.log("access not deleted");
+        this.openSnackBar(response, "snackBar");
+        console.log("Feature not deleted");
       }
-    });
-    dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
 }

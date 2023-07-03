@@ -1,10 +1,13 @@
-<div class="logo">
+<!-- <div class="logo">
   <a href="#" class="simple-text">
     <div class="logo-img">
       <img src="./assets/img/logo.png" loading="lazy"/>
+      <img *ngIf="isLogo" class="img" src="{{ logo.byte }}" />
+      <img *ngIf="!isLogo" class="img" src="{{ srcImg }}" />
     </div>
   </a>
-</div>
+</div> -->
+
 <div class="sidebar-wrapper">
   <div *ngIf="isMobileMenu()">
     <!-- <form class="navbar-form">
@@ -53,10 +56,16 @@
         </li> -->
     </ul>
   </div>
+  <ul class="nav">
+    <div class="logo-image">
+      <img *ngIf="isLogo" class="img-photo" src="{{ logo.byte }}" />
+      <img *ngIf="!isLogo" class="img-photo" src="{{ srcImg }}" />
+    </div>
+  </ul>
   <ul class="nav" *ngFor="let menuItem of menuItems">
     <li
       routerLinkActive="active"
-      *ngIf=" menuItem.show "
+      *ngIf="menuItem.show"
       class="{{ menuItem.class }} nav-item"
     >
       <a class="nav-link" [routerLink]="[menuItem.path]">
@@ -66,6 +75,5 @@
         <p>{{ menuItem.title }}</p>
       </a>
     </li>
-    <li></li>
   </ul>
 </div>

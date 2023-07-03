@@ -182,14 +182,15 @@ export class DynamicSupportComponent implements OnInit {
       const templateId = "53571";
 
       try {
-        messageResponse = await this.restService.sendWhatsapp(
-          msisdn,
-          from,
-          type,
-          templateId,
-          getLink
-        );
-
+        for (let i = 0; i < numbers.length; i++) {
+          messageResponse = await this.restService.sendWhatsapp(
+            numbers[i],
+            from,
+            type,
+            templateId,
+            getLink
+          );
+        }
         if (messageResponse.status_code == 200) {
           console.log(messageResponse.link);
           this.goTo(messageResponse.link);

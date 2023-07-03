@@ -477,19 +477,21 @@ export class FormDialogComponent implements OnInit {
         this.selectedFeaturesMeta
       );
       console.warn(response);
-      this.openSnackBar(response.msg, "snackBar");
-      this.timeOut(3000);
+      if (response.status_code == 200) {
+        this.openSnackBar(response.msg, "snackBar");
+        this.timeOut(3000);
 
-      console.log("uploading file");
-      console.log(this.formData);
-      if (this.formData !== null) {
-        this.restService.uploadVideo("", this.login_id, this.formData);
+        console.log("uploading file");
+        console.log(this.formData);
+        if (this.formData !== null) {
+          this.restService.uploadVideo("", this.login_id, this.formData);
+        }
+        this.dialogRef.close();
+        this.restService.closeDialog();
       }
-      this.dialogRef.close();
-      this.restService.closeDialog();
     } catch (error) {
       console.log(error);
-      this.openSnackBar("error", "snackBar");
+      this.openSnackBar(error.error, "snackBar");
       this.timeOut(3000);
     }
   }

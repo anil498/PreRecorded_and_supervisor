@@ -6,9 +6,9 @@ import {
   OnInit,
   Renderer2,
 } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { MatDialogRef } from "@angular/material/dialog";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
 import { RestService } from "app/services/rest.service";
@@ -19,6 +19,7 @@ import { RestService } from "app/services/rest.service";
   styleUrls: ["./create-feature-dialog.component.scss"],
 })
 export class CreateFeatureDialogComponent implements OnInit {
+  metaListNumber: number;
   metaTypes: string[];
   featureForm: FormGroup;
   constructor(
@@ -33,56 +34,102 @@ export class CreateFeatureDialogComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private renderer: Renderer2
   ) {
-    this.metaTypes = ["text", "bool", "radio"];
+    this.metaTypes = ["text", "bool", "radio", "file"];
+    this.metaListNumber = 0;
   }
 
   async ngOnInit(): Promise<void> {
     this.featureForm = this.fb.group({
       featureId: [null, [Validators.required]],
       name: ["", [Validators.required]],
-      metaList: [[], [Validators.required]],
+      metaList: this.fb.array([]),
     });
   }
 
-  addMeta() {
-    const rowDiv = this.renderer.createElement("div");
-    this.renderer.addClass(rowDiv, "row");
-
-    const colDiv1 = this.renderer.createElement("div");
-    this.renderer.addClass(colDiv1, "col-4");
-    const colDiv2 = this.renderer.createElement("div");
-    this.renderer.addClass(colDiv2, "col-4");
-    const colDiv3 = this.renderer.createElement("div");
-    this.renderer.addClass(colDiv3, "col-3");
-    const colDiv4 = this.renderer.createElement("div");
-    this.renderer.addClass(colDiv4, "col-1");
-
-    const matFormField1 = this.renderer.createElement("mat-form-field");
-
-    this.renderer.appendChild(rowDiv, colDiv1);
-    this.renderer.appendChild(rowDiv, colDiv2);
-    this.renderer.appendChild(rowDiv, colDiv3);
-    this.renderer.appendChild(rowDiv, colDiv4);
-
-    const metaListContainer =
-      this.elementRef.nativeElement.querySelectorAll("#metaList");
-    this.renderer.appendChild(metaListContainer, rowDiv);
+  generateArray(n: number): number[] {
+    return Array(n);
   }
 
-  submit() {
+  removeMeta(i: number) {
+    const control = <FormArray>this.featureForm.controls["metaList"];
+    control.removeAt(i);
+  }
+
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    this.snackBar.open(message, "Dismiss", snackBarConfig);
+  }
+
+  focusOnInvalidFields() {
+    console.log("focus");
+    const invalidFields =
+      this.elementRef.nativeElement.querySelectorAll(".ng-invalid");
+    console.log(invalidFields);
+    if (invalidFields.length > 0) {
+      invalidFields.forEach((invalid) => {
+        invalid.focus();
+      });
+    }
+  }
+
+  addMeta() {
+    const metaGroup = this.fb.group({
+      name: ["", Validators.required],
+      type: ["", Validators.required],
+      key: ["", Validators.required],
+    });
+
+    const control = <FormArray>this.featureForm.controls["metaList"];
+    control.push(metaGroup);
+    console.log(this.featureForm.value.metaList);
+    this.metaListNumber++;
+    console.log(this.metaListNumber);
+  }
+
+  get metaList() {
+    return this.featureForm.value.metaList as FormArray;
+  }
+  async submit() {
     if (this.featureForm.invalid) {
+      this.focusOnInvalidFields();
       return;
     }
-
+    const featureId = this.featureForm.value.featureId;
+    const name = this.featureForm.value.name;
+    const metaList = this.featureForm.value.metaList;
+    metaList.forEach((meta) => {
+      if (meta.type == "radio") {
+        console.log(meta.name);
+        const nameArray = meta.name.split(",");
+        console.log(nameArray);
+        meta.name = nameArray;
+      }
+    });
+    console.log(featureId);
+    console.log(name);
+    console.log(metaList);
+    let response: any;
     try {
-      const response = this.restService.createFeature(
-        "Feature/create",
-        this.featureForm.value.parentId,
-        this.featureForm.value.featureId,
-        this.featureForm.value.metaList
+      response = await this.restService.createFeature(
+        "Feature/Create",
+        featureId,
+        name,
+        metaList
       );
       console.log(response);
+      console.log(response.msg);
+      console.log(response.status_code);
+      if (response.status_code == 200) {
+        this.openSnackBar(response.msg, "snackBar");
+        console.log("Feature Created");
+        this.dialogRef.close();
+        this.restService.closeDialog();
+      }
+      //console.log(response.status_code);
     } catch {
+      this.openSnackBar("Error while Creating Feature", "snackBar");
       console.log("feature not created");
     }
   }

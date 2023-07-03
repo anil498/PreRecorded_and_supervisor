@@ -383,6 +383,7 @@ export class UpdateUserDialogComponent implements OnInit {
         if (this.userForm1.invalid) {
           console.log(this.userForm1.invalid);
           this.focusOnInvalidFields();
+          console.log(this.userForm1.value.acc_exp_date);
           return;
         }
       } else if (this.tabGroup.selectedIndex === 1) {
@@ -446,8 +447,10 @@ export class UpdateUserDialogComponent implements OnInit {
     this.max_duration = this.userForm3.value.max_duration;
     this.max_participants = this.userForm3.value.max_participants;
     this.max_active_sessions = this.userForm3.value.max_active_sessions;
-    console.log(this.logo);
 
+    console.log(this.userForm1.value.acc_exp_date);
+    console.log(this.acc_exp_date);
+    console.log(this.exp_date);
     let response: any;
     try {
       response = await this.restService.updateUser(
@@ -471,17 +474,25 @@ export class UpdateUserDialogComponent implements OnInit {
         this.selectedFeaturesMeta
       );
       console.warn(response);
-      console.warn(response);
       console.log(this.login_id);
-      if (this.formData !== null) {
-        this.restService.uploadVideo("", this.login_id, this.formData);
+      if (response.status_code == 200) {
+        if (this.formData !== null) {
+          let videoResponse = await this.restService.uploadVideo(
+            "",
+            this.login_id,
+            this.formData
+          );
+          console.log(videoResponse);
+        }
+        this.openSnackBar(response.msg, "snackBar");
+        this.timeOut(3000);
+        this.dialogRef.close();
+        this.restService.closeDialog();
       }
-      this.openSnackBar(response.msg, "snackBar");
-      this.timeOut(3000);
-      this.dialogRef.close();
-      this.restService.closeDialog();
     } catch (error) {
       console.warn(error);
+      this.openSnackBar(error.error, "snackBar");
+      this.timeOut(3000);
     }
   }
 

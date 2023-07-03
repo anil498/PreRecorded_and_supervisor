@@ -13,7 +13,7 @@
         <div class="col-md-6">
           <div class="row">
             <div class="col-12 col-custom">
-              <mat-form-field appearance="outline">
+              <mat-form-field disabled>
                 <mat-label>Parent</mat-label>
                 <mat-select formControlName="parentId">
                   <mat-option [value]="0">0</mat-option>
@@ -24,6 +24,14 @@
                     {{ access.name }}
                   </mat-option>
                 </mat-select>
+                <mat-error
+                  *ngIf="
+                    accessForm.get('parentId').invalid &&
+                    accessForm.get('parentId').required
+                  "
+                >
+                  Parent ID is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -37,7 +45,16 @@
                   type="number"
                   placeholder="Access ID"
                   formControlName="accessId"
+                  disabled
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('accessId').invalid &&
+                    accessForm.get('accessId').required
+                  "
+                >
+                  Access ID is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -54,6 +71,14 @@
                   placeholder="Sequence"
                   formControlName="seq"
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('seq').invalid &&
+                    accessForm.get('seq').required
+                  "
+                >
+                  Sequence is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -68,6 +93,14 @@
                   placeholder="Name"
                   formControlName="name"
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('name').invalid &&
+                    accessForm.get('name').required
+                  "
+                >
+                  Access Name is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -84,6 +117,45 @@
                   placeholder="System Name"
                   formControlName="systemName"
                 />
+                <mat-error
+                  *ngIf="
+                    accessForm.get('systemName').invalid &&
+                    accessForm.get('systemName').required
+                  "
+                >
+                  System Name is Required
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    accessForm.get('systemName').invalid &&
+                    accessForm.get('systemName').errors.existingSystemName
+                  "
+                >
+                  System Name already exist!!!
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-12 col-custom">
+              <mat-form-field>
+                <mat-label>Status</mat-label>
+                <mat-select formControlName="status">
+                  <mat-option [value]="0">Deactive</mat-option>
+                  <mat-option [value]="1">Active</mat-option>
+                  <mat-option [value]="2">Deleted</mat-option>
+                  <mat-option [value]="3">Expired</mat-option>
+                </mat-select>
+                <mat-error
+                  *ngIf="
+                    accessForm.get('status').invalid &&
+                    accessForm.get('status').required
+                  "
+                >
+                  Status is Required
+                </mat-error>
               </mat-form-field>
             </div>
           </div>

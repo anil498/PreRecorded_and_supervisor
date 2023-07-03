@@ -1,1 +1,134 @@
-<p>update-feature-dialog works!</p>
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      Feature Creation
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+  <div class="container" [formGroup]="featureForm" *ngIf="featureForm">
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-12 col-custom">
+            <mat-form-field appearance="outline">
+              <mat-label>Feature ID</mat-label>
+              <input
+                matInput
+                type="number"
+                placeholder="Feature ID"
+                formControlName="featureId"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-12 col-custom">
+            <mat-form-field appearance="outline">
+              <mat-label>Feature Name</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Feature Name"
+                formControlName="name"
+              />
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-12 col-custom">
+            <mat-form-field>
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option [value]="0">Deactive</mat-option>
+                <mat-option [value]="1">Active</mat-option>
+                <mat-option [value]="2">Deleted</mat-option>
+                <mat-option [value]="3">Expired</mat-option>
+              </mat-select>
+              <mat-error
+                *ngIf="
+                  featureForm.get('status').invalid &&
+                  featureForm.get('status').required
+                "
+              >
+                Status is Required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" formArrayName="metaList">
+      <div class="col-md-12 col-custom" id="metaList">
+        <div class="row">
+          <div class="col-11">
+            <h4>Add Meta List</h4>
+          </div>
+          <div class="col-1">
+            <mat-icon (click)="addMeta()">add</mat-icon>
+          </div>
+        </div>
+        <div
+          class="row"
+          *ngFor="
+            let control of featureForm.controls.metaList.controls;
+            let i = index
+          "
+          [formGroupName]="i"
+        >
+          <div class="col-3">
+            <mat-form-field appearance="outline">
+              <mat-label>Meta Type</mat-label>
+              <mat-select formControlName="type">
+                <mat-option
+                  *ngFor="let metaType of metaTypes"
+                  [value]="metaType"
+                >
+                  {{ metaType }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="col-4">
+            <mat-form-field appearance="outline">
+              <mat-label>Meta Name {{ i }}</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Meta Name"
+                formControlName="name"
+              />
+            </mat-form-field>
+          </div>
+
+          <div class="col-4">
+            <mat-form-field appearance="outline">
+              <mat-label>Meta Key</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="meta_key"
+                formControlName="key"
+              />
+            </mat-form-field>
+          </div>
+          <div class="col-1">
+            <mat-icon (click)="removeMeta(i)">close</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="submit-btn" mat-raised-button (click)="submit()">
+      Submit
+    </button>
+  </div>
+</div>

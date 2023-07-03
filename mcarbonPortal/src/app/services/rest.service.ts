@@ -296,8 +296,6 @@ export class RestService {
         Token: `${this._token}`,
         Authorization: `${this.authKey}`,
       });
-
-      console.warn(headers);
       return lastValueFrom(
         this.http.post<any>(this.baseHref + path, body, { headers })
       );
@@ -628,7 +626,8 @@ export class RestService {
     accessId: number,
     seq: number,
     name: string,
-    systemName: string
+    systemName: string,
+    status: number
   ) {
     return this.putRequest(type, {
       pId,
@@ -636,6 +635,7 @@ export class RestService {
       seq,
       name,
       systemName,
+      status,
     });
   }
   async createFeature(
@@ -651,19 +651,33 @@ export class RestService {
     });
   }
 
+  async updateFeature(
+    type: string,
+    featureId: number,
+    name: string,
+    metaList: any[],
+    status: number
+  ) {
+    return this.putRequest(type, {
+      featureId,
+      name,
+      metaList,
+      status
+    });
+  }
   async deleteAccess(accessId: number) {
-    this.deleteRequest(`Access/Delete/${accessId}`);
+    return await this.deleteRequest(`Access/Delete/${accessId}`);
   }
   async deleteFeature(featureId: number) {
-    this.deleteRequest(`Feature/Delete/${featureId}`);
+    return await this.deleteRequest(`Feature/Delete/${featureId}`);
   }
 
   async deleteAccount(id: number) {
-    this.deleteRequest(`Account/Delete/${id}`);
+    return await this.deleteRequest(`Account/Delete/${id}`);
   }
 
   async deleteUser(id: number) {
-    this.deleteRequest(`User/Delete/${id}`);
+    return await this.deleteRequest(`User/Delete/${id}`);
   }
 
   async sendSMS(msisdn: string, getLink: any) {

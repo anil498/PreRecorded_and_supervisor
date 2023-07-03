@@ -112,9 +112,6 @@ export class AccessManagementComponent implements OnInit {
   }
 
   openSnackBar(message: string, color: string) {
-    console.warn(this.token + "\n" + this.userId);
-    this.viewTable();
-
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;
     snackBarConfig.panelClass = [color];
@@ -160,25 +157,30 @@ export class AccessManagementComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
-  deleteAccess(accessId: number) {
+  async deleteAccess(accessId: number) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "25%";
     console.log("Confirm Delete");
 
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       console.log(confirmed);
+      let response: any;
       if (confirmed) {
-        this.restService.deleteAccess(accessId);
-        console.log("access Deleted");
+        response = await this.restService.deleteAccess(accessId);
+        if (response.status_code == 200) {
+          console.log("access Deleted");
+          this.openSnackBar(response.msg, "snackBar");
+        }
       } else {
+        this.openSnackBar(response, "snackBar");
         console.log("access not deleted");
       }
-    });
-    dialogRef.afterClosed().subscribe(() => {
       this.restService.closeDialog();
+      this.viewTable();
     });
   }
 }
