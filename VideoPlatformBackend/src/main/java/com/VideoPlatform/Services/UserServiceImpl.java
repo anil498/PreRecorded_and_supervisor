@@ -81,12 +81,12 @@ public class UserServiceImpl implements UserService{
         AccountEntity accountEntity = accountRepository.findByAccountId(accountId);
         if(userRepository.findByLoginId(user.getLoginId()) != null){
             logger.info("Login Id {} already exists !",user.getLoginId());
-            return new ResponseEntity<>("Login Id already exists !",HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(commonService.responseData("406","Login Id already exist !"),HttpStatus.NOT_ACCEPTABLE);
         }
         int maxUsers = accountEntity.getMaxUser();
         if(maxUsers<=(userRepository.usersAccount(accountId)-1)){
             logger.info("No more users are allowed for account {} having login id {} , max limit exceed..!",accountId,user.getLoginId());
-            return new ResponseEntity<>("No more users are allowed, max limit exceed..!",HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(commonService.responseData("406","Max limit exceed, No more users are allowed."),HttpStatus.NOT_ACCEPTABLE);
         }
 
 //        logger.info("feature_meta 4 val {}",user.getFeaturesMeta().get("4"));
@@ -107,18 +107,18 @@ public class UserServiceImpl implements UserService{
             if (checkIfAllowedFeature(featuresId, user.getFeatures(),accountId)) {
                 user.setFeatures(user.getFeatures());
             } else {
-                return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
+                return new ResponseEntity<>(commonService.responseData("406","Feature not allowed, Try again."), HttpStatus.NOT_ACCEPTABLE);
             }
             if (checkIfAllowedAccess(accessId,user.getAccessId(),accountId)) {
                 user.setAccessId(user.getAccessId());
             } else {
-                return new ResponseEntity<>("Invalid access id values !", HttpStatus.NOT_ACCEPTABLE);
+                return new ResponseEntity<>(commonService.responseData("406","Access not allowed, Try again."), HttpStatus.NOT_ACCEPTABLE);
             }
             if (checkIfAllowedSession(sessionA, user.getSession())) {
                 user.setSession(user.getSession());
             } else {
                 logger.info("Invalid session values. Not allowed to create !");
-                return new ResponseEntity<>("Invalid session values !", HttpStatus.NOT_ACCEPTABLE);
+                return new ResponseEntity<>(commonService.responseData("406","Invalid session values."), HttpStatus.NOT_ACCEPTABLE);
             }
 
         logger.info("User details {}",user.toString());
@@ -159,7 +159,10 @@ public class UserServiceImpl implements UserService{
         UserEntity existing = userRepository.findByUserId(params.get("userId").getAsInt());
         AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(params.get("accountId").getAsInt());
         AccountEntity accountEntity = accountRepository.findByAccountId(params.get("accountId").getAsInt());
-
+        if(existing == null || accountEntity == null || accountAuthEntity == null){
+            logger.info("Getting null or invalid value from parameters !");
+            return new ResponseEntity<>(commonService.responseData("400","Getting null or invalid value from parameters."),HttpStatus.BAD_REQUEST);
+        }
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
@@ -173,7 +176,7 @@ public class UserServiceImpl implements UserService{
                         existing.setFeatures(objectMapper.readValue(params.get("features").toString(), Integer[].class));
                     } else {
                         logger.info("Feature values not present in Account Entity. Not allowed to update !");
-                        return new ResponseEntity<>("Invalid feature values !", HttpStatus.NOT_ACCEPTABLE);
+                        return new ResponseEntity<>(commonService.responseData("406","Invalid Feature values!"), HttpStatus.NOT_ACCEPTABLE);
                     }
                 }
                 if(!params.get("accessId").isJsonNull()){
@@ -181,7 +184,7 @@ public class UserServiceImpl implements UserService{
                         existing.setAccessId(objectMapper.readValue(params.get("accessId").toString(), Integer[].class));
                     } else {
                         logger.info("Access Id values not present in Account Entity. Not allowed to update !");
-                        return new ResponseEntity<>("Invalid access id values !", HttpStatus.NOT_ACCEPTABLE);
+                        return new ResponseEntity<>(commonService.responseData("406","Invalid Access values!"), HttpStatus.NOT_ACCEPTABLE);
                     }
                 }
                 if(!params.get("session").isJsonNull()){
@@ -189,7 +192,7 @@ public class UserServiceImpl implements UserService{
                         existing.setSession(objectMapper.readValue(params.get("session").toString(), HashMap.class));
                     } else {
                         logger.info("Invalid session values. Not allowed to update !");
-                        return new ResponseEntity<>("Invalid session values !", HttpStatus.NOT_ACCEPTABLE);
+                        return new ResponseEntity<>(commonService.responseData("406","Invalid Session values!"), HttpStatus.NOT_ACCEPTABLE);
                     }
                 }
                 if(!params.get("logo").isJsonNull())
@@ -241,17 +244,12 @@ public class UserServiceImpl implements UserService{
 
         if(userEntity == null){
             logger.info("No user present with given login id !");
-            Map<String,String> result = new HashMap<>();
-            result.put("status_code","401");
-            result.put("msg", "Invalid username or password !");
-            return  new ResponseEntity<>(result,HttpStatus.UNAUTHORIZED);
+
+            return  new ResponseEntity<>(commonService.responseData("401","Invalid username or password!"),HttpStatus.UNAUTHORIZED);
         }
         if(userEntity.getStatus()!=1){
             logger.info("User does not exist !");
-            Map<String,String> result = new HashMap<>();
-            result.put("status_code","401");
-            result.put("msg", "User does not exist !");
-            return  new ResponseEntity<>(result,HttpStatus.UNAUTHORIZED);
+            return  new ResponseEntity<>(commonService.responseData("401","User does not exist!"),HttpStatus.UNAUTHORIZED);
         }
 
         logger.info("user "+userEntity);
@@ -265,7 +263,7 @@ public class UserServiceImpl implements UserService{
             UserAuthEntity userAuthEntity = userAuthRepository.findByUId(userId);
             AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(userEntity.getAccountId());
             if(TimeUtils.isExpire(accountAuthEntity.getExpDate())){
-                return new ResponseEntity<>("Account Expired !",HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(commonService.responseData("401","Account Expired!"),HttpStatus.UNAUTHORIZED);
             }
             userAuthEntity.setSystemNames(accessCheck(userId));
 
@@ -289,7 +287,7 @@ public class UserServiceImpl implements UserService{
             if (passwordEncoder.matches(password,userEntity.getPassword())) {
                 AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(userEntity.getAccountId());
                 if(TimeUtils.isExpire(accountAuthEntity.getExpDate())){
-                    return new ResponseEntity<>("Account Expired !",HttpStatus.UNAUTHORIZED);
+                    return new ResponseEntity<>(commonService.responseData("401","Account Expired!"),HttpStatus.UNAUTHORIZED);
                 }
                 int auth = accountAuthEntity.getAuthId();
                 String token1 = commonService.generateToken(userId,"UR");

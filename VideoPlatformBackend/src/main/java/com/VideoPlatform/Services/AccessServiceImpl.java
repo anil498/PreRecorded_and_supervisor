@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -42,12 +43,21 @@ public class AccessServiceImpl implements AccessService {
         JsonObject params=gson.fromJson(params1,JsonObject.class);
         ObjectMapper objectMapper=new ObjectMapper();
         AccessEntity existing = accessRepository.findByAccessId(params.get("accessId").getAsInt());
+        if(existing == null){
+            logger.info("Access Id doesn't exist !");
+            return new ResponseEntity<>("Access Id doesn't exist !",HttpStatus.UNAUTHORIZED);
+        }
         try {
-            existing.setName(objectMapper.readValue(params.get("name").toString(),String.class));
-            existing.setSystemName(objectMapper.readValue(params.get("systemName").toString(),String.class));
-            existing.setpId(objectMapper.readValue(params.get("pId").toString(),Integer.class));
-            existing.setSeq(objectMapper.readValue(params.get("seq").toString(),Integer.class));
-            existing.setStatus(params.get("status").getAsInt());
+            if(!params.get("name").isJsonNull())
+                existing.setName(objectMapper.readValue(params.get("name").toString(),String.class));
+            if(!params.get("systemName").isJsonNull())
+                existing.setSystemName(objectMapper.readValue(params.get("systemName").toString(),String.class));
+            if(!params.get("pId").isJsonNull())
+                existing.setpId(objectMapper.readValue(params.get("pId").toString(),Integer.class));
+            if(!params.get("seq").isJsonNull())
+                existing.setSeq(objectMapper.readValue(params.get("seq").toString(),Integer.class));
+            if(!params.get("status").isJsonNull())
+                existing.setStatus(params.get("status").getAsInt());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
