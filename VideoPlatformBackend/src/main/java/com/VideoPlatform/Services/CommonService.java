@@ -282,6 +282,13 @@ public class CommonService {
         }
         return deletedValues;
     }
+
+    public Map<String,String> responseData(String statusCode,String message){
+        Map<String ,String> response = new HashMap<>();
+        response.put("status_code",statusCode);
+        response.put("msg",message);
+        return response;
+    }
 //    public void writeByteToFile(String encodedString) {
 //
 //        logger.info("Encoded String : {}",encodedString);

@@ -11,6 +11,8 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,7 +54,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public String accountCreation(String params1,String authKey,String token) throws JsonProcessingException {
+    public ResponseEntity<?> accountCreation(String params1, String authKey, String token) throws JsonProcessingException {
         logger.info(params1);
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
@@ -62,13 +64,12 @@ public class AccountServiceImpl implements AccountService {
 
         String loginId = params.get("loginId").getAsString();
         if(userRepository.findByLoginId(loginId) != null){
-            logger.info("Login Id already exist !");
-            return null;
+            return new ResponseEntity<>(commonService.responseData("400","Login Id already exist!"), HttpStatus.CONFLICT);
         }
         String accountName = params.get("name").getAsString();
         if(accountRepository.findByAccountName(accountName) != null){
             logger.info("Account name already exist !");
-            return null;
+            return new ResponseEntity<>(commonService.responseData("400","Account Name already exist!"), HttpStatus.CONFLICT);
         }
         Date creation = TimeUtils.getDate();
         AccountEntity acc = new AccountEntity();
@@ -146,7 +147,7 @@ public class AccountServiceImpl implements AccountService {
             ua.setAuthKey(accountAuthEntity.getAuthKey());
             userAuthRepository.save(ua);
         }
-        return "Account created !";
+        return new ResponseEntity<>(commonService.responseData("200","Account created!"),HttpStatus.OK);
     }
     @Override
     public AccountEntity createAccount(AccountEntity account) {
@@ -155,13 +156,16 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountEntity updateAccount(String params1) {
+    public ResponseEntity<?> updateAccount(String params1) {
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         AccountEntity existing = accountRepository.findByAccountId(params.get("accountId").getAsInt());
 
+        if(existing==null){
+            return new ResponseEntity<>(commonService.responseData("400","Invalid or missing value!"),HttpStatus.BAD_REQUEST);
+        }
         logger.info("Old Data : {}",existing);
         logger.info("New Data : {}",params);
         commonService.compareAndChange(params,existing,params.get("accountId").getAsInt());
@@ -193,7 +197,7 @@ public class AccountServiceImpl implements AccountService {
 
         accountRepository.save(existing);
         logger.info("New Entity {}",existing);
-        return null;
+        return new ResponseEntity<>(commonService.responseData("200","Account updated!"),HttpStatus.OK);
     }
     @Override
     public String deleteAccount(Integer accountId) {
@@ -221,7 +225,6 @@ public class AccountServiceImpl implements AccountService {
 
         return String.valueOf(accessEntities);
     }
-
 
     @Override
     public void saveFilePathToFeature(String fileName, String loginId, String name){

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -247,7 +248,13 @@ public class SessionServiceImpl implements SessionService{
             if(map.containsKey("supervisor_contacts")){
                 contactArray = (List<String>) map.get("supervisor_contacts");
             }
-
+            else if(map.containsKey("customer_contacts")){
+                contactArray = (List<String>) map.get("customer_contacts");
+            }
+            else{
+                logger.info("contact list not present in feature meta.");
+                return new ResponseEntity<>("Missing Value.", HttpStatus.UNAUTHORIZED);
+            }
         }
         String sendTo = "whatsapp";
         if(params.containsKey("sendTo")){

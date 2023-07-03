@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -43,11 +44,18 @@ public class FeatureServiceImpl implements FeatureService{
         JsonObject params=gson.fromJson(params1,JsonObject.class);
         ObjectMapper objectMapper=new ObjectMapper();
         FeatureEntity existing = featureRepository.findByFeatureId(params.get("featureId").getAsInt());
+        if(existing == null){
+            logger.info("Feature Id doesn't exist !");
+            return new ResponseEntity<>("Feature Id doesn't exist !",HttpStatus.UNAUTHORIZED);
+        }
         try {
-            existing.setName(objectMapper.readValue(params.get("name").toString(),String.class));
+            if(!params.get("name").isJsonNull())
+                existing.setName(objectMapper.readValue(params.get("name").toString(),String.class));
             logger.info("MetaList val {}",params.get("metaList").toString());
-            existing.setMetaList(objectMapper.readValue(params.get("metaList").toString(), JsonNode.class));
-            existing.setStatus(params.get("status").getAsInt());
+            if(!params.get("metaList").isJsonNull())
+                existing.setMetaList(objectMapper.readValue(params.get("metaList").toString(), JsonNode.class));
+            if(!params.get("status").isJsonNull())
+                existing.setStatus(params.get("status").getAsInt());
 
         } catch (JsonProcessingException e) {
             e.printStackTrace();

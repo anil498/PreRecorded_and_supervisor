@@ -72,17 +72,10 @@ public class AccountController {
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
         if(!commonService.checkMandatory(params1)){
-            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
-        }
-        if(accountService.accountCreation(params1,authKey,token) == null){
-            return new ResponseEntity<>("Invalid or null credentials. Try again !",HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(commonService.responseData("400","Mandatory parameters are missing!"),HttpStatus.BAD_REQUEST);
         }
 
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Account created!");
-
-        return new ResponseEntity<>(result,HttpStatus.CREATED);
+        return accountService.accountCreation(params1,authKey,token);
     }
 
     @PutMapping("/Update")
@@ -94,13 +87,7 @@ public class AccountController {
         if(!commonService.authorizationCheck(authKey,token,"customer_update")){
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-
-        accountService.updateAccount(params1);
-
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Account updated!");
-        return ok(result);
+        return accountService.updateAccount(params1);
     }
 
     @DeleteMapping("/Delete/{id}")
@@ -124,11 +111,8 @@ public class AccountController {
     public ResponseEntity<?> checkAccountName(@RequestBody Map<String, String> params,HttpServletRequest request){
         String accountName = params.get("accountName");
         if(!accountService.checkAccountName(accountName)){
-            return new ResponseEntity<>("Invalid Account name!",HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(commonService.responseData("409","Name already exist!"),HttpStatus.CONFLICT);
         }
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Valid Account name !");
-        return ok(result);
+        return new ResponseEntity<>(commonService.responseData("200","Valid Name value!"),HttpStatus.OK);
     }
 }
