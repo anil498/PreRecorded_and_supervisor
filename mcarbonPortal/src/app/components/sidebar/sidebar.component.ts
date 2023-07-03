@@ -65,11 +65,24 @@ declare const $: any;
 export class SidebarComponent implements OnInit {
   menuItems: any[];
   accessList: any[];
-  constructor(private restService: RestService, private http: HttpClient) {}
+  logo: any;
+  isLogo: boolean;
+  srcImg: string;
+  constructor(private restService: RestService, private http: HttpClient) {
+    this.logo = this.restService.getData().user_data.logo;
+  }
 
   async ngOnInit() {
     this.menuItems = ROUTE.filter((menuItem) => menuItem);
     this.accessList = this.restService.getData().Access.filter(item => item.pId === 0);
+    if(this.logo == null || Object.keys(this.logo).length === 0){
+      this.isLogo = false;
+      this.srcImg = "./assets/img/logo.png"
+    }
+    else{
+      this.isLogo = true;
+      this.srcImg = this.logo.byte;
+    }
     this.showSideNav();
   }
 

@@ -10,7 +10,7 @@
             </div>
             <p class="card-category">Accounts</p>
             <h3 class="card-title">
-              {{accounts.activeAccounts}}/{{accounts.totalAccounts}}
+              {{ accounts.activeAccounts }}/{{ accounts.totalAccounts }}
               <small></small>
             </h3>
           </div>
@@ -29,7 +29,9 @@
               <i class="material-icons">store</i>
             </div>
             <p class="card-category">Users</p>
-            <h3 class="card-title">{{users.activeUsers}}/{{users.totalUsers}}</h3>
+            <h3 class="card-title">
+              {{ users.activeUsers }}/{{ users.totalUsers }}
+            </h3>
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -45,7 +47,9 @@
               <i class="material-icons">videocam</i>
             </div>
             <p class="card-category">Sessions</p>
-            <h3 class="card-title">{{sessions.activeSessions}}/{{sessions.totalSessions}}</h3>
+            <h3 class="card-title">
+              {{ sessions.activeSessions }}/{{ sessions.totalSessions }}
+            </h3>
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -61,7 +65,7 @@
               <i class="fa fa-user"></i>
             </div>
             <p class="card-category">Participants</p>
-            <h3 class="card-title">{{participants}}</h3>
+            <h3 class="card-title">{{ participants }}</h3>
           </div>
           <div class="card-footer">
             <div class="stats">
@@ -72,13 +76,24 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-4" *ngIf="checkAccount()">
+      <div class="col-md-12 graph-select">
+        <button class="btn btn-graph">
+          <mat-select [(ngModel)]="selectedGraph" (selectionChange)="onChangeGraph($event)">
+            <mat-option value="daily">Daily</mat-option>
+            <mat-option value="monthly">Monthly</mat-option>
+            <mat-option value="yearly">Annually</mat-option>
+          </mat-select>
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" *ngIf="checkAccount()">
         <div class="card card-chart">
           <div class="card-header card-header-warning">
             <div class="ct-chart" id="dailySalesChart"></div>
           </div>
           <div class="card-body">
-            <h4 class="card-title">Monthly Account Creation</h4>
+            <h4 class="card-title">{{accountTitle}}</h4>
             <p class="card-category">
               <span class="text-success"
                 ><i class="fa fa-long-arrow-up"></i> 55%
@@ -93,13 +108,13 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4" *ngIf="checkUser()">
+      <div class="col-md-12" *ngIf="checkUser()">
         <div class="card card-chart">
           <div class="card-header card-header-success">
             <div class="ct-chart" id="websiteViewsChart"></div>
           </div>
           <div class="card-body">
-            <h4 class="card-title">Monthly User Creation</h4>
+            <h4 class="card-title">{{userTitle}}</h4>
             <p class="card-category">
               <span class="text-success"
                 ><i class="fa fa-long-arrow-up"></i> 75%
@@ -114,13 +129,13 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4" *ngIf="checkSession()">
+      <div class="col-md-12" *ngIf="checkSession()">
         <div class="card card-chart">
           <div class="card-header card-header-danger">
             <div class="ct-chart" id="completedTasksChart"></div>
           </div>
           <div class="card-body">
-            <h4 class="card-title">Monthly Session Creation</h4>
+            <h4 class="card-title">{{sessionTitle}}</h4>
             <p class="card-category">
               <span class="text-success"
                 ><i class="fa fa-long-arrow-up"></i> 20%
