@@ -129,12 +129,12 @@ public class SessionController {
     @PostMapping("/sendLink")
     public ResponseEntity<?> sendLink(@RequestBody(required = false)  Map<String,?> params, HttpServletRequest request,HttpServletResponse response) {
 
-//        String authKey = request.getHeader("Authorization");
-//        String token = request.getHeader("Token");
-//
-//        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
-//            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-//        }
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
 
         sessionService.sendLink(params,request,response);
 
