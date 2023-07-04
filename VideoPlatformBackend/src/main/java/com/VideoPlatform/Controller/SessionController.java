@@ -49,6 +49,8 @@ public class SessionController {
     CommonService commonService;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
+    @Value("${call.prefix}")
+    private String callPrefix;
 
     @PostMapping("/Create")
     public ResponseEntity<?> createSession(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
@@ -144,7 +146,32 @@ public class SessionController {
 
         return ok(result);
     }
-    @GetMapping("/Download/{filename}")
+    @PostMapping("/sessionPlugin")
+    public ResponseEntity<?> sessionPlugin(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if (!commonService.authorizationCheck(authKey, token, "session_create")) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        String description = null;
+        if (params.containsKey("description")) {
+            description = String.valueOf(params.get("description"));
+        }
+        String participantName = "Participant";
+        if (params.containsKey("participantName")) {
+            participantName = String.valueOf(params.get("participantName"));
+        }
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
+        String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
+        Map<String,String> result = new HashMap<>();
+        result.put("status_code","200");
+        result.put("msg","Session created!");
+        result.put("callUrl",callUrl);
+        return ok(result);
+    }
+        @GetMapping("/Download/{filename}")
     public ResponseEntity<byte[]> handleFileDownload(@PathVariable("filename") String filename) throws IOException {
         Path file = Paths.get(FILE_DIRECTORY, filename);
         byte[] bytes = new byte[0];

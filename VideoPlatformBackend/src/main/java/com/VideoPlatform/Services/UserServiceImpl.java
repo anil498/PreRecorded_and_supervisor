@@ -272,7 +272,7 @@ public class UserServiceImpl implements UserService{
             response.put("auth_key",accountAuthEntity.getAuthKey());
             response.put("user_data",userEntity);
             response.put("status_code","200");
-            response.put("status_message","Login Successful");
+            response.put("msg","Login Successful!");
             response.put("Features", featureData(userEntity.getUserId()));
             response.put("Access", accessData(userEntity.getUserId()));
             response.put("Dashboard",dashboardService.dashboardData(loginId,userAuthEntity.getToken()));
@@ -326,7 +326,7 @@ public class UserServiceImpl implements UserService{
                 res.put("auth_key",accountAuthEntity.getAuthKey());
                 res.put("user_data",userEntity);
                 res.put("status_code","200");
-                res.put("status_message","Login Successful");
+                res.put("msg","Login Successful!");
                 res.put("Features", featureData(userEntity.getUserId()));
                 res.put("Access", accessData(userEntity.getUserId()));
                 res.put("Dashboard",dashboardService.dashboardData(loginId,token1));
