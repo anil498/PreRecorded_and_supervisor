@@ -45,6 +45,7 @@ export class CallComponent implements OnInit {
 	isScreenShareWithAudio:boolean;
 	isAutoFullScreen:boolean;
 	private isDebugSession: boolean = false;
+	isquestionpanel: boolean = false;
 
 	constructor(
 		private restService: RestService,
@@ -170,6 +171,7 @@ export class CallComponent implements OnInit {
 			}
 			if (this.type === "Support"){
 				this.isAudioMuted=false;
+				this.isquestionpanel = true;
 				if(this.platformService.isIos()){
 					this.isVideoMuted=false
 				}else{

@@ -1,0 +1,147 @@
+
+.text-container {
+	/* padding: 5px; */
+	background-color: var(--ov-light-color);
+	color: var(--ov-panel-text-color);
+	text-align: center;
+	/* margin: 5px 5px; */
+	font-size: 12px;
+}
+
+.text-info {
+	margin: 3px;
+}
+
+.question-container {
+	display: block !important;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 10px;
+}
+
+
+
+.message {
+	position: relative;
+	padding: 3px 0;
+}
+
+.msg-detail {
+	width: 95%;
+	display: inline-block;
+}
+
+.msg-detail p {
+	margin: 0;
+	font-size: 14px;
+}
+
+
+.msg-content {
+	position: relative;
+	border-radius: var(--ov-panel-radius);
+	padding: 8px;
+	color: #000000;
+	width: auto;
+	max-width: 95%;
+	font-size: 13px;
+	word-break: break-all;
+}
+
+
+
+.message.left .msg-detail .msg-content {
+	float: left;
+}
+
+/* End message from other user */
+
+.message.right .msg-detail .msg-content {
+	float: right;
+}
+
+::ng-deep a:-webkit-any-link {
+	color: #1a73e8;
+}
+
+
+/* Apply some basic styling to the form */
+form {
+	width: 400px;
+	margin: 0 auto;
+  }
+  
+  /* Style the labels */
+  label {
+	display: block;
+	font-weight:500;
+	margin-bottom: 5px;
+	color:black;
+  }
+  
+  /* Style the radio buttons */
+  input[type="radio"],
+  input[type="checkbox"] {
+	margin-right: 5px;
+  }
+  
+  /* Style the dropdown/select */
+  select {
+	width: 70%;
+	padding: 5px;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	background-color: #f9f9f9;
+	margin-bottom: 10px;
+	box-sizing: border-box; /* Include padding and border in the width calculation */
+  }
+  
+  /* Style the text input */
+  input[type="text"] {
+	width: 70%;
+	padding: 5px;
+	height: 20%;
+	border: 1px solid #ccc;
+	border-radius: 3px;
+	margin-bottom: 10px;
+	box-sizing: border-box; /* Include padding and border in the width calculation */
+  }
+  
+  /* Style the submit button */
+  button[type="submit"] {
+	background-color: #2196F3;
+	color: white;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+  }
+  
+  /* Add some spacing between elements */
+  br {
+	margin-top: 10px;
+	margin-bottom: 10px;
+  }
+
+  .panel-title{
+	font-size: 30px;
+	padding-bottom: 15px;
+  }
+
+  label.question{
+	font-size: medium;
+  }
+
+  ::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-ripple .mat-ripple-element {
+    opacity: 0.03 !important;
+    background-color: #2196F3 !important;
+  }
+  
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background,.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+    background-color: #2196F3;
+  }
+
+  
+  
+
+ 

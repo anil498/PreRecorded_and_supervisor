@@ -51,7 +51,8 @@
 		"PLAY_VIDEO": "Play video",
 		"PAUSE_VIDEO": "Pause video",
 		"ADD_SUPERVISOR": "Add Supervisor",
-		"MERGE_CALL": "Merge call"
+		"MERGE_CALL": "Merge call",
+		"QUESTION": "Question Panel Button"
 	},
 	"STREAM": {
 		"SETTINGS": "Settings",
@@ -71,6 +72,9 @@
 			"SUBTITLE": "Messages will be removed at the end of the session",
 			"PLACEHOLDER": "Send a message...",
 			"SEND": "Send"
+		},
+		"QUESTION": {
+			"TITLE": "Questions"
 		},
 		"PARTICIPANTS": {
 			"TITLE": "Participants",

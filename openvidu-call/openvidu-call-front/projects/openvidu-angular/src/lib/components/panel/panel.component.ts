@@ -4,6 +4,7 @@ import {
 	ChatPanelDirective,
 	AdditionalPanelsDirective,
 	ParticipantsPanelDirective,
+	QuestionPanelDirective,
 	BackgroundEffectsPanelDirective,
 	ActivitiesPanelDirective
 } from '../../directives/template/openvidu-angular.directive';
@@ -38,6 +39,7 @@ import { PanelEvent, PanelService } from '../../services/panel/panel.service';
  * |:----------------------------------:|:---------------------------------------------:|
  * |           ***ovChatPanel**          |           {@link ChatPanelDirective}          |
  * |       ***ovParticipantsPanel**      |       {@link ParticipantsPanelDirective}      |
+ * |       ***ovQuestionPanel**          |       {@link QuestionPanelDirective}          | 
  * |        ***ovAdditionalPanels**      |       {@link AdditionalPanelsDirective}       |
  *
  * <p class="component-link-text">
@@ -58,6 +60,11 @@ export class PanelComponent implements OnInit {
 	 * @ignore
 	 */
 	@ContentChild('participantsPanel', { read: TemplateRef }) participantsPanelTemplate: TemplateRef<any>;
+
+	/**
+	 * @ignore
+	 */
+	@ContentChild('questionPanel', { read: TemplateRef }) questionPanelTemplate: TemplateRef<any>;
 
 	/**
 	 * @ignore
@@ -89,6 +96,15 @@ export class PanelComponent implements OnInit {
 		// is inside of the PANEL component tagged with '*ovPanel'
 		if (externalParticipantsPanel) {
 			this.participantsPanelTemplate = externalParticipantsPanel.template;
+		}
+	}
+
+	@ContentChild(QuestionPanelDirective)
+	set externalQuestionPanel(externalQuestionPanel: QuestionPanelDirective) {
+		// This directive will has value only when Questions PANEL component tagged with '*ovParticipantsPanel'
+		// is inside of the PANEL component tagged with '*ovPanel'
+		if (externalQuestionPanel) {
+			this.questionPanelTemplate = externalQuestionPanel.template;
 		}
 	}
 
@@ -141,6 +157,7 @@ export class PanelComponent implements OnInit {
 
 	isParticipantsPanelOpened: boolean;
 	isChatPanelOpened: boolean;
+	isQuestionPanelOpened: boolean;
 	isBackgroundEffectsPanelOpened: boolean;
 	isSettingsPanelOpened: boolean;
 	isActivitiesPanelOpened: boolean;
@@ -163,6 +180,7 @@ export class PanelComponent implements OnInit {
 	ngOnDestroy() {
 		this.isChatPanelOpened = false;
 		this.isParticipantsPanelOpened = false;
+		this.isQuestionPanelOpened = false;
 		if (this.panelSubscription) this.panelSubscription.unsubscribe();
 	}
 
@@ -170,6 +188,7 @@ export class PanelComponent implements OnInit {
 		this.panelSubscription = this.panelService.panelOpenedObs.pipe(skip(1)).subscribe((ev: PanelEvent) => {
 			this.isChatPanelOpened = ev.opened && ev.type === PanelType.CHAT;
 			this.isParticipantsPanelOpened = ev.opened && ev.type === PanelType.PARTICIPANTS;
+			this.isQuestionPanelOpened = ev.opened && ev.type === PanelType.QUESTIONS;
 			this.isBackgroundEffectsPanelOpened = ev.opened && ev.type === PanelType.BACKGROUND_EFFECTS;
 			this.isSettingsPanelOpened = ev.opened && ev.type === PanelType.SETTINGS;
 			this.isActivitiesPanelOpened = ev.opened && ev.type === PanelType.ACTIVITIES;

@@ -3,6 +3,10 @@
 	<ng-container *ngTemplateOutlet="chatPanelTemplate"></ng-container>
 </ng-container>
 
+<!-- QUESTIONS panel -->
+<ng-container *ngIf="isQuestionPanelOpened">
+	<ng-container *ngTemplateOutlet="questionPanelTemplate"></ng-container>
+</ng-container>
 
 <!-- PARTICIPANTS panel -->
 <ng-container *ngIf="isParticipantsPanelOpened">

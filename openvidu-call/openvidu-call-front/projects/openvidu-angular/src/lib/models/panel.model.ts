@@ -1,6 +1,7 @@
 export enum PanelType {
 	CHAT = 'chat',
 	PARTICIPANTS = 'participants',
+	QUESTIONS = 'questions',
 	BACKGROUND_EFFECTS = 'background-effects',
 	ACTIVITIES = 'activities',
 	SETTINGS = 'settings',

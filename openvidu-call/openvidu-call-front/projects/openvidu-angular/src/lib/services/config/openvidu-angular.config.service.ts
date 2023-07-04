@@ -66,6 +66,9 @@ export class OpenViduAngularConfigService {
 	participantsPanelButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	participantsPanelButtonObs: Observable<boolean>;
 
+	questionPanelButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	questionPanelButtonObs: Observable<boolean>;
+
 	chatPanelButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	chatPanelButtonObs: Observable<boolean>;
 	playvideoButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
@@ -167,6 +170,7 @@ export class OpenViduAngularConfigService {
 		this.backgroundEffectsButtonObs = this.backgroundEffectsButton.asObservable();
 		this.leaveButtonObs = this.leaveButton.asObservable();
 		this.participantsPanelButtonObs = this.participantsPanelButton.asObservable();
+		this.questionPanelButtonObs = this.questionPanelButton.asObservable();
 		this.chatPanelButtonObs = this.chatPanelButton.asObservable();
 		this.playvideoButtonObs = this.playvideoButton.asObservable();
 		this.activitiesPanelButtonObs = this.activitiesPanelButton.asObservable();

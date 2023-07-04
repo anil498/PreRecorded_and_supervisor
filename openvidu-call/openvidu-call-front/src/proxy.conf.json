@@ -1,6 +1,7 @@
 {
 	"/": {
-	  "target": "http://localhost:5000",
-	  "secure": false
+	  "target": "https://demo2.progate.mobi/session",
+	  "secure": false,
+	  "changeOrigin": true
 	}
   }

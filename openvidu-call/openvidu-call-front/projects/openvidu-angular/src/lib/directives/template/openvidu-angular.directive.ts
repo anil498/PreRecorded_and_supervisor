@@ -780,3 +780,11 @@ export class LayoutDirective {
 export class StreamDirective {
 	constructor(public template: TemplateRef<any>, public container: ViewContainerRef) {}
 }
+
+
+@Directive({
+	selector: '[ovQuestionPanel]'
+})
+export class QuestionPanelDirective {
+	constructor(public template: TemplateRef<any>, public viewContainer: ViewContainerRef) {}
+}

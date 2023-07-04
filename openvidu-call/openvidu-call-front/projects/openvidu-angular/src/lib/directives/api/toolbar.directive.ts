@@ -1159,3 +1159,66 @@ private update(value: boolean) {
 }
 }
 
+
+
+/**
+ * The **questionPanelButton** directive allows show/hide the questions panel toolbar button.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [toolbarQuestionPanelButton]="false"></ov-videoconference>
+ *
+ * \
+ * And it also can be used in the {@link ToolbarComponent}.
+ * @example
+ * <ov-toolbar [questionPanelButton]="false"></ov-toolbar>
+ */
+@Directive({
+	selector: 'ov-videoconference[toolbarQuestionPanelButton], ov-toolbar[questionPanelButton]'
+})
+export class ToolbarQuestionPanelButtonDirective implements AfterViewInit, OnDestroy {
+	/**
+	 * @ignore
+	 */
+	@Input() set toolbarQuestionPanelButton(value: boolean) {
+		this.questionPanelValue = value;
+		this.update(this.questionPanelValue);
+	}
+
+	/**
+	 * @ignore
+	 */
+	@Input() set questionPanelButton(value: boolean) {
+		this.questionPanelValue = value;
+		this.update(this.questionPanelValue);
+	}
+
+	private questionPanelValue: boolean = true;
+
+	/**
+	 * @ignore
+	 */
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	ngAfterViewInit() {
+		this.update(this.questionPanelValue);
+	}
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+	private clear() {
+		this.questionPanelValue = true;
+		this.update(true);
+	}
+
+	private update(value: boolean) {
+		if (this.libService.questionPanelButton.getValue() !== value) {
+			this.libService.questionPanelButton.next(value);
+		}
+	}
+}
+

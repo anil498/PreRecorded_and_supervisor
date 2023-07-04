@@ -1,0 +1,61 @@
+<div class="panel-container" id="chat-container" fxLayout="column" fxLayoutAlign="space-evenly none">
+	<div class="panel-header-container" fxFlex="55px" fxLayoutAlign="start center">
+		<h3 class="panel-title">{{ 'PANEL.QUESTION.TITLE' | translate }}</h3>
+		<button class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="close()">
+			<mat-icon>close</mat-icon>
+		</button>
+	</div>
+
+	<div class="question-container" fxFlex="75%" fxLayoutAlign="space-evenly none" #chatScroll>
+		<div class="msg-detail">
+			<form [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="form">
+				<div *ngFor="let question of questions ; let i = index">
+				  <label class="question">Q {{i+1}} . {{ question.question }}</label>
+				  <br />
+				  <ng-container [ngSwitch]="question.type">
+					<div *ngSwitchCase="'radio'">
+					  <label *ngFor="let option of question.meta">
+						<input 
+						type="radio"
+						[name]="question.q_id"
+						[formControlName]="question.q_id" 
+						[value]="option" 
+						class="custom-radio" 
+						/>
+						{{ option }}
+					  </label>
+					</div>
+					<div *ngSwitchCase="'checkbox'">
+						<div>
+						  <ng-container *ngFor="let option of question.meta">
+							<mat-checkbox
+							  [value]="option"
+							  [checked]="isOptionSelected(question.q_id, option)"
+							  (change)="updateSelectedAnswers(question.q_id , option, $event.checked)"
+							>
+							  {{ option }}
+							</mat-checkbox><br>
+						  </ng-container>
+						</div>
+					  </div>
+					<div *ngSwitchCase="'dropdown'">
+					  <select [formControlName]="question.q_id">
+						<option value="">Select an option</option>
+						<option *ngFor="let option of question.meta" [value]="option">{{ option }}</option>
+					  </select>
+					</div>
+					<div *ngSwitchDefault>
+					  <input type="text" [formControlName]="question.q_id" />
+					</div>
+				  </ng-container>
+				  <br/>
+				</div>
+			  
+				<button *ngIf="isSubmit" type="submit">Submit</button>
+			  </form>
+			  
+			  
+						  
+		</div>
+	</div>
+</div>
