@@ -22,6 +22,7 @@ import {
 	ParticipantPanelItemDirective,
 	ParticipantPanelItemElementsDirective,
 	ParticipantsPanelDirective,
+	QuestionPanelDirective,
 	StreamDirective,
 	ToolbarAdditionalButtonsDirective,
 	ToolbarAdditionalPanelButtonsDirective,
@@ -67,6 +68,7 @@ import { TranslateService } from '../../services/translate/translate.service';
  * | **toolbarBackgroundEffectsButton** | `boolean` | {@link ToolbarBackgroundEffectsButtonDirective} |
  * | **toolbarLeaveButton**             | `boolean` | {@link ToolbarLeaveButtonDirective}             |
  * | **toolbarChatPanelButton**         | `boolean` | {@link ToolbarChatPanelButtonDirective}         |
+ * | **toolbarQuestionPanelButton**     | `boolean` | {@link ToolbarQuestionPanelButtonDirective}     |
  * | **toolbarParticipantsPanelButton** | `boolean` | {@link ToolbarParticipantsPanelButtonDirective} |
  * | **toolbarDisplayLogo**             | `boolean` | {@link ToolbarDisplayLogoDirective}             |
  * | **toolbarDisplaySessionName**      | `boolean` | {@link ToolbarDisplaySessionNameDirective}      |
@@ -99,6 +101,7 @@ import { TranslateService } from '../../services/translate/translate.service';
  * |             ***ovPanel**            |             {@link PanelDirective}            |
  * |        ***ovAdditionalPanels**      |       {@link AdditionalPanelsDirective}       |
  * |           ***ovChatPanel**          |           {@link ChatPanelDirective}          |
+ * |       ***ovQuestionPanel**          |       {@link QuestionPanelDirective}          |
  * |       ***ovParticipantsPanel**      |       {@link ParticipantsPanelDirective}      |
  * |     ***ovParticipantPanelItem**     |     {@link ParticipantPanelItemDirective}     |
  * | ***ovParticipantPanelItemElements** | {@link ParticipantPanelItemElementsDirective} |
@@ -160,6 +163,12 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	 * @internal
 	 */
 	@ContentChild(ParticipantsPanelDirective) externalParticipantsPanel: ParticipantsPanelDirective;
+	
+	/**
+	 * @internal
+	 */
+	@ContentChild(QuestionPanelDirective) externalQuestionPanel: QuestionPanelDirective;
+	
 	/**
 	 * @internal
 	 */
@@ -195,6 +204,11 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	 * @internal
 	 */
 	@ViewChild('defaultParticipantsPanel', { static: false, read: TemplateRef }) defaultParticipantsPanelTemplate: TemplateRef<any>;
+	/**
+	 * @internal
+	 */
+	@ViewChild('defaultQuestionPanel', { static: false, read: TemplateRef }) defaultQuestionPanelTemplate: TemplateRef<any>;
+	
 	/**
 	 * @internal
 	 */
@@ -243,6 +257,11 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	 * @internal
 	 */
 	openviduAngularParticipantsPanelTemplate: TemplateRef<any>;
+	/**
+	 * @internal
+	 */
+	openviduAngularQuestionPanelTemplate: TemplateRef<any>;
+	
 	/**
 	 * @internal
 	 */
@@ -339,6 +358,11 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	 * Provides event notifications that fire when participants panel button has been clicked.
 	 */
 	@Output() onToolbarParticipantsPanelButtonClicked: EventEmitter<void> = new EventEmitter<void>();
+
+	/**
+	 * Provides event notifications that fire when question panel button has been clicked.
+	 */
+	@Output() onToolbarQuestionPanelButtonClicked: EventEmitter<void> = new EventEmitter<void>();
 
 	/**
 	 * Provides event notifications that fire when chat panel button has been clicked.
@@ -510,6 +534,14 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 				this.openviduAngularParticipantsPanelTemplate = this.defaultParticipantsPanelTemplate;
 			}
 
+			if (this.externalQuestionPanel) {
+				this.log.d('Setting EXTERNAL QUESTION PANEL');
+				this.openviduAngularQuestionPanelTemplate = this.externalQuestionPanel.template;
+			} else {
+				this.log.d('Setting DEFAULT QUESTION PANEL');
+				this.openviduAngularQuestionPanelTemplate = this.defaultQuestionPanelTemplate;
+			}
+
 			if (this.externalChatPanel) {
 				this.log.d('Setting EXTERNAL CHAT PANEL');
 				this.openviduAngularChatPanelTemplate = this.externalChatPanel.template;
@@ -634,6 +666,14 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	onParticipantsPanelButtonClicked() {
 		this.onToolbarParticipantsPanelButtonClicked.emit();
 	}
+
+	/**
+	 * @internal
+	 */
+	onQuestionPanelButtonClicked() {
+		this.onToolbarQuestionPanelButtonClicked.emit();
+	}
+	
 	/**
 	 * @internal
 	 */

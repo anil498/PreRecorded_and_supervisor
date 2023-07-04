@@ -22,11 +22,13 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 
 @NgModule({
     imports: [BrowserAnimationsModule],
     exports: [
+		MatCheckboxModule,
 		MatButtonModule,
 		MatCardModule,
 		MatToolbarModule,
@@ -48,7 +50,7 @@ import { NgModule } from '@angular/core';
 		MatDividerModule,
 		MatListModule,
 		MatExpansionModule,
-		MatSlideToggleModule
+		MatSlideToggleModule,
     ]
 })
 export class AppMaterialModule { }

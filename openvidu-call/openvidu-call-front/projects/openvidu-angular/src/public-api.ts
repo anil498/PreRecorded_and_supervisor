@@ -27,6 +27,7 @@ export * from './lib/components/layout/layout.component';
 export * from './lib/components/stream/stream.component';
 export * from './lib/admin/dashboard/dashboard.component';
 export * from './lib/admin/login/login.component';
+export * from './lib/components/panel/question-panel/question-panel.component';
 
 // Models
 export * from './lib/models/participant.model';

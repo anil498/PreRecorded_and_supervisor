@@ -12,6 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 // Application Components
 import { AppComponent } from './app.component';
@@ -40,6 +41,7 @@ const config: OpenViduAngularConfig = {
 		MatToolbarModule,
 		MatButtonModule,
 		MatIconModule,
+		MatCheckboxModule,
 		MatExpansionModule,
 		MatTooltipModule,
 		CdkAccordionModule,

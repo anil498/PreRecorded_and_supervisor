@@ -45,6 +45,7 @@
 		(onMicrophoneButtonClicked)="onMicrophoneButtonClicked()"
 		(onScreenshareButtonClicked)="onScreenshareButtonClicked()"
 		(onFullscreenButtonClicked)="onFullscreenButtonClicked()"
+		(onQuestionPanelButtonClicked)="onQuestionPanelButtonClicked()"
 		(onParticipantsPanelButtonClicked)="onParticipantsPanelButtonClicked()"
 		(onChatPanelButtonClicked)="onChatPanelButtonClicked()"
 		(onActivitiesPanelButtonClicked)="onActivitiesPanelButtonClicked()"
@@ -71,6 +72,10 @@
 			<ng-container *ngTemplateOutlet="openviduAngularParticipantsPanelTemplate"></ng-container>
 		</ng-template>
 
+		<ng-template #questionPanel>
+			<ng-container *ngTemplateOutlet="openviduAngularQuestionPanelTemplate"></ng-container>
+		</ng-template>
+
 		<ng-template #backgroundEffectsPanel>
 			<ov-background-effects-panel id="default-background-effects-panel"></ov-background-effects-panel>
 		</ng-template>
@@ -91,6 +96,10 @@
 
 <ng-template #defaultChatPanel>
 	<ov-chat-panel id="default-chat-panel"></ov-chat-panel>
+</ng-template>
+
+<ng-template #defaultQuestionPanel>
+	<ov-question-panel id="default-question-panel"></ov-question-panel>
 </ng-template>
 
 <ng-template #defaultActivitiesPanel>

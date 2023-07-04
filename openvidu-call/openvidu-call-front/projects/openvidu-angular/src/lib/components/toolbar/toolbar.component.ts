@@ -62,6 +62,7 @@ import { Signal } from '../../models/signal.model';
  * | **leaveButton**             | `boolean` | {@link ToolbarLeaveButtonDirective}             |
  * | **chatPanelButton**         | `boolean` | {@link ToolbarChatPanelButtonDirective}         |
  * | **participantsPanelButton** | `boolean` | {@link ToolbarParticipantsPanelButtonDirective} |
+ * | **questionPanelButton**     | `boolean` | {@link ToolbarQuestionPanelButtonDirective}     | 
  * | **displayLogo**             | `boolean` | {@link ToolbarDisplayLogoDirective}             |
  * | **displaySessionName**      | `boolean` | {@link ToolbarDisplaySessionNameDirective}      |
  *
@@ -183,6 +184,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	@Output() onParticipantsPanelButtonClicked: EventEmitter<void> = new EventEmitter<any>();
 
 	/**
+	 * Provides event notifications that fire when question panel button has been clicked.
+	 */
+	@Output() onQuestionPanelButtonClicked: EventEmitter<void> = new EventEmitter<any>();
+
+	/**
 	 * Provides event notifications that fire when chat panel button has been clicked.
 	 */
 	@Output() onChatPanelButtonClicked: EventEmitter<void> = new EventEmitter<any>();
@@ -270,6 +276,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	isQuestionOpened: boolean = false;
+
+	/**
+	 * @ignore
+	 */
 	isActivitiesOpened: boolean = false;
 
 	/**
@@ -331,6 +342,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	showParticipantsPanelButton: boolean = true;
 
+	/**
+	 * @ignore
+	 */
+	showQuestionPanelButton: boolean = true;
 	/**
 	 * @ignore
 	 */
@@ -423,6 +438,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private sessionTimerSubscription: Subscription;
 	private activitiesPanelButtonSub: Subscription;
 	private participantsPanelButtonSub: Subscription;
+	private questionPanelButtonSub: Subscription;
 	private chatPanelButtonSub: Subscription;
 	private displayLogoSub: Subscription;
 	private displayLogoValueSub: Subscription;
@@ -499,6 +515,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.subscribeToScreenSize();
 		this.subscribeToCaptionsToggling();
 		this.subscribeToSessionTimergStatus();
+		this.subscribeToSignal();
+
 	}
 
 	ngAfterViewInit() {
@@ -518,6 +536,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.leaveButtonSub) this.leaveButtonSub.unsubscribe();
 		if (this.recordingButtonSub) this.recordingButtonSub.unsubscribe();
 		if (this.participantsPanelButtonSub) this.participantsPanelButtonSub.unsubscribe();
+		if (this.questionPanelButtonSub) this.questionPanelButtonSub.unsubscribe();
 		if (this.chatPanelButtonSub) this.chatPanelButtonSub.unsubscribe();
 		if (this.displayLogoSub) this.displayLogoSub.unsubscribe();
 		if (this.displayLogoValueSub) this.displayLogoValueSub.unsubscribe();
@@ -658,6 +677,29 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	toggleQuestionPanel() {
+		this.onQuestionPanelButtonClicked.emit();
+		this.panelService.togglePanel(PanelType.QUESTIONS);
+
+		
+		const connection = this.participantService.getRemoteParticipants();
+		console.log("Connections: "+JSON.stringify(connection));
+
+		const connectionIds = connection.map((conn) => JSON.parse(JSON.stringify(conn)).id);
+        console.log("Connection ID of Customer - "+connectionIds[0]);
+
+		const data = {
+			message: "Question Panel Signal From Support",
+			nickname: this.participantService.getMyNickname(),
+			to: connectionIds[0],
+		}
+
+		this.openviduService.sendSignal(Signal.QUESTION, undefined, data);
+	}
+
+	/**
+	 * @ignore
+	 */
 	toggleChatPanel() {
 		this.onChatPanelButtonClicked.emit();
 		this.panelService.togglePanel(PanelType.CHAT);
@@ -754,6 +796,29 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.session.on('reconnected', () => {
 			this.isConnectionLost = false;
 		});
+	}
+
+	protected subscribeToSignal() {
+			  
+		this.session.on(`signal:${Signal.QUESTION}`, (event: any) => {
+			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
+			this.log.w(data.to);
+			const isMyOwnConnection = this.openviduService.isMyOwnConnection(data.to);
+			
+			this.log.d("Connection ID From Signal: "+connectionId);
+			this.log.d("Signal For Id : "+data.to);
+			this.log.d("Is the Signal for this id ? "+isMyOwnConnection);
+			this.log.d("Recieved : "+ event.data);
+
+			if(isMyOwnConnection && connectionId != data.to){
+				this.panelService.togglePanel(PanelType.QUESTIONS);
+			}
+		});
+
+				
+			
+		
 	}
 	protected subscribeToMenuToggling() {
 		this.panelTogglingSubscription = this.panelService.panelOpenedObs.subscribe((ev: PanelEvent) => {
@@ -855,6 +920,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 		this.chatPanelButtonSub = this.libService.chatPanelButtonObs.subscribe((value: boolean) => {
 			this.showChatPanelButton = value;
+			this.cd.markForCheck();
+		});
+		this.questionPanelButtonSub = this.libService.questionPanelButtonObs.subscribe((value: boolean) => {
+			this.showQuestionPanelButton = value;
 			this.cd.markForCheck();
 		});
 		this.participantsPanelButtonSub = this.libService.participantsPanelButtonObs.subscribe((value: boolean) => {

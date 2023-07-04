@@ -51,6 +51,19 @@
 				matTooltip="{{ 'TOOLBAR.DISABLE_SCREEN' | translate }}">open_in_browser</mat-icon>
 		</button>
 
+		<!-- Default question button -->
+		<button
+			mat-icon-button
+			id="question-panel-btn"
+			*ngIf="!isMinimal && showQuestionPanelButton"
+			matTooltip="{{ 'TOOLBAR.QUESTION' | translate }}"
+			(click)="toggleQuestionPanel()"
+			[disabled]="isConnectionLost"
+			[class.active-btn]="isQuestionOpened"
+		>
+			<mat-icon>question_answer</mat-icon>
+		</button>
+
 		<!-- VideoPublish button -->
 		<button mat-icon-button *ngIf="!isMinimal && showPublishVideoButton && screenSize !== 'xs'"
 			id="videopublish-btn" (click)="togglePublishVideo()" [disabled]="isConnectionLost"

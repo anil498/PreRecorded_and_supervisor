@@ -5,6 +5,9 @@ export enum Signal {
 	NICKNAME_CHANGED = 'nicknameChanged',
 	CHAT = 'chat',
 	SCREEN='screen',
-	SUPERVISOR="supervisor"
+	QUESTION='question',
+	SUPERVISOR="supervisor",
+	SUPPORT='support',
+	CLOSE = 'close'
 
 }

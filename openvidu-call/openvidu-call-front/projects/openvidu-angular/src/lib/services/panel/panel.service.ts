@@ -99,6 +99,13 @@ export class PanelService {
 	}
 
 	/**
+	 * Whether the question panel is opened or not.
+	 */
+	isQuestionPanelOpened(): boolean {
+		return !!this.panelMap.get(PanelType.QUESTIONS);
+	}
+	
+	/**
 	 * Whether the activities panel is opened or not.
 	 */
 	isActivitiesPanelOpened(): boolean {

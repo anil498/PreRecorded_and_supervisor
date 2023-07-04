@@ -62,6 +62,7 @@ import { ApiDirectiveModule } from './directives/api/api.directive.module';
 import { OpenViduAngularDirectiveModule } from './directives/template/openvidu-angular.directive.module';
 import { AppMaterialModule } from './openvidu-angular.material.module';
 import { TranslateService } from './services/translate/translate.service';
+import { QuestionPanelComponent } from './components/panel/question-panel/question-panel.component';
 
 const publicComponents = [
 	AdminDashboardComponent,
@@ -69,6 +70,7 @@ const publicComponents = [
 	VideoconferenceComponent,
 	ToolbarComponent,
 	PanelComponent,
+    QuestionPanelComponent,
 	ActivitiesPanelComponent,
 	ParticipantsPanelComponent,
 	ParticipantPanelItemComponent,
