@@ -128,13 +128,25 @@ public class SessionController {
         return ok(result);
     }
 
+    @PutMapping("/hold")
+    public ResponseEntity<?> updateHold(@RequestBody Map<String, Object> params, HttpServletRequest request) {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+        if(!commonService.authorizationCheck(authKey,token,"session_update")){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        sessionService.updateHold(params);
+        return ok(commonService.responseData("200","Hold updated!"));
+    }
+
     @PostMapping("/sendLink")
     public ResponseEntity<?> sendLink(@RequestBody(required = false)  Map<String,?> params, HttpServletRequest request,HttpServletResponse response) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
+        if(!commonService.authorizationCheck(authKey,token,"dynamic_links")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 

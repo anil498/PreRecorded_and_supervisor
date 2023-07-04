@@ -14,4 +14,6 @@ public interface SessionService {
     SessionEntity getByKey(String key);
     String deleteSession(String sessionKey);
     ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response);
+
+    void updateHold(Map<String, Object> params);
 }

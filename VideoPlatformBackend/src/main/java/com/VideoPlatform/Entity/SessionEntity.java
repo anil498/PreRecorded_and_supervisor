@@ -40,6 +40,8 @@ public class SessionEntity {
 
     @Column(name = "type") private String type;
 
+    @Column(name = "hold") private Boolean hold = false;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
     @Column(name = "creation_date") private Date creationDate;
 
@@ -167,6 +169,14 @@ public class SessionEntity {
         this.status = status;
     }
 
+    public Boolean getHold() {
+        return hold;
+    }
+
+    public void setHold(Boolean hold) {
+        this.hold = hold;
+    }
+
     @Override
     public String toString() {
         return "SessionEntity{" +
@@ -178,9 +188,10 @@ public class SessionEntity {
                 ", userMaxSessions=" + userMaxSessions +
                 ", accountMaxSessions=" + accountMaxSessions +
                 ", participantName='" + participantName + '\'' +
-                ", totalParticipants='" + totalParticipants  +
+                ", totalParticipants=" + totalParticipants +
                 ", settings='" + settings + '\'' +
                 ", type='" + type + '\'' +
+                ", hold=" + hold +
                 ", creationDate=" + creationDate +
                 ", expDate=" + expDate +
                 ", status=" + status +

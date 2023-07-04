@@ -227,6 +227,14 @@ public class SessionServiceImpl implements SessionService{
         sessionRepository.deleteSession(sessionKey);
         return "Session deleted";
     }
+    @Override
+    public void updateHold(Map<String, Object> params){
+        String sessionKey = (String) params.get("sessionKey");
+        Boolean hold = (Boolean) params.get("hold");
+        SessionEntity sessionEntity = sessionRepository.findBySessionKey(sessionKey);
+        if(sessionEntity==null)return;
+        sessionRepository.updateHold(sessionKey,hold);
+    }
 
     @Override
     public ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response){
