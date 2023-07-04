@@ -3,7 +3,7 @@
     "path": "/app/dashboard",
     "title": "Dashboard",
     "icon": "dashboard",
-    "class": "",
+    "class": "dashboard",
     "show": false,
     "systemName": "dashboard"
   },
@@ -11,7 +11,7 @@
     "path": "/app/user_profile",
     "title": "User Profile",
     "icon": "person",
-    "class": "",
+    "class": "user-profile",
     "show": false,
     "systemName": "user_profile"
   },
@@ -19,7 +19,7 @@
     "path": "/app/customer_management",
     "title": "Customer Management",
     "icon": "supervisor_account",
-    "class": "",
+    "class": "customer-mgmt",
     "show": false,
     "systemName": "customer_management"
   },
@@ -27,7 +27,7 @@
     "path": "/app/my_users",
     "title": "My Users",
     "icon": "person",
-    "class": "",
+    "class": "my-users",
     "show": false,
     "systemName": "my_users"
   },
@@ -35,7 +35,7 @@
     "path": "/app/my_sessions",
     "title": "My Session",
     "icon": "videocam",
-    "class": "",
+    "class": "my-sessions",
     "show": false,
     "systemName": "my_sessions"
   },
@@ -43,7 +43,7 @@
     "path": "/app/dynamic_links",
     "title": "Dynamic Links",
     "icon": "headset_mic",
-    "class": "",
+    "class": "dynamic-link",
     "show": false,
     "systemName": "dynamic_links"
   },
@@ -51,7 +51,7 @@
     "path": "/app/my_reports",
     "title": "My Reports",
     "icon": "library_books",
-    "class": "",
+    "class": "my-reports",
     "show": false,
     "systemName": "my_reports"
   },
@@ -59,7 +59,7 @@
     "path": "",
     "title": "Customer Creation",
     "icon": "",
-    "class": "",
+    "class": "customer-creation",
     "show": false,
     "systemName": "customer_creation"
   },
@@ -67,7 +67,7 @@
     "path": "",
     "title": "Customer Update",
     "icon": "",
-    "class": "",
+    "class": "customer-update",
     "show": false,
     "systemName": "customer_update"
   },
@@ -75,7 +75,7 @@
     "path": "",
     "title": "Custommer Delete",
     "icon": "",
-    "class": "",
+    "class": "customer-delete",
     "show": false,
     "systemName": "customer_delete"
   },
@@ -83,7 +83,7 @@
     "path": "",
     "title": "Group Creation",
     "icon": "",
-    "class": "",
+    "class": "group-creation",
     "show": false,
     "systemName": "group_creation"
   },
@@ -91,7 +91,7 @@
     "path": "",
     "title": "Group Update",
     "icon": "",
-    "class": "",
+    "class": "group-update",
     "show": false,
     "systemName": "group_update"
   },
@@ -99,7 +99,7 @@
     "path": "",
     "title": "Group Delete",
     "icon": "",
-    "class": "",
+    "class": "group-delete",
     "show": false,
     "systemName": "group_delete"
   },
@@ -107,7 +107,7 @@
     "path": "/app/manage_platform_feature",
     "title": "Platform Feature",
     "icon": "star",
-    "class": "",
+    "class": "platform-feature",
     "show": false,
     "systemName": "manage_platform_feature"
   },
@@ -115,7 +115,7 @@
     "path": "/app/manage_platform_access",
     "title": "Platform Access",
     "icon": "star",
-    "class": "",
+    "class": "platform-access",
     "show": false,
     "systemName": "manage_platform_access"
   },
@@ -123,7 +123,7 @@
     "path": "/app/feedback_form",
     "title": "Feedback Form",
     "icon": "receipt",
-    "class": "",
+    "class": "feedform-form",
     "show": true,
     "systemName": "feedback_form"
   }
