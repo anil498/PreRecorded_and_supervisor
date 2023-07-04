@@ -117,9 +117,9 @@ export class LoginComponent implements OnInit {
       this.failedMessage = true;
       this.failedMessageShow = "";
       const snackBarConfig = new MatSnackBarConfig();
-      snackBarConfig.duration = 3000;
+      snackBarConfig.duration = 300000;
       this.snackBar.open(this.state, "Dismiss", snackBarConfig);
-      this.timeOut(3000);
+      this.timeOut(300000);
       return;
     }
     this.failedMessage = false;
@@ -129,7 +129,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.state = loginResponse.description;
       this.showDescription = true;
-      this.timeOut(3000);
+      this.timeOut(300000);
     }
   }
 
