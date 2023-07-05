@@ -91,12 +91,16 @@ export class LoginComponent implements OnInit {
         this.username,
         this.password
       );
-      this.token = loginResponse.token;
-      console.warn(loginResponse);
-      this.restService.setData(loginResponse);
-      this.restService.setToken(this.token);
-      this.restService.setAuthKey(loginResponse.auth_key);
-      this.restService.setUserId(this.username);
+      if (loginResponse.status_code == 200) {
+        this.token = loginResponse.token;
+        this.restService.setData(loginResponse);
+        this.restService.setToken(this.token);
+        this.restService.setAuthKey(loginResponse.auth_key);
+        this.restService.setUserId(this.username);
+        console.log(loginResponse);
+        localStorage.setItem("loginId", this.username);
+        localStorage.setItem("password", this.password);
+      }
       let defaultLabel: any;
       if (loginResponse.Access.length === 0) {
         defaultLabel = "user_profile";

@@ -45,8 +45,9 @@ export class UpdateFeatureDialogComponent implements OnInit {
       featureId: [this.featureData.featureId, [Validators.required]],
       name: [this.featureData.name, [Validators.required]],
       metaList: this.fb.array([]),
-      status: [this.featureData.status, [Validators.required]]
+      status: [this.featureData.status, [Validators.required]],
     });
+    this.featureForm.get("featureId").disable();
     this.initMeta();
     console.log(this.featureForm.value.metaList);
   }

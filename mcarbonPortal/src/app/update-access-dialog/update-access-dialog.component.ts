@@ -61,13 +61,12 @@ export class UpdateAccessDialogComponent implements OnInit {
       name: [this.access.name, [Validators.required]],
       accessId: [this.access.accessId, [Validators.required]],
       seq: [this.access.seq, [Validators.required]],
-      systemName: [
-        this.access.systemName,
-        [Validators.required],
-      ],
+      systemName: [this.access.systemName, [Validators.required]],
       status: [this.access.status, [Validators.required]],
     });
     console.log(this.access);
+    this.accessForm.get("accessId").disable();
+    this.accessForm.get("systemName").disable();
   }
 
   checkAccessId = (control: AbstractControl): ValidationErrors | null => {

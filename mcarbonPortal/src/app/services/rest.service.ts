@@ -2,13 +2,14 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { catchError, lastValueFrom, Subject } from "rxjs";
+import { authKey, baseHref } from "app/app.component";
 @Injectable({
   providedIn: "root",
 })
 export class RestService {
   private dialogClosedSource = new Subject<boolean>();
   public dialogClosed$ = this.dialogClosedSource.asObservable();
-
+  username = "";
   private authKey: string;
   private _response: any;
   private _token: string;
@@ -23,16 +24,35 @@ export class RestService {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
     //this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
     //this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
-    this.getHeaders();
-    this.http.get<any>("assets/json/headers.json").subscribe((response) => {
-      this.authKey = response.authKey;
-      this.baseHref = response.url;
-    });
+    this.authKey = "AC001CBoh3eACy9";
+    //this.authKey = authKey;
+    //this.baseHref = baseHref;
+    this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
   }
 
-  getHeaders() {
+  async onReload() {
+    console.log(localStorage);
+    console.log(localStorage.getItem("loginId"));
+    console.log(localStorage.getItem("password"));
+    const body = {
+      loginId: localStorage.getItem("loginId"),
+      password: localStorage.getItem("password"),
+    };
+    const loginResponse = await this.loginRequest("login", body);
+    this.setData(loginResponse);
+    this.setToken(this.token);
+    this.setAuthKey(loginResponse.auth_key);
+    this.setUserId(this.username);
+  }
+  async getHeaders(authKey, baseHref) {
     if (this._response == null) {
-      this.router.navigate([""]);
+      this.authKey = authKey;
+      this.baseHref = baseHref;
+      console.log(this.baseHref);
+      console.log(this.authKey);
+      this.onReload();
+
+      // this.router.navigate([""]);
     }
   }
 
@@ -320,7 +340,7 @@ export class RestService {
     this.setUserId(null);
     localStorage.clear();
     sessionStorage.clear();
-    location.reload();
+    //location.reload();
     this.router.navigate([""]);
   }
 
@@ -662,7 +682,7 @@ export class RestService {
       featureId,
       name,
       metaList,
-      status
+      status,
     });
   }
   async deleteAccess(accessId: number) {
