@@ -814,19 +814,16 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.d("Is the Signal for this id ? "+isMyOwnConnection);
 			this.log.d("Recieved : "+ event.data);
 
+			if(this.participantService.getMyRole()!=='MODERATOR'){
 				if(isMyOwnConnection && connectionId != data.to){
 					this.panelService.togglePanel(PanelType.QUESTIONS);
-			
+			}
 		}
 		
-		});
-	
-	
-
-				
-			
-		
+		});		
 	}
+
+	
 	protected subscribeToMenuToggling() {
 		this.panelTogglingSubscription = this.panelService.panelOpenedObs.subscribe((ev: PanelEvent) => {
 			this.isChatOpened = ev.opened && ev.type === PanelType.CHAT;
