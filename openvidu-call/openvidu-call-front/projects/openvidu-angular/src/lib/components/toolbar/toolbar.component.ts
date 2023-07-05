@@ -681,12 +681,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.onQuestionPanelButtonClicked.emit();
 		this.panelService.togglePanel(PanelType.QUESTIONS);
 
-		
 		const connection = this.participantService.getRemoteParticipants();
 		console.log("Connections: "+JSON.stringify(connection));
 
 		const connectionIds = connection.map((conn) => JSON.parse(JSON.stringify(conn)).id);
-        console.log("Connection ID of Customer - "+connectionIds[0]);
+        console.log("Connection ID - "+connectionIds[0]);
 
 		const data = {
 			message: "Question Panel Signal From Support",
@@ -694,7 +693,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			to: connectionIds[0],
 		}
 
+		
 		this.openviduService.sendSignal(Signal.QUESTION, undefined, data);
+			
+
+
 	}
 
 	/**
@@ -799,7 +802,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	protected subscribeToSignal() {
-			  
+  
 		this.session.on(`signal:${Signal.QUESTION}`, (event: any) => {
 			const connectionId = event.from.connectionId;
 			const data = JSON.parse(event.data);
@@ -811,10 +814,15 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.d("Is the Signal for this id ? "+isMyOwnConnection);
 			this.log.d("Recieved : "+ event.data);
 
-			if(isMyOwnConnection && connectionId != data.to){
-				this.panelService.togglePanel(PanelType.QUESTIONS);
+			if(this.participantService.getMyRole()=='PUBLISHER'){
+				if(isMyOwnConnection && connectionId != data.to){
+					this.panelService.togglePanel(PanelType.QUESTIONS);
 			}
+		}
+		
 		});
+	
+	
 
 				
 			
