@@ -23,6 +23,7 @@ import {
   names,
   uniqueNamesGenerator,
 } from "unique-names-generator";
+import { browserRefresh } from "app/app.component";
 
 @Component({
   selector: "app-dynamic-support",
@@ -47,17 +48,37 @@ export class DynamicSupportComponent implements OnInit {
   failedMessageShow: any;
   titleValue: string = "mCarbon Support";
   bodyValue: string = "Join Video Call";
+  browserRefresh: any;
 
   constructor(
     private router: Router,
     private restService: RestService,
     private fb: FormBuilder,
     private elementRef: ElementRef
-  ) {
-    this.accessList = this.restService.getData().Access;
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
+    this.browserRefresh = browserRefresh;
+    console.log("refreshed?:", browserRefresh);
+    if (this.browserRefresh == true) {
+      const body = {
+        loginId: localStorage.getItem("loginId"),
+        password: localStorage.getItem("password"),
+      };
+      console.log(body);
+      let loginResponse = await this.restService.login(
+        "login",
+        localStorage.getItem("loginId"),
+        localStorage.getItem("password")
+      );
+      if (loginResponse.status_code == 200) {
+        this.restService.setData(loginResponse);
+        this.restService.setToken(loginResponse.token);
+        this.restService.setAuthKey(loginResponse.auth_key);
+        this.restService.setUserId(localStorage.getItem("loginId"));
+      }
+    }
+    this.accessList = this.restService.getData().Access;
     this.show();
 
     this.userForm1 = this.fb.group({

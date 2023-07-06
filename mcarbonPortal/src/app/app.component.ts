@@ -5,8 +5,8 @@ import { Subscription } from "rxjs";
 import { RouteInfo } from "./model/ROUTE";
 
 export let browserRefresh = false;
-export let authKey: string;
-export let baseHref: string;
+export let authKey: string = "";
+export let baseHref: string = "";
 export var ROUTE: RouteInfo[] = [];
 @Component({
   selector: "app-root",
@@ -29,6 +29,8 @@ export class AppComponent {
       console.log(authKey);
       console.log(baseHref);
     });
+    console.log(authKey);
+    console.log(baseHref);
     this.http
       .get<RouteInfo[]>("assets/json/access.json")
       .subscribe((response: RouteInfo[]) => {

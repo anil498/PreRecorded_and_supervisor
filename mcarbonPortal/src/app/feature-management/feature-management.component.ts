@@ -18,6 +18,7 @@ import { Features } from "app/model/features";
 import { CreateFeatureDialogComponent } from "app/create-feature-dialog/create-feature-dialog.component";
 import { DeleteDialogComponent } from "app/delete-dialog/delete-dialog.component";
 import { UpdateFeatureDialogComponent } from "app/update-feature-dialog/update-feature-dialog.component";
+import { browserRefresh } from "app/app.component";
 @Component({
   selector: "app-feature-management",
   templateUrl: "./feature-management.component.html",
@@ -45,6 +46,7 @@ export class FeatureManagementComponent implements OnInit {
 
   features: Features[] = [];
   dataSourceWithPageSize = new MatTableDataSource(this.features);
+  browserRefresh: any;
 
   constructor(
     private dialog: MatDialog,
@@ -54,11 +56,32 @@ export class FeatureManagementComponent implements OnInit {
     private restService: RestService,
     private snackBar: MatSnackBar
   ) {
-    this.token = this.restService.getToken();
-    this.userId = this.restService.getUserId();
+    
   }
 
   async ngOnInit(): Promise<void> {
+    this.browserRefresh = browserRefresh;
+    console.log("refreshed?:", browserRefresh);
+    if (this.browserRefresh == true) {
+      const body = {
+        loginId: localStorage.getItem("loginId"),
+        password: localStorage.getItem("password"),
+      };
+      console.log(body);
+      let loginResponse = await this.restService.login(
+        "login",
+        localStorage.getItem("loginId"),
+        localStorage.getItem("password")
+      );
+      if (loginResponse.status_code == 200) {
+        this.restService.setData(loginResponse);
+        this.restService.setToken(loginResponse.token);
+        this.restService.setAuthKey(loginResponse.auth_key);
+        this.restService.setUserId(localStorage.getItem("loginId"));
+      }
+    }
+    this.token = this.restService.getToken();
+    this.userId = this.restService.getUserId();
     console.warn(this.token + "\n" + this.userId);
 
     this.accessList = this.restService.getData().Access;

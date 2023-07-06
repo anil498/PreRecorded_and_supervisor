@@ -20,7 +20,7 @@ import { ViewAccessDialogComponent } from "app/view-access-dialog/view-access-di
 import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature-dialog.component";
 import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account-dialog.component";
 import { DeleteDialogComponent } from "app/delete-dialog/delete-dialog.component";
-
+import { browserRefresh } from "app/app.component";
 @Component({
   selector: "app-account-management",
   templateUrl: "./account-management.component.html",
@@ -47,7 +47,7 @@ export class AccountManagementComponent implements OnInit {
 
   accounts: Accounts[] = [];
   dataSourceWithPageSize = new MatTableDataSource(this.accounts);
-
+  browserRefresh: boolean;
   accessList: any[];
   showCreateButton = false;
   showTable = false;
@@ -61,12 +61,31 @@ export class AccountManagementComponent implements OnInit {
     private domSanitizer: DomSanitizer,
     private restService: RestService,
     private snackBar: MatSnackBar
-  ) {
-    this.token = this.restService.getToken();
-    this.userId = this.restService.getUserId();
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
+    this.browserRefresh = browserRefresh;
+    console.log("refreshed?:", browserRefresh);
+    if (this.browserRefresh == true) {
+      const body = {
+        loginId: localStorage.getItem("loginId"),
+        password: localStorage.getItem("password"),
+      };
+      console.log(body);
+      let loginResponse = await this.restService.login(
+        "login",
+        localStorage.getItem("loginId"),
+        localStorage.getItem("password")
+      );
+      if (loginResponse.status_code == 200) {
+        this.restService.setData(loginResponse);
+        this.restService.setToken(loginResponse.token);
+        this.restService.setAuthKey(loginResponse.auth_key);
+        this.restService.setUserId(localStorage.getItem("loginId"));
+      }
+    }
+    this.token = this.restService.getToken();
+    this.userId = this.restService.getUserId();
     console.warn(this.token + "\n" + this.userId);
 
     this.accessList = this.restService.getData().Access;
