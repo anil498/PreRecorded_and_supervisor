@@ -110,16 +110,23 @@ export class UpdateAccessDialogComponent implements OnInit {
       this.focusOnInvalidFields();
       return;
     }
+    const parentId = this.accessForm.get("parentId").value;
+    const accessId = this.accessForm.get("accessId").value;
+    const seq = this.accessForm.get("seq").value;
+    const name = this.accessForm.get("name").value;
+    const systemName = this.accessForm.get("systemName").value;
+    const status = this.accessForm.get("status").value;
+    console.log(parentId, accessId, seq, name, systemName, status);
     let response: any;
     try {
       response = await this.restService.updateAccess(
         "Access/Update",
-        this.accessForm.value.parentId,
-        this.accessForm.value.accessId,
-        this.accessForm.value.seq,
-        this.accessForm.value.name,
-        this.accessForm.value.systemName,
-        this.accessForm.value.status
+        parentId,
+        accessId,
+        seq,
+        name,
+        systemName,
+        status
       );
       console.log(response);
       if (response.status_code == 200) {
