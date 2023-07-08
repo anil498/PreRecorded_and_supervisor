@@ -45,8 +45,11 @@ export class UpdateFeatureDialogComponent implements OnInit {
       featureId: [this.featureData.featureId, [Validators.required]],
       name: [this.featureData.name, [Validators.required]],
       metaList: this.fb.array([]),
-      status: [this.featureData.status, [Validators.required]]
+      status: [this.featureData.status, [Validators.required]],
     });
+    this.featureForm.get("featureId").disable();
+    console.log(this.featureForm.get("featureId").value);
+    console.log(this.featureForm.value.featureId);
     this.initMeta();
     console.log(this.featureForm.value.metaList);
   }
@@ -115,7 +118,7 @@ export class UpdateFeatureDialogComponent implements OnInit {
       this.focusOnInvalidFields();
       return;
     }
-    const featureId = this.featureForm.value.featureId;
+    const featureId = this.featureForm.get("featureId").value;
     const name = this.featureForm.value.name;
     const metaList = this.featureForm.value.metaList;
     const status = this.featureForm.value.status;

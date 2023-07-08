@@ -8,6 +8,7 @@ import { RestService } from "app/services/rest.service";
 import { SessionDialogComponent } from "../session-dialog/session-dialog.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
+import { browserRefresh } from "app/app.component";
 
 @Component({
   selector: "app-session-management",
@@ -37,17 +38,37 @@ export class SessionManagementComponent implements OnInit {
   ];
   session: Sessions[] = [];
   dataSourceWithPageSize = new MatTableDataSource(this.session);
+  browserRefresh: any;
   constructor(
     private dialog: MatDialog,
     private restService: RestService,
     private snackBar: MatSnackBar
-  ) {
+  ) {}
+
+  async ngOnInit(): Promise<void> {
+    this.browserRefresh = browserRefresh;
+    console.log("refreshed?:", browserRefresh);
+    if (this.browserRefresh == true) {
+      const body = {
+        loginId: localStorage.getItem("loginId"),
+        password: localStorage.getItem("password"),
+      };
+      console.log(body);
+      let loginResponse = await this.restService.login(
+        "login",
+        localStorage.getItem("loginId"),
+        localStorage.getItem("password")
+      );
+      if (loginResponse.status_code == 200) {
+        this.restService.setData(loginResponse);
+        this.restService.setToken(loginResponse.token);
+        this.restService.setAuthKey(loginResponse.auth_key);
+        this.restService.setUserId(localStorage.getItem("loginId"));
+      }
+    }
     this.token = this.restService.getToken();
     this.userId = this.restService.getUserId();
     this.accessList = this.restService.getData().Access;
-  }
-
-  async ngOnInit(): Promise<void> {
     this.viewTable();
   }
 

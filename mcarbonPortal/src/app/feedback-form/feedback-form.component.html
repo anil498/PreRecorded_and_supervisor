@@ -1,1 +1,63 @@
-<p>feedback-form works!</p>
+<div class="main-content">
+  <div class="container-fluid">
+    <div class="row section-1">
+      <div class="col-md-12">
+        <div class="row card card-body card-body-1">
+          <div class="col-md-4">
+            <mat-form-field>
+              <input
+                matInput
+                type="text"
+                value="Untitled Form"
+                plaveholder="Form Name"
+              />
+            </mat-form-field>
+          </div>
+          <div
+            class="col-md-4"
+            cdkDropList
+            (cdkDropListDropped)="onQuestionDrop($event)"
+          >
+            <div
+              class="question-box"
+              [cdkDragDisabled]="questionDisable"
+              cdkDragBoundary=".question-body"
+              cdkDrag
+            >
+              Question
+            </div>
+          </div>
+          <div
+            class="col-md-4"
+            cdkDropList
+            (cdkDropListDropped)="onAnswerDrop($event)"
+          >
+            <div
+              class="answer-box"
+              [cdkDragDisabled]="answerDisable"
+              cdkDrag
+              cdkDragBoundary=".answer-body"
+            >
+              Answer
+            </div>
+          </div>
+        </div>
+        <div class="row card card-body">
+          <div class="question-body" id="question-div" cdkDropList></div>
+        </div>
+        <div class="row card card-body" *ngIf="questionDisable">
+          <div class="answer-body" id="answer-div" cdkDropList></div>
+        </div>
+      </div>
+    </div>
+    <div class="row section-2">
+      <div class="col-md-12">
+        <div class="card card-body question-tab"></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-danger">Cancel</button>
+    <button class="btn btn-success">Save</button>
+  </div>
+</div>

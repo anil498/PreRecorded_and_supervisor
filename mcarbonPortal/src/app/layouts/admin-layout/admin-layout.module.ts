@@ -49,6 +49,10 @@ import { MatRadioModule } from "@angular/material/radio";
 import { UpdateAccessDialogComponent } from "app/update-access-dialog/update-access-dialog.component";
 import { UpdateFeatureDialogComponent } from "app/update-feature-dialog/update-feature-dialog.component";
 import { FeedbackFormComponent } from "app/feedback-form/feedback-form.component";
+import { DragDropModule } from "@angular/cdk/drag-drop";
+import { QuestionTemplateComponent } from "app/templates/question-template/question-template.component";
+import { AnswerTemplateComponent } from "app/templates/answer-template/answer-template.component";
+
 @NgModule({
   imports: [
     CommonModule,
@@ -77,7 +81,7 @@ import { FeedbackFormComponent } from "app/feedback-form/feedback-form.component
     MatMenuModule,
     MatSlideToggleModule,
     MatFileUploadModule,
-
+    DragDropModule,
     RouterModule.forChild(AdminLayoutRoutes),
   ],
   declarations: [
@@ -104,6 +108,8 @@ import { FeedbackFormComponent } from "app/feedback-form/feedback-form.component
     UpdateAccessDialogComponent,
     UpdateFeatureDialogComponent,
     FeedbackFormComponent,
+    QuestionTemplateComponent,
+    AnswerTemplateComponent
   ],
   entryComponents: [FormDialogComponent, DeleteDialogComponent],
 })
