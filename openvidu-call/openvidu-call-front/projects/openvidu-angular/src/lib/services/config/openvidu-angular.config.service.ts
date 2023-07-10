@@ -86,6 +86,18 @@ export class OpenViduAngularConfigService {
 	displayTimer = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayTimerObs: Observable<boolean>;
 
+	displayicdc = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	displayicdcObs: Observable<boolean>;
+
+	editicdc = <BehaviorSubject<boolean>>new BehaviorSubject(true);
+	editicdcObs: Observable<boolean>;
+
+	titleicdc = <BehaviorSubject<string>>new BehaviorSubject('');
+	titleicdcObs: Observable<string>;
+
+	usertype = <BehaviorSubject<string>>new BehaviorSubject('');
+	usertypeObs: Observable<string>;
+
 	displayTicker = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	displayTickerObs: Observable<boolean>;
 
@@ -154,6 +166,10 @@ export class OpenViduAngularConfigService {
 		this.participantNameObs = this.participantName.asObservable();
 		this.floatingLayoutTypeObs=this.floatingLayoutType.asObservable();
 		this.displayTickerValueObs = this.displayTickerValue.asObservable();
+		this.usertypeObs = this.usertype.asObservable();
+		this.displayicdcObs = this.displayicdc.asObservable();
+		this.editicdcObs = this.editicdc.asObservable();
+		this.titleicdcObs = this.titleicdc.asObservable();
 		this.isOnHoldObs = this.isOnHold.asObservable();
 		this.prejoinObs = this.prejoin.asObservable();
 		this.prefullscreenObs = this.prefullscreen.asObservable();

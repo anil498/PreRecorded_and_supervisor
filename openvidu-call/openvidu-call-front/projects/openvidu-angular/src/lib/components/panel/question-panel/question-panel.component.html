@@ -1,16 +1,18 @@
 <div class="panel-container" id="chat-container" fxLayout="column" fxLayoutAlign="space-evenly none">
-	<div class="panel-header-container" fxFlex="55px" fxLayoutAlign="start center">
-		<h3 class="panel-title">{{ 'PANEL.QUESTION.TITLE' | translate }}</h3>
-		<button class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="close()">
+	<div class="panel-header-container" fxLayoutAlign="start center">
+		<h3 class="panel-title">{{titleicdc}}</h3>
+		<button class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="closeForm()">
 			<mat-icon>close</mat-icon>
 		</button>
 	</div>
 
-	<div class="question-container" fxFlex="75%" fxLayoutAlign="space-evenly none" #chatScroll>
-		<div class="msg-detail">
+	<div class="question-container" fxFlex="75%" fxLayoutAlign="space-evenly none" (scroll)="onScroll()" #chatScroll>
+		<div class="question-detail">
 			<form [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="form">
 				<div *ngFor="let question of questions ; let i = index">
-				  <label class="question">Q {{i+1}} . {{ question.question }}</label>
+					<div class = "question-block">
+						<label class="question">Q {{i+1}} . {{ question.question }}</label>
+					</div>
 				  <br />
 				  <ng-container [ngSwitch]="question.type">
 					<div *ngSwitchCase="'radio'">

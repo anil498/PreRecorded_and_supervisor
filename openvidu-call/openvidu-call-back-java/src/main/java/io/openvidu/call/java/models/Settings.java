@@ -31,6 +31,12 @@ public class Settings {
   private Boolean broadcast=false;
   private String landingPage="https://in.linkedin.com/company/mcarbon";
   private String fileUrl;
+  private Boolean icdc;
+  private Boolean displayIcdc;
+  private Boolean editIcdc;
+  private Object titleIcdc;
+
+  
   public Integer getDuration() {
     return duration;
   }
@@ -243,6 +249,38 @@ public class Settings {
     isAutoFullScreen = autoFullScreen;
   }
 
+  public Boolean getIcdc() {
+    return this.icdc;
+  }
+
+  public void setIcdc(Boolean icdc) {
+    this.icdc = icdc;
+  }
+
+  public Object getTitleIcdc() {
+    return this.titleIcdc;
+  }
+
+  public void setTitleIcdc(Object title) {
+    this.titleIcdc = title;
+  }
+
+  public Boolean getDisplayIcdc() {
+    return this.displayIcdc;
+  }
+
+  public void setDisplayIcdc(Boolean displayicdc) {
+    this.displayIcdc = displayicdc;
+  }
+
+  public Boolean getEditIcdc() {
+    return this.editIcdc;
+  }
+
+  public void setEditIcdc(Boolean editicdc) {
+    this.editIcdc = editicdc;
+  }
+
   @Override
   public String toString() {
     return "Settings{" +
@@ -270,6 +308,10 @@ public class Settings {
             ", broadcast=" + broadcast +
             ", landingPage='" + landingPage + '\'' +
             ", fileUrl='" + fileUrl + '\'' +
+            ", icdc='" + icdc + '\'' +
+            ", displayIcdc='" + displayIcdc + '\'' +
+            ", editIcdc='" + editIcdc + '\'' +
+            ", titleIcdc='" + titleIcdc + '\'' +
             '}';
   }
 }

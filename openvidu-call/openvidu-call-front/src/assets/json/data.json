@@ -28,7 +28,7 @@
     {
         "q_id":"4",
         "type":"checkbox",
-        "question":"Choose your favourite color for design ?",
+        "question":"Choose your favourite color for design ",
         "meta": ["Red","Blue","Green","Purple","Black"]
     } ,
 
