@@ -1,10 +1,7 @@
 package com.sdet.auto.SeleniumExtensions;
 
 import com.sdet.auto.TestHelper.IoLibrary;
-import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import javax.imageio.ImageIO;
@@ -44,11 +41,11 @@ public class WebDriverExtensions {
     public static void seleniumExceptionHandler(Exception ex) {
         String exceptionName = ex.getMessage();
         IoLibrary.writeLine(String.format("WebDriver Exception Handler Caught Exception: [%s]", exceptionName));
-        screenshot();
+        screenshot(driver);
         IoLibrary.writelineEnd();
     }
 
-    public static void screenshot() {
+    public static void screenshot(WebDriver driver) {
         File screenshot;
         String testName = String.format(IoLibrary.getTestName() + "_" + IoLibrary.getUniqueIdentifier() + ".Png");
 

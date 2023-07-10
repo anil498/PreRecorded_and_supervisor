@@ -1,10 +1,11 @@
 package com.VideoPlatform.Services;
 
-import com.VideoPlatform.Entity.FeatureEntity;
-import com.VideoPlatform.Repository.FeatureRepository;
+import com.VideoPlatform.Entity.*;
+import com.VideoPlatform.Repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.primitives.Ints;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.slf4j.Logger;
@@ -14,9 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -26,11 +25,30 @@ public class FeatureServiceImpl implements FeatureService{
 
     @Autowired
     private FeatureRepository featureRepository;
+    @Autowired
+    private UserAuthRepository userAuthRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
-    public FeatureEntity createFeature(FeatureEntity featureEntity){
+    public String createFeature(FeatureEntity featureEntity,String authKey, String token){
         if(featureRepository.findByFeatureId(featureEntity.getFeatureId())!=null) return null;
-        return featureRepository.save(featureEntity);
+        featureRepository.save(featureEntity);
+//        UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
+//        if(userAuthEntity == null) return null;
+//        UserEntity userEntity = userRepository.findByUserId(userAuthEntity.getUserId());
+//        List<Integer> features = Arrays.asList(userEntity.getFeatures());
+//        logger.info("Features : {}",features);
+//        int f = featureEntity.getFeatureId();
+//        logger.info("featureEntity.getFeatureId() :  {} ",featureEntity.getFeatureId());
+//        features.add(f);
+//        Integer[] featureId = (Integer[]) features.toArray();
+//        logger.info("Updated features  : {},{}",features,featureId);
+//        accountRepository.updateFeatures(userEntity.getAccountId(),featureId);
+//        userRepository.updateFeatures(userEntity.getUserId(),featureId);
+        return "";
     }
     @Override
     public List<FeatureEntity> getAllFeatures(){

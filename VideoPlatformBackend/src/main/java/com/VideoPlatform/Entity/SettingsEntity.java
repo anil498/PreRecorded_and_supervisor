@@ -24,6 +24,10 @@ public class SettingsEntity {
     private Boolean preRecorded;
     private Object landingPage;
     private Object preRecordedDetails;
+    private Boolean icdc;
+    private Boolean displayIcdc;
+    private Boolean editIcdc;
+    private Object titleIcdc;
 
 
     public Integer getDuration() {
@@ -166,6 +170,37 @@ public class SettingsEntity {
         if(landingPage != null) this.landingPage = landingPage;
     }
 
+    public Boolean getIcdc() {
+        return icdc;
+    }
+
+    public void setIcdc(Boolean icdc) {
+        this.icdc = icdc;
+    }
+
+    public Boolean getDisplayIcdc() {
+        return displayIcdc;
+    }
+
+    public void setDisplayIcdc(Boolean displayIcdc) {
+        this.displayIcdc = displayIcdc;
+    }
+
+    public Boolean getEditIcdc() {
+        return editIcdc;
+    }
+
+    public void setEditIcdc(Boolean editIcdc) {
+        this.editIcdc = editIcdc;
+    }
+
+    public Object getTitleIcdc() {
+        return titleIcdc;
+    }
+
+    public void setTitleIcdc(Object titleIcdc) {
+        this.titleIcdc = titleIcdc;
+    }
 
     @Override
     public String toString() {
@@ -188,6 +223,10 @@ public class SettingsEntity {
                 ", preRecorded=" + preRecorded +
                 ", landingPage=" + landingPage +
                 ", preRecordedDetails=" + preRecordedDetails +
+                ", icdc=" + icdc +
+                ", displayIcdc=" + displayIcdc +
+                ", editIcdc=" + editIcdc +
+                ", titleIcdc=" + titleIcdc +
                 '}';
     }
 }

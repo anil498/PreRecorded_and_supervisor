@@ -23,7 +23,7 @@ public class WebDriverBase {
             options.addArguments("--start-maximized");
             options.addArguments("--disable-extensions");
             options.addArguments("disable-infobars");
-            System.setProperty("webdriver.chrome.driver", "src/main/resources/chromedriver");
+            System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
             driver = new ChromeDriver(options);
             driver.manage().deleteAllCookies();
 

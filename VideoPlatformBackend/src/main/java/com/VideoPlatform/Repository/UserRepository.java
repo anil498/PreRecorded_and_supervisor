@@ -93,4 +93,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(nativeQuery = true, value = "UPDATE user_data SET session = :session WHERE login_id = :loginId")
     void updateSession(@Param("loginId") String loginId,@Param("session") String session);
 
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET features = :features WHERE user_id = :userId")
+    void updateFeatures(@Param("userId") Integer userId,@Param("features") Integer[] features);
+
 }

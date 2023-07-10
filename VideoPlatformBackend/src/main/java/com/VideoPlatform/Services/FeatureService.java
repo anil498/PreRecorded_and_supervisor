@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface FeatureService {
-    FeatureEntity createFeature(FeatureEntity featureEntity);
+    String createFeature(FeatureEntity featureEntity,String authKey, String token);
     ResponseEntity<?> updateFeature(String params);
     void deleteFeature(Integer featureId);
     List<FeatureEntity> getAllFeatures();
