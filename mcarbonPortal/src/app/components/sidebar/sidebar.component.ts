@@ -7,7 +7,7 @@ import { RouteInfo } from "../../model/ROUTE";
 import { ROUTE } from "app/app.component";
 import { browserRefresh } from "app/app.component";
 import { Subscription } from "rxjs";
-import { ObserverService } from "app/services/observer.service";
+//import { ObserverService } from "app/services/observer.service";
 declare const $: any;
 
 // export const ROUTES: RouteInfo[] = [
