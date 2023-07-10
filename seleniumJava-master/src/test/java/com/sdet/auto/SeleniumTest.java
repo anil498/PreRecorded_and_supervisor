@@ -107,7 +107,7 @@ public class SeleniumTest extends TestBaseClass{
                 System.out.println("ICON PRESSED");
                 element1.click();
                 Thread.sleep(2000);
-                driver.findElement(By.cssSelector("div#mat-menu-panel-0>div>button[class='mat-focus-indicator btn-profile btn-action mat-menu-item ng-tns-c42-2']")).click();
+                driver.findElement(By.cssSelector("#mat-menu-panel-1>div>button.mat-focus-indicator.btn-profile.btn-action.mat-menu-item.ng-tns-c42-13")).click();
                 System.out.println("Profile button pressed!");
                 Thread.sleep(2000);
                 break;
@@ -255,12 +255,15 @@ public class SeleniumTest extends TestBaseClass{
         devTools.addListener(Network.responseReceived(), responseReceived -> {
 //            System.out.println("Network event :"+ responseReceived.getRequestId());
             requestIds[0] = responseReceived.getRequestId();
+            System.out.println("RequestIds : "+ requestIds[0]);
+            for(RequestId request : requestIds){
+                System.out.println(request);
+            }
             String url = responseReceived.getResponse().getUrl();
             System.out.println("Url : "+url);
             if(url.contains("https://demo2.progate.mobi/VPService/v1/Account/GetAll")) {
                 String responseBody = finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody();
                 System.out.println("Response Body :" + responseBody);
-
             }});
         JavascriptExecutor js = (JavascriptExecutor) driver;
         NgWebDriver ngWebDriver = new NgWebDriver(js);
@@ -279,7 +282,7 @@ public class SeleniumTest extends TestBaseClass{
     }
 
     @Test
-    public void TC0009_CustomerRolesCheck() throws InterruptedException {
+    public void TC0009_CustomerRolesCheck() throws InterruptedException, IOException {
 
         AtomicReference<String> responseBody= new AtomicReference<>("");
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
@@ -323,7 +326,16 @@ public class SeleniumTest extends TestBaseClass{
         checkRoles(driver,responseBody);
         driver.findElement(ByAngular.partialButtonText("View")).click();
         Thread.sleep(1000);
+        driver.findElement(By.cssSelector("#mat-tab-label-5-1")).click();
+        Thread.sleep(1000);
+        checkAccessValues(responseBody.get(),driver);
         driver.close();
+    }
+    public void checkAccessValues(String responseBody, ChromeDriver driver) throws IOException {
+        List<String> systemNames = getAccessData(responseBody);
+        if(driver.findElement(By.cssSelector("#mat-checkbox-85")).isSelected()){
+
+        }
     }
     public List<String> getAccessData(String responseBody) throws IOException {
         Gson gson=new Gson();
