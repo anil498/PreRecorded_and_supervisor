@@ -6,6 +6,8 @@ import { RouteInfo } from "../../model/ROUTE";
 // import { ROUTE } from "app/login/login.component";
 import { ROUTE } from "app/app.component";
 import { browserRefresh } from "app/app.component";
+import { Subscription } from "rxjs";
+import { ObserverService } from "app/services/observer.service";
 declare const $: any;
 
 // export const ROUTES: RouteInfo[] = [
@@ -109,6 +111,16 @@ export class SidebarComponent implements OnInit {
     this.showSideNav();
   }
 
+  ngOnDestroy() {
+    this.accessList.forEach((access) => {
+      this.menuItems.forEach((menuItem) => {
+        if (access.systemName === menuItem.systemName) {
+          menuItem.show = false;
+          menuItem.title = access.name;
+        }
+      });
+    });
+  }
   showSideNav() {
     console.log(this.accessList);
     console.log(this.menuItems);

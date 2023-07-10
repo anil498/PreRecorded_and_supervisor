@@ -109,7 +109,7 @@ import { AnswerTemplateComponent } from "app/templates/answer-template/answer-te
     UpdateFeatureDialogComponent,
     FeedbackFormComponent,
     QuestionTemplateComponent,
-    AnswerTemplateComponent
+    AnswerTemplateComponent,
   ],
   entryComponents: [FormDialogComponent, DeleteDialogComponent],
 })
