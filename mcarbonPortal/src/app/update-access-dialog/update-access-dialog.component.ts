@@ -61,13 +61,12 @@ export class UpdateAccessDialogComponent implements OnInit {
       name: [this.access.name, [Validators.required]],
       accessId: [this.access.accessId, [Validators.required]],
       seq: [this.access.seq, [Validators.required]],
-      systemName: [
-        this.access.systemName,
-        [Validators.required],
-      ],
+      systemName: [this.access.systemName, [Validators.required]],
       status: [this.access.status, [Validators.required]],
     });
     console.log(this.access);
+    this.accessForm.get("accessId").disable();
+    this.accessForm.get("systemName").disable();
   }
 
   checkAccessId = (control: AbstractControl): ValidationErrors | null => {
@@ -111,16 +110,23 @@ export class UpdateAccessDialogComponent implements OnInit {
       this.focusOnInvalidFields();
       return;
     }
+    const parentId = this.accessForm.get("parentId").value;
+    const accessId = this.accessForm.get("accessId").value;
+    const seq = this.accessForm.get("seq").value;
+    const name = this.accessForm.get("name").value;
+    const systemName = this.accessForm.get("systemName").value;
+    const status = this.accessForm.get("status").value;
+    console.log(parentId, accessId, seq, name, systemName, status);
     let response: any;
     try {
       response = await this.restService.updateAccess(
         "Access/Update",
-        this.accessForm.value.parentId,
-        this.accessForm.value.accessId,
-        this.accessForm.value.seq,
-        this.accessForm.value.name,
-        this.accessForm.value.systemName,
-        this.accessForm.value.status
+        parentId,
+        accessId,
+        seq,
+        name,
+        systemName,
+        status
       );
       console.log(response);
       if (response.status_code == 200) {

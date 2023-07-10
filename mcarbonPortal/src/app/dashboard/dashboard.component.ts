@@ -4,12 +4,14 @@ import * as Chartist from "chartist";
 import { DashSession } from "app/model/dash_session";
 import { DashAccount } from "app/model/dash_account";
 import { DashUser } from "app/model/dash_user";
+import { browserRefresh } from "app/app.component";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.css"],
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
+  browserRefresh: boolean;
   dashboard;
   sessions: DashSession;
   accounts: DashAccount;
@@ -19,9 +21,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   accountTitle: string = "Daily Account Creation";
   userTitle: string = "Daily User Creation";
   sessionTitle: string = "Daily Session Creation";
-  constructor(private restService: RestService) {
-    this.dashboard = this.restService.getData().Dashboard;
-  }
+  constructor(private restService: RestService) {}
 
   checkAccount() {
     if (this.accounts !== null && this.accounts.isDisplay === true) return true;
@@ -95,7 +95,28 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
     seq2 = 0;
   }
-  ngOnInit() {
+  async ngOnInit() {
+    this.browserRefresh = browserRefresh;
+    console.log("refreshed?:", browserRefresh);
+    if (this.browserRefresh == true) {
+      const body = {
+        loginId: localStorage.getItem("loginId"),
+        password: localStorage.getItem("password"),
+      };
+      console.log(body);
+      let loginResponse = await this.restService.login(
+        "login",
+        localStorage.getItem("loginId"),
+        localStorage.getItem("password")
+      );
+      if (loginResponse.status_code == 200) {
+        this.restService.setData(loginResponse);
+        this.restService.setToken(loginResponse.token);
+        this.restService.setAuthKey(loginResponse.auth_key);
+        this.restService.setUserId(localStorage.getItem("loginId"));
+      }
+    }
+    this.dashboard = this.restService.getData().Dashboard;
     this.participants = this.dashboard.participants;
 
     if (this.dashboard.hasOwnProperty("accounts")) {

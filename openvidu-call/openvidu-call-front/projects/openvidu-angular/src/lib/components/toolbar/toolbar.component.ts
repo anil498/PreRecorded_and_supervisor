@@ -681,16 +681,15 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.onQuestionPanelButtonClicked.emit();
 		this.panelService.togglePanel(PanelType.QUESTIONS);
 
-		const connection = this.participantService.getRemoteParticipants();
-		console.log("Connections: "+JSON.stringify(connection));
+		// const connection = this.participantService.getRemoteParticipants();
+		// console.log("Connections: "+JSON.stringify(connection));
 
-		const connectionIds = connection.map((conn) => JSON.parse(JSON.stringify(conn)).id);
-        console.log("Connection ID - "+connectionIds[0]);
+		// const connectionIds = connection.map((conn) => JSON.parse(JSON.stringify(conn)).id);
+        // console.log("Connection ID - "+connectionIds[0]);
 
 		const data = {
 			message: "Question Panel Signal From Support",
 			nickname: this.participantService.getMyNickname(),
-			to: connectionIds[0],
 		}
 
 		
@@ -806,28 +805,21 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.session.on(`signal:${Signal.QUESTION}`, (event: any) => {
 			const connectionId = event.from.connectionId;
 			const data = JSON.parse(event.data);
-			this.log.w(data.to);
-			const isMyOwnConnection = this.openviduService.isMyOwnConnection(data.to);
+			const isMyOwnConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
 			
 			this.log.d("Connection ID From Signal: "+connectionId);
-			this.log.d("Signal For Id : "+data.to);
-			this.log.d("Is the Signal for this id ? "+isMyOwnConnection);
+			this.log.d("Is the Signal for this id ? "+!isMyOwnConnection);
 			this.log.d("Recieved : "+ event.data);
 
-			if(this.participantService.getMyRole()=='PUBLISHER'){
-				if(isMyOwnConnection && connectionId != data.to){
+				if(!isMyOwnConnection ){
 					this.panelService.togglePanel(PanelType.QUESTIONS);
 			}
-		}
 		
-		});
-	
-	
 
-				
-			
-		
+		});		
 	}
+
+
 	protected subscribeToMenuToggling() {
 		this.panelTogglingSubscription = this.panelService.panelOpenedObs.subscribe((ev: PanelEvent) => {
 			this.isChatOpened = ev.opened && ev.type === PanelType.CHAT;

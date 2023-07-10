@@ -1,0 +1,78 @@
+.question {
+  width: 400px;
+  height: 400px;
+  max-width: 100%;
+  border: dotted #ccc 2px;
+}
+
+.question-box,
+.answer-box {
+  border: solid 1px #ccc;
+  color: rgba(0, 0, 0, 0.87);
+  cursor: move;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background: #fff;
+  border-radius: 50px;
+  margin-right: 25px;
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  padding: 10px;
+  transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
+  box-shadow: 0 3px 1px -2px rgba(0, 255, 238, 0.2),
+    0 2px 2px 0 rgba(0, 255, 238, 0.2), 0 1px 5px 0 rgba(0, 255, 238, 0.2);
+}
+
+.question-box:active,
+.answer-box:active {
+  box-shadow: 0 5px 5px -3px rgba(0, 255, 238, 0.2),
+    0 8px 10px 1px rgba(0, 255, 238, 0.2), 0 3px 14px 2px rgba(0, 255, 238, 0.2);
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  min-width: 150px;
+}
+
+.container-fluid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.draggable,
+.droppable {
+  padding: 10px;
+  background-color: #f0f0f0;
+  cursor: move;
+}
+
+.card-body-1 {
+  display: flex;
+  flex-direction: row;
+}
+
+.question-body,
+.answer-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.question-tab {
+  border-radius: 50px;
+  min-height: 10vh;
+}
+
+.section-1 {
+  width: 90%;
+}
+
+.section-2 {
+  width: 10%;
+}

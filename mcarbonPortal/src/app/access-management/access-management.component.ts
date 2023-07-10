@@ -17,6 +17,7 @@ import { Access } from "app/model/access";
 import { CreateAccessDialogComponent } from "app/create-access-dialog/create-access-dialog.component";
 import { DeleteDialogComponent } from "app/delete-dialog/delete-dialog.component";
 import { UpdateAccessDialogComponent } from "app/update-access-dialog/update-access-dialog.component";
+import { browserRefresh } from "app/app.component";
 
 @Component({
   selector: "app-access-management",
@@ -47,6 +48,7 @@ export class AccessManagementComponent implements OnInit {
 
   access: Access[] = [];
   dataSourceWithPageSize = new MatTableDataSource(this.access);
+  browserRefresh: any;
   constructor(
     private dialog: MatDialog,
     private router: Router,
@@ -55,11 +57,32 @@ export class AccessManagementComponent implements OnInit {
     private restService: RestService,
     private snackBar: MatSnackBar
   ) {
-    this.token = this.restService.getToken();
-    this.userId = this.restService.getUserId();
+    
   }
 
   async ngOnInit(): Promise<void> {
+    this.browserRefresh = browserRefresh;
+    console.log("refreshed?:", browserRefresh);
+    if (this.browserRefresh == true) {
+      const body = {
+        loginId: localStorage.getItem("loginId"),
+        password: localStorage.getItem("password"),
+      };
+      console.log(body);
+      let loginResponse = await this.restService.login(
+        "login",
+        localStorage.getItem("loginId"),
+        localStorage.getItem("password")
+      );
+      if (loginResponse.status_code == 200) {
+        this.restService.setData(loginResponse);
+        this.restService.setToken(loginResponse.token);
+        this.restService.setAuthKey(loginResponse.auth_key);
+        this.restService.setUserId(localStorage.getItem("loginId"));
+      }
+    }
+    this.token = this.restService.getToken();
+    this.userId = this.restService.getUserId();
     console.warn(this.token + "\n" + this.userId);
 
     this.accessList = this.restService.getData().Access;
