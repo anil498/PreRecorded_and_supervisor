@@ -277,35 +277,35 @@ public class Settings {
   }
 
   public Boolean getIcdc() {
-    return this.icdc
+    return this.icdc;
   }
 
   public void setIcdc(Boolean icdc) {
-    this.icdc = icdc
+    this.icdc = icdc;
   }
 
   public Object getTitleIcdc() {
-    return this.titleIcdc
+    return this.titleIcdc;
   }
 
   public void setTitleIcdc(Object title) {
-    this.titleIcdc = title
+    this.titleIcdc = title;
   }
 
   public Boolean getDisplayIcdc() {
-    return this.displayIcdc
+    return this.displayIcdc;
   }
 
   public void setDisplayIcdc(Boolean displayicdc) {
-    this.displayIcdc = displayicdc
+    this.displayIcdc = displayicdc;
   }
 
   public Boolean getEditIcdc() {
-    return this.editIcdc
+    return this.editIcdc;
   }
 
   public void setEditIcdc(Boolean editicdc) {
-    this.editIcdc = editicdc
+    this.editIcdc = editicdc;
   }
 
   @Override
