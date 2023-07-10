@@ -45,11 +45,9 @@ public class SeleniumTest extends TestBaseClass{
     @Test
     public void TC0001_PageLogin() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\Vatsala\\Desktop\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-        WebDriver driver = new ChromeDriver();
+        ChromeDriver driver = new ChromeDriver();
         driver.get(ConfigSettings.getWebUrl());
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-        driver.findElement(By.className("login-button")).click();
+        login(driver);
         Thread.sleep(2000);
         driver.close();
     }
@@ -71,12 +69,10 @@ public class SeleniumTest extends TestBaseClass{
     @Test
     public void TC0003_LogOutCheck() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-        WebDriver driver = new ChromeDriver();
+        ChromeDriver driver = new ChromeDriver();
         driver.get(ConfigSettings.getWebUrl());
         driver.manage().window().maximize();
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-        driver.findElement(By.className("login-button")).click();
+        login(driver);
         Thread.sleep(2000);
         List<WebElement> elementA = driver.findElements(By.tagName("a"));
 
@@ -98,12 +94,10 @@ public class SeleniumTest extends TestBaseClass{
     @Test
     public void TC0004_ProfileCheck() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-        WebDriver driver = new ChromeDriver();
+        ChromeDriver driver = new ChromeDriver();
         driver.get(ConfigSettings.getWebUrl());
         driver.manage().window().maximize();
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-        driver.findElement(By.className("login-button")).click();
+        login(driver);
         Thread.sleep(2000);
         List<WebElement> elementA = driver.findElements(By.tagName("a"));
 
@@ -127,12 +121,6 @@ public class SeleniumTest extends TestBaseClass{
         AtomicReference<String> responseBody= new AtomicReference<>("");
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
 
-//        Level logLevel = Level.INFO;
-//        System.setProperty("webdriver.chrome.logfile", "selenium.log");
-//        System.setProperty("webdriver.chrome.verboseLogging", "true");
-//        Logger logger = Logger.getLogger("");
-//        logger.setLevel(logLevel);
-
         ChromeDriverService service = new ChromeDriverService.Builder()
                 .usingDriverExecutable(file)
                 .usingAnyFreePort().build();
@@ -150,11 +138,6 @@ public class SeleniumTest extends TestBaseClass{
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         DevTools finalDevTools = devTools;
 
-        devTools.addListener(Network.requestWillBeSent(), request -> {
-
-            System.out.println("Request: " + request.getRequest().getUrl());
-
-        });
         devTools.addListener(Network.responseReceived(), responseReceived -> {
             System.out.println("Network event :"+ responseReceived.getRequestId());
             requestIds[0] = responseReceived.getRequestId();
@@ -167,105 +150,25 @@ public class SeleniumTest extends TestBaseClass{
 
                 responseBody.set(finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody());
                 System.out.println("Response Body :"+responseBody);
-
             }
         });
-        
+
         driver.get(ConfigSettings.getWebUrl());
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-
-        testLoginResponseValidation(driver);
-
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));
-        loginButton.click();
-
+        login(driver);
         Thread.sleep(5000);
-
-        try {
-            List<String> accessValues = getAccessData(responseBody.get());
-//                    driver.get("https://demo2.progate.mobi/#/app/dashboard");
-//                    System.out.println("SystemNames : "+driver.getScreenshotAs(OutputType.FILE));
-            List<WebElement> sidebarElements = driver.findElements(By.tagName("li"));
-//                    WebDriverExtensions.screenshot(driver);
-//                    System.out.println("Find ele : "+ driver.findElements(By.tagName("li")));
-            if(sidebarElements.isEmpty()){
-//                        fail("Unexpected error");
-                Assert.assertTrue(true);
-            }
-            for (WebElement element : sidebarElements) {
-                System.out.println("Attribute name : "+element.getAttribute("class"));
-                if (element.getAttribute("class").contains("dashboard nav-item ng-star-inserted active")) {
-                    System.out.println("DASHBOARD");
-                    if(!accessValues.contains("dashboard"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("customer_management nav-item ng-star-inserted")) {
-                    System.out.println("CUSTOMER MANAGEMENT");
-                    if(!accessValues.contains("customer_management"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("my_users nav-item ng-star-inserted")) {
-                    System.out.println("MY GROUPS");
-                    if(!accessValues.contains("my_users"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("my_sessions nav-item ng-star-inserted")) {
-                    System.out.println("MY SESSIONS");
-                    if(!accessValues.contains("my_sessions"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("dynamic_links nav-item ng-star-inserted")) {
-                    System.out.println("DYNAMIC LINKS");
-                    if(!accessValues.contains("dynamic_links"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("my_reports nav-item ng-star-inserted")) {
-                    System.out.println("MY REPORTS");
-                    if(!accessValues.contains("my_reports"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("nav-item platform_access ng-star-inserted")) {
-                    System.out.println("PLATFORM ACCESS");
-                    if(!accessValues.contains("manage_platform_access"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("nav-item platform_feature ng-star-inserted")) {
-                    System.out.println("PLATFORM FEATURE");
-                    if(!accessValues.contains("manage_platform_feature"))
-                        fail();
-                }
-                if (element.getAttribute("class").contains("feedform_form nav-item ng-star-inserted")) {
-                    System.out.println("FEEDBACK");
-                    if(!accessValues.contains("feedback")){
-                        System.out.println("FEEDBACK FAIL");
-                        fail();
-                        break;
-                    }
-                }
-            }
-            Thread.sleep(1000);
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            fail("Unexpected error");
-        }
-
+        checkAccess(driver,responseBody);
         driver.close();
     }
 
     @Test
     public void TC0006_CustomerManagement() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-        WebDriver driver = new ChromeDriver();
+        ChromeDriver driver = new ChromeDriver();
         JavascriptExecutor js = (JavascriptExecutor) driver;
         NgWebDriver ngWebDriver = new NgWebDriver(js);
         driver.get(ConfigSettings.getWebUrl());
         driver.manage().window().maximize();
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-        driver.findElement(By.className("login-button")).click();
+        login(driver);
         Thread.sleep(1000);
         driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='customer_management nav-item ng-star-inserted']")).click();
         Thread.sleep(1000);
@@ -284,7 +187,6 @@ public class SeleniumTest extends TestBaseClass{
         Thread.sleep(1000);
         driver.findElement(By.cssSelector("button[class='mat-focus-indicator close-btn mat-icon-button mat-button-base']")).click();
         driver.close();
-
     }
 
     @Test
@@ -356,7 +258,6 @@ public class SeleniumTest extends TestBaseClass{
             String url = responseReceived.getResponse().getUrl();
             System.out.println("Url : "+url);
             if(url.contains("https://demo2.progate.mobi/VPService/v1/Account/GetAll")) {
-
                 String responseBody = finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody();
                 System.out.println("Response Body :" + responseBody);
 
@@ -365,65 +266,65 @@ public class SeleniumTest extends TestBaseClass{
         NgWebDriver ngWebDriver = new NgWebDriver(js);
         driver.get(ConfigSettings.getWebUrl());
         driver.manage().window().maximize();
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-        driver.findElement(By.className("login-button")).click();
+        login(driver);
         Thread.sleep(5000);
         driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='customer_management nav-item ng-star-inserted']")).click();
         Thread.sleep(10000);
         List<WebElement> tableRows = driver.findElements(By.tagName("tr"));
         for (WebElement element : tableRows) {
             System.out.println("Attribute name : " + element.getAttribute("class"));
-
         }
         Thread.sleep(2000);
         driver.close();
     }
 
-    public Boolean testLoginResponseValidation(ChromeDriver driver){
-        System.out.println("Driver : "+driver.getCurrentUrl());
-        return true;
+    @Test
+    public void TC0009_CustomerRolesCheck() throws InterruptedException {
+
+        AtomicReference<String> responseBody= new AtomicReference<>("");
+        File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
+        ChromeDriverService service = new ChromeDriverService.Builder()
+                .usingDriverExecutable(file)
+                .usingAnyFreePort().build();
+        ChromeOptions options = new ChromeOptions().addArguments("--incognito");
+        ChromeDriver driver = new ChromeDriver(service, options);
+        driver.manage().window().maximize();
+        DevTools devTools = driver.getDevTools();
+
+        devTools = ((ChromeDriver) driver).getDevTools();
+        devTools.createSession();
+        devTools.send(Network.clearBrowserCache());
+        devTools.send(Network.setCacheDisabled(true));
+
+        final RequestId[] requestIds = new RequestId[1];
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+        DevTools finalDevTools = devTools;
+
+        devTools.addListener(Network.responseReceived(), responseReceived -> {
+//            System.out.println("Network event :"+ responseReceived.getRequestId());
+            requestIds[0] = responseReceived.getRequestId();
+            String url = responseReceived.getResponse().getUrl();
+            if(url.contains("/VPService/v1/User/login")) {
+                responseBody.set(finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody());
+//                System.out.println("Response Body :"+responseBody);
+            }
+        });
+
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        NgWebDriver ngWebDriver = new NgWebDriver(js);
+        driver.get(ConfigSettings.getWebUrl());
+        driver.manage().window().maximize();
+        login(driver);
+        Thread.sleep(3000);
+        driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='customer_management nav-item ng-star-inserted']")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
+        Thread.sleep(1000);
+        checkRoles(driver,responseBody);
+        driver.findElement(ByAngular.partialButtonText("View")).click();
+        Thread.sleep(1000);
+        driver.close();
     }
-//    @Test
-//    public void getLogs() {
-//
-//        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Vatsala\\Desktop\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-//        WebDriver driver = new ChromeDriver();
-//
-//        DevTools devTools = ((ChromeDriver) driver).getDevTools();
-//        devTools.createSession();
-//
-//        devTools.send(Network.enable(Optional.of(1000000), Optional.empty(), Optional.empty()));
-
-//        devTools.addListener(Network.requestWillBeSent(), request -> {
-//            if (request.getRequest().getMethod().equalsIgnoreCase("POST")) {
-//                System.out.println("Request URL : " + request.getRequest().getUrl());
-//                System.out.println("Request body: " + request.getRequest().getPostData());
-//                System.out.println("Request headers: " + request.getRequest().getHeaders().toString());
-//            }
-//            System.out.println("Request Method : " + request.getRequest().getMethod().equalsIgnoreCase("POST"));
-//            System.out.println("Request isPostDataPresent : " + request.getRequest().getHasPostData());
-//        });
-
-//        devTools.addListener(Network.loadingFinished(), response ->
-//        {
-//            String body = devTools.send(Network.getResponseBody(response.getRequestId())).getBody();
-//            System.out.println(body);
-//        });
-//
-//        driver.get(ConfigSettings.getWebUrl());
-//        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-//        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-//        driver.findElement(By.className("login-button")).click();
-
-
-//            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-//            WebElement liElement = wait.until(ExpectedConditions.elementToBeClickable(By.className("dashboard")));
-//            liElement.click();
-
-
-//    }
-
     public List<String> getAccessData(String responseBody) throws IOException {
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(responseBody,JsonObject.class);
@@ -439,6 +340,100 @@ public class SeleniumTest extends TestBaseClass{
             }
         }
         return sysName;
+    }
+
+    public void login(ChromeDriver driver){
+        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
+        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
+
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));
+        loginButton.click();
+    }
+    public void checkRoles(ChromeDriver driver,AtomicReference<String> responseBody) {
+        try {
+            List<String> accessValues = getAccessData(responseBody.get());
+                if (driver.findElement(ByAngular.partialButtonText("Edit")).isDisplayed()) {
+                    System.out.println("EDIT");
+                    if (!accessValues.contains("customer_update"))
+                        fail();
+                }
+            if (driver.findElement(ByAngular.partialButtonText("Delete")).isDisplayed()) {
+                System.out.println("DELETE");
+                if (!accessValues.contains("customer_delete"))
+                    fail();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void checkAccess(ChromeDriver driver,AtomicReference<String> responseBody){
+        try {
+            List<String> accessValues = getAccessData(responseBody.get());
+            List<WebElement> sidebarElements = driver.findElements(By.tagName("li"));
+//                    WebDriverExtensions.screenshot(driver);
+//                    System.out.println("Find ele : "+ driver.findElements(By.tagName("li")));
+            if(sidebarElements.isEmpty()){
+                fail();
+            }
+            for (WebElement element : sidebarElements) {
+                System.out.println("Attribute name : "+element.getAttribute("class"));
+                if (element.getAttribute("class").contains("dashboard nav-item ng-star-inserted active")) {
+                    System.out.println("DASHBOARD");
+                    if(!accessValues.contains("dashboard"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("customer_management nav-item ng-star-inserted")) {
+                    System.out.println("CUSTOMER MANAGEMENT");
+                    if(!accessValues.contains("customer_management"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("my_users nav-item ng-star-inserted")) {
+                    System.out.println("MY GROUPS");
+                    if(!accessValues.contains("my_users"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("my_sessions nav-item ng-star-inserted")) {
+                    System.out.println("MY SESSIONS");
+                    if(!accessValues.contains("my_sessions"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("dynamic_links nav-item ng-star-inserted")) {
+                    System.out.println("DYNAMIC LINKS");
+                    if(!accessValues.contains("dynamic_links"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("my_reports nav-item ng-star-inserted")) {
+                    System.out.println("MY REPORTS");
+                    if(!accessValues.contains("my_reports"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("nav-item platform_access ng-star-inserted")) {
+                    System.out.println("PLATFORM ACCESS");
+                    if(!accessValues.contains("manage_platform_access"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("nav-item platform_feature ng-star-inserted")) {
+                    System.out.println("PLATFORM FEATURE");
+                    if(!accessValues.contains("manage_platform_feature"))
+                        fail();
+                }
+                if (element.getAttribute("class").contains("feedform_form nav-item ng-star-inserted")) {
+                    System.out.println("FEEDBACK");
+                    if(!accessValues.contains("feedback")){
+                        System.out.println("FEEDBACK FAIL");
+                        fail();
+                        break;
+                    }
+                }
+            }
+            Thread.sleep(1000);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            fail("Unexpected error");
+        }
     }
 
 
@@ -469,28 +464,5 @@ public class SeleniumTest extends TestBaseClass{
 //        }
 //
 //    }
-//@Test
-//public void getLogs() {
-//
-//    // pass the path of the chromedriver location in the second argument
-////    System.setProperty("webdriver.chrome.driver", "");
-//
-//    WebDriver driver = new ChromeDriver();
-//    driver.get("https://demo2.progate.mobi/#/");
-//
-//    LogEntries entry = driver.manage().logs().get(LogType.BROWSER);
-//
-//    // Retrieving all logs
-//    List<LogEntry> logs = entry.getAll();
-//
-//    // Printing details separately
-//    for (LogEntry e : logs) {
-//        System.out.println("Message: " + e.getMessage());
-//        System.out.println("Level: " + e.getLevel());
-//        System.out.println("Timestamp: " + e.getTimestamp());
-//    }
-//
-//}
-
 
 }

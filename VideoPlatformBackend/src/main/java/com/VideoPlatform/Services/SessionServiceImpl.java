@@ -201,13 +201,13 @@ public class SessionServiceImpl implements SessionService{
                 try {
                     Map<String, String> map = (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
                     if(moderator == false){
-                    settingsEntity.setIcdc(true);
+                    settingsEntity.setIcdc(false);
                     settingsEntity.setDisplayIcdc(true);
                     settingsEntity.setEditIcdc(false);
                     settingsEntity.setTitleIcdc(map.get("title_icdc"));
                     }
                     else {
-                        settingsEntity.setIcdc(false);
+                        settingsEntity.setIcdc(true);
                         settingsEntity.setDisplayIcdc(true);
                         settingsEntity.setEditIcdc(true);
                         settingsEntity.setTitleIcdc(map.get("title_icdc"));
