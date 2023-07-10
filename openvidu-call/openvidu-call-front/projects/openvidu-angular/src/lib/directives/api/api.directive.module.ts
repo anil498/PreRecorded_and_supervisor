@@ -42,7 +42,11 @@ import {
 	displayTickerDirective,
 	PrejoinDirective,
 	VideoMutedDirective,
-	DisplayTickerDirective
+	DisplayTickerDirective,
+	usertypeDirective,
+	displayicdcDirective,
+	editicdcDirective,
+	titleicdcDirective,
 } from './videoconference.directive';
 
 @NgModule({
@@ -82,6 +86,10 @@ import {
 		ParticipantNameDirective,
 		DisplayTickerDirective,
 		displayTickerDirective,
+		usertypeDirective,
+		displayicdcDirective,
+		editicdcDirective,
+		titleicdcDirective,
 		ActivitiesPanelRecordingActivityDirective,
 		RecordingActivityRecordingsListDirective,
 		RecordingActivityRecordingErrorDirective,
@@ -128,6 +136,10 @@ import {
 		ParticipantNameDirective,
 		DisplayTickerDirective,
 		displayTickerDirective,
+		usertypeDirective,
+		displayicdcDirective,
+		editicdcDirective,
+		titleicdcDirective,
 		ActivitiesPanelRecordingActivityDirective,
 		RecordingActivityRecordingsListDirective,
 		RecordingActivityRecordingErrorDirective,

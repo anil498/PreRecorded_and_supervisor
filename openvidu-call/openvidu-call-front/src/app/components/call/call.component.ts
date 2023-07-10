@@ -45,7 +45,11 @@ export class CallComponent implements OnInit {
 	isScreenShareWithAudio:boolean;
 	isAutoFullScreen:boolean;
 	private isDebugSession: boolean = false;
+	
 	isquestionpanel: boolean = false;
+	isdisplayicdc: boolean=true;
+	isediticdc: boolean=true;
+	istitleicdc: string='Custom Title to Check if DIv Element is steeing height according to the contents of the the container';
 
 	constructor(
 		private restService: RestService,

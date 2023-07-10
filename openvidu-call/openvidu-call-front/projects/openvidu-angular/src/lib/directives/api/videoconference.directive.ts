@@ -4,7 +4,6 @@ import { CaptionService } from '../../services/caption/caption.service';
 import { OpenViduAngularConfigService } from '../../services/config/openvidu-angular.config.service';
 import { TranslateService } from '../../services/translate/translate.service';
 
-
 /**
  * The **minimal** directive applies a minimal UI hiding all controls except for cam and mic.
  *
@@ -78,7 +77,7 @@ export class MinimalDirective implements OnDestroy {
  * @example
  * <ov-videoconference [lang]="'es'"></ov-videoconference>
  */
- @Directive({
+@Directive({
 	selector: 'ov-videoconference[lang]'
 })
 export class LangDirective implements OnDestroy {
@@ -141,7 +140,7 @@ export class LangDirective implements OnDestroy {
  * @example
  * <ov-videoconference [captionsLang]="'es-ES'"></ov-videoconference>
  */
- @Directive({
+@Directive({
 	selector: 'ov-videoconference[captionsLang]'
 })
 export class CaptionsLangDirective implements OnDestroy {
@@ -202,14 +201,14 @@ export class CaptionsLangDirective implements OnDestroy {
  * @example
  * <ov-videoconference [captionsLangOptions]="[{name:'Spanish', ISO: 'es-ES'}]"></ov-videoconference>
  */
- @Directive({
+@Directive({
 	selector: 'ov-videoconference[captionsLangOptions]'
 })
 export class CaptionsLangOptionsDirective implements OnDestroy {
 	/**
 	 * @ignore
 	 */
-	@Input() set captionsLangOptions(value: CaptionsLangOption []) {
+	@Input() set captionsLangOptions(value: CaptionsLangOption[]) {
 		this.update(value);
 	}
 
@@ -235,11 +234,10 @@ export class CaptionsLangOptionsDirective implements OnDestroy {
 	/**
 	 * @ignore
 	 */
-	update(value: CaptionsLangOption [] | undefined) {
+	update(value: CaptionsLangOption[] | undefined) {
 		this.captionService.setLanguageOptions(value);
 	}
 }
-
 
 /**
  * The **participantName** directive sets the participant name. It can be useful for aplications which doesn't need the prejoin page.
@@ -510,7 +508,6 @@ export class VideoMutedDirective implements OnDestroy {
 	selector: 'ov-videoconference[audioMuted]'
 })
 export class AudioMutedDirective implements OnDestroy {
-
 	/**
 	 * @ignore
 	 */
@@ -541,5 +538,294 @@ export class AudioMutedDirective implements OnDestroy {
 		if (this.libService.audioMuted.getValue() !== value) {
 			this.libService.audioMuted.next(value);
 		}
+	}
+}
+
+/**
+ * The **usertype** directive allows get user type.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [usertype]="false"></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[usertype]'
+})
+export class usertypeDirective implements OnInit {
+	/**
+
+     * @ignore
+
+     */
+
+	@Input() usertype: string;
+
+	/**
+
+     * @ignore
+
+     */
+
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnInit(): void {
+		this.update(this.usertype);
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	clear() {
+		this.update('');
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	update(value: string) {
+		this.libService.usertype.next(value);
+	}
+}
+
+
+/**
+ * The **displayicdc** directive allows to set to display icdc or not.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [displayicdc]="false"></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[displayicdc]'
+})
+export class displayicdcDirective implements OnInit {
+	/**
+
+     * @ignore
+
+     */
+
+	@Input() displayicdc: boolean;
+
+	/**
+
+     * @ignore
+
+     */
+
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnInit(): void {
+		this.update(this.displayicdc);
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	clear() {
+		this.update(false);
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	update(value: boolean) {
+		this.libService.displayicdc.next(value);
+	}
+}
+
+/**
+ * The **editicdc** directive allows get edit type.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [editicdc]="false"></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[editicdc]'
+})
+export class editicdcDirective implements OnInit {
+	/**
+
+     * @ignore
+
+     */
+
+	@Input() editicdc: boolean;
+
+	/**
+
+     * @ignore
+
+     */
+
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnInit(): void {
+		this.update(this.editicdc);
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	clear() {
+		this.update(false);
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	update(value: boolean) {
+		this.libService.editicdc.next(value);
+	}
+}
+
+/**
+ * The **titleicdc** directive allows get icdc titlee.
+ *
+ * Default: `true`
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `toolbar` component:
+ *
+ * @example
+ * <ov-videoconference [titleicdc]="false"></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[titleicdc]'
+})
+export class titleicdcDirective implements OnInit {
+	/**
+
+     * @ignore
+
+     */
+
+	@Input() titleicdc: string;
+
+	/**
+
+     * @ignore
+
+     */
+
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnInit(): void {
+		this.update(this.titleicdc);
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	clear() {
+		this.update('');
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	update(value: string) {
+		this.libService.titleicdc.next(value);
 	}
 }

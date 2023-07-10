@@ -422,6 +422,16 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	screenSize: string;
 
+	/**
+	 * @ignore
+	 */
+	displayicdc: boolean = true;
+
+	/**
+	 * @ignore
+	 */
+	isicdc: boolean = true;
+
 	private log: ILogger;
 	private minimalSub: Subscription;
 	private panelTogglingSubscription: Subscription;
@@ -452,6 +462,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private sessionDurationSub: Subscription;
 	private supervisorButtonSub:Subscription;
 	private MuteCameraButtonSub:Subscription;
+	private icdcSub:Subscription;
+	private displayicdcSub:Subscription;
 	/**
 	 * @ignore
 	 */
@@ -679,13 +691,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleQuestionPanel() {
 		this.onQuestionPanelButtonClicked.emit();
+
+		if(this.displayicdc){
 		this.panelService.togglePanel(PanelType.QUESTIONS);
-
-		// const connection = this.participantService.getRemoteParticipants();
-		// console.log("Connections: "+JSON.stringify(connection));
-
-		// const connectionIds = connection.map((conn) => JSON.parse(JSON.stringify(conn)).id);
-        // console.log("Connection ID - "+connectionIds[0]);
+	}
 
 		const data = {
 			message: "Question Panel Signal From Support",
@@ -975,6 +984,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.showMuteCameraButton = value;
 			this.cd.markForCheck();
 		});
+
+		this.displayicdcSub = this.libService.displayicdc.subscribe((displayicdc: boolean)=>{
+			this.displayicdc = displayicdc;
+		})
+
 	}
 
 	private subscribeToScreenSize() {
@@ -996,4 +1010,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.showMoreOptionsButton =
 			this.showFullscreenButton || this.showBackgroundEffectsButton || this.showRecordingButton || this.showSettingsButton;
 	}
+
+	
 }

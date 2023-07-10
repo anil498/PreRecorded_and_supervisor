@@ -39,6 +39,10 @@ export interface sessionResponse {
     }
     broadcast: boolean;
     fileUrl:string;
+    icdc:boolean;
+    displayIcdc:boolean;
+    editIcdc:boolean;
+    titleIcdc:object;
   };
   cameraToken: string;
   screenToken: string;
