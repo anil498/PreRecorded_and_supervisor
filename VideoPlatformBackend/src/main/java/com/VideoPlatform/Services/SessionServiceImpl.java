@@ -203,13 +203,13 @@ public class SessionServiceImpl implements SessionService{
                     if(moderator == false){
                     settingsEntity.setIcdc(false);
                     settingsEntity.setDisplayIcdc(true);
-                    settingsEntity.setEditIcdc(false);
+                    settingsEntity.setEditIcdc(true);
                     settingsEntity.setTitleIcdc(map.get("title_icdc"));
                     }
                     else {
                         settingsEntity.setIcdc(true);
                         settingsEntity.setDisplayIcdc(true);
-                        settingsEntity.setEditIcdc(true);
+                        settingsEntity.setEditIcdc(false);
                         settingsEntity.setTitleIcdc(map.get("title_icdc"));
                     }
                 }
