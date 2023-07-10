@@ -249,33 +249,6 @@ public class Settings {
     isAutoFullScreen = autoFullScreen;
   }
 
-  public void setDescription(String description) {
-    if(description!=null)
-    this.description = description;
-  }
-
-  public Boolean getDisplayTicker() {
-    return displayTicker;
-  }
-
-  public void setDescription(String description) {
-    if(description!=null)
-    this.description = description;
-  }
-
-  public Boolean getDisplayTicker() {
-    return displayTicker;
-  }
-
-  public void setDescription(String description) {
-    if(description!=null)
-    this.description = description;
-  }
-
-  public Boolean getDisplayTicker() {
-    return displayTicker;
-  }
-
   public Boolean getIcdc() {
     return this.icdc;
   }
