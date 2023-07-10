@@ -46,10 +46,10 @@ export class CallComponent implements OnInit {
 	isAutoFullScreen:boolean;
 	private isDebugSession: boolean = false;
 	
-	isquestionpanel: boolean = false;
-	isdisplayicdc: boolean=true;
-	isediticdc: boolean=true;
-	istitleicdc: string='Custom Title to Check if DIv Element is steeing height according to the contents of the the container';
+	isquestionpanel: boolean;
+	isdisplayicdc: boolean;
+	isediticdc: boolean;
+	istitleicdc: string;
 
 	constructor(
 		private restService: RestService,
@@ -167,6 +167,11 @@ export class CallComponent implements OnInit {
 			this.preRecordedFilePath=response.settings.fileUrl;
 			this.isScreenShareWithAudio=response.settings.isScreenShareWithAudio;
 			this.isAutoFullScreen=response.settings.isAutoFullScreen;
+			
+			this.isquestionpanel=response.settings.icdc;
+			this.isdisplayicdc=response.settings.displayIcdc;
+			this.isediticdc=response.settings.editIcdc;
+			this.istitleicdc=response.settings.titleIcdc.toString();
 
 			if (response.participantName) {
 				this.participantNameValue = response.participantName;
@@ -175,7 +180,6 @@ export class CallComponent implements OnInit {
 			}
 			if (this.type === "Support"){
 				this.isAudioMuted=false;
-				this.isquestionpanel = true;
 				if(this.platformService.isIos()){
 					this.isVideoMuted=false
 				}else{

@@ -46,8 +46,6 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	 * @ignore
 	 */
 	@ViewChild('chatScroll') chatScroll: ElementRef;
-	@ViewChild('title', { read: ElementRef }) title: ElementRef;
-  @ViewChild('titlecontainer', { read: ElementRef }) titlecontainer: ElementRef;
 
 	private log: ILogger;
 
@@ -147,30 +145,8 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 
 	}
 
-	ngAfterViewInit() {
-		// setTimeout(() => {
-		// 	this.scrollToBottom();
-		// }, 100);
+	ngAfterViewInit() {}
 
-		this.setDivHeight();
-
-	}
-
-	setDivHeight() {
-		// Get the height of the label
-		const labelHeight = this.title.nativeElement.offsetHeight;
-	
-		// Set the height of the div
-		this.titlecontainer.nativeElement.style.height = labelHeight + 'px';
-	  }
-
-	// scrollToBottom(): void {
-	// 	setTimeout(() => {
-	// 		try {
-	// 			this.chatScroll.nativeElement.scrollTop = this.chatScroll.nativeElement.scrollHeight;
-	// 		} catch (err) {}
-	// 	}, 20);
-	// }
 
 	protected subscribeToSignal() {
 		this.session.on(`signal:${Signal.SUPPORT}`, (event: any) => {

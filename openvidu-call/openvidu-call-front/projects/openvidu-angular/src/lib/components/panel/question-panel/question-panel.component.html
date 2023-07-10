@@ -31,6 +31,7 @@
 						<div>
 						  <ng-container *ngFor="let option of question.meta">
 							<mat-checkbox
+							  [disabled]="!editicdc"
 							  [value]="option"
 							  [checked]="isOptionSelected(question.q_id, option)"
 							  (change)="updateSelectedAnswers(question.q_id , option, $event.checked)"
