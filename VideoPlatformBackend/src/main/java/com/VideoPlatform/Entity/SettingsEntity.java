@@ -24,10 +24,11 @@ public class SettingsEntity {
     private Boolean preRecorded;
     private Object landingPage;
     private Object preRecordedDetails;
-    private Boolean icdc;
-    private Boolean displayIcdc;
-    private Boolean editIcdc;
-    private Object titleIcdc;
+//    private Boolean icdc;
+//    private Boolean displayIcdc;
+//    private Boolean editIcdc;
+//    private Object titleIcdc;
+    private Object icdcDetails;
 
 
     public Integer getDuration() {
@@ -170,36 +171,12 @@ public class SettingsEntity {
         if(landingPage != null) this.landingPage = landingPage;
     }
 
-    public Boolean getIcdc() {
-        return icdc;
+    public Object getIcdcDetails() {
+        return icdcDetails;
     }
 
-    public void setIcdc(Boolean icdc) {
-        this.icdc = icdc;
-    }
-
-    public Boolean getDisplayIcdc() {
-        return displayIcdc;
-    }
-
-    public void setDisplayIcdc(Boolean displayIcdc) {
-        this.displayIcdc = displayIcdc;
-    }
-
-    public Boolean getEditIcdc() {
-        return editIcdc;
-    }
-
-    public void setEditIcdc(Boolean editIcdc) {
-        this.editIcdc = editIcdc;
-    }
-
-    public Object getTitleIcdc() {
-        return titleIcdc;
-    }
-
-    public void setTitleIcdc(Object titleIcdc) {
-        this.titleIcdc = titleIcdc;
+    public void setIcdcDetails(Object icdcDetails) {
+        this.icdcDetails = icdcDetails;
     }
 
     @Override
@@ -223,10 +200,7 @@ public class SettingsEntity {
                 ", preRecorded=" + preRecorded +
                 ", landingPage=" + landingPage +
                 ", preRecordedDetails=" + preRecordedDetails +
-                ", icdc=" + icdc +
-                ", displayIcdc=" + displayIcdc +
-                ", editIcdc=" + editIcdc +
-                ", titleIcdc=" + titleIcdc +
+                ", icdcDetails=" + icdcDetails +
                 '}';
     }
 }

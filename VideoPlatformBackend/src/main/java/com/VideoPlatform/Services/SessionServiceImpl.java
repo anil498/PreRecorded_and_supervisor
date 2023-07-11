@@ -199,18 +199,25 @@ public class SessionServiceImpl implements SessionService{
             }
             else if (16 == featureId) {
                 try {
-                    Map<String, String> map = (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    Map<String, Object> map1 = (Map<String, Object>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    Map<String, Object> map2 = map1;
                     if(moderator == false){
-                    settingsEntity.setIcdc(false);
-                    settingsEntity.setDisplayIcdc(true);
-                    settingsEntity.setEditIcdc(true);
-                    settingsEntity.setTitleIcdc(map.get("title_icdc"));
+                        map1.replace("icdc",false);
+                        map1.replace("display_icdc",true);
+                        map1.replace("edit_icdc",true);
+                        map1.replace("title_icdc","ICDC Panel");
+
+                        logger.info("Map1 : {}",map1);
+                        settingsEntity.setIcdcDetails(map1);
                     }
                     else {
-                        settingsEntity.setIcdc(true);
-                        settingsEntity.setDisplayIcdc(true);
-                        settingsEntity.setEditIcdc(false);
-                        settingsEntity.setTitleIcdc(map.get("title_icdc"));
+                        map2.replace("icdc",true);
+                        map2.replace("display_icdc",true);
+                        map2.replace("edit_icdc",false);
+                        map2.replace("title_icdc","ICDC Panel");
+
+                        logger.info("Map1 : {}",map2);
+                        settingsEntity.setIcdcDetails(map2);
                     }
                 }
                 catch (Exception e){
