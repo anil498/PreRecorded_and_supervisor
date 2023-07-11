@@ -128,7 +128,7 @@ public class SessionController {
         return ok(result);
     }
 
-    @PutMapping("/hold")
+    @PutMapping("/Update")
     public ResponseEntity<?> updateHold(@RequestBody Map<String, Object> params, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
@@ -137,7 +137,7 @@ public class SessionController {
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         sessionService.updateHold(params);
-        return ok(commonService.responseData("200","Hold updated!"));
+        return ok(commonService.responseData("200","Session updated!"));
     }
 
     @PostMapping("/sendLink")
