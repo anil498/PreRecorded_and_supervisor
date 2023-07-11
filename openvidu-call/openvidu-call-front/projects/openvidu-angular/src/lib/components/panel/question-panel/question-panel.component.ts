@@ -105,7 +105,8 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				}
 			});
 
-			//Gvve Form Access to user based on the paramters Recieved from backend
+			this.log.d(this.titleicdc);
+			//Give Form Access to user based on the paramters Recieved from backend
 			if (!this.editicdc) {
 				this.form.disable();
 				this.isSubmit = false;

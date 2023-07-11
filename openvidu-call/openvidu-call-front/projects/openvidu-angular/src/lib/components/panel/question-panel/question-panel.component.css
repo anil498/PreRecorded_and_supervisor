@@ -1,6 +1,7 @@
 .panel-container{
 	border-radius: 10px;
 	padding: 10px;
+	background-color: lightyellow;
 }
 
 .panel-header-container{
@@ -26,11 +27,21 @@
 .question-detail {
 	width: 95%;
 	display: inline-block;
+
+}
+
+.icdc{
+	border-radius: 10px;
+	padding: 10px;
+	margin: 10px;
+	width: 65%;
+	align-content: center;
+	background-color: lightblue;
 }
 
 .question-block{
 	width: 300px;
-	padding-left: 10px;
+	padding-right: 20px;
 }
 
 ::ng-deep a:-webkit-any-link {
@@ -60,7 +71,7 @@ form {
   
   /* Style the dropdown/select */
   select {
-	width: 70%;
+	width: 90%;
 	padding: 5px;
 	border: 1px solid #ccc;
 	border-radius: 3px;
@@ -71,7 +82,7 @@ form {
   
   /* Style the text input */
   input[type="text"] {
-	width: 70%;
+	width: 90%;
 	padding: 5px;
 	height: 20%;
 	border: 1px solid #ccc;
@@ -109,6 +120,12 @@ form {
 ::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background,.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
     background-color: #2196F3;
   }
+
+  .submit-button{
+	padding-left: 100px;
+  }
+
+  
 
   
   
