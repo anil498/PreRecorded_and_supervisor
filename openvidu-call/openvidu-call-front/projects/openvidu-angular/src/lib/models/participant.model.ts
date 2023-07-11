@@ -57,6 +57,10 @@ export interface ParticipantProperties {
 	 * Whether the participant is muted forcibly or not
 	 */
 	isMutedForcibly?: boolean;
+	/**
+	 * Whether the participant is on hold  or not
+	 */
+	isOnHold?: boolean;
 }
 
 export abstract class ParticipantAbstractModel {
@@ -66,6 +70,7 @@ export abstract class ParticipantAbstractModel {
 	nickname: string;
 	colorProfile: string;
 	isMutedForcibly: boolean;
+	isOnHold:boolean;
 
 	constructor(props: ParticipantProperties, model?: StreamModel) {
 		this.id = props.id ? props.id : new Date().getTime().toString();
@@ -73,6 +78,7 @@ export abstract class ParticipantAbstractModel {
 		this.nickname = props.nickname;
 		this.colorProfile = !!props.colorProfile ? props.colorProfile : `hsl(${Math.random() * 360}, 100%, 80%)`;
 		this.isMutedForcibly = typeof props.isMutedForcibly === 'boolean' ? props.isMutedForcibly : false;
+		this.isOnHold = typeof props.isOnHold === 'boolean' ? props.isOnHold : false;
 		let streamModel: StreamModel = {
 			connected: model ? model.connected : true,
 			type: model ? model.type : VideoType.CAMERA,

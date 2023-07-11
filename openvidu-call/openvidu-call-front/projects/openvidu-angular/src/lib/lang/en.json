@@ -60,7 +60,9 @@
 		"UNMUTE_SOUND": "Unmute sound",
 		"ZOOM_IN": "Zoom in",
 		"ZOOM_OUT": "Zoom out",
-		"REPLACE_SCREEN": "Replace screen"
+		"REPLACE_SCREEN": "Replace screen",
+		"HOLD": "Hold the participant",
+		"UNHOLD": "UnHold the participant"
 	},
 	"PANEL": {
 		"CLOSE": "Close",

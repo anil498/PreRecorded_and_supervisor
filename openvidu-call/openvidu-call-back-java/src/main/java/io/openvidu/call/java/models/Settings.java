@@ -31,10 +31,11 @@ public class Settings {
   private Boolean broadcast=false;
   private String landingPage="https://in.linkedin.com/company/mcarbon";
   private String fileUrl;
-  private Boolean icdc;
-  private Boolean displayIcdc;
-  private Boolean editIcdc;
+  private Boolean icdc=false;
+  private Boolean displayIcdc=false;
+  private Boolean editIcdc=false;
   private Object titleIcdc;
+  private Boolean hold=false;
 
   
   public Integer getDuration() {
@@ -281,6 +282,14 @@ public class Settings {
     this.editIcdc = editicdc;
   }
 
+  public Boolean getHold() {
+    return hold;
+  }
+
+  public void setHold(Boolean hold) {
+    this.hold = hold;
+  }
+
   @Override
   public String toString() {
     return "Settings{" +
@@ -308,10 +317,11 @@ public class Settings {
             ", broadcast=" + broadcast +
             ", landingPage='" + landingPage + '\'' +
             ", fileUrl='" + fileUrl + '\'' +
-            ", icdc='" + icdc + '\'' +
-            ", displayIcdc='" + displayIcdc + '\'' +
-            ", editIcdc='" + editIcdc + '\'' +
-            ", titleIcdc='" + titleIcdc + '\'' +
+            ", icdc=" + icdc +
+            ", displayIcdc=" + displayIcdc +
+            ", editIcdc=" + editIcdc +
+            ", titleIcdc=" + titleIcdc +
+            ", hold=" + hold +
             '}';
   }
 }

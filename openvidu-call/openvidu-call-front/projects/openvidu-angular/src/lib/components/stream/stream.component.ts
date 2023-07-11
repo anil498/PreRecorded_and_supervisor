@@ -1,8 +1,8 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Output, ViewChild,EventEmitter } from '@angular/core';
 import { MatMenuPanel, MatMenuTrigger } from '@angular/material/menu';
-import { PublisherProperties } from 'openvidu-browser';
-import { Subscription } from 'rxjs';
+import { PublisherProperties, Session,Subscriber } from 'openvidu-browser';
+import { Subscription, throwError } from 'rxjs';
 import { VideoSizeIcon } from '../../models/icon.model';
 import { StreamModel } from '../../models/participant.model';
 import { Signal } from '../../models/signal.model';
@@ -13,6 +13,8 @@ import { LayoutService } from '../../services/layout/layout.service';
 import { OpenViduService } from '../../services/openvidu/openvidu.service';
 import { ParticipantService } from '../../services/participant/participant.service';
 import { StorageService } from '../../services/storage/storage.service';
+import { ILogger } from '../../models/logger.model';
+import { LoggerService } from '../../services/logger/logger.service';
 
 /**
  * The **StreamComponent** is hosted inside of the {@link LayoutComponent}.
@@ -118,6 +120,7 @@ export class StreamComponent implements OnInit {
 	showVideo: boolean;
 	displayTickerValue:string;
 	isOnHold:boolean;
+	protected log: ILogger;
 
 	/**
 	 * @ignore
@@ -141,8 +144,17 @@ export class StreamComponent implements OnInit {
 		this.checkVideoEnlarged();
 		if (this._stream.participant) {
 			this.nickname = this._stream.participant.nickname;
+			this.libService.isOnHold.next(this._stream.participant.isOnHold);
 		}
 	}
+	/**
+	 * Provides event notifications that fire when hold button has been clicked.
+	 */
+	@Output() onHoldButtonClicked: EventEmitter<void> = new EventEmitter<void>();
+	/**
+	 * Provides event notifications that fire when hold button has been clicked.
+	 */
+	@Output() onUnHoldButtonClicked: EventEmitter<void> = new EventEmitter<void>();
 
 	/**
 	 * @ignore
@@ -171,8 +183,11 @@ export class StreamComponent implements OnInit {
 		protected participantService: ParticipantService,
 		protected storageService: StorageService,
 		protected cdkSrv: CdkOverlayService,
-		private libService: OpenViduAngularConfigService
-	) {}
+		private libService: OpenViduAngularConfigService,
+		private loggerSrv: LoggerService,
+	) {
+		this.log = this.loggerSrv.get('StreamComponent');
+	}
 
 	ngOnInit() {
 		this.subscribeToStreamDirectives();
@@ -225,6 +240,25 @@ export class StreamComponent implements OnInit {
 	toggleNicknameForm() {
 		if (this._stream?.participant?.local) {
 			this.toggleNickname = !this.toggleNickname;
+		}
+	}
+	/**
+	 * @ignore
+	 */
+	toggleHold() {
+		console.log("Toggling hold")
+		const connectionId = this._stream.connectionId;
+		const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
+		const subscriber: Subscriber = this.openviduService.getWebcamSession().subscribe(participantAdded?.stream, undefined);
+		this.isOnHold=this.libService.isOnHold.getValue();
+		if (!this.isOnHold) {
+			this.onHoldButtonClicked.emit();
+			this.log.d("Going to hold the partiticpant: ",connectionId)
+			this.openviduService.holdPartiticipant(subscriber);
+		}else{
+			this.onUnHoldButtonClicked.emit();
+			this.log.d("Going to unhold the partiticpant: ",connectionId)
+			this.openviduService.unholdPartiticipant(subscriber);
 		}
 	}
 

@@ -39,6 +39,7 @@ public class VideoPlatform {
   protected static final String API_SESSION = "/sessionDetails";
   protected static final String API_CALLBACK = "/sessionCallback";
   protected static final String API_LINK="/sendLink";
+  protected static final String API_SESSION_UPDATE="/Update";
 
   public VideoPlatform() {
 
@@ -105,6 +106,32 @@ public class VideoPlatform {
     HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
 
     String url = this.hostname + API_PATH + API_LINK;
+
+    ResponseEntity<String> response;
+    try {
+      response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+    } catch (RestClientException e) {
+      throw new RuntimeException(e.getMessage(), e.getCause());
+    }
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    } else {
+      throw new HttpException(String.valueOf(response.getStatusCodeValue()));
+    }
+  }
+  public ResponseEntity<?> updateSession(String authorization, String token, String sessionKey,Boolean isOnHold) throws HttpException {
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("Authorization", authorization);
+    headers.set("Token", token);
+
+    JsonObject json = new JsonObject();
+    json.addProperty("sessionKey",sessionKey);
+    json.addProperty("hold",isOnHold);
+    HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
+
+    String url = this.hostname + API_PATH + API_SESSION_UPDATE;
 
     ResponseEntity<String> response;
     try {

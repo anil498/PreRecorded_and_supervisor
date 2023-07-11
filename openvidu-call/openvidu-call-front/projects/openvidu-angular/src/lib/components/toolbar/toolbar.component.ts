@@ -146,6 +146,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	@Output() onLeaveButtonClicked: EventEmitter<void> = new EventEmitter<any>();
 
 	/**
+	 * Provides event notifications that fire when add supervisor button has been clicked.
+	 */
+	@Output() onAddSupervisorButtonClicked: EventEmitter<void> = new EventEmitter<any>();
+
+	/**
 	 * Provides event notifications that fire when camera toolbar button has been clicked.
 	 */
 	@Output() onCameraButtonClicked: EventEmitter<void> = new EventEmitter<any>();
@@ -254,15 +259,15 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	isPublishVideoActive: boolean=false;
+	isPublishVideoActive: boolean = false;
 	/**
 	 * @ignore
 	 */
-	isVideoControlActive: boolean=false;
+	isVideoControlActive: boolean = false;
 	/**
 	 * @ignore
 	 */
-	isSupervisorActive: boolean=false;
+	isSupervisorActive: boolean = false;
 
 	/**
 	 * @ignore
@@ -294,7 +299,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	showScreenshareButton: boolean= true;
+	showScreenshareButton: boolean = true;
 	/**
 	 * @ignore
 	 */
@@ -302,11 +307,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	showVideoControlButton: boolean= false;
+	showVideoControlButton: boolean = false;
 	/**
 	 * @ignore
 	 */
-	showFullscreenButton:boolean;
+	showFullscreenButton: boolean;
 	/**
 	 * @ignore
 	 */
@@ -377,11 +382,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	sessionDuration:number;
+	sessionDuration: number;
 	/**
 	 * @ignore
 	 */
-	sessionTime:Date;
+	sessionTime: Date;
 
 	/**
 	 * @ignore
@@ -421,10 +426,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	screenSize: string;
-
 	/**
-	 * @ignore
-	 */
+	* @ignore
+	*/
 	displayicdc: boolean = true;
 
 	/**
@@ -449,6 +453,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private activitiesPanelButtonSub: Subscription;
 	private participantsPanelButtonSub: Subscription;
 	private questionPanelButtonSub: Subscription;
+	private icdcSub:Subscription;
+	private displayicdcSub:Subscription;
 	private chatPanelButtonSub: Subscription;
 	private displayLogoSub: Subscription;
 	private displayLogoValueSub: Subscription;
@@ -460,10 +466,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private sessionNameSub: Subscription;
 	private displayTimerSub: Subscription;
 	private sessionDurationSub: Subscription;
-	private supervisorButtonSub:Subscription;
-	private MuteCameraButtonSub:Subscription;
-	private icdcSub:Subscription;
-	private displayicdcSub:Subscription;
+	private supervisorButtonSub: Subscription;
+	private MuteCameraButtonSub: Subscription;
 	/**
 	 * @ignore
 	 */
@@ -573,7 +577,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.e('There was an error toggling microphone:', error.code, error.message);
 			this.actionService.openDialog(
 				this.translateService.translate('ERRORS.TOGGLE_MICROPHONE'),
-				error?.error || error?.message || error,true
+				error?.error || error?.message || error, true
 			);
 		}
 	}
@@ -592,7 +596,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			await this.openviduService.publishVideo(publishVideo);
 		} catch (error) {
 			this.log.e('There was an error toggling camera:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_CAMERA'), error?.error || error?.message || error,true);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_CAMERA'), error?.error || error?.message || error, true);
 		}
 		this.videoMuteChanging = false;
 	}
@@ -610,7 +614,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
 				this.actionService.openDialog(
 					this.translateService.translate('ERRORS.SCREEN_SHARING'),
-					this.translateService.translate('ERRORS.SCREEN_SUPPORT'),true
+					this.translateService.translate('ERRORS.SCREEN_SUPPORT'), true
 				);
 			}
 		}
@@ -622,6 +626,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	leaveSession() {
 		this.log.d('Leaving session...');
 		this.openviduService.disconnect();
+		this.openviduService.stopTune();
 		this.onLeaveButtonClicked.emit();
 	}
 
@@ -691,19 +696,18 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleQuestionPanel() {
 		this.onQuestionPanelButtonClicked.emit();
-
 		if(this.displayicdc){
-		this.panelService.togglePanel(PanelType.QUESTIONS);
-	}
+			this.panelService.togglePanel(PanelType.QUESTIONS);
+		}
 
 		const data = {
 			message: "Question Panel Signal From Support",
 			nickname: this.participantService.getMyNickname(),
 		}
 
-		
+
 		this.openviduService.sendSignal(Signal.QUESTION, undefined, data);
-			
+
 
 
 	}
@@ -721,73 +725,74 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	togglePublishVideo() {
 		this.onPublishVideoButtonClicked.emit();
 		try {
-			this.showVideoControlButton=!this.showVideoControlButton
+			this.showVideoControlButton = !this.showVideoControlButton
 			console.log("Publishing video")
 			this.openviduService.publishRecordedVideo()
 			this.libService.screenshareButton.next(this.isPublishVideoActive);
-			this.isPublishVideoActive=!this.isPublishVideoActive;
+			this.isPublishVideoActive = !this.isPublishVideoActive;
 		} catch (error) {
 			this.log.e('There was an error toggling Publish video:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error,true);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error, true);
 		}
 	}
-	
+
 	/**
 	 * @ignore
 	 */
 	toggleFullscreen() {
 		this.isFullscreenActive = !this.isFullscreenActive;
-		this.log.d("Someone has shared screen",this.participantService.someoneIsSharingScreen())
-		if(this.participantService.someoneIsSharingScreen()){
+		this.log.d("Someone has shared screen", this.participantService.someoneIsSharingScreen())
+		if (this.participantService.someoneIsSharingScreen()) {
 			this.openviduService.toggleShareFullscreen()
-		}else{
-		this.documentService.toggleFullscreen('session-container');
+		} else {
+			this.documentService.toggleFullscreen('session-container');
 		}
 		this.onFullscreenButtonClicked.emit();
 	}
 	/**
 	 * @ignore
 	 */
-	toggleVideoPlay(){
+	toggleVideoPlay() {
 		this.onVideoControlButtonClicked.emit();
 		try {
-			if(!this.isVideoControlActive){
+			if (!this.isVideoControlActive) {
 				console.log("Playig video")
 				this.openviduService.playVideo();
-				this.isVideoControlActive=!this.isVideoControlActive;
-			}else{
+				this.isVideoControlActive = !this.isVideoControlActive;
+			} else {
 				console.log("Pausing video")
 				this.openviduService.pauseVideo();
-				this.isVideoControlActive=!this.isVideoControlActive;
+				this.isVideoControlActive = !this.isVideoControlActive;
 			}
 		} catch (error) {
 			this.log.e('There was an error toggling Publish video:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error,true);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error, true);
 		}
 	}
 	/**
 	 * @ignore
 	 */
-	toggleSupervisor(){
-		try{
-			this.isSupervisorActive=this.participantService.isSupervisorInCall();
-			this.log.d("Sending signal for supervisor",this.isSupervisorActive)
-			if(!this.isSupervisorActive){
+	toggleSupervisor() {
+		try {
+			this.onAddSupervisorButtonClicked.emit();
+			this.isSupervisorActive = this.participantService.isSupervisorInCall();
+			this.log.d("Sending signal for supervisor", this.isSupervisorActive)
+			if (!this.isSupervisorActive) {
 				const data = {
 					message: "Add supervisor",
 					nickname: this.participantService.getMyNickname()
 				};
-				this.openviduService.sendSignal(Signal.SUPERVISOR,undefined,data)
-			}else if(this.isSupervisorActive){
+				this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
+			} else if (this.isSupervisorActive) {
 				const data = {
 					message: "Merge supervisor",
 					nickname: this.participantService.getMyNickname()
 				};
-				this.openviduService.sendSignal(Signal.SUPERVISOR,undefined,)
+				this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
 			}
 
-		}catch(error){
-			this.log.d("Getting error while adding supervisor",error.message)
+		} catch (error) {
+			this.log.d("Getting error while adding supervisor", error.message)
 		}
 	}
 
@@ -810,22 +815,22 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	protected subscribeToSignal() {
-  
+
 		this.session.on(`signal:${Signal.QUESTION}`, (event: any) => {
 			const connectionId = event.from.connectionId;
 			const data = JSON.parse(event.data);
 			const isMyOwnConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
-			
-			this.log.d("Connection ID From Signal: "+connectionId);
-			this.log.d("Is the Signal for this id ? "+!isMyOwnConnection);
-			this.log.d("Recieved : "+ event.data);
 
-				if(!isMyOwnConnection ){
-					this.panelService.togglePanel(PanelType.QUESTIONS);
+			this.log.d("Connection ID From Signal: " + connectionId);
+			this.log.d("Is the Signal for this id ? " + !isMyOwnConnection);
+			this.log.d("Recieved : " + event.data);
+
+			if (!isMyOwnConnection) {
+				this.panelService.togglePanel(PanelType.QUESTIONS);
 			}
-		
 
-		});		
+
+		});
 	}
 
 
@@ -877,17 +882,17 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	private subscribeToSessionTimergStatus() {
-		if(this.showSessionTimer){
-		this.sessionTimerSubscription = this.openviduService.sessionTimerObs
-		.pipe(skip(1))	
-		.subscribe((ev: {time?: Date }) => {
-			if (ev.time) {
-				this.sessionTime = ev.time;
-			}
-			this.cd.markForCheck();
-		});
+		if (this.showSessionTimer) {
+			this.sessionTimerSubscription = this.openviduService.sessionTimerObs
+				.pipe(skip(1))
+				.subscribe((ev: { time?: Date }) => {
+					if (ev.time) {
+						this.sessionTime = ev.time;
+					}
+					this.cd.markForCheck();
+				});
+		}
 	}
-	  }
 
 	private subscribeToToolbarDirectives() {
 		this.minimalSub = this.libService.minimalObs.subscribe((value: boolean) => {
@@ -972,6 +977,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.showSessionTimer = value;
 			this.cd.markForCheck();
 		});
+		this.displayicdcSub = this.libService.displayicdc.subscribe((displayicdc: boolean)=>{
+			this.displayicdc = displayicdc;
+		});
 		this.sessionDurationSub = this.libService.sessionDurationObs.subscribe((value: number) => {
 			this.sessionDuration = value;
 			this.cd.markForCheck();
@@ -984,11 +992,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.showMuteCameraButton = value;
 			this.cd.markForCheck();
 		});
-
-		this.displayicdcSub = this.libService.displayicdc.subscribe((displayicdc: boolean)=>{
-			this.displayicdc = displayicdc;
-		})
-
 	}
 
 	private subscribeToScreenSize() {
@@ -1003,13 +1006,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.captionsEnabled = value;
 			this.cd.markForCheck();
 		});
-	
+
 	}
 
 	private checkDisplayMoreOptions() {
 		this.showMoreOptionsButton =
 			this.showFullscreenButton || this.showBackgroundEffectsButton || this.showRecordingButton || this.showSettingsButton;
 	}
-
-	
 }
