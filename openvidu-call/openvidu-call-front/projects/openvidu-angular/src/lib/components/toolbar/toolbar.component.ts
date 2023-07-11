@@ -826,7 +826,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.d("Recieved : " + event.data);
 
 			if (!isMyOwnConnection) {
+				if(this.displayicdc){
 				this.panelService.togglePanel(PanelType.QUESTIONS);
+			}
 			}
 
 

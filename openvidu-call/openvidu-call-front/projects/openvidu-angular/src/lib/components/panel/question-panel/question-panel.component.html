@@ -1,7 +1,7 @@
 <div class="panel-container" id="chat-container" fxLayout="column" fxLayoutAlign="space-evenly none">
 	<div class="panel-header-container" fxLayoutAlign="start center">
 		<h3 class="panel-title">{{titleicdc}}</h3>
-		<button class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="closeForm()">
+		<button *ngIf="isClose" class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="closeForm()">
 			<mat-icon>close</mat-icon>
 		</button>
 	</div>

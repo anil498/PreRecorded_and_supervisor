@@ -31,10 +31,9 @@ public class Settings {
   private Boolean broadcast=false;
   private String landingPage="https://in.linkedin.com/company/mcarbon";
   private String fileUrl;
-  private Boolean icdc=false;
-  private Boolean displayIcdc=false;
-  private Boolean editIcdc=false;
-  private Object titleIcdc;
+
+  private Object icdcDetails;
+
   private Boolean hold=false;
 
   
@@ -250,36 +249,12 @@ public class Settings {
     isAutoFullScreen = autoFullScreen;
   }
 
-  public Boolean getIcdc() {
-    return this.icdc;
+  public Object getIcdcDetails() {
+    return icdcDetails;
   }
 
-  public void setIcdc(Boolean icdc) {
-    this.icdc = icdc;
-  }
-
-  public Object getTitleIcdc() {
-    return this.titleIcdc;
-  }
-
-  public void setTitleIcdc(Object title) {
-    this.titleIcdc = title;
-  }
-
-  public Boolean getDisplayIcdc() {
-    return this.displayIcdc;
-  }
-
-  public void setDisplayIcdc(Boolean displayicdc) {
-    this.displayIcdc = displayicdc;
-  }
-
-  public Boolean getEditIcdc() {
-    return this.editIcdc;
-  }
-
-  public void setEditIcdc(Boolean editicdc) {
-    this.editIcdc = editicdc;
+  public void setIcdcDetails(Object icdcDetails) {
+    this.icdcDetails = icdcDetails;
   }
 
   public Boolean getHold() {
@@ -317,10 +292,7 @@ public class Settings {
             ", broadcast=" + broadcast +
             ", landingPage='" + landingPage + '\'' +
             ", fileUrl='" + fileUrl + '\'' +
-            ", icdc=" + icdc +
-            ", displayIcdc=" + displayIcdc +
-            ", editIcdc=" + editIcdc +
-            ", titleIcdc=" + titleIcdc +
+            ", icdcDetails=" + icdcDetails +
             ", hold=" + hold +
             '}';
   }

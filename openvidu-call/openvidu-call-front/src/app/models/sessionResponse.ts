@@ -135,10 +135,13 @@ export class Settings {
   };
   private _broadcast?: boolean;
   private _fileUrl?: string;
-  private _titleIcdc:object;
-  private _editIcdc:boolean;
-  private _displayIcdc:boolean;
-  private _icdc:boolean;
+ 
+  private _icdcDetails?: {
+    icdc?:boolean;
+    displayIcdc?:boolean;
+    editIcdc?:boolean;
+    titleIcdc?:string;
+  };
 
   get duration(): number | undefined {
     return this._duration;
@@ -336,32 +339,23 @@ export class Settings {
   set fileUrl(value: string | undefined) {
     this._fileUrl = value;
   }
-  get titleIcdc(): object | undefined {
-    return this._titleIcdc;
+  get icdcDetails(): {
+    icdc?:boolean;
+    displayIcdc?:boolean;
+    editIcdc?:boolean;
+    titleIcdc?:string;
+  } | undefined {
+    return this._icdcDetails;
   }
 
-  set titleIcdc(value: object | undefined) {
-    this._titleIcdc = value;
-  }
-  get editIcdc(): boolean | undefined {
-    return this._editIcdc;
-  }
-
-  set editIcdc(value: boolean | undefined) {
-    this.editIcdc = value;
-  }
-  get displayIcdc(): boolean | undefined {
-    return this.displayIcdc;
-  }
-
-  set displayIcdc(value: boolean | undefined) {
-    this._displayIcdc = value;
-  }
-  get icdc(): boolean | undefined {
-    return this._icdc;
-  }
-
-  set icdc(value: boolean | undefined) {
-    this._icdc = value;
+  set icdcDetails(
+      value: { 
+      icdc?:boolean;
+      displayIcdc?:boolean;
+      editIcdc?:boolean;
+      titleIcdc?:string; 
+    } | undefined
+  ) {
+    this._icdcDetails = value;
   }
 }
