@@ -51,6 +51,7 @@
 		(onActivitiesPanelButtonClicked)="onActivitiesPanelButtonClicked()"
 		(onStartRecordingClicked)="onStartRecordingClicked('toolbar')"
 		(onStopRecordingClicked)="onStopRecordingClicked('toolbar')"
+		(onAddSupervisorButtonClicked)="onAddSupervisorButtonClicked()"
 	>
 		<ng-template #toolbarAdditionalButtons>
 			<ng-container *ngTemplateOutlet="openviduAngularToolbarAdditionalButtonsTemplate"></ng-container>
@@ -141,7 +142,6 @@
 
 <ng-template #defaultStream let-stream>
 	<ov-stream [stream]="stream" id="default-stream"
-	(onAddSupervisorButtonClicked)="onAddSupervisorButtonClicked()"
 	(onUnHoldButtonClicked)="onUnHoldButtonClicked()"
 	(onHoldButtonClicked)="onHoldButtonClicked()"
 	></ov-stream>
