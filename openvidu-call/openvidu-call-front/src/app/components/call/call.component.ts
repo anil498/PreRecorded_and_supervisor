@@ -15,6 +15,7 @@ export class CallComponent implements OnInit {
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
+	sessionId:string;
 	isRecording: boolean = true;
 	screenShareEnabled: boolean = true;
 	chatEnabled: boolean = true;
@@ -97,6 +98,33 @@ export class CallComponent implements OnInit {
 			window.location.replace(this.redirectUrl);
 		}
 	}
+
+	onHoldButtonClicked(){
+		try {
+			console.log("Hold button clicked")
+			this.restService.updateSession(this.sessionKey,true)
+		} catch (error) {
+			console.error("Getting error while calling update session API")
+		}
+	}
+
+	onUnHoldButtonClicked(){
+		try {
+			console.log("UnHold button clicked")
+			this.restService.updateSession(this.sessionKey,false)
+		} catch (error) {
+			console.error("Getting error while calling update session API")
+		}
+	}
+
+	onAddSupervisorButtonClicked(){
+		try {
+			console.log("Add supervisor button clicked")
+			this.restService.sendLink(this.sessionId)
+		} catch (error) {
+			console.error("Getting error while calling send link API")
+		}
+	}
 	async onStartRecordingClicked() {
 		try {
 			await this.restService.startRecording(this.sessionKey);
@@ -132,6 +160,7 @@ export class CallComponent implements OnInit {
 			if(response.isSessionExpired){
 				throw new Error("Session expired");
 			}
+			this.sessionId=response.sessionId;
 			this.isRecording = response.settings.recording;
 			this.broadcastingEnabled = response.settings.broadcast;
 			this.recordingList = response.recordings

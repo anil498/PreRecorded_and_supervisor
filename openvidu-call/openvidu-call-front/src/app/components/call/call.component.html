@@ -5,6 +5,9 @@
 	[recordingActivityRecordingsList]="recordingList"
 	[recordingActivityRecordingError]="recordingError"
 	(onToolbarLeaveButtonClicked)="onLeaveButtonClicked()"
+	(onToolbarUnHoldButtonClicked)="onUnHoldButtonClicked()"
+	(onToolbarHoldButtonClicked)="onHoldButtonClicked()"
+	(onToolbarAddSupervisorButtonClicked)="onAddSupervisorButtonClicked()"
 	(onToolbarStartRecordingClicked)="onStartRecordingClicked()"
 	(onActivitiesPanelStartRecordingClicked)="onStartRecordingClicked()"
 	(onToolbarStopRecordingClicked)="onStopRecordingClicked()"
@@ -56,11 +59,6 @@
 	[toolbarScreenShareWithAudio]="isScreenShareWithAudio"
 	[toolbarAutoFullScreen]="isAutoFullScreen"
 	[toolbarSupervisorButton]="true"
-	[toolbarQuestionPanelButton]="isquestionpanel"
-	[usertype]="type"
-	[displayicdc]="isdisplayicdc"
-	[editicdc]="isediticdc"
-	[titleicdc]="istitleicdc"
 >
 </ov-videoconference>
 
