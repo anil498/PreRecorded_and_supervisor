@@ -169,7 +169,7 @@ public class OpenViduService {
 		return session;
 	}
 
-	public Connection createConnection(Session session, String nickname, OpenViduRole role)
+	public Connection createConnection(Session session, String nickname, OpenViduRole role,boolean isOnHold)
 			throws OpenViduJavaClientException, OpenViduHttpException {
 		Map<String, Object> params = new HashMap<String, Object>();
 		Map<String, Object> connectionData = new HashMap<String, Object>();
@@ -179,6 +179,7 @@ public class OpenViduService {
 		}
 		params.put("role", role.name());
 		params.put("data", connectionData.toString());
+		params.put("isOnHold",isOnHold);
 		ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
 
 		Connection connection = session.createConnection(properties);

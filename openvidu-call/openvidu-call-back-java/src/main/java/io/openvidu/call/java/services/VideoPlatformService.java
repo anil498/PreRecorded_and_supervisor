@@ -31,6 +31,9 @@ public class VideoPlatformService {
   public ResponseEntity<?> sendLink(String authorization, String token, String sessionId) throws IOException, HttpException {
     return videoPlatform.sendLink(authorization,token,sessionId);
   }
+  public ResponseEntity<?> updateSession(String authorization, String token, String sessionKey,Boolean isOnHold) throws IOException, HttpException {
+    return videoPlatform.updateSession(authorization,token,sessionKey,isOnHold);
+  }
   public HashMap<String,Integer> getExpiredSession(){
 //    return videoPlatform.getExpiredTimer();
     HashMap<String,Integer> hashMap=new HashMap<>();

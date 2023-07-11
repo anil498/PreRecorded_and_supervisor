@@ -144,12 +144,13 @@ public class SessionController {
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
 
         Connection cameraConnection = null;
+        boolean isOnHold=sessionProperty.getSettings().getHold();
         if (validateParticipantJoined(sessionProperty, sessionCreated,sessionIdToSessionContextMap)) {
           if(sessionCreated!=null) {
-            cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
+            cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role,isOnHold);
             sessionProperty.setCameraToken(cameraConnection.getToken());
             if (sessionProperty.getSettings().getScreenShare()) {
-              Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
+              Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
               sessionProperty.setScreenToken(screenConnection.getToken());
             }
           }
@@ -162,7 +163,7 @@ public class SessionController {
           HashMap<String,Object> map= (HashMap<String, Object>) sessionProperty.getSettings().getPreRecordedDetails();
             if (!Boolean.TRUE.equals(map.get("share_pre_recorded_video"))) {
               sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(), "prerecorded");
-              Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role);
+              Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
               sessionProperty.setScreenToken(screenConnection.getToken());
             } else {
               sessionProperty.getSettings().setFileUrl(OPENVIDU_URL + "/downloadFile/" + map.get("pre_recorded_video_file").toString());
@@ -267,6 +268,21 @@ public class SessionController {
     ResponseEntity<?> response=videoPlatformService.sendLink(authorization,token,sessionId);
     return response;
   }
+  @PostMapping("/updateSession")
+  public ResponseEntity<?> updateSession(@RequestBody(required = false) Map<String, Object> params,HttpServletRequest request,HttpServletResponse res) throws HttpException, IOException {
+    Map<String,String> headers=getHeaders(request);
+    logger.info("Request API /updateSession Headers {} and Parameters {}",headers,params);
+    String sessionKey=" ";
+    Boolean isOnHold=false;
+    if (params.containsKey("sessionKey")){
+      sessionKey=params.get("sessionId").toString();
+    }
+    if (params.containsKey("isOnHold")){
+      isOnHold= (Boolean) params.get("isOnHold");
+    }
+    ResponseEntity<?> response=videoPlatformService.updateSession(authorization,token,sessionKey,isOnHold);
+    return response;
+  }
   @DeleteMapping("/sessions/{sessionId}")
   public ResponseEntity<?> deleteSession(@PathVariable String sessionId) {
     try {
@@ -288,7 +304,7 @@ public class SessionController {
   private boolean validateSession(SessionProperty sessionProperty, String sessionKey, ConcurrentMap<String,SessionContext> sessionContextConcurrentMap) throws OpenViduJavaClientException, OpenViduHttpException {
       int activeAccountSession = 0;
       int activeUserSession = 0;
-      sessionDestroyed(sessionKey);
+//      sessionDestroyed(sessionKey);
       for (String key : sessionContextConcurrentMap.keySet()) {
         if (key.startsWith(sessionProperty.getAccountId())) {
           activeAccountSession += 1;
