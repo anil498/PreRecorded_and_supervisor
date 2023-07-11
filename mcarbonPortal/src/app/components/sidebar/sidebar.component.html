@@ -67,6 +67,7 @@
       routerLinkActive="active"
       *ngIf="menuItem.show"
       class="{{ menuItem.class }} nav-item"
+      id="{{ menuItem.class }}"
     >
       <a class="nav-link" [routerLink]="[menuItem.path]">
         <i>
