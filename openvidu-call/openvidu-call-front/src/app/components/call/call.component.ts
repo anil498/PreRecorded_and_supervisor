@@ -198,9 +198,9 @@ export class CallComponent implements OnInit {
 			this.isAutoFullScreen=response.settings.isAutoFullScreen;
 			
 			this.isquestionpanel=response.settings.icdcDetails.icdc;
-			this.isdisplayicdc=response.settings.icdcDetails.displayIcdc;
-			this.isediticdc=response.settings.icdcDetails.editIcdc;
-			this.istitleicdc=response.settings.icdcDetails.titleIcdc.toString();
+			this.isdisplayicdc=response.settings.icdcDetails.display_icdc;
+			this.isediticdc=response.settings.icdcDetails.edit_icdc;
+			this.istitleicdc=response.settings.icdcDetails.title_icdc;
 
 			if (response.participantName) {
 				this.participantNameValue = response.participantName;

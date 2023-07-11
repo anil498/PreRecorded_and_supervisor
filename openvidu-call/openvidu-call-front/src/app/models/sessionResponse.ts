@@ -138,9 +138,9 @@ export class Settings {
  
   private _icdcDetails?: {
     icdc?:boolean;
-    displayIcdc?:boolean;
-    editIcdc?:boolean;
-    titleIcdc?:string;
+    display_icdc?:boolean;
+    edit_icdc?:boolean;
+    title_icdc?:string;
   };
 
   get duration(): number | undefined {
@@ -341,9 +341,9 @@ export class Settings {
   }
   get icdcDetails(): {
     icdc?:boolean;
-    displayIcdc?:boolean;
-    editIcdc?:boolean;
-    titleIcdc?:string;
+    display_icdc?:boolean;
+    edit_icdc?:boolean;
+    title_icdc?:string;
   } | undefined {
     return this._icdcDetails;
   }
@@ -351,9 +351,9 @@ export class Settings {
   set icdcDetails(
       value: { 
       icdc?:boolean;
-      displayIcdc?:boolean;
-      editIcdc?:boolean;
-      titleIcdc?:string; 
+      display_icdc?:boolean;
+      edit_icdc?:boolean;
+      title_icdc?:string; 
     } | undefined
   ) {
     this._icdcDetails = value;
