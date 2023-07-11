@@ -78,6 +78,13 @@
 				<mat-icon>picture_in_picture</mat-icon>
 				<span>{{ 'STREAM.REPLACE_SCREEN' | translate }}</span>
 			</button>
+			<button mat-menu-item id="holdButton" *ngIf="!this._stream.participant.local" (click)="toggleHold()">
+				<mat-icon *ngIf="!this.isOnHold">pause</mat-icon>
+				<span *ngIf="!this.isOnHold">{{ 'STREAM.HOLD' | translate }}</span>
+
+				<mat-icon *ngIf="this.isOnHold">play_arrow</mat-icon>
+				<span *ngIf="this.isOnHold">{{ 'STREAM.UNHOLD' | translate }}</span>
+			</button>
 		</mat-menu>
 	</div>
 </div>

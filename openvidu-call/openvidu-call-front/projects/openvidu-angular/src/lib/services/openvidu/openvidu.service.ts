@@ -8,7 +8,8 @@ import {
 	PublisherProperties,
 	Session,
 	SignalOptions,
-	Stream
+	Stream,
+	Subscriber
 } from 'openvidu-browser';
 
 import { LoggerService } from '../logger/logger.service';
@@ -24,6 +25,7 @@ import { DeviceService } from '../device/device.service';
 import { ParticipantService } from '../participant/participant.service';
 import { PlatformService } from '../platform/platform.service';
 import { DocumentService } from '../document/document.service';
+import { Howl } from 'howler';
 
 @Injectable({
 	providedIn: 'root'
@@ -50,10 +52,11 @@ export class OpenViduService {
 	private sessionTimerStatus = <BehaviorSubject<{ time?: Date }>>new BehaviorSubject(null);
 	private sessionTimerSub: Subscription;
 	private videoFilePathSubs: Subscription;
-	private screenShareWithAudioSubs:Subscription;
+	private screenShareWithAudioSubs: Subscription;
 	showSessionTimer: boolean;
 	videoFilePath: string;
-	screenShareWithAudio:boolean;
+	screenShareWithAudio: boolean;
+	tune: Howl | null = null;
 
 	private sessionTime: Date;
 	private sessionTimeInterval: NodeJS.Timer;
@@ -85,7 +88,7 @@ export class OpenViduService {
 			publisherSpeakingEventsOptions: {
 				interval: 50
 			},
-			forceMediaReconnectionAfterNetworkDrop:true
+			forceMediaReconnectionAfterNetworkDrop: true
 		});
 		if (this.openviduAngularConfigSrv.isProduction()) this.OV.enableProdMode();
 		this.webcamSession = this.OV.initSession();
@@ -374,12 +377,13 @@ export class OpenViduService {
 	 */
 	async publishVideo(publish: boolean): Promise<void> {
 		const publishAudio = this.participantService.isMyAudioActive();
-		this.log.d("Publishing video")
-
 		// Disabling webcam
 		if (this.participantService.haveICameraAndScreenActive()) {
-			this.log.d("Publishing video1")
-			await this.publishVideoAux(this.participantService.getMyCameraPublisher(), publish);
+			if (!this.libService.isOnHold.getValue()) {
+				await this.publishVideoAux(this.participantService.getMyCameraPublisher(), publish);
+			} else {
+				await this.publishVideoAux(this.participantService.getMyCameraPublisher(), false);
+			}
 			//this commented for screenshare with audio
 			this.participantService.disableWebcamStream();
 			this.unpublish(this.participantService.getMyCameraPublisher());
@@ -398,7 +402,6 @@ export class OpenViduService {
 			this.publishAudioAux(this.participantService.getMyScreenPublisher(), true);
 			this.publishAudioAux(this.participantService.getMyCameraPublisher(), hasAudio);
 		} else {
-			this.log.d("Publishing video4")
 			// Muting/unmuting webcam
 			await this.publishVideoAux(this.participantService.getMyCameraPublisher(), publish);
 		}
@@ -416,8 +419,11 @@ export class OpenViduService {
 				const mediaStream = await this.createMediaStream({ videoSource: currentDeviceId, audioSource: false });
 				resource = mediaStream.getVideoTracks()[0];
 			}
-
-			await publisher.publishVideo(publish, resource);
+			if (!this.libService.isOnHold.getValue()) {
+				await publisher.publishVideo(publish, resource);
+			} else {
+				await publisher.publishVideo(false);
+			}
 			this.participantService.updateLocalParticipant();
 		}
 	}
@@ -433,7 +439,11 @@ export class OpenViduService {
 				this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
 			}
 			//
-			this.publishAudioAux(this.participantService.getMyCameraPublisher(), publish);
+			if (!this.libService.isOnHold.getValue()) {
+				this.publishAudioAux(this.participantService.getMyCameraPublisher(), publish);
+			} else {
+				this.publishAudioAux(this.participantService.getMyCameraPublisher(), false);
+			}
 		} else {
 			this.publishAudioAux(this.participantService.getMyScreenPublisher(), publish);
 		}
@@ -455,51 +465,51 @@ export class OpenViduService {
 			// Disabling screenShare
 			this.participantService.disableScreenStream();
 			this.unpublish(this.participantService.getMyScreenPublisher());
-		} 
+		}
 		// this screen share without audio
 		else if (this.participantService.isOnlyMyCameraActive() && !this.screenShareWithAudio) {
 			console.log("Screen share without audio")
-		const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
-		const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
-		const hasAudio = willWebcamBePresent ? false : hasAudioDevicesAvailable && this.participantService.isMyAudioActive();
+			const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
+			const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
+			const hasAudio = willWebcamBePresent ? false : hasAudioDevicesAvailable && this.participantService.isMyAudioActive();
 
-		const properties: PublisherProperties = {
-			videoSource: ScreenType.SCREEN,
-			audioSource: hasAudioDevicesAvailable ? this.deviceService.getMicrophoneSelected().device : false,
-			publishVideo: true,
-			publishAudio: hasAudio,
-			mirror: false
-		};
-		const screenPublisher = await this.initPublisher(undefined,properties);
+			const properties: PublisherProperties = {
+				videoSource: ScreenType.SCREEN,
+				audioSource: hasAudioDevicesAvailable ? this.deviceService.getMicrophoneSelected().device : false,
+				publishVideo: true,
+				publishAudio: hasAudio,
+				mirror: false
+			};
+			const screenPublisher = await this.initPublisher(undefined, properties);
 
-		screenPublisher.once('accessAllowed', async () => {
-			// Listen to event fired when native stop button is clicked
-			screenPublisher.stream
-				.getMediaStream()
-				.getVideoTracks()[0]
-				.addEventListener('ended', async () => {
-					this.log.d('Clicked native stop button. Stopping screen sharing');
-					await this.toggleScreenshare();
-				});
+			screenPublisher.once('accessAllowed', async () => {
+				// Listen to event fired when native stop button is clicked
+				screenPublisher.stream
+					.getMediaStream()
+					.getVideoTracks()[0]
+					.addEventListener('ended', async () => {
+						this.log.d('Clicked native stop button. Stopping screen sharing');
+						await this.toggleScreenshare();
+					});
 
-			// Enabling screenShare
-			this.participantService.activeMyScreenShare(screenPublisher);
+				// Enabling screenShare
+				this.participantService.activeMyScreenShare(screenPublisher);
 
-			if (!this.isScreenSessionConnected()) {
-				await this.connectSession(this.getScreenSession(), this.getScreenToken());
-			}
-			await this.publish(this.participantService.getMyScreenPublisher());
-			if (!this.participantService.isMyVideoActive()) {
-				// Disabling webcam
-				this.participantService.disableWebcamStream();
-				this.unpublish(this.participantService.getMyCameraPublisher());
-			}
-		});
+				if (!this.isScreenSessionConnected()) {
+					await this.connectSession(this.getScreenSession(), this.getScreenToken());
+				}
+				await this.publish(this.participantService.getMyScreenPublisher());
+				if (!this.participantService.isMyVideoActive()) {
+					// Disabling webcam
+					this.participantService.disableWebcamStream();
+					this.unpublish(this.participantService.getMyCameraPublisher());
+				}
+			});
 
-		screenPublisher.once('accessDenied', (error: any) => {
-			return Promise.reject(error);
-		});
-		//this screen share with audio
+			screenPublisher.once('accessDenied', (error: any) => {
+				return Promise.reject(error);
+			});
+			//this screen share with audio
 		} else if (this.participantService.isOnlyMyCameraActive()) {
 			// I only have the camera published
 			console.log("Screen share with	 audio")
@@ -574,16 +584,16 @@ export class OpenViduService {
 	 * @ignore
 	 */
 	toggleShareFullscreen() {
-		try{
-		let screenPublisher: any;
-		const screenSession=this.getScreenRemoteConnections();
-		screenSession.forEach((remoteConnection) =>{	
-			    screenPublisher=remoteConnection.stream?.streamManager	
+		try {
+			let screenPublisher: any;
+			const screenSession = this.getScreenRemoteConnections();
+			screenSession.forEach((remoteConnection) => {
+				screenPublisher = remoteConnection.stream?.streamManager
 			})
-		const screenVideoElement=screenPublisher.videos[0].video;
-		this.documentService.toggleFullscreenByVideo(screenVideoElement);
-		}catch(error){
-			this.log.d("Getting error while toggling full screen",error)
+			const screenVideoElement = screenPublisher.videos[0].video;
+			this.documentService.toggleFullscreenByVideo(screenVideoElement);
+		} catch (error) {
+			this.log.d("Getting error while toggling full screen", error)
 		}
 	}
 	/**
@@ -606,6 +616,74 @@ export class OpenViduService {
 			to: connections && connections.length > 0 ? connections : undefined
 		};
 		this.webcamSession.signal(signalOptions);
+	}
+	/**
+	 * @internal
+	 */
+	async holdPartiticipant(subscriber: Subscriber) {
+		if (!this.libService.isOnHold.getValue()) {
+			this.publishVideo(false);
+			this.publishAudio(false);
+			subscriber.subscribeToAudio(false);
+			subscriber.subscribeToVideo(false);
+			const data = {
+				message: "hold",
+				nickname: this.participantService.getMyNickname()
+			};
+			this.sendSignal(Signal.HOLD, undefined, data);
+			try {
+				this.startTune();
+				this.libService.isOnHold.next(true);
+			} catch (error) {
+				console.error('Failed to fetch and play tune:', error);
+			}
+		}
+	}
+	/**
+	 * @internal
+	 */
+	async unholdPartiticipant(subscriber: Subscriber) {
+		if (this.libService.isOnHold.getValue()) {
+			this.stopTune();
+			const data = {
+				message: "unhold",
+				nickname: this.participantService.getMyNickname()
+			};
+			this.sendSignal(Signal.UNHOLD, undefined, data);
+			this.publishVideo(true);
+			subscriber.subscribeToAudio(true);
+			subscriber.subscribeToVideo(true);
+			this.libService.isOnHold.next(false);
+			this.publishAudio(true);
+		}
+	}
+	/**
+	 * @internal
+	 */
+	async startTune() {
+		const response = await fetch('./assets/audio/tune.mp3'); // Replace with the actual path to your tune file
+		const tuneBlob = await response.blob();
+		const tuneUrl = URL.createObjectURL(tuneBlob);
+
+		this.tune = new Howl({
+			src: [tuneUrl],
+			format: 'mp3',
+			autoplay: true,
+			onend: () => {
+				// Restart the tune when it ends
+				this.tune?.play();
+			},
+		});
+	}
+	/**
+	 * @internal
+	 */
+	stopTune() {
+		if (this.tune) {
+			// Stop playing the tune
+			this.tune.stop();
+			this.tune = null;
+		}
 	}
 
 	/**
@@ -644,6 +722,7 @@ export class OpenViduService {
 			this.log.e('Error replacing track ', error);
 		}
 	}
+
 
 	/**
 	 * @internal
@@ -804,7 +883,7 @@ export class OpenViduService {
 				this.participantService.disablePublishVideoStream();
 				await this.screenSession.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
-				const videoBlob= await this.http.get(this.videoFilePath, { responseType: 'blob' }).toPromise();
+				const videoBlob = await this.http.get(this.videoFilePath, { responseType: 'blob' }).toPromise();
 
 				// Create a local URL for the video file
 				const videoURL = URL.createObjectURL(videoBlob);

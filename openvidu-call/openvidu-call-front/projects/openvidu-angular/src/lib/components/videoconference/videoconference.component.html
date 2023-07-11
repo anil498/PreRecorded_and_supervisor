@@ -140,5 +140,9 @@
 </ng-template>
 
 <ng-template #defaultStream let-stream>
-	<ov-stream [stream]="stream" id="default-stream"></ov-stream>
+	<ov-stream [stream]="stream" id="default-stream"
+	(onAddSupervisorButtonClicked)="onAddSupervisorButtonClicked()"
+	(onUnHoldButtonClicked)="onUnHoldButtonClicked()"
+	(onHoldButtonClicked)="onHoldButtonClicked()"
+	></ov-stream>
 </ng-template>

@@ -325,6 +325,18 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	}
 
 	/**
+	 * Provides event notifications that fire when hold button has been clicked.
+	 */
+	@Output() onToolbarHoldButtonClicked: EventEmitter<void> = new EventEmitter<void>();
+	/**
+	 * Provides event notifications that fire when unHold button  has been clicked.
+	 */
+	@Output() onToolbarUnHoldButtonClicked: EventEmitter<void> = new EventEmitter<void>();
+	/**
+	 * Provides event notifications that fire when add supervisor button has been clicked.
+	 */
+	@Output() onToolbarAddSupervisorButtonClicked: EventEmitter<void> = new EventEmitter<void>();
+	/**
 	 * Provides event notifications that fire when join button (in prejoin page) has been clicked.
 	 */
 	@Output() onJoinButtonClicked: EventEmitter<void> = new EventEmitter<void>();
@@ -729,6 +741,24 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	_onNodeCrashed() {
 		this.nodeCrashed = true;
 		this.onNodeCrashed.emit();
+	}
+	/**
+	 * @internal
+	 */
+	onHoldButtonClicked() {
+		this.onToolbarHoldButtonClicked.emit();
+	}
+	/**
+	 * @internal
+	 */
+	onUnHoldButtonClicked() {
+		this.onToolbarUnHoldButtonClicked.emit();
+	}
+	/**
+	 * @internal
+	 */
+	onAddSupervisorButtonClicked() {
+		this.onToolbarAddSupervisorButtonClicked.emit();
 	}
 
 	private async handlePublisherError(e: any): Promise<void> {

@@ -7,6 +7,8 @@ export enum Signal {
 	SCREEN='screen',
 	QUESTION='question',
 	SUPERVISOR="supervisor",
+	HOLD="hold",
+	UNHOLD="unhold",
 	SUPPORT='support',
 	CLOSE = 'close',
 	SCROLL = 'scroll'
