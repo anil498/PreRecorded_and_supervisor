@@ -127,6 +127,7 @@
                     <mat-menu #menu="matMenu" xPosition="after">
                       <button
                         class="btn-action"
+                        id="view"
                         mat-menu-item
                         (click)="viewAccessDialog(access)"
                       >
@@ -137,6 +138,7 @@
                       </button>
                       <button
                         class="btn-action"
+                        id="edit"
                         mat-menu-item
                         (click)="updateAccess(access)"
                         *ngIf="access.status !== 2"
@@ -146,6 +148,7 @@
                       </button>
                       <button
                         class="btn-action"
+                        id="delete"
                         mat-menu-item
                         (click)="deleteAccess(access.accessId)"
                         *ngIf="access.status !== 2"
