@@ -1,4 +1,110 @@
-<mat-form-field>
-  <mat-label>Answer</mat-label>
-  <input matInput type="text" placeholder="Answer" />
-</mat-form-field>
+<div
+  [ngSwitch]="questionType"
+  class="container"
+  cdkDrag
+  cdkDragBoundary="#answer-div"
+>
+  <ng-container *ngSwitchCase="'text'" [formGroup]="ansForm">
+    <div class="row answer">
+      <div class="col-md-11">
+        <mat-form-field>
+          <mat-label>Short Answer</mat-label>
+          <input
+            matInput
+            [type]="text"
+            value="Answer"
+            formControlName="meta"
+            (keyup)="onKey($event)"
+            id="{{ ansIndex }}"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-md-1" *ngIf="totalAnswer > 1">
+        <button class="btn-delete" (click)="removeAnswer()">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'dropdown'" [formGroup]="ansForm">
+    <div class="row answer">
+      <div class="col-md-1 col-icon">
+        <button class="btn-delete" cdkDragHandle>
+          <mat-icon>drag_indicator</mat-icon>
+        </button>
+        {{ ansIndex }}.
+      </div>
+      <div class="col-md-10">
+        <mat-form-field>
+          <input
+            matInput
+            [type]="text"
+            value="Option {{ ansIndex }}"
+            formControlName="meta"
+            (keyup)="onKey($event)"
+            id="{{ ansIndex }}"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-md-1" *ngIf="totalAnswer > 1">
+        <button class="btn-delete" (click)="removeAnswer()">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'checkbox'" [formGroup]="ansForm">
+    <div class="row answer">
+      <div class="col-md-1 col-icon">
+        <button class="btn-delete" cdkDragHandle>
+          <mat-icon>drag_indicator</mat-icon>
+        </button>
+        <mat-icon>check_box_outline_blank</mat-icon>
+      </div>
+      <div class="col-md-10">
+        <mat-form-field>
+          <input
+            matInput
+            [type]="text"
+            value="Option {{ ansIndex }}"
+            formControlName="meta"
+            (keyup)="onKey($event)"
+            id="{{ ansIndex }}"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-md-1" *ngIf="totalAnswer > 1">
+        <button class="btn-delete" (click)="removeAnswer()">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+  <ng-container *ngSwitchCase="'radio'" [formGroup]="ansForm">
+    <div class="row answer">
+      <div class="col-md-1 col-icon">
+        <button class="btn-delete" cdkDragHandle>
+          <mat-icon>drag_indicator</mat-icon>
+        </button>
+        <mat-icon>radio_button_unchecked</mat-icon>
+      </div>
+      <div class="col-md-10">
+        <mat-form-field>
+          <input
+            matInput
+            [type]="text"
+            value="Option {{ ansIndex }}"
+            formControlName="meta"
+            (input)="onKey($event)"
+            id="{{ ansIndex }}"
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-md-1" *ngIf="totalAnswer > 1">
+        <button class="btn-delete" (click)="removeAnswer()">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</div>

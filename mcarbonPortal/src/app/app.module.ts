@@ -15,6 +15,7 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { ObserverService } from "./services/observer.service";
 @NgModule({
   imports: [
     BrowserAnimationsModule,
@@ -32,7 +33,7 @@ import { MatSnackBarModule } from "@angular/material/snack-bar";
     AppRoutingModule,
   ],
   declarations: [AppComponent, AdminLayoutComponent, LoginComponent],
-  providers: [],
+  providers: [ObserverService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

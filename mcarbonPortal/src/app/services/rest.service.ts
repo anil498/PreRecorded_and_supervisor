@@ -1,8 +1,15 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Injectable, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { catchError, lastValueFrom, Subject } from "rxjs";
+import {
+  catchError,
+  lastValueFrom,
+  Subject,
+  Subscribable,
+  Subscription,
+} from "rxjs";
 import { authKey, baseHref } from "app/app.component";
+import { ObserverService } from "./observer.service";
 @Injectable({
   providedIn: "root",
 })
@@ -20,14 +27,28 @@ export class RestService {
   private token: string;
   private userId: string;
 
-  constructor(private http: HttpClient, private router: Router) {
+  private urlSub: Subscription;
+  private authKeySub: Subscription;
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private observerService: ObserverService
+  ) {
     // this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/VPService/v1/' : '');
     //this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
     //this.baseHref = "http://172.17.0.122:5000/VPService/v1/";
-    this.authKey = "AC001CBoh3eACy9";
+    //this.authKey = "AC001CBoh3eACy9";
     //this.authKey = authKey;
     //this.baseHref = baseHref;
-    this.baseHref = "https://demo2.progate.mobi/VPService/v1/";
+
+    this.urlSub = this.observerService.urlObs.subscribe((url) => {
+      this.baseHref = url;
+      console.log(this.baseHref);
+    });
+    this.authKeySub = this.observerService.authKeyObs.subscribe((auth) => {
+      this.authKey = auth;
+      console.log(this.authKey);
+    });
   }
 
   async onReload() {
@@ -335,6 +356,7 @@ export class RestService {
   }
 
   logout() {
+    console.log("Clearing DATA>>>>>>>>>>>>");
     this.setData(null);
     this.setToken(null);
     this.setUserId(null);

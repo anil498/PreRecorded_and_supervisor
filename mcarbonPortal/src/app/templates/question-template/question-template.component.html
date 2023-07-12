@@ -1,22 +1,28 @@
-<div class="row">
-  <div class="col-md-8">
-    <mat-form-field>
-      <mat-label>Question</mat-label>
-      <input matInput type="text" placeholder="Write a question" />
-    </mat-form-field>
-  </div>
-  <div class="col-md-4">
-    <mat-form-field appearance="outline">
-      <mat-label>Type</mat-label>
-      <mat-select [(value)]="selectedValue" (selectionChange)="onTypeChange($event)">
-        <mat-select-trigger>
-          {{ selectedValue }}
-        </mat-select-trigger>
-        <mat-option *ngFor="let type of types" [value]="type"
-          ><mat-icon matPrefix>{{ type.icon }}</mat-icon
-          >{{ type.name }}</mat-option
+<div class="container q-container" [formGroup]="questionForm">
+  <div class="row">
+    <div class="col-md-8">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Write a question" formControlName="question"/>
+      </mat-form-field>
+    </div>
+    <div class="col-md-3 offset-md-1">
+      <mat-form-field appearance="outline">
+        <mat-label>Type</mat-label>
+        <mat-select
+          [(value)]="selectedValue"
+          (selectionChange)="onTypeChange($event)"
+          formCOntrolName="type"
         >
-      </mat-select>
-    </mat-form-field>
+          <mat-select-trigger class="select-trigger">
+            <mat-icon class="select-icon">{{ selectedValue.icon }}</mat-icon>
+            {{ selectedValue.name }}
+          </mat-select-trigger>
+          <mat-option *ngFor="let type of types" [value]="type"
+            ><mat-icon matPrefix>{{ type.icon }}</mat-icon
+            >{{ type.name }}</mat-option
+          >
+        </mat-select>
+      </mat-form-field>
+    </div>
   </div>
 </div>

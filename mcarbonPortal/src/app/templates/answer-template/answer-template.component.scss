@@ -1,0 +1,22 @@
+.answer {
+  display: flex;
+  align-items: center;
+}
+
+.btn-delete {
+  background: transparent;
+  border: none;
+}
+
+.col-icon {
+  display: flex;
+  justify-content: space-around;
+  padding: 0;
+}
+
+.drag {
+  display: none;
+}
+.drag :hover + .drag {
+  display: block;
+}
