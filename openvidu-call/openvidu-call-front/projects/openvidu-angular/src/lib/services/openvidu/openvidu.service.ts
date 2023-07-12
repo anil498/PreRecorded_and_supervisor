@@ -620,17 +620,33 @@ export class OpenViduService {
 	/**
 	 * @internal
 	 */
+	async holdPartiticipantSiganl(connectionId:string) {
+		if (!this.libService.isOnHold.getValue()) {
+			// this.publishVideo(false);
+			// this.publishAudio(false);
+			// subscriber.subscribeToAudio(false);
+			// subscriber.subscribeToVideo(false);
+			const data = {
+				message: "hold",
+				nickname: this.participantService.getMyNickname(),
+				connectionId:connectionId
+			};
+			this.sendSignal(Signal.HOLD, undefined, data);
+			try {
+				// this.startTune();
+				// this.libService.isOnHold.next(true);
+			} catch (error) {
+				console.error('Failed to fetch and play tune:', error);
+			}
+		}
+	}
 	async holdPartiticipant(subscriber: Subscriber) {
 		if (!this.libService.isOnHold.getValue()) {
+			console.log("holding")
 			this.publishVideo(false);
 			this.publishAudio(false);
 			subscriber.subscribeToAudio(false);
 			subscriber.subscribeToVideo(false);
-			const data = {
-				message: "hold",
-				nickname: this.participantService.getMyNickname()
-			};
-			this.sendSignal(Signal.HOLD, undefined, data);
 			try {
 				this.startTune();
 				this.libService.isOnHold.next(true);
@@ -642,20 +658,32 @@ export class OpenViduService {
 	/**
 	 * @internal
 	 */
-	async unholdPartiticipant(subscriber: Subscriber) {
-		if (this.libService.isOnHold.getValue()) {
-			this.stopTune();
+	async unholdPartiticipantSignal(connectionId:string) {
+			// this.stopTune();
 			const data = {
 				message: "unhold",
-				nickname: this.participantService.getMyNickname()
+				nickname: this.participantService.getMyNickname(),
+				connectionId:connectionId
 			};
 			this.sendSignal(Signal.UNHOLD, undefined, data);
+			// this.publishVideo(true);
+			// subscriber.subscribeToAudio(true);
+			// subscriber.subscribeToVideo(true);
+			// this.libService.isOnHold.next(false);
+			// this.publishAudio(true);
+		
+	}
+	/**
+	 * @internal
+	 */
+	async unholdPartiticipant(subscriber:Subscriber) {
+			console.log("unholding")
+			this.stopTune();
 			this.publishVideo(true);
 			subscriber.subscribeToAudio(true);
 			subscriber.subscribeToVideo(true);
-			this.libService.isOnHold.next(false);
 			this.publishAudio(true);
-		}
+			this.libService.isOnHold.next(false)
 	}
 	/**
 	 * @internal

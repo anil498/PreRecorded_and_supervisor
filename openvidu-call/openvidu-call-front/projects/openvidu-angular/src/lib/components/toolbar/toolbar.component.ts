@@ -468,6 +468,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private sessionDurationSub: Subscription;
 	private supervisorButtonSub: Subscription;
 	private MuteCameraButtonSub: Subscription;
+	private SupervisorSub: Subscription;
 	/**
 	 * @ignore
 	 */
@@ -774,21 +775,25 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleSupervisor() {
 		try {
-			this.onAddSupervisorButtonClicked.emit();
-			this.isSupervisorActive = this.participantService.isSupervisorInCall();
+			this.isSupervisorActive = this.libService.isSupervisorActive.getValue();
 			this.log.d("Sending signal for supervisor", this.isSupervisorActive)
 			if (!this.isSupervisorActive) {
-				const data = {
-					message: "Add supervisor",
-					nickname: this.participantService.getMyNickname()
-				};
-				this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
+				this.onAddSupervisorButtonClicked.emit();
+				// const data = {
+				// 	message: "Add supervisor",
+				// 	nickname: this.participantService.getMyNickname()
+				// };
+				// this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
+				this.openviduService.getRemoteConnections().filter(connection => this.openviduService.holdPartiticipantSiganl(connection.connectionId))
+				this.libService.isOnHold.next(true);
 			} else if (this.isSupervisorActive) {
-				const data = {
-					message: "Merge supervisor",
-					nickname: this.participantService.getMyNickname()
-				};
-				this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
+				// const data = {
+				// 	message: "Merge supervisor",
+				// 	nickname: this.participantService.getMyNickname()
+				// };
+				// this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
+				this.openviduService.getRemoteConnections().filter(connection => this.openviduService.unholdPartiticipantSignal(connection.connectionId))
+				this.libService.isOnHold.next(false);
 			}
 
 		} catch (error) {
@@ -826,9 +831,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.d("Recieved : " + event.data);
 
 			if (!isMyOwnConnection) {
-				if(this.displayicdc){
 				this.panelService.togglePanel(PanelType.QUESTIONS);
-			}
 			}
 
 
@@ -992,6 +995,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 		this.MuteCameraButtonSub = this.libService.MuteCameraButtonObs.subscribe((value: boolean) => {
 			this.showMuteCameraButton = value;
+			this.cd.markForCheck();
+		});
+		this.SupervisorSub= this.libService.isSupervisorActiveObs.subscribe((value: boolean) => {
+			this.isSupervisorActive = value;
 			this.cd.markForCheck();
 		});
 	}

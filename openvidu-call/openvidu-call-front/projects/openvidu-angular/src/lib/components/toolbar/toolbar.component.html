@@ -84,7 +84,7 @@
 
 		<!-- Supervisor button -->
 		<button mat-icon-button *ngIf="!isMinimal && showSupervisorButton && screenSize !== 'xs'" id="supervisor-btn"
-			(click)="toggleSupervisor()" [disabled]="isConnectionLost" [class.active-btn]="isSupervisorActive">
+			(click)="toggleSupervisor()" [disabled]="isConnectionLost">
 			<mat-icon *ngIf="!isSupervisorActive"
 				matTooltip="{{ 'TOOLBAR.ADD_SUPERVISOR' | translate }}">account_circle</mat-icon>
 			<mat-icon *ngIf="isSupervisorActive"

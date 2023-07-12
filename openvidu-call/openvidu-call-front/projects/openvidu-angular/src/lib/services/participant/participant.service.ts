@@ -444,6 +444,30 @@ export class ParticipantService {
 			return false;
 		}
 	}
+	/**
+	 * @internal
+	 */
+	getHoldConnectionIdFromConnectionData(data: string): string {
+		try {
+			console.log(JSON.parse(data))
+			return JSON.parse(data).connectionId;
+		} catch (error) {
+			console.log(error)
+			return '';
+		}
+	}
+	/**
+	 * @internal
+	 */
+	getHoldNicknameFromConnectionData(data: string): string {
+		try {
+			console.log(JSON.parse(data))
+			return JSON.parse(data).nickname;
+		} catch (error) {
+			console.log(error)
+			return '';
+		}
+	}
 
 	/**
 	 * @internal
