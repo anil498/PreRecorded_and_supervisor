@@ -226,7 +226,7 @@ public class SeleniumTest extends TestBaseClass{
         driver.get(webUrl);
         childTest = parentTest.createNode("PROFILE CHECK");
         login(driver);
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Navigated to wrong page",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login done",ExtentColor.BLUE));
         Thread.sleep(1000);
         driver.findElement(By.cssSelector("#user-menu")).click();
         Thread.sleep(1000);

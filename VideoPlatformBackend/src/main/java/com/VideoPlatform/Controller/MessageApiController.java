@@ -93,8 +93,8 @@ public class MessageApiController {
             agentName= String.valueOf(params.get("agentName"));
         }
 
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName,"Support");
         String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",callUrl);
 
@@ -151,8 +151,8 @@ public class MessageApiController {
         if(params.containsKey("agentName")){
             agentName= String.valueOf(params.get("agentName"));
         }
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName,"Support");
         String placeHolder= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",placeHolder);
 
@@ -225,8 +225,8 @@ public class MessageApiController {
                 agentName= String.valueOf(params.get("agentName"));
             }
 
-            SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-            SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName);
+            SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
+            SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName,"Support");
             String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
             logger.info("callUrl : {}",callUrl);
 

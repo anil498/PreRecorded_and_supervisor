@@ -47,7 +47,7 @@ public class SessionServiceImpl implements SessionService{
     private String callPrefix;
 
     @Override
-    public SessionEntity createSession(String authKey, String token,Boolean moderator, String sessionId, String sessionKey, String description, String participantName) {
+    public SessionEntity createSession(String authKey, String token,Boolean moderator, String sessionId, String sessionKey, String description, String participantName, String type) {
 
         SessionEntity session=new SessionEntity();
         Date creation = TimeUtils.getDate();
@@ -66,20 +66,19 @@ public class SessionServiceImpl implements SessionService{
 //        }
 
         Gson gson = new Gson();
-        if(moderator==false){
+        if(type.equalsIgnoreCase("Customer")){
             session.setType("Customer");
             sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
         }
-        else{
-            if(participantName.equals("Supervisor")){
+        else if(type.equalsIgnoreCase("Supervisor")){
                 session.setType("Supervisor");
                 sessionKey = sessionKey+"_2";
-            }
-            else {
+        }
+        else {
                 session.setType("Support");
                 sessionKey = sessionKey + "_1";
-            }
         }
+
 //        if (sessionKey.length()==0)
 //            sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
 //        else
@@ -275,7 +274,7 @@ public class SessionServiceImpl implements SessionService{
     }
 
     @Override
-    public ResponseEntity<?> sendLink(String authKey, String token, Map<String,?> params, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response){
         logger.info("Params Values : {} ",params);
         String sessionId = (String) params.get("sessionId");
         String type = "Customer";
@@ -283,6 +282,8 @@ public class SessionServiceImpl implements SessionService{
             type = (String) params.get("type");
         }
         SessionEntity sessionEntity = sessionRepository.findBySessionId(sessionId,"Customer");
+        UserAuthEntity userAuthEntity = userAuthRepository.findByUId(sessionEntity.getUserId());
+        SessionEntity sessionEntitySupervisor = null;
         if(sessionEntity==null){
             logger.info("Invalid sessionId");
             return new ResponseEntity<>(commonService.responseData("401","Invalid sessionId"),HttpStatus.UNAUTHORIZED);
@@ -293,7 +294,7 @@ public class SessionServiceImpl implements SessionService{
             contactArray = (List<String>) params.get("contactArray");
             logger.info("Contact list is : {}",contactArray);
             if(type.equalsIgnoreCase("Supervisor")){
-                createSession(authKey,token,true,sessionId,sessionEntity.getSessionKey(),"","Supervisor");
+              sessionEntitySupervisor = createSession(userAuthEntity.getAuthKey(),userAuthEntity.getToken(),true,sessionId,sessionEntity.getSessionKey(),"","Supervisor","Supervisor");
             }
         }
         else{
@@ -301,8 +302,7 @@ public class SessionServiceImpl implements SessionService{
             HashMap<String,Object> map = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("9");
             if(map.containsKey("supervisor_contacts") && type.equalsIgnoreCase("Supervisor")){
                 contactArray = (List<String>) map.get("supervisor_contacts");
-                createSession(authKey,token,true,sessionId,sessionEntity.getSessionKey(),"","Supervisor");
-
+                sessionEntitySupervisor = createSession(userAuthEntity.getAuthKey(),userAuthEntity.getToken(),true,sessionId,sessionEntity.getSessionKey(),"","Supervisor","Supervisor");
             }
             else if(map.containsKey("customer_contacts") && type.equals("Customer")){
                 contactArray = (List<String>) map.get("customer_contacts");
@@ -316,7 +316,8 @@ public class SessionServiceImpl implements SessionService{
         if(params.containsKey("sendTo")){
             sendTo = (String) params.get("sendTo");
         }
-        String callUrl = callPrefix+sessionEntity.getSessionKey();
+        String callUrl = callPrefix+sessionEntitySupervisor.getSessionKey();
+
         if(sendTo.equals("sms")){
             for(String contact : contactArray){
                 try {
