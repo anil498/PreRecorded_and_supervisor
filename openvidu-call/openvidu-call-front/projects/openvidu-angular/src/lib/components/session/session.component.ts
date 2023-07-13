@@ -322,10 +322,15 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.openviduService.holdPartiticipant(subscriber);
 				}
 				// Adding participant when connection is created and it's not screen
-				console.log("Hold",this.libService.isOnHold.getValue())
-				console.log(JSON.parse(data.split('%/%')[0]).clientData)
+				if(this.participantService.getMyNickname()=="Support"){
+					this.libService.supervisorWhenButton.next(true);
+				}
 				if(JSON.parse(data.split('%/%')[0]).clientData=="Supervisor"){
 					this.libService.isSupervisorActive.next(true)
+				}
+				if(this.participantService.getMyNickname()=="Supervisor"){
+					const isOnHoldConnection=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData=="Customer");
+					this.libService.isOnHold.next(isOnHoldConnection.isAudioActive && isOnHoldConnection.isVideoActive);
 				}
 				if(!this.libService.isOnHold.getValue()){
 					this.participantService.addRemoteConnection(connectionId, data, null);
@@ -348,7 +353,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 				if(JSON.parse(event.connection.data.split('%/%')[0]).clientData=="Supervisor"){
 					this.libService.isSupervisorActive.next(false)
 				}
-				if(JSON.parse(event.connection.data.split('%/%')[0]).clientData=="Support"){
+				if(JSON.parse(event.connection.data.split('%/%')[0]).clientData!="Supervisor"){
 					this.libService.isOnHold.next(false)
 				}
 		});
