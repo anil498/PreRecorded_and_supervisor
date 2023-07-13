@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface SessionService {
-    SessionEntity createSession(String authKey,String token,Boolean moderator,String sessionId,String sessionKey,String description,String participantName);
+    SessionEntity createSession(String authKey,String token,Boolean moderator,String sessionId,String sessionKey,String description,String participantName,String type);
     List<SessionEntity> getAllSupportSessions(String authKey,String token);
     SessionEntity getByKey(String key);
     String deleteSession(String sessionKey);
-    ResponseEntity<?> sendLink(String authKey, String token,Map<String,?> params, HttpServletRequest request, HttpServletResponse response);
+    ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response);
 
     void updateHold(Map<String, Object> params);
 }

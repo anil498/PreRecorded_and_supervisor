@@ -70,8 +70,8 @@ public class SessionController {
             participantName= String.valueOf(params.get("participantName"));
         }
 
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
-        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
+        SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName,"Support");
 
 
         Map<String,String> result = new HashMap<>();
@@ -149,7 +149,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token,"dynamic_links")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        return sessionService.sendLink(authKey,token,params,request,response);
+        return sessionService.sendLink(params,request,response);
     }
     @PostMapping("/sessionPlugin")
     public ResponseEntity<?> sessionPlugin(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
@@ -168,7 +168,7 @@ public class SessionController {
         if (params.containsKey("participantName")) {
             participantName = String.valueOf(params.get("participantName"));
         }
-        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName);
+        SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
         String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
