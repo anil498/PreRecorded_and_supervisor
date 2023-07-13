@@ -41,6 +41,7 @@ import { RecordingService } from '../../services/recording/recording.service';
 import { StorageService } from '../../services/storage/storage.service';
 import { TranslateService } from '../../services/translate/translate.service';
 import { Signal } from '../../models/signal.model';
+import { CdkOverlayService } from '../../services/cdk-overlay/cdk-overlay.service';
 
 /**
  *
@@ -62,7 +63,7 @@ import { Signal } from '../../models/signal.model';
  * | **leaveButton**             | `boolean` | {@link ToolbarLeaveButtonDirective}             |
  * | **chatPanelButton**         | `boolean` | {@link ToolbarChatPanelButtonDirective}         |
  * | **participantsPanelButton** | `boolean` | {@link ToolbarParticipantsPanelButtonDirective} |
- * | **questionPanelButton**     | `boolean` | {@link ToolbarQuestionPanelButtonDirective}     | 
+ * | **questionPanelButton**     | `boolean` | {@link ToolbarQuestionPanelButtonDirective}     |
  * | **displayLogo**             | `boolean` | {@link ToolbarDisplayLogoDirective}             |
  * | **displaySessionName**      | `boolean` | {@link ToolbarDisplaySessionNameDirective}      |
  *
@@ -427,8 +428,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	screenSize: string;
 	/**
-	* @ignore
-	*/
+	 * @ignore
+	 */
 	displayicdc: boolean = true;
 
 	/**
@@ -453,8 +454,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private activitiesPanelButtonSub: Subscription;
 	private participantsPanelButtonSub: Subscription;
 	private questionPanelButtonSub: Subscription;
-	private icdcSub:Subscription;
-	private displayicdcSub:Subscription;
+	private icdcSub: Subscription;
+	private displayicdcSub: Subscription;
 	private chatPanelButtonSub: Subscription;
 	private displayLogoSub: Subscription;
 	private displayLogoValueSub: Subscription;
@@ -487,7 +488,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		private platformService: PlatformService,
 		private recordingService: RecordingService,
 		private translateService: TranslateService,
-		private storageSrv: StorageService
+		private storageSrv: StorageService,
+		private cdkOverlayService: CdkOverlayService
 	) {
 		this.log = this.loggerSrv.get('ToolbarComponent');
 	}
@@ -533,7 +535,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.subscribeToCaptionsToggling();
 		this.subscribeToSessionTimergStatus();
 		this.subscribeToSignal();
-
 	}
 
 	ngAfterViewInit() {
@@ -541,6 +542,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.menuTrigger?.menuOpened.subscribe(() => {
 			this.isSessionCreator = this.participantService.getMyRole() === OpenViduRole.MODERATOR;
 		});
+		this.subscribeToFullscreenChanged();
 	}
 
 	ngOnDestroy(): void {
@@ -565,6 +567,10 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		if (this.screenSizeSub) this.screenSizeSub.unsubscribe();
 		if (this.settingsButtonSub) this.settingsButtonSub.unsubscribe();
 		if (this.captionsSubs) this.captionsSubs.unsubscribe();
+		document.removeEventListener('fullscreenchange', () => {
+			this.isFullscreenActive = false;
+			this.cdkOverlayService.setSelector('body');
+		});
 	}
 
 	/**
@@ -578,7 +584,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.e('There was an error toggling microphone:', error.code, error.message);
 			this.actionService.openDialog(
 				this.translateService.translate('ERRORS.TOGGLE_MICROPHONE'),
-				error?.error || error?.message || error, true
+				error?.error || error?.message || error,
+				true
 			);
 		}
 	}
@@ -597,7 +604,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			await this.openviduService.publishVideo(publishVideo);
 		} catch (error) {
 			this.log.e('There was an error toggling camera:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_CAMERA'), error?.error || error?.message || error, true);
+			this.actionService.openDialog(
+				this.translateService.translate('ERRORS.TOGGLE_CAMERA'),
+				error?.error || error?.message || error,
+				true
+			);
 		}
 		this.videoMuteChanging = false;
 	}
@@ -615,7 +626,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
 				this.actionService.openDialog(
 					this.translateService.translate('ERRORS.SCREEN_SHARING'),
-					this.translateService.translate('ERRORS.SCREEN_SUPPORT'), true
+					this.translateService.translate('ERRORS.SCREEN_SUPPORT'),
+					true
 				);
 			}
 		}
@@ -697,20 +709,16 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleQuestionPanel() {
 		this.onQuestionPanelButtonClicked.emit();
-		if(this.displayicdc){
+		if (this.displayicdc) {
 			this.panelService.togglePanel(PanelType.QUESTIONS);
 		}
 
 		const data = {
-			message: "Question Panel Signal From Support",
-			nickname: this.participantService.getMyNickname(),
-		}
-
+			message: 'Question Panel Signal From Support',
+			nickname: this.participantService.getMyNickname()
+		};
 
 		this.openviduService.sendSignal(Signal.QUESTION, undefined, data);
-
-
-
 	}
 
 	/**
@@ -726,14 +734,18 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	togglePublishVideo() {
 		this.onPublishVideoButtonClicked.emit();
 		try {
-			this.showVideoControlButton = !this.showVideoControlButton
-			console.log("Publishing video")
-			this.openviduService.publishRecordedVideo()
+			this.showVideoControlButton = !this.showVideoControlButton;
+			console.log('Publishing video');
+			this.openviduService.publishRecordedVideo();
 			this.libService.screenshareButton.next(this.isPublishVideoActive);
 			this.isPublishVideoActive = !this.isPublishVideoActive;
 		} catch (error) {
 			this.log.e('There was an error toggling Publish video:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error, true);
+			this.actionService.openDialog(
+				this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'),
+				error?.error || error?.message || error,
+				true
+			);
 		}
 	}
 
@@ -741,10 +753,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	toggleFullscreen() {
-		this.isFullscreenActive = !this.isFullscreenActive;
-		this.log.d("Someone has shared screen", this.participantService.someoneIsSharingScreen())
+		this.log.d('Someone has shared screen', this.participantService.someoneIsSharingScreen());
 		if (this.participantService.someoneIsSharingScreen()) {
-			this.openviduService.toggleShareFullscreen()
+			this.openviduService.toggleShareFullscreen();
 		} else {
 			this.documentService.toggleFullscreen('session-container');
 		}
@@ -757,17 +768,21 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.onVideoControlButtonClicked.emit();
 		try {
 			if (!this.isVideoControlActive) {
-				console.log("Playig video")
+				console.log('Playig video');
 				this.openviduService.playVideo();
 				this.isVideoControlActive = !this.isVideoControlActive;
 			} else {
-				console.log("Pausing video")
+				console.log('Pausing video');
 				this.openviduService.pauseVideo();
 				this.isVideoControlActive = !this.isVideoControlActive;
 			}
 		} catch (error) {
 			this.log.e('There was an error toggling Publish video:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'), error?.error || error?.message || error, true);
+			this.actionService.openDialog(
+				this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'),
+				error?.error || error?.message || error,
+				true
+			);
 		}
 	}
 	/**
@@ -776,7 +791,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	toggleSupervisor() {
 		try {
 			this.isSupervisorActive = this.libService.isSupervisorActive.getValue();
-			this.log.d("Sending signal for supervisor", this.isSupervisorActive)
+			this.log.d('Sending signal for supervisor', this.isSupervisorActive);
 			if (!this.isSupervisorActive) {
 				this.onAddSupervisorButtonClicked.emit();
 				// const data = {
@@ -784,7 +799,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 				// 	nickname: this.participantService.getMyNickname()
 				// };
 				// this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
-				this.openviduService.getRemoteConnections().filter(connection => this.openviduService.holdPartiticipantSiganl(connection.connectionId))
+				this.openviduService
+					.getRemoteConnections()
+					.filter((connection) => this.openviduService.holdPartiticipantSiganl(connection.connectionId));
 				this.libService.isOnHold.next(true);
 			} else if (this.isSupervisorActive) {
 				// const data = {
@@ -792,15 +809,15 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 				// 	nickname: this.participantService.getMyNickname()
 				// };
 				// this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
-				this.openviduService.getRemoteConnections().filter(connection => this.openviduService.unholdPartiticipantSignal(connection.connectionId))
+				this.openviduService
+					.getRemoteConnections()
+					.filter((connection) => this.openviduService.unholdPartiticipantSignal(connection.connectionId));
 				this.libService.isOnHold.next(false);
 			}
-
 		} catch (error) {
-			this.log.d("Getting error while adding supervisor", error.message)
+			this.log.d('Getting error while adding supervisor', error.message);
 		}
 	}
-
 
 	private toggleActivitiesPanel(expandPanel: string) {
 		this.onActivitiesPanelButtonClicked.emit();
@@ -820,24 +837,26 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	protected subscribeToSignal() {
-
 		this.session.on(`signal:${Signal.QUESTION}`, (event: any) => {
 			const connectionId = event.from.connectionId;
 			const data = JSON.parse(event.data);
 			const isMyOwnConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
 
-			this.log.d("Connection ID From Signal: " + connectionId);
-			this.log.d("Is the Signal for this id ? " + !isMyOwnConnection);
-			this.log.d("Recieved : " + event.data);
+			this.log.d('Connection ID From Signal: ' + connectionId);
+			this.log.d('Is the Signal for this id ? ' + !isMyOwnConnection);
+			this.log.d('Recieved : ' + event.data);
 
 			if (!isMyOwnConnection) {
 				this.panelService.togglePanel(PanelType.QUESTIONS);
 			}
-
-
 		});
 	}
-
+	private subscribeToFullscreenChanged() {
+		document.addEventListener('fullscreenchange', (event) => {
+			this.isFullscreenActive = Boolean(document.fullscreenElement);
+			this.cdkOverlayService.setSelector(this.isFullscreenActive ? '#session-container' : 'body');
+		});
+	}
 
 	protected subscribeToMenuToggling() {
 		this.panelTogglingSubscription = this.panelService.panelOpenedObs.subscribe((ev: PanelEvent) => {
@@ -888,14 +907,12 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	private subscribeToSessionTimergStatus() {
 		if (this.showSessionTimer) {
-			this.sessionTimerSubscription = this.openviduService.sessionTimerObs
-				.pipe(skip(1))
-				.subscribe((ev: { time?: Date }) => {
-					if (ev.time) {
-						this.sessionTime = ev.time;
-					}
-					this.cd.markForCheck();
-				});
+			this.sessionTimerSubscription = this.openviduService.sessionTimerObs.pipe(skip(1)).subscribe((ev: { time?: Date }) => {
+				if (ev.time) {
+					this.sessionTime = ev.time;
+				}
+				this.cd.markForCheck();
+			});
 		}
 	}
 
@@ -909,11 +926,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.cd.markForCheck();
 		});
 		this.publishVideoButtonSub = this.libService.publishVideoeButtonObs.subscribe((value: boolean) => {
-			this.showPublishVideoButton = value
+			this.showPublishVideoButton = value;
 			this.cd.markForCheck();
 		});
 		this.videoControlButtonSub = this.libService.videoControlButtonObs.subscribe((value: boolean) => {
-			this.showVideoControlButton = value
+			this.showVideoControlButton = value;
 			this.cd.markForCheck();
 		});
 		this.fullscreenButtonSub = this.libService.fullscreenButtonObs.subscribe((value: boolean) => {
@@ -982,7 +999,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.showSessionTimer = value;
 			this.cd.markForCheck();
 		});
-		this.displayicdcSub = this.libService.displayicdc.subscribe((displayicdc: boolean)=>{
+		this.displayicdcSub = this.libService.displayicdc.subscribe((displayicdc: boolean) => {
 			this.displayicdc = displayicdc;
 		});
 		this.sessionDurationSub = this.libService.sessionDurationObs.subscribe((value: number) => {
@@ -997,7 +1014,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.showMuteCameraButton = value;
 			this.cd.markForCheck();
 		});
-		this.SupervisorSub= this.libService.isSupervisorActiveObs.subscribe((value: boolean) => {
+		this.SupervisorSub = this.libService.isSupervisorActiveObs.subscribe((value: boolean) => {
 			this.isSupervisorActive = value;
 			this.cd.markForCheck();
 		});
@@ -1015,7 +1032,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.captionsEnabled = value;
 			this.cd.markForCheck();
 		});
-
 	}
 
 	private checkDisplayMoreOptions() {
