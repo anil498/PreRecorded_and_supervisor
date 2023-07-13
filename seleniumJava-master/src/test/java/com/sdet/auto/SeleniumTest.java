@@ -224,9 +224,11 @@ public class SeleniumTest extends TestBaseClass{
             }
         });
         driver.get(webUrl);
+        childTest = parentTest.createNode("PROFILE CHECK");
         login(driver);
-        Thread.sleep(2000);
-        driver.findElement(By.cssSelector("#navigation>ul>li>a")).click();
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Navigated to wrong page",ExtentColor.BLUE));
+        Thread.sleep(1000);
+        driver.findElement(By.cssSelector("#user-menu")).click();
         Thread.sleep(1000);
         driver.findElement(ByAngular.partialButtonText("Profile")).click();
         System.out.println("Profile button pressed!");

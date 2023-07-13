@@ -40,6 +40,8 @@ public class SessionServiceImpl implements SessionService{
     @Autowired
     private AccountAuthRepository accountAuthRepository;
     @Autowired
+    private CommonService commonService;
+    @Autowired
     MessagingService messagingService;
     @Value("${call.prefix}")
     private String callPrefix;
@@ -280,7 +282,12 @@ public class SessionServiceImpl implements SessionService{
         if(params.containsKey("type")) {
             type = (String) params.get("type");
         }
-        SessionEntity sessionEntity = sessionRepository.findBySessionId(sessionId);
+        SessionEntity sessionEntity = sessionRepository.findBySessionId(sessionId,"Customer");
+        if(sessionEntity==null){
+            logger.info("Invalid sessionId");
+            return new ResponseEntity<>(commonService.responseData("401","Invalid sessionId"),HttpStatus.UNAUTHORIZED);
+
+        }
         List<String> contactArray = new ArrayList<>(){};
         if(params.containsKey("contactArray")){
             contactArray = (List<String>) params.get("contactArray");
@@ -302,7 +309,7 @@ public class SessionServiceImpl implements SessionService{
             }
             else{
                 logger.info("contact list not present in feature meta.");
-                return new ResponseEntity<>("Missing Value.", HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(commonService.responseData("400","Getting null or invalid value from parameters."),HttpStatus.BAD_REQUEST);
             }
         }
         String sendTo = "whatsapp";
@@ -344,7 +351,7 @@ public class SessionServiceImpl implements SessionService{
 
             }
         }
-        return ResponseEntity.ok("Link sent successfully !");
+        return new ResponseEntity<>(commonService.responseData("200","Link sent successfully!"),HttpStatus.OK);
     }
 
     public String givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect() {

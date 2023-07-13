@@ -149,14 +149,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token,"dynamic_links")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-
-        sessionService.sendLink(authKey,token,params,request,response);
-
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Link sent successfully !");
-
-        return ok(result);
+        return sessionService.sendLink(authKey,token,params,request,response);
     }
     @PostMapping("/sessionPlugin")
     public ResponseEntity<?> sessionPlugin(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
