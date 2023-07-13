@@ -144,7 +144,7 @@ export class StreamComponent implements OnInit {
 		this.checkVideoEnlarged();
 		if (this._stream.participant) {
 			this.nickname = this._stream.participant.nickname;
-			this.libService.isOnHold.next(this._stream.participant.isOnHold);
+			// this.libService.isOnHold.next(this._stream.participant.isOnHold);
 		}
 	}
 	/**
@@ -248,17 +248,20 @@ export class StreamComponent implements OnInit {
 	toggleHold() {
 		console.log("Toggling hold")
 		const connectionId = this._stream.connectionId;
+		
 		const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
 		const subscriber: Subscriber = this.openviduService.getWebcamSession().subscribe(participantAdded?.stream, undefined);
 		this.isOnHold=this.libService.isOnHold.getValue();
 		if (!this.isOnHold) {
 			this.onHoldButtonClicked.emit();
 			this.log.d("Going to hold the partiticpant: ",connectionId)
-			this.openviduService.holdPartiticipant(subscriber);
+			this.openviduService.holdPartiticipantSiganl(connectionId);
+			this.libService.isOnHold.next(true);
 		}else{
 			this.onUnHoldButtonClicked.emit();
 			this.log.d("Going to unhold the partiticpant: ",connectionId)
-			this.openviduService.unholdPartiticipant(subscriber);
+			this.openviduService.unholdPartiticipantSignal(connectionId);
+			this.libService.isOnHold.next(false);
 		}
 	}
 

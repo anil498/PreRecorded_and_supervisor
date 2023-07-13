@@ -139,6 +139,7 @@
                       <button
                         class="btn-action"
                         mat-menu-item
+                        id="view"
                         (click)="viewAccountDialog(account)"
                       >
                         <mat-icon style="color: #009688"
@@ -148,6 +149,7 @@
                       </button>
                       <button
                         class="btn-action"
+                        id="edit"
                         mat-menu-item
                         (click)="updateAccountDialog(account)"
                         *ngIf="showEdit && account.status !== 2"
@@ -157,6 +159,7 @@
                       </button>
                       <button
                         class="btn-action"
+                        id="delete"
                         mat-menu-item
                         (click)="deleteAccount(account.accountId)"
                         *ngIf="showDelete && account.status !== 2"
@@ -168,6 +171,7 @@
                       </button>
                       <button
                         class="btn-action"
+                        id="expire"
                         mat-menu-item
                         (click)="expireAccount(account)"
                         *ngIf="account.status !== 2"

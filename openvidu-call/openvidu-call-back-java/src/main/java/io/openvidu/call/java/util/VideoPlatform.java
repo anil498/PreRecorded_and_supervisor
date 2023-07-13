@@ -135,7 +135,7 @@ public class VideoPlatform {
 
     ResponseEntity<String> response;
     try {
-      response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
+      response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
     } catch (RestClientException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
     }

@@ -1,4 +1,7 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { ObserverService } from "app/services/observer.service";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-question-template",
@@ -6,6 +9,8 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./question-template.component.scss"],
 })
 export class QuestionTemplateComponent implements OnInit {
+  questionForm: FormGroup;
+  questionId: any;
   types = [
     {
       name: "Text",
@@ -27,24 +32,58 @@ export class QuestionTemplateComponent implements OnInit {
     },
     {
       name: "Drop Down",
-      type: "select",
+      type: "dropdown",
       value: "drop_down",
       icon: "arrow_drop_down_circle",
     },
   ];
   selectedValue: any;
-  constructor() {
+  questionTypeSub: Subscription;
+  constructor(
+    private observerService: ObserverService,
+    private fb: FormBuilder
+  ) {
     this.selectedValue = this.types[0];
   }
 
   ngOnInit(): void {
     console.log(this.selectedValue);
+    this.questionTypeSub = this.observerService.totalQuestionObs.subscribe(
+      (quesId) => {
+        this.questionId = quesId;
+      }
+    );
+    this.questionForm = this.fb.group({
+      qId: [this.questionId, [Validators.required]],
+      question: ["", [Validators.required]],
+      type: [this.selectedValue.type, [Validators.required]],
+    });
+    this.observerService.questionType.next(this.selectedValue.type);
+    this.questionForm.value.type = this.selectedValue.type;
+    this.observerService.questionForm.next(this.questionForm);
+
+    // this.questionForm.valueChanges.subscribe((ques) => {
+    //   console.log(ques);
+    //   this.questionForm.value.question = ques;
+    //   this.observerService.questionType.next(this.selectedValue.type);
+    //   this.questionForm.value.type = this.selectedValue.type;
+    //   this.observerService.questionForm.next(this.questionForm);
+    //   console.log(this.questionForm);
+    // });
   }
 
   onTypeChange(event: any) {
     console.log(this.selectedValue);
     console.log(event);
-    this.selectedValue = structuredClone(event.value);
+    this.selectedValue = event.value;
     console.log(this.selectedValue);
+    console.log(this.questionForm);
+    this.observerService.questionType.next(this.selectedValue.type);
+    this.questionForm.value.type = this.selectedValue.type;
+    this.observerService.questionForm.next(this.questionForm);
+  }
+
+  ngOnDestroy() {
+    if (this.questionTypeSub) this.questionTypeSub.unsubscribe();
   }
 }

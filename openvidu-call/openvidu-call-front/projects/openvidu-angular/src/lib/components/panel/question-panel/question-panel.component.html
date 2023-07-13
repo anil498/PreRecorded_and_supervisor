@@ -1,7 +1,7 @@
 <div class="panel-container" id="chat-container" fxLayout="column" fxLayoutAlign="space-evenly none">
 	<div class="panel-header-container" fxLayoutAlign="start center">
 		<h3 class="panel-title">{{titleicdc}}</h3>
-		<button class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="closeForm()">
+		<button *ngIf="isClose" class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="closeForm()">
 			<mat-icon>close</mat-icon>
 		</button>
 	</div>
@@ -9,7 +9,7 @@
 	<div class="question-container" fxFlex="75%" fxLayoutAlign="space-evenly none" (scroll)="onScroll()" #chatScroll>
 		<div class="question-detail">
 			<form [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="form">
-				<div *ngFor="let question of questions ; let i = index">
+				<div class="icdc" *ngFor="let question of questions ; let i = index">
 					<div class = "question-block">
 						<label class="question">Q {{i+1}} . {{ question.question }}</label>
 					</div>
@@ -41,20 +41,22 @@
 						  </ng-container>
 						</div>
 					  </div>
-					<div *ngSwitchCase="'dropdown'">
+					<div style="padding-left: 20px;" *ngSwitchCase="'dropdown'">
 					  <select [formControlName]="question.q_id">
 						<option value="">Select an option</option>
 						<option *ngFor="let option of question.meta" [value]="option">{{ option }}</option>
 					  </select>
 					</div>
-					<div *ngSwitchDefault>
+					<div style="padding-left: 20px;" *ngSwitchDefault>
 					  <input type="text" [formControlName]="question.q_id" />
 					</div>
 				  </ng-container>
 				  <br/>
 				</div>
-			  
-				<button *ngIf="isSubmit" type="submit">Submit</button>
+		  
+				<div class="submit-button">
+					<button *ngIf="isSubmit" type="submit">Submit</button>	
+				</div>		 
 			  </form>
 			  
 			  

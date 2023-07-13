@@ -275,7 +275,7 @@ public class SessionController {
     String sessionKey=" ";
     Boolean isOnHold=false;
     if (params.containsKey("sessionKey")){
-      sessionKey=params.get("sessionId").toString();
+      sessionKey=params.get("sessionKey").toString();
     }
     if (params.containsKey("isOnHold")){
       isOnHold= (Boolean) params.get("isOnHold");

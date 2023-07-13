@@ -58,10 +58,11 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	name: string;
 	ischecked: boolean = false;
 	session: Session;
-	scrolling:boolean=true;
+	scrolling: boolean = true;
 	usertype: string = '';
 	editicdc: boolean;
-	titleicdc: string='';
+	titleicdc: string = '';
+	isClose: boolean = true;
 
 	private usertypeSub: Subscription;
 	private editicdcSub: Subscription;
@@ -77,15 +78,20 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		protected participantService: ParticipantService,
 		private libService: OpenViduAngularConfigService
 	) {
+		//Get Logger Service
 		this.log = this.loggerSrv.get('Question Panel');
+
+		//Get Session Service
 		this.session = this.openviduService.getSession();
 
+		//Build a Form Group
 		this.form = this.formBuilder.group({});
 
+		//Harcoded Json imported From assets folder . It can be modifeied to get a json object from an API
 		this.http.get<any>('assets/json/data.json').subscribe((response) => {
 			this.questions = response.Question_data;
-
 			this.questions.forEach((question) => {
+				//Set custom Controls for a Checkbox Question
 				if (question.type === 'checkbox') {
 					const checkboxOptions = question.meta.reduce((options, option) => {
 						options[option] = false; // Set all options to false initially
@@ -94,33 +100,121 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 					this.selectedAnswers[question.q_id] = [];
 					this.form.addControl(question.q_id, this.formBuilder.control(checkboxOptions));
 				} else {
+					//Add Controls for Questions other than the checkbox
 					this.form.addControl(question.q_id, this.formBuilder.control('', Validators.required));
 				}
-
-				this.name = question.q_id;
 			});
 
-			this.log.d('My Role -' + this.usertype);
-			this.log.d('Edit ICDC -' + this.editicdc);
-			this.log.d('Title ICDC -' + this.titleicdc);
-
-
+			this.log.d(this.titleicdc);
+			//Give Form Access to user based on the paramters Recieved from backend
 			if (!this.editicdc) {
-					this.form.disable();
-					this.isSubmit = false;
-				}else{
-					this.isSubmit = true;
-				}
-				
-			
+				this.form.disable();
+				this.isSubmit = false;
+			} else {
+				this.isSubmit = true;
+			}
 
+			if (this.usertype == 'Customer') {
+				this.isClose = false;
+			}
+
+			//Update UI
 			if (this.panelService.isQuestionPanelOpened()) {
-				// this.scrollToBottom();
 				this.cd.markForCheck();
 			}
 		});
 	}
 
+	ngOnInit(): void {
+		this.subscribetoParameters();
+		this.subscribeToSignal();
+		this.form.valueChanges.subscribe((value) => {
+			// Handle the real-time form values here
+			this.log.d(value);
+
+			if (!this.form.pristine) {
+				this.openviduService.sendSignal(Signal.SUPPORT, undefined, value);
+			}
+		});
+	}
+
+	ngAfterViewInit() {}
+
+	//Subscribe to Signals
+	protected subscribeToSignal() {
+
+		// Data Signal From Other Participant
+		this.session.on(`signal:${Signal.SUPPORT}`, (event: any) => {
+			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
+			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
+
+			if (!isMyOwnConnection) {
+
+				//For Checkbox Question
+				if (data.options) {
+					const control = this.form.get(data.qid);
+					const value = control.value;
+
+					if (data.check == true) {
+						value[data.options] = true; // Set the specific option to true
+					} else {
+						value[data.options] = false; // Set the specific option to true
+					}
+				
+					control.patchValue(value);
+					this.form.markAsPristine();
+
+				} else {
+
+					//For Questions other than the checkbox
+					this.form.patchValue(data);
+					this.form.markAsPristine();
+				}
+			}
+		});
+
+		// Close Form Signal
+		this.session.on(`signal:${Signal.CLOSE}`, (event: any) => {
+			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
+			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
+			if (!isMyOwnConnection) {
+				this.log.w('Panel Closing');
+				this.close();
+			}
+		});
+
+		//Scroll Form Signal
+		this.session.on(`signal:${Signal.SCROLL}`, (event: any) => {
+			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
+			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
+			
+			if (!isMyOwnConnection) {
+				const formElement = this.chatScroll.nativeElement;
+				formElement.scrollTop = data.scrollValue;
+				this.scrolling = false;
+			}
+		});
+	}
+
+	// SUbscribe to Paramters recieved from backend
+	protected subscribetoParameters() {
+		this.usertypeSub = this.libService.usertype.subscribe((usertype: string) => {
+			this.usertype = usertype;
+		});
+
+		this.editicdcSub = this.libService.editicdc.subscribe((editicdc: boolean) => {
+			this.editicdc = editicdc;
+		});
+
+		this.titleicdcSub = this.libService.titleicdc.subscribe((titleicdc: string) => {
+			this.titleicdc = titleicdc;
+		});
+	}
+
+	//Function To Check if checkbox is checked or not
 	isOptionSelected(questionId: string, option: string): boolean {
 		const control = this.form.get(questionId);
 		const value = control.value;
@@ -131,101 +225,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		}
 	}
 
-	ngOnInit(): void {
-		this.subscribetouser();
-		this.subscribeToSignal();
-		this.form.valueChanges.subscribe((value) => {
-			// Handle the real-time form values here
-			this.log.d(value);
-
-			if (!this.form.pristine) {
-				this.openviduService.sendSignal(Signal.SUPPORT, undefined, value);
-			}
-		});
-
-	}
-
-	ngAfterViewInit() {}
-
-
-	protected subscribeToSignal() {
-		this.session.on(`signal:${Signal.SUPPORT}`, (event: any) => {
-			const connectionId = event.from.connectionId;
-			const data = JSON.parse(event.data);
-			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
-
-			if (!isMyOwnConnection) {
-				this.log.d('Connection ID From Signal: ' + connectionId);
-				this.log.d('Is the Signal for this id ? ' + !isMyOwnConnection);
-
-				if (data.options) {
-
-					this.log.d(data.options);
-					const control = this.form.get(data.qid);
-					const value = control.value;
-					
-					if (data.check == true) {
-						value[data.options] = true; // Set the specific option to true
-					} else {
-						value[data.options] = false; // Set the specific option to true
-					}
-					control.setValue(value);
-					this.form.markAsPristine();
-				} else {
-					this.log.w(data);
-					this.form.patchValue(data);
-					this.form.markAsPristine();
-				}
-			}
-		});
-
-		this.session.on(`signal:${Signal.CLOSE}`, (event: any) => {
-			const connectionId = event.from.connectionId;
-			const data = JSON.parse(event.data);
-			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
-			if (!isMyOwnConnection) {
-				this.log.d('Connection ID From Signal: ' + connectionId);
-				this.log.d('Is the Signal for this id ? ' + !isMyOwnConnection);
-				this.log.d('Recieved : ' + data);
-
-				this.log.w('Panel Closing');
-				this.close();
-			}
-		});
-
-
-		this.session.on(`signal:${Signal.SCROLL}`, (event: any) => {
-			const connectionId = event.from.connectionId;
-			const data = JSON.parse(event.data);
-			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
-			if (!isMyOwnConnection) {
-				this.log.d('Connection ID From Signal: ' + connectionId);
-				this.log.d('Is the Signal for this id ? ' + !isMyOwnConnection);
-				this.log.d('Recieved : ' + data);
-
-				const formElement = this.chatScroll.nativeElement;
-				formElement.scrollTop=data.scrollValue;
-				this.scrolling= false;
-			}
-		});
-	}
-
-	protected subscribetouser() {
-		this.usertypeSub = this.libService.usertype.subscribe((usertype: string)=>{
-			this.usertype = usertype;
-		})
-
-		this.editicdcSub = this.libService.editicdc.subscribe((editicdc: boolean)=>{
-			this.editicdc = editicdc;
-		})
-
-		this.titleicdcSub = this.libService.titleicdc.subscribe((titleicdc: string)=>{
-			this.titleicdc = titleicdc;
-		})
-	}
-
-	// For CheckBox
-
+	//Function to Update CheckBox Questions Selection Array
 	updateSelectedAnswers(questionId: string, option: string, checked: boolean) {
 		this.selectedOptions = this.selectedAnswers[questionId];
 		if (!this.selectedOptions) {
@@ -235,20 +235,23 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 
 		const control = this.form.get(questionId);
 		const value = control.value;
-		value[option] = true; // Set the specific option to true
-		control.setValue(value);
-
+		
+		// Add the selected option to the selectedOptions array
 		if (checked) {
-			// Add the selected option to the selectedOptions array
+			value[option] = true; // Set the specific option to true
 			this.selectedOptions.push(option);
 		} else {
 			// Remove the deselected option from the selectedOptions array
+			value[option] = false;
 			const index = this.selectedOptions.indexOf(option);
 			if (index !== -1) {
 				this.selectedOptions.splice(index, 1);
 			}
 		}
-		
+
+		control.setValue(value);
+
+		//Send a Signal to other participant with checkbox data
 		const data: object = {
 			qid: questionId,
 			options: option,
@@ -259,8 +262,8 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	}
 
 	submitForm() {
-		this.log.d('Use form Data to Submit the Form');
-		this.log.d(this.form.value);
+		this.log.d('Form Submitted Succesfully');
+		this.log.d("Form Value : "+this.form.value);
 		this.form.reset();
 		this.selectedAnswers = [];
 		this.close();
@@ -272,13 +275,12 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	}
 
 	close() {
-		if(this.panelService.isQuestionPanelOpened()==true){
+		if (this.panelService.isQuestionPanelOpened() == true) {
 			this.panelService.togglePanel(PanelType.QUESTIONS);
 		}
 	}
 
-
-	closeForm(){
+	closeForm() {
 		this.close();
 		const data = {
 			data: 'Close Form Signal'
@@ -286,25 +288,22 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		this.openviduService.sendSignal(Signal.CLOSE, undefined, data);
 	}
 
+	//Function to calculate scroll Value
 	onScroll() {
+		if (this.scrolling == true) {
+			const formElement = this.chatScroll.nativeElement;
+			const scrollTop = formElement.scrollTop;
 
-		if(this.scrolling == true){
-		const formElement = this.chatScroll.nativeElement;
-		const scrollTop = formElement.scrollTop;
-		// Use the scrollTop value as needed
+			const data = {
+				data: 'Scroll Signal',
+				scrollValue: scrollTop,
+				scrolling: false
+			};
+			this.openviduService.sendSignal(Signal.SCROLL, undefined, data);
+		}
 
-		this.log.d("Scroll Value : "+ scrollTop);
-
-		const data = {
-			data: 'Scroll Signal',
-			scrollValue: scrollTop,
-			scrolling: false
-		};
-		this.openviduService.sendSignal(Signal.SCROLL, undefined, data);
-	  }
-
-	  setTimeout(() => {
-		this.scrolling = true;
-	  }, 300);
+		setTimeout(() => {
+			this.scrolling = true;
+		}, 300);
 	}
 }

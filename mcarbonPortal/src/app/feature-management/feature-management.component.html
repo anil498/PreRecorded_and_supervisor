@@ -113,6 +113,7 @@
                     <mat-menu #menu="matMenu" xPosition="after">
                       <button
                         class="btn-action"
+                        id="view"
                         mat-menu-item
                         (click)="viewFeatureDialog(feature)"
                       >
@@ -123,6 +124,7 @@
                       </button>
                       <button
                         class="btn-action"
+                        view="edit"
                         mat-menu-item
                         (click)="updateFeature(feature)"
                         *ngIf="feature.status !== 2"
@@ -132,6 +134,7 @@
                       </button>
                       <button
                         class="btn-action"
+                        id="delete"
                         mat-menu-item
                         (click)="deleteFeature(feature.featureId)"
                         *ngIf="feature.status !== 2"

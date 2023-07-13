@@ -39,7 +39,7 @@
               class="col-10 offset-1 text-center"
               *ngIf="emptyUname && emptyPass"
             >
-              <p class="alert alert-danger">
+              <p class="alert alert-danger" id="emptyUserPass">
                 <strong>Enter Username & Password</strong>
               </p>
             </div>
@@ -47,7 +47,7 @@
               class="col-10 offset-1 text-center"
               *ngIf="emptyUname && !emptyPass"
             >
-              <p class="alert alert-danger">
+              <p class="alert alert-danger" id="emptyUser">
                 <strong>Must Enter Username</strong>
               </p>
             </div>
@@ -55,7 +55,7 @@
               class="col-10 offset-1 text-center"
               *ngIf="emptyPass && !emptyUname"
             >
-              <p class="alert alert-danger">
+              <p class="alert alert-danger" id="emptyPass">
                 <strong>Must Enter Password</strong>
               </p>
             </div>

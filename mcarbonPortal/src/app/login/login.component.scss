@@ -14,7 +14,7 @@
   width: 26%;
   margin-top: 15%;
   margin-right: 11%;
-  background-color: rgb(255, 255, 255,0.25);
+  background-color: rgb(255, 255, 255, 0.25);
 }
 
 .form {
@@ -24,7 +24,7 @@
 }
 
 #login-head {
-  color: rgb(0,0,0);
+  color: rgb(0, 0, 0);
 }
 
 .form-field {
@@ -134,15 +134,21 @@
 }
 
 .mat-form-field-appearance-legacy .mat-form-field-label {
-  color: rgba(0,0,0,);
+  color: rgba(0, 0, 0);
 }
 
+// .error {
+//   background-color: #da0505;
+//   background: linear-gradient(60deg, #da0505, #eb6161) !important;
+//   color: #ffffff !important;
+//   font-weight: bold;
+// }
 ::ng-deep .mat-snack-bar-container {
-  background: linear-gradient(60deg, #e8f1ee, #ffffff) !important;
-  color: #be1818 !important;
+  background: linear-gradient(60deg, #da0505, #eb6161) !important;
+  color: #ffffff !important;
   font-weight: bold;
 }
 
 ::ng-deep .mat-simple-snackbar-action {
-  color: black !important;
+  color: rgb(255, 255, 255) !important;
 }

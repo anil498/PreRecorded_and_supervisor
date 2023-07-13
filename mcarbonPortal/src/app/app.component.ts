@@ -3,6 +3,7 @@ import { Component } from "@angular/core";
 import { NavigationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { RouteInfo } from "./model/ROUTE";
+import { ObserverService } from "./services/observer.service";
 
 export let browserRefresh = false;
 export let authKey: string = "";
@@ -15,10 +16,15 @@ export var ROUTE: RouteInfo[] = [];
 })
 export class AppComponent {
   private subscription: Subscription;
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(
+    private router: Router,
+    private http: HttpClient,
+    private observerService: ObserverService
+  ) {
     this.subscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         browserRefresh = !router.navigated;
+        this.observerService.isBrowserRefreshed.next(browserRefresh);
       }
     });
   }
@@ -28,6 +34,8 @@ export class AppComponent {
       baseHref = response.url;
       console.log(authKey);
       console.log(baseHref);
+      this.observerService.url.next(baseHref);
+      this.observerService.authKey.next(authKey);
     });
     console.log(authKey);
     console.log(baseHref);
@@ -37,6 +45,14 @@ export class AppComponent {
         console.warn(response);
         ROUTE = response;
       });
+
+    if (
+      localStorage.getItem("loginId") == null ||
+      localStorage.getItem("password") == null
+    ) {
+      this.router.navigate([""]);
+      return;
+    }
   }
 
   ngOnDestroy() {

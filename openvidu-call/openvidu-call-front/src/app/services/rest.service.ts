@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RecordingInfo } from 'openvidu-angular';
 import { lastValueFrom } from 'rxjs';
-import { sessionResponse } from '../models/sessionResponse';
+import { SessionResponse } from '../models/sessionResponse';
 
 @Injectable({
 	providedIn: 'root'
@@ -25,13 +25,24 @@ export class RestService {
 	async getTokens(
 		sessionKey: string,
 		nickname?: string
-	): Promise<sessionResponse> {
+	): Promise<SessionResponse> {
 		return this.postRequest('sessions', { sessionKey, nickname });
 	}
 	async removeSession(
 		sessionId: string
 	): Promise<any> {
 		return this.deleteRequest('sessions/'+{sessionId});
+	}
+	async sendLink(
+		sessionId: string
+	): Promise<any> {
+		return this.postRequest('sendLink', { sessionId });
+	}
+	async updateSession(
+		sessionKey: string,
+		isOnHold: boolean
+	): Promise<any> {
+		return this.postRequest('updateSession', { sessionKey,isOnHold });
 	}
 	adminLogin(password: string): Promise<any[]> {
 		return this.postRequest('auth/admin/login', { password });

@@ -76,3 +76,16 @@
 .section-2 {
   width: 10%;
 }
+
+.form-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.main-content {
+  margin-top: 60px !important;
+  padding: 30px 15px 0px 30px !important;
+  min-height: calc(100vh - 60px) !important;
+}

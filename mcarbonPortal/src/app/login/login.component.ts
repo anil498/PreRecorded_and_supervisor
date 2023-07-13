@@ -114,16 +114,21 @@ export class LoginComponent implements OnInit {
       if (err.status === 0) {
         this.state = "Server Not Responding";
       } else if (err.status === 401) {
-        this.state = err.error.msg;
+        console.log("ERROR");
+        if (err.error !== null) {
+          this.state = err.error.msg;
+        } else {
+          this.state = "Incorrect Password !!!";
+        }
       } else {
         this.state = err.error.error;
       }
       this.failedMessage = true;
       this.failedMessageShow = "";
-      const snackBarConfig = new MatSnackBarConfig();
-      snackBarConfig.duration = 300000;
-      this.snackBar.open(this.state, "Dismiss", snackBarConfig);
-      this.timeOut(300000);
+      // const snackBarConfig = new MatSnackBarConfig();
+      // snackBarConfig.duration = 300000;
+      this.openSnackBar(this.state, "error");
+      this.timeOut(3000);
       return;
     }
     this.failedMessage = false;
@@ -137,6 +142,13 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    console.log(snackBarConfig.panelClass);
+    this.snackBar.open(message, "Dismiss", snackBarConfig);
+  }
   private timeOut(time: number) {
     setTimeout(() => {
       this.showDescription = false;

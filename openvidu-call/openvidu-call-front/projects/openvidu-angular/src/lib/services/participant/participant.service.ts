@@ -334,8 +334,7 @@ export class ParticipantService {
 			const props: ParticipantProperties = {
 				nickname: this.getNicknameFromConnectionData(data),
 				local: false,
-				id: participantId,
-				isOnHold:this.getHoldValueFromConnectionData(data)
+				id: participantId
 			};
 			const remoteParticipant = this.newParticipant(props, streamModel);
 			this.remoteParticipants.push(remoteParticipant);
@@ -442,6 +441,30 @@ export class ParticipantService {
 		} catch (error) {
 			console.log(error)
 			return false;
+		}
+	}
+	/**
+	 * @internal
+	 */
+	getHoldConnectionIdFromConnectionData(data: string): string {
+		try {
+			console.log(JSON.parse(data))
+			return JSON.parse(data).connectionId;
+		} catch (error) {
+			console.log(error)
+			return '';
+		}
+	}
+	/**
+	 * @internal
+	 */
+	getHoldNicknameFromConnectionData(data: string): string {
+		try {
+			console.log(JSON.parse(data))
+			return JSON.parse(data).nickname;
+		} catch (error) {
+			console.log(error)
+			return '';
 		}
 	}
 
