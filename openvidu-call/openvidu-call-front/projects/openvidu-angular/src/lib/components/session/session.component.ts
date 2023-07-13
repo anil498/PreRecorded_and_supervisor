@@ -190,7 +190,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.chatService.subscribeToChat();
 			this.subscribeToReconnection();
 			this.subscribeToDisplayTrickerDirectives();
-			this.subscribeToSupervisor();
 			this.subscribeToHold();
 			this.subscribeToUnhold();
 			const recordingEnabled = this.libService.recordingButton.getValue() && this.libService.recordingActivity.getValue();
@@ -454,34 +453,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
-	private subscribeToSupervisor() {
-		this.session.on(`signal:${Signal.SUPERVISOR}`, async (event: any) => {
-			
-			const data = JSON.parse(event.data);
-			const connectionId = event.from.connectionId;
-			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
-
-			if (isRemoteConnection) {
-				const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
-		        const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
-				if(data.message.includes("Add supervisor")){
-					this.log.d("Going to hold the partiticpant: ",connectionId)
-					this.openviduService.holdPartiticipant(subscriber);
-					
-				}
-				if(data.message.includes("Merge call")){
-					this.log.d("Going to unhold the partiticpant: ",connectionId)
-					this.openviduService.unholdPartiticipant(subscriber);
-					console.log("supervisor subs1",this.participantService.getMyNickname())
-					if(this.participantService.getMyNickname()=="Customer"){
-						console.log("supervisor subs")
-						subscriber.subscribeToAudio(true);
-			            subscriber.subscribeToVideo(true);
-					}
-				}
-			}
-		});
-	}
 	private subscribeToHold() {
 		this.session.on(`signal:${Signal.HOLD}`, async (event: any) => {
 			
@@ -513,11 +484,10 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const eventConnectionId=event.from.connectionId;
 
 			if (isLocalConnection) {
-				console.log("message",data.message)
 				if(this.participantService.getMyNickname()=="Customer"){
-					const sconnectionId=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).nickname=="Supervisor")?.connectionId;
-					console.log("supervisor",sconnectionId)
-					this.participantService.addRemoteConnection(sconnectionId, data, null);
+					const sconnectionId=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData=="Supervisor");
+					const subscriber: Subscriber = this.session.subscribe(sconnectionId?.stream, undefined);
+					this.participantService.addRemoteConnection(sconnectionId.connectionId, sconnectionId.data, subscriber);
 				}
 				const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === eventConnectionId);
 				this.openviduService.getRemoteConnections().filter(connection=>
@@ -528,12 +498,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.log.d("Going to unhold the partiticpant: ",connectionId)
 					this.openviduService.unholdPartiticipant(subscriber);
 					console.log("supervisor subs1",this.participantService.getMyNickname())
-					if(this.participantService.getMyNickname()=="Customer"){
-						// this.participantService.updateRemoteParticipants();
-						console.log("supervisor subs")
-						subscriber.subscribeToAudio(true);
-			            subscriber.subscribeToVideo(true);
-					}
 					this.libService.isOnHold.next(false)
 				}
 			}

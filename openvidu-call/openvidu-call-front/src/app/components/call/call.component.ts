@@ -43,6 +43,7 @@ export class CallComponent implements OnInit {
 	preRecordedFilePath:string;
 	isVideoMuted:boolean;
 	isAudioMuted:boolean;
+	addSupervisor:boolean;
 	isScreenShareWithAudio:boolean;
 	isAutoFullScreen:boolean;
 	private isDebugSession: boolean = false;
@@ -221,7 +222,8 @@ export class CallComponent implements OnInit {
 				this.isVideoMuted=false;
 			}
 			if(response.settings.supervisor && this.type === "Support"){
-				this.participantNameValue="Support"
+				this.participantNameValue="Support";
+				this.addSupervisor=true;
 			}
 		} catch (error) {
 			console.log(error)
