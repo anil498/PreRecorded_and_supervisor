@@ -436,8 +436,7 @@ export class ParticipantService {
 	 */
 	getHoldValueFromConnectionData(data: string): boolean {
 		try {
-			const db=data.split('%/%')[0];
-			return JSON.parse(db).isOnHold;
+			return JSON.parse(data).isOnHold;
 		} catch (error) {
 			console.log(error)
 			return false;
