@@ -799,25 +799,30 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.log.d('Sending signal for supervisor', this.isSupervisorActive);
 			if (!this.isSupervisorActive) {
 				this.onAddSupervisorButtonClicked.emit();
-				// const data = {
-				// 	message: "Add supervisor",
-				// 	nickname: this.participantService.getMyNickname()
-				// };
-				// this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
 				this.openviduService
 					.getRemoteConnections()
 					.filter((connection) => this.openviduService.holdPartiticipantSiganl(connection.connectionId));
+			const remoteParticipants = this.participantService.getRemoteParticipants();
+			const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
+			if (participantToUpdate) {
+				participantToUpdate.isOnHold = true;
+				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+			}
+			console.log("update partiticpant",participantToUpdate)
 				this.libService.isOnHold.next(true);
 			} else if (this.isSupervisorActive) {
-				// const data = {
-				// 	message: "Merge supervisor",
-				// 	nickname: this.participantService.getMyNickname()
-				// };
-				// this.openviduService.sendSignal(Signal.SUPERVISOR, undefined, data)
 				this.openviduService
 					.getRemoteConnections()
 					.filter((connection) => this.openviduService.unholdPartiticipantSignal(connection.connectionId));
 				this.libService.isOnHold.next(false);
+				this.libService.supervisorWhenButton.next(false);
+				const remoteParticipants = this.participantService.getRemoteParticipants();
+			const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
+			if (participantToUpdate) {
+				participantToUpdate.isOnHold = false;
+				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+			}
+			console.log("update partiticpant",participantToUpdate)
 			}
 		} catch (error) {
 			this.log.d('Getting error while adding supervisor', error.message);

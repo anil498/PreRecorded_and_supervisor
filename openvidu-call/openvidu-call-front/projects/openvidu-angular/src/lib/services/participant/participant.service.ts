@@ -500,7 +500,17 @@ export class ParticipantService {
 			this.remoteParticipants[0].streams.set(VideoType.SCREEN, remoteModel);
 			}
 		}
+		
 		this._remoteParticipants.next([...this.remoteParticipants]);
+	}
+	/**
+	 * Force to update the remote participants object and fire a new {@link remoteParticipantsObs} Observable event.
+	 */
+	updateRemoteParticipantsByModel(remoteParticipants:ParticipantAbstractModel) {
+		this.remoteParticipants = this.remoteParticipants.filter((p) => p.id !== remoteParticipants.id);
+		this.remoteParticipants.push(remoteParticipants)
+		this._remoteParticipants.next([...this.remoteParticipants]);
+		console.log(this.remoteParticipants)
 	}
 
 	/**

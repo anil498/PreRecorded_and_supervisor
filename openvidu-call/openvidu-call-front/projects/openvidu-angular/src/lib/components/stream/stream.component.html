@@ -36,7 +36,7 @@
 		*ngIf="!_stream.streamManager?.stream?.videoActive && _stream.type === 'CAMERA'"
 		[name]="_stream.participant.nickname"
 		[color]="_stream.participant.colorProfile"
-		[isOnHold]="isOnHold && !_stream.participant.local"
+		[isOnHold]="_stream.participant.isOnHold && !_stream.participant.local"
 	></ov-avatar-profile>
 
 	<ov-video

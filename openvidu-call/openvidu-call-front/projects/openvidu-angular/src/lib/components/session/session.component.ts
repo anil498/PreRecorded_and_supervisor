@@ -30,7 +30,7 @@ import { VideoType } from '../../models/video-type.model';
 
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDrawerContainer, MatSidenav } from '@angular/material/sidenav';
-import { skip, Subscription } from 'rxjs';
+import { flatMap, skip, Subscription } from 'rxjs';
 import { SidenavMode } from '../../models/layout.model';
 import { PanelType } from '../../models/panel.model';
 import { Signal } from '../../models/signal.model';
@@ -80,8 +80,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 	settingsPanelOpened: boolean;
 	drawer: MatDrawerContainer;
 	preparing: boolean = true;
-	displayTickerValue:string;
-	displayTicker:boolean=true;
+	displayTickerValue: string;
+	displayTicker: boolean = true;
 
 	protected readonly SIDENAV_WIDTH_LIMIT_MODE = 790;
 
@@ -196,7 +196,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			if (recordingEnabled) {
 				this.subscribeToRecordingEvents();
 			}
-			if(this.participantService.isMyCameraActive()){
+			if (this.participantService.isMyCameraActive()) {
 				console.log("turn on camera")
 				this.libService.videoMuted.next(true);
 			}
@@ -288,7 +288,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 		} catch (error) {
 			// this._error.emit({ error: error.error, messgae: error.message, code: error.code, status: error.status });
 			this.log.e('There was an error connecting to the session:', error.code, error.message);
-			this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error,true);
+			this.actionService.openDialog(this.translateService.translate('ERRORS.SESSION'), error?.error || error?.message || error, true);
 		}
 	}
 
@@ -312,33 +312,28 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
 			const isCameraConnection: boolean = !nickname?.includes(`_${VideoType.SCREEN}`);
 			const data = event.connection?.data;
+			console.log(data)
 
 			if (isRemoteConnection && isCameraConnection) {
-				if(this.participantService.getHoldValueFromConnectionData(data)){
-					const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
-		            const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
-					
-					this.log.d("Going to hold the partiticpant: ",connectionId)
-					this.openviduService.holdPartiticipant(subscriber);
-				}
+
 				// Adding participant when connection is created and it's not screen
-				if(this.participantService.getMyNickname()=="Support"){
+				if (this.participantService.getMyNickname() == "Support") {
 					this.libService.supervisorWhenButton.next(true);
 				}
-				if(JSON.parse(data.split('%/%')[0]).clientData=="Supervisor"){
-					this.libService.isSupervisorActive.next(true)
+				try {
+					if (JSON.parse(data.split('%/%')[0]).clientData == "Supervisor") {
+						this.libService.isSupervisorActive.next(true)
+					}
+				} catch (error) {
+					console.log("This user is not supervisor")
 				}
-				try{
-				if(this.participantService.getMyNickname()=="Supervisor"){
-					const isOnHoldConnection=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData=="Customer");
+				if (this.participantService.getMyNickname() == "Supervisor") {
+					const isOnHoldConnection = this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData == "Customer");
 					this.libService.isOnHold.next(isOnHoldConnection.stream.audioActive && isOnHoldConnection.stream.videoActive);
 				}
-			}catch(error){
-				console.log("This connection don't have clientData")
-			}
-				if(!this.libService.isOnHold.getValue()){
+				if (!this.libService.isOnHold.getValue()) {
 					this.participantService.addRemoteConnection(connectionId, data, null);
-					}
+				}
 
 				//Sending nicnkanme signal to new participants
 				if (this.openviduService.needSendNicknameSignal()) {
@@ -353,13 +348,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(event.connection.connectionId);
 			const isCameraConnection: boolean = !nickname?.includes(`_${VideoType.SCREEN}`);
 			// Deleting participant when connection is destroyed
-				this.participantService.removeConnectionByConnectionId(event.connection.connectionId);
-				if(JSON.parse(event.connection.data.split('%/%')[0]).clientData=="Supervisor"){
-					this.libService.isSupervisorActive.next(false)
-				}
-				if(JSON.parse(event.connection.data.split('%/%')[0]).clientData!="Supervisor"){
-					this.libService.isOnHold.next(false)
-				}
+			this.participantService.removeConnectionByConnectionId(event.connection.connectionId);
+			if (JSON.parse(event.connection.data.split('%/%')[0]).clientData == "Supervisor") {
+				this.libService.isSupervisorActive.next(false)
+			}
+			if (JSON.parse(event.connection.data.split('%/%')[0]).clientData != "Supervisor") {
+				this.libService.isOnHold.next(false)
+			}
+
 		});
 	}
 
@@ -368,18 +364,18 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const connectionId = event.stream?.connection?.connectionId;
 			const nickname: string = this.participantService.getNicknameFromConnectionData(event.stream.connection.data);
 			const data = event.stream?.connection?.data;
-			if(this.participantService.getTypeConnectionData(data) === VideoType.SCREEN && !this.openviduService.isMyOwnConnection(connectionId)){
+			if (this.participantService.getTypeConnectionData(data) === VideoType.SCREEN && !this.openviduService.isMyOwnConnection(connectionId)) {
 				this.openviduService.toggleShareFullscreen();
 			}
 			const isCameraType: boolean = this.participantService.getTypeConnectionData(data) === VideoType.CAMERA;
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
 			const lang = this.captionService.getLangSelected().ISO;
-			const localNickname=this.participantService.getMyNickname();
-			if(nickname=="Supervisor" && localNickname!="Customer"){
+			const localNickname = this.participantService.getMyNickname();
+			if (nickname == "Supervisor" && localNickname != "Customer") {
 				this.libService.isOnHold.next(false);
 			}
 
-			if (isRemoteConnection && (!this.libService.isOnHold.getValue() || localNickname=="Support")) {
+			if (isRemoteConnection && (!this.libService.isOnHold.getValue() || localNickname == "Support")) {
 				const subscriber: Subscriber = this.session.subscribe(event.stream, undefined);
 				this.participantService.addRemoteConnection(connectionId, data, subscriber);
 				// this.oVSessionService.sendNicknameSignal(event.stream.connection);
@@ -404,8 +400,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 		this.session.on('streamDestroyed', async (event: StreamEvent) => {
 			const connectionId = event.stream.connection.connectionId;
 			const data = event.stream?.connection?.data;
-			if(this.participantService.getTypeConnectionData(data) === VideoType.SCREEN){
-				this.openviduService.sendSignal(Signal.SCREEN,undefined,"disable")
+			if (this.participantService.getTypeConnectionData(data) === VideoType.SCREEN) {
+				this.openviduService.sendSignal(Signal.SCREEN, undefined, "disable")
 			}
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
 			const isCameraType: boolean = this.participantService.getTypeConnectionData(data) === VideoType.CAMERA;
@@ -417,6 +413,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 				} catch (error) {
 					this.log.e('Error unsubscribing from STT: ', error);
 				}
+			}
+			if (this.participantService.getMyNickname() == "Support" && JSON.parse(data.split('%/%')[0]).clientData == "Customer") {
+				this.libService.supervisorWhenButton.next(false);
 			}
 		});
 	}
@@ -436,14 +435,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 		this.session.on('streamPropertyChanged', (event: StreamPropertyChangedEvent) => {
 			const connectionId = event.stream.connection.connectionId;
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
-		
+
 			if (isRemoteConnection && !this.libService.isOnHold.getValue()) {
 				this.participantService.updateRemoteParticipants();
-			// }else{
-			// 	const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
-			// 	const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
-			// 	subscriber.subscribeToAudio(false);
-			// 	subscriber.subscribeToVideo(false);
+				// }else{
+				// 	const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
+				// 	const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
+				// 	subscriber.subscribeToAudio(false);
+				// 	subscriber.subscribeToVideo(false);
 			}
 		});
 	}
@@ -456,7 +455,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			if (isRemoteConnection) {
 				const nickname = this.participantService.getNicknameFromConnectionData(event.data);
 				this.participantService.setRemoteNickname(connectionId, nickname);
-				if(JSON.parse(event.data).clientData=="Supervisor"){
+				if (JSON.parse(event.data).clientData == "Supervisor") {
 					this.libService.isSupervisorActive.next(true)
 				}
 			}
@@ -464,49 +463,51 @@ export class SessionComponent implements OnInit, OnDestroy {
 	}
 	private subscribeToHold() {
 		this.session.on(`signal:${Signal.HOLD}`, async (event: any) => {
-			
+
 			const data = JSON.parse(event.data);
-			const eventConnectionId=event.from.connectionId;
+			const eventConnectionId = event.from.connectionId;
 			const connectionId = this.participantService.getHoldConnectionIdFromConnectionData(event.data);
 			const isLocalConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
 
 			if (isLocalConnection) {
-				console.log("message",data.message)
+				console.log("message", data.message)
 				const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === eventConnectionId);
 				const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
-			
-				if(data.message.includes("hold")){
-					this.log.d("Going to hold the partiticpant: ",connectionId)
+
+				if (data.message.includes("hold")) {
+					this.log.d("Going to hold the partiticpant: ", connectionId)
 					this.openviduService.holdPartiticipant(subscriber);
 					this.libService.isOnHold.next(true)
-					
+					const remoteParticipants = this.participantService.getRemoteParticipants();
+					const participantToUpdate = remoteParticipants.find(participant => participant.nickname === data.nickname);
+					if (participantToUpdate) {
+						participantToUpdate.isOnHold = true;
+						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+					}
+
 				}
 			}
 		});
 	}
 	private subscribeToUnhold() {
 		this.session.on(`signal:${Signal.UNHOLD}`, async (event: any) => {
-			
+
 			const data = JSON.parse(event.data);
 			const connectionId = this.participantService.getHoldConnectionIdFromConnectionData(event.data);
 			const isLocalConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
-			const eventConnectionId=event.from.connectionId;
+			const eventConnectionId = event.from.connectionId;
 
 			if (isLocalConnection) {
-				if(this.participantService.getMyNickname()=="Customer"){
-					const sconnectionId=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData=="Supervisor");
+				if (this.participantService.getMyNickname() == "Customer") {
+					const sconnectionId = this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData == "Supervisor");
 					const subscriber: Subscriber = this.session.subscribe(sconnectionId?.stream, undefined);
 					this.participantService.addRemoteConnection(sconnectionId.connectionId, sconnectionId.data, subscriber);
 				}
 				const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === eventConnectionId);
-				this.openviduService.getRemoteConnections().filter(connection=>
-					this.openviduService.unholdPartiticipant(this.session.subscribe(connection?.stream, undefined))
-					);
 				const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
-				if(data.message.includes("unhold")){
-					this.log.d("Going to unhold the partiticpant: ",connectionId)
+				if (data.message.includes("unhold")) {
+					this.log.d("Going to unhold the partiticpant: ", connectionId)
 					this.openviduService.unholdPartiticipant(subscriber);
-					console.log("supervisor subs1",this.participantService.getMyNickname())
 					this.libService.isOnHold.next(false)
 				}
 			}
