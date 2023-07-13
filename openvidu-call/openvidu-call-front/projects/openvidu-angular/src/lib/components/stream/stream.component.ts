@@ -1,7 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, Input, OnInit, Output, ViewChild,EventEmitter } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Output, ViewChild, EventEmitter } from '@angular/core';
 import { MatMenuPanel, MatMenuTrigger } from '@angular/material/menu';
-import { PublisherProperties, Session,Subscriber } from 'openvidu-browser';
+import { PublisherProperties, Session, Subscriber } from 'openvidu-browser';
 import { Subscription, throwError } from 'rxjs';
 import { VideoSizeIcon } from '../../models/icon.model';
 import { StreamModel } from '../../models/participant.model';
@@ -62,7 +62,7 @@ import { LoggerService } from '../../services/logger/logger.service';
 	animations: [
 		trigger('posterAnimation', [
 			transition(':enter', [style({ opacity: 0 }), animate('100ms', style({ opacity: 1 }))]),
-			transition(':leave', [style({ opacity: 1 }), animate('200ms', style({ opacity: 0 }))]),
+			transition(':leave', [style({ opacity: 1 }), animate('200ms', style({ opacity: 0 }))])
 		])
 	]
 })
@@ -118,8 +118,8 @@ export class StreamComponent implements OnInit {
 	 */
 	showSettingsButton: boolean = true;
 	showVideo: boolean;
-	displayTickerValue:string;
-	isOnHold:boolean;
+	displayTickerValue: string;
+	isOnHold: boolean;
 	protected log: ILogger;
 
 	/**
@@ -172,7 +172,7 @@ export class StreamComponent implements OnInit {
 	private displayAudioDetectionSub: Subscription;
 	private settingsButtonSub: Subscription;
 	private displayTickerValueSub: Subscription;
-	private isOnHoldSubs:Subscription;
+	private isOnHoldSubs: Subscription;
 
 	/**
 	 * @ignore
@@ -184,7 +184,7 @@ export class StreamComponent implements OnInit {
 		protected storageService: StorageService,
 		protected cdkSrv: CdkOverlayService,
 		private libService: OpenViduAngularConfigService,
-		private loggerSrv: LoggerService,
+		private loggerSrv: LoggerService
 	) {
 		this.log = this.loggerSrv.get('StreamComponent');
 	}
@@ -205,14 +205,16 @@ export class StreamComponent implements OnInit {
 	 * @ignore
 	 */
 	toggleVideoEnlarged() {
-		if (!!this._stream.streamManager?.stream?.connection?.connectionId) {
-			if (this.openviduService.isMyOwnConnection(this._stream.streamManager?.stream?.connection?.connectionId)) {
-				this.participantService.toggleMyVideoEnlarged(this._stream.streamManager?.stream?.connection?.connectionId);
+		const connectionId = this._stream.streamManager?.stream?.connection?.connectionId;
+		if (Boolean(connectionId)) {
+			if (this.openviduService.isMyOwnConnection(connectionId)) {
+				this.participantService.toggleMyVideoEnlarged(connectionId);
 			} else {
-				this.participantService.toggleRemoteVideoEnlarged(this._stream.streamManager?.stream?.connection?.connectionId);
+				this.participantService.toggleRemoteVideoEnlarged(connectionId);
 			}
+			this.checkVideoEnlarged();
+			this.layoutService.update();
 		}
-		this.layoutService.update();
 	}
 
 	/**
@@ -246,20 +248,20 @@ export class StreamComponent implements OnInit {
 	 * @ignore
 	 */
 	toggleHold() {
-		console.log("Toggling hold")
+		console.log('Toggling hold');
 		const connectionId = this._stream.connectionId;
-		
-		const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
+
+		const participantAdded = this.openviduService.getRemoteConnections().find((connection) => connection.connectionId === connectionId);
 		const subscriber: Subscriber = this.openviduService.getWebcamSession().subscribe(participantAdded?.stream, undefined);
-		this.isOnHold=this.libService.isOnHold.getValue();
+		this.isOnHold = this.libService.isOnHold.getValue();
 		if (!this.isOnHold) {
 			this.onHoldButtonClicked.emit();
-			this.log.d("Going to hold the partiticpant: ",connectionId)
+			this.log.d('Going to hold the partiticpant: ', connectionId);
 			this.openviduService.holdPartiticipantSiganl(connectionId);
 			this.libService.isOnHold.next(true);
-		}else{
+		} else {
 			this.onUnHoldButtonClicked.emit();
-			this.log.d("Going to unhold the partiticpant: ",connectionId)
+			this.log.d('Going to unhold the partiticpant: ', connectionId);
 			this.openviduService.unholdPartiticipantSignal(connectionId);
 			this.libService.isOnHold.next(false);
 		}
@@ -322,7 +324,7 @@ export class StreamComponent implements OnInit {
 		});
 		this.isOnHoldSubs = this.libService.isOnHoldObs.subscribe((value: boolean) => {
 			this.isOnHold = value;
-			console.error("p",this._stream.participant.local,this.isOnHold)
+			console.error('p', this._stream.participant.local, this.isOnHold);
 			// this.cd.markForCheck();
 		});
 	}

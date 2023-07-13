@@ -36,10 +36,10 @@ export class OpenViduAngularConfigService {
 	prefullscreen = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	prefullscreenObs: Observable<boolean>;
 
-	videoMuted = <BehaviorSubject<boolean>>new BehaviorSubject(undefined);
+	videoMuted = <BehaviorSubject<boolean | undefined>>new BehaviorSubject(undefined);
 	videoMutedObs: Observable<boolean | undefined>;
-
-	audioMuted = <BehaviorSubject<boolean>>new BehaviorSubject(undefined);
+	
+	audioMuted = <BehaviorSubject<boolean | undefined>>new BehaviorSubject(undefined);
 	audioMutedObs: Observable<boolean | undefined>;
 
 	screenshareButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);

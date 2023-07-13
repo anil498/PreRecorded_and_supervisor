@@ -349,6 +349,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 				if(JSON.parse(event.connection.data.split('%/%')[0]).clientData=="Supervisor"){
 					this.libService.isSupervisorActive.next(false)
 				}
+				if(JSON.parse(event.connection.data.split('%/%')[0]).clientData=="Support"){
+					this.libService.isOnHold.next(false)
+				}
 		});
 	}
 

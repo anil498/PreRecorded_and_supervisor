@@ -103,6 +103,7 @@ public class VideoPlatform {
 
     JsonObject json = new JsonObject();
     json.addProperty("sessionId", sessionId);
+    json.addProperty("type","Supervisor");
     HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
 
     String url = this.hostname + API_PATH + API_LINK;
