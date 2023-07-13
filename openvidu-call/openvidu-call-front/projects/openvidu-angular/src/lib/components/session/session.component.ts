@@ -30,7 +30,7 @@ import { VideoType } from '../../models/video-type.model';
 
 import { animate, style, transition, trigger } from '@angular/animations';
 import { MatDrawerContainer, MatSidenav } from '@angular/material/sidenav';
-import { flatMap, skip, Subscription } from 'rxjs';
+import { skip, Subscription } from 'rxjs';
 import { SidenavMode } from '../../models/layout.model';
 import { PanelType } from '../../models/panel.model';
 import { Signal } from '../../models/signal.model';
@@ -343,7 +343,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			}
 			if (this.participantService.getMyNickname() == "Supervisor") {
 				const stream = this.openviduService.getRemoteConnections().find(con => JSON.parse(con.data.split('%/%')[0]).clientData == "Customer")?.stream;
-				if (stream?.videoActive || stream?.audioActive) {
+				if (!stream?.videoActive || !stream?.audioActive) {
 					const remoteParticipants = this.participantService.getRemoteParticipants();
 					const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
 					if (participantToUpdate) {
@@ -489,12 +489,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.log.d("Going to hold the partiticpant: ", connectionId)
 					this.openviduService.holdPartiticipant(subscriber);
 					this.libService.isOnHold.next(true)
-					const remoteParticipants = this.participantService.getRemoteParticipants();
-					const participantToUpdate = remoteParticipants.find(participant => participant.nickname === data.nickname);
-					if (participantToUpdate) {
-						participantToUpdate.isOnHold = true;
-						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
-					}
 
 				}
 			}
