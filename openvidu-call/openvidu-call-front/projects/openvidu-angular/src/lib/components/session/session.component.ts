@@ -328,7 +328,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 				if(JSON.parse(data.split('%/%')[0]).clientData=="Supervisor"){
 					this.libService.isSupervisorActive.next(true)
 				}
-				this.participantService.addRemoteConnection(connectionId, data, null);
+				if(!this.libService.isOnHold.getValue()){
+					this.participantService.addRemoteConnection(connectionId, data, null);
+					}
 
 				//Sending nicnkanme signal to new participants
 				if (this.openviduService.needSendNicknameSignal()) {
@@ -509,6 +511,11 @@ export class SessionComponent implements OnInit, OnDestroy {
 
 			if (isLocalConnection) {
 				console.log("message",data.message)
+				if(this.participantService.getMyNickname()=="Customer"){
+					const sconnectionId=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).nickname=="Supervisor")?.connectionId;
+					console.log("supervisor",sconnectionId)
+					this.participantService.addRemoteConnection(sconnectionId, data, null);
+				}
 				const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === eventConnectionId);
 				this.openviduService.getRemoteConnections().filter(connection=>
 					this.openviduService.unholdPartiticipant(this.session.subscribe(connection?.stream, undefined))

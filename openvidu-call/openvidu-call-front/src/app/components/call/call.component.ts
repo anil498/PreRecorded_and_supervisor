@@ -220,6 +220,9 @@ export class CallComponent implements OnInit {
 				this.isAudioMuted=false;
 				this.isVideoMuted=false;
 			}
+			if(response.settings.supervisor){
+				this.participantNameValue="Support"
+			}
 		} catch (error) {
 			console.log(error)
 			if (error.error.settings.landingPage) {

@@ -334,8 +334,7 @@ export class ParticipantService {
 			const props: ParticipantProperties = {
 				nickname: this.getNicknameFromConnectionData(data),
 				local: false,
-				id: participantId,
-				isOnHold:this.getHoldValueFromConnectionData(data)
+				id: participantId
 			};
 			const remoteParticipant = this.newParticipant(props, streamModel);
 			this.remoteParticipants.push(remoteParticipant);
