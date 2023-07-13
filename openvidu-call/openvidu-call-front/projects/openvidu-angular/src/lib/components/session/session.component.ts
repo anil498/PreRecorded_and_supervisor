@@ -330,7 +330,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 				}
 				if(this.participantService.getMyNickname()=="Supervisor"){
 					const isOnHoldConnection=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData=="Customer");
-					this.libService.isOnHold.next(isOnHoldConnection.isAudioActive && isOnHoldConnection.isVideoActive);
+					this.libService.isOnHold.next(isOnHoldConnection.stream.isAudioActive && isOnHoldConnection.stream.isVideoActive);
 				}
 				if(!this.libService.isOnHold.getValue()){
 					this.participantService.addRemoteConnection(connectionId, data, null);
