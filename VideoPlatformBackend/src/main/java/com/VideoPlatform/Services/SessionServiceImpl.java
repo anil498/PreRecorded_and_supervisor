@@ -64,18 +64,27 @@ public class SessionServiceImpl implements SessionService{
 //        }
 
         Gson gson = new Gson();
-        if (sessionKey.length()==0)
-            sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-        else
-            sessionKey = sessionKey +"_1";
-        if(sessionId.length()==0)
-            sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
         if(moderator==false){
             session.setType("Customer");
+            sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
         }
         else{
-            session.setType("Support");
+            if(participantName.equals("Supervisor")){
+                session.setType("Supervisor");
+                sessionKey = sessionKey+"_2";
+            }
+            else {
+                session.setType("Support");
+                sessionKey = sessionKey + "_1";
+            }
         }
+//        if (sessionKey.length()==0)
+//            sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
+//        else
+//            sessionKey = sessionKey +"_1";
+        if(sessionId.length()==0)
+            sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
+
         session.setSessionId(sessionId);
         session.setSessionKey(sessionKey);
         session.setSessionName(account.getName());
@@ -264,7 +273,7 @@ public class SessionServiceImpl implements SessionService{
     }
 
     @Override
-    public ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response){
+    public ResponseEntity<?> sendLink(String authKey, String token, Map<String,?> params, HttpServletRequest request, HttpServletResponse response){
         logger.info("Params Values : {} ",params);
         String sessionId = (String) params.get("sessionId");
         String type = "Customer";
@@ -276,14 +285,19 @@ public class SessionServiceImpl implements SessionService{
         if(params.containsKey("contactArray")){
             contactArray = (List<String>) params.get("contactArray");
             logger.info("Contact list is : {}",contactArray);
+            if(type.equalsIgnoreCase("Supervisor")){
+                createSession(authKey,token,true,sessionId,sessionEntity.getSessionKey(),"","Supervisor");
+            }
         }
         else{
             UserEntity userEntity = userRepository.findByUserId(sessionEntity.getUserId());
             HashMap<String,Object> map = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("9");
-            if(map.containsKey("supervisor_contacts")){
+            if(map.containsKey("supervisor_contacts") && type.equalsIgnoreCase("Supervisor")){
                 contactArray = (List<String>) map.get("supervisor_contacts");
+                createSession(authKey,token,true,sessionId,sessionEntity.getSessionKey(),"","Supervisor");
+
             }
-            else if(map.containsKey("customer_contacts")){
+            else if(map.containsKey("customer_contacts") && type.equals("Customer")){
                 contactArray = (List<String>) map.get("customer_contacts");
             }
             else{

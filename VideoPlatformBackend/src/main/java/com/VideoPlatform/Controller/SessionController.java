@@ -150,7 +150,7 @@ public class SessionController {
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        sessionService.sendLink(params,request,response);
+        sessionService.sendLink(authKey,token,params,request,response);
 
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");

@@ -13,7 +13,7 @@ public interface SessionService {
     List<SessionEntity> getAllSupportSessions(String authKey,String token);
     SessionEntity getByKey(String key);
     String deleteSession(String sessionKey);
-    ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response);
+    ResponseEntity<?> sendLink(String authKey, String token,Map<String,?> params, HttpServletRequest request, HttpServletResponse response);
 
     void updateHold(Map<String, Object> params);
 }
