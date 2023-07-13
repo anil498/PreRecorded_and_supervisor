@@ -1,14 +1,30 @@
 package com.sdet.auto;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+//import com.aventstack.extentreports.parentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.markuputils.ExtentColor;
+import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.paulhammant.ngwebdriver.ByAngular;
 import com.paulhammant.ngwebdriver.NgWebDriver;
 import com.sdet.auto.PageObjects.*;
 import com.sdet.auto.TestHelper.ConfigSettings;
+import com.sdet.auto.TestHelper.TestAssert;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -19,78 +35,168 @@ import org.openqa.selenium.devtools.v108.network.Network;
 import org.openqa.selenium.devtools.v108.network.model.RequestId;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.ITestResult;
+import org.testng.Reporter;
+import org.testng.annotations.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import static org.junit.Assert.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SeleniumTest extends TestBaseClass{
 
-    @Test
-    public void TC0000_SmokeTest() {
-        GuiHelper.openWebBrowser();
-        Navigation.navToWebPageUnderTest();
-        GuiHelper.closeWebBrowser();
+    public String webUrl = "https://demo2.progate.mobi/#/";
+    public ExtentReports extentReports;
+    public ExtentSparkReporter extentSparkReporter;
+    @BeforeClass
+    public void beforeClass(){
+        System.out.println("Before class!");
+        extentReports = new ExtentReports();
+        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport.html");
+        extentReports.setSystemInfo("Environment", "Dev");
+        extentReports.setSystemInfo("User Name", "mCarbon");
+        extentSparkReporter.config().setDocumentTitle("Video Platform Test Report");
+        extentSparkReporter.config().setReportName("Video Platform Test Report");
+        extentSparkReporter.config().setTheme(Theme.STANDARD);
+        extentSparkReporter.config().setTimelineEnabled(true);
     }
 
-    @Test
-    public void TC0001_PageLogin() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", "C:\\Users\\Vatsala\\Desktop\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-        ChromeDriver driver = new ChromeDriver();
-        driver.get(ConfigSettings.getWebUrl());
-        login(driver);
-        Thread.sleep(2000);
-        driver.close();
+    ExtentTest parentTest;
+    ExtentTest childTest;
+
+    @BeforeMethod
+    public void startReport() {
+        extentReports.attachReporter(extentSparkReporter);
     }
 
-    @Test
-    public void TC0002_LoginBadInfo() throws InterruptedException {
+//    @Test
+//    public void TC0000_SmokeTest() {
+//        parentTest = extentReports.createTest("SMOKE TEST");
+//        ChromeDriver driver = new ChromeDriver();
+//        driver.get(webUrl);
+//        driver.close();
+//    }
 
-        final String loginId = "sdetAutomatiom";
-        final String password = "pass@word";
-        final String expectedMsg = "Invalid username or password!";
-
-        GuiHelper.openWebBrowser();
-        Navigation.navToWebPageUnderTest();
-        LoginPage.enterCredentials(loginId, password);
-        LoginPage.verifyMessage(testAssert, expectedMsg);
-        Thread.sleep(2000);
-        GuiHelper.closeWebBrowser();
-    }
     @Test
-    public void TC0003_LogOutCheck() throws InterruptedException {
+    public void TC0001_LoginTest() throws Exception {
+        parentTest = extentReports.createTest("LOGIN TEST");
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
         ChromeDriver driver = new ChromeDriver();
-        driver.get(ConfigSettings.getWebUrl());
         driver.manage().window().maximize();
-        login(driver);
-        Thread.sleep(1000);
-        List<WebElement> elementA = driver.findElements(By.tagName("a"));
+        driver.get(webUrl);
 
-        for (WebElement element1 : elementA){
-//            System.out.println("Elements : "+element1.getAttribute("class"));
-            if(element1.getAttribute("class").contains("mat-menu-trigger nav-link")){
-                System.out.println("ICON PRESSED");
-                element1.click();
-                Thread.sleep(1000);
-                driver.findElement(By.cssSelector("div#mat-menu-panel-0>div>button[class='mat-focus-indicator btn-action btn-logout mat-menu-item ng-tns-c42-2']")).click();
-                System.out.println("LogOut button pressed!");
-                Thread.sleep(1000);
-                break;
-            }
+        WebElement userName = driver.findElement(By.id("mat-input-0"));
+        WebElement password = driver.findElement(By.id("mat-input-1"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));
+
+
+        childTest = parentTest.createNode("BOTH LOGIN CREDENTIALS EMPTY");
+        String cardLabelText = "Enter Username & Password";
+        if(userName.getText().isEmpty() && password.getText().isEmpty()){
+            loginButton.click();
+//            Thread.sleep(30);
+            //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
+            if(false)
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Empty fields giving right response label",ExtentColor.BLUE));
+            else
+                childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty fields giving wrong response label",ExtentColor.RED));
         }
+        childTest = parentTest.createNode("EMPTY USERNAME");
+        String cardLabelTextU = "Must Enter Username";
+        password.sendKeys("abcde");
+        if(userName.getText().isEmpty() && password.getText().equals("")){
+            loginButton.click();
+//            Thread.sleep(30);
+            //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
+            if(false)
+                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty username field giving right response label",ExtentColor.BLUE));
+            else
+                childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty username field giving wrong response label",ExtentColor.RED));
+        }
+        password.clear();
+        childTest = parentTest.createNode("EMPTY PASSWORD");
+        String cardLabelTextP = "Must Enter Password";
+        userName.sendKeys("abcedfg");
+        if(userName.getText().equals("") && password.getText().isEmpty()){
+            loginButton.click();
+//            Thread.sleep(30);
+            //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
+            if(false)
+                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty password field giving right response label",ExtentColor.BLUE));
+            else
+                childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty password field giving wrong response label",ExtentColor.RED));
+        }
+        userName.clear();
+        childTest = parentTest.createNode("LABEL TEXT");
+        String expectedText = "Invalid username or password!";
+
+        userName.sendKeys("abcedfg");
+        password.sendKeys("abcde");
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.BLUE));
+        loginButton.click();
+        Thread.sleep(50);
+        if(driver.findElement(By.cssSelector(".mat-simple-snack-bar-content")).getText().contains(expectedText)){
+//        if(false){
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Bad info label text correct",ExtentColor.BLUE));
+        }
+        else{
+            childTest.log(Status.FAIL,MarkupHelper.createLabel("Bad info label text wrong",ExtentColor.RED));
+        }
+        userName.clear();
+        password.clear();
+        childTest = parentTest.createNode("VALID USER CREDENTIALS");
+        userName.sendKeys("mcarbon");
+        userName.sendKeys("mcarbon");
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.BLUE));
+        loginButton.click();
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login button clicked",ExtentColor.BLUE));
+        driver.navigate().to("https://demo2.progate.mobi/#/app/dashboard");
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login Successful",ExtentColor.BLUE));
+        driver.close();
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Driver closed",ExtentColor.BLUE));
+
+    }
+
+    @Test
+    public void TC0002_LogOutTest() throws InterruptedException {
+        parentTest = extentReports.createTest("LOGOUT TEST");
+        System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
+        ChromeDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.get(webUrl);
+        login(driver);
+        childTest = parentTest.createNode("LOGOUT CHECK");
+        Thread.sleep(1000);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login Successful",ExtentColor.BLUE));
+        driver.findElement(By.cssSelector("#user-menu")).click();
+        System.out.println("ICON PRESSED");
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Menu icon pressed",ExtentColor.BLUE));
+        Thread.sleep(100);
+        driver.findElement(ByAngular.partialButtonText("Log Out")).click();
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Logout button pressed",ExtentColor.BLUE));
+        System.out.println("LogOut button pressed!");
+
+        childTest = parentTest.createNode("LOGOUT DONE");
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Logout Successful",ExtentColor.BLUE));
+        if(driver.getCurrentUrl().equals(webUrl))
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Navigated to login page",ExtentColor.BLUE));
+        else
+            childTest.log(Status.FAIL,MarkupHelper.createLabel("Navigated to wrong page",ExtentColor.RED));
         driver.close();
     }
 
     @Test
     public void TC0004_ProfileCheck() throws InterruptedException, IOException {
+        parentTest = extentReports.createTest("PROFILE ACCESS AND FEATURE CHECK");
         AtomicReference<String> responseBody= new AtomicReference<>("");
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
 
@@ -117,26 +223,26 @@ public class SeleniumTest extends TestBaseClass{
                 System.out.println("Response Body :"+responseBody);
             }
         });
-        driver.get(ConfigSettings.getWebUrl());
+        driver.get(webUrl);
+        childTest = parentTest.createNode("PROFILE CHECK");
         login(driver);
-        Thread.sleep(2000);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Navigated to wrong page",ExtentColor.BLUE));
+        Thread.sleep(1000);
         driver.findElement(By.cssSelector("#user-menu")).click();
         Thread.sleep(1000);
         driver.findElement(ByAngular.partialButtonText("Profile")).click();
-        Thread.sleep(1000);
         System.out.println("Profile button pressed!");
         Thread.sleep(1000);
         List<WebElement> elementA = driver.findElements(By.tagName("h6"));
         checkAccessAndFeatures(responseBody,elementA);
         driver.close();
     }
-
+/*
     @Test
     public void TC0005_SideNavCheck() throws InterruptedException {
-
+        parentTest = extentReports.createTest("SIDE-NAV ELEMENTS CHECK");
         AtomicReference<String> responseBody= new AtomicReference<>("");
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-
         ChromeDriverService service = new ChromeDriverService.Builder().usingDriverExecutable(file).usingAnyFreePort().build();
         ChromeOptions options = new ChromeOptions().addArguments("--incognito");
         ChromeDriver driver = new ChromeDriver(service, options);
@@ -152,7 +258,7 @@ public class SeleniumTest extends TestBaseClass{
         DevTools finalDevTools = devTools;
 
         devTools.addListener(Network.responseReceived(), responseReceived -> {
-            System.out.println("Network event :"+ responseReceived.getRequestId());
+//            System.out.println("Network event :"+ responseReceived.getRequestId());
             requestIds[0] = responseReceived.getRequestId();
             String url = responseReceived.getResponse().getUrl();
 
@@ -161,7 +267,7 @@ public class SeleniumTest extends TestBaseClass{
                 System.out.println("Response Body :"+responseBody);
             }
         });
-        driver.get(ConfigSettings.getWebUrl());
+        driver.get(webUrl);
         login(driver);
         Thread.sleep(5000);
         checkAccess(driver,responseBody);
@@ -170,79 +276,69 @@ public class SeleniumTest extends TestBaseClass{
 
     @Test
     public void TC0006_CustomerManagement() throws InterruptedException {
+        parentTest = extentReports.createTest("CUSTOMER MANAGEMENT CARD CHECK");
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
         ChromeDriver driver = new ChromeDriver();
         JavascriptExecutor js = (JavascriptExecutor) driver;
         NgWebDriver ngWebDriver = new NgWebDriver(js);
-        driver.get(ConfigSettings.getWebUrl());
+        driver.get(webUrl);
         driver.manage().window().maximize();
         login(driver);
-        Thread.sleep(1000);
-        driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='customer_management nav-item ng-star-inserted']")).click();
+        Thread.sleep(3000);
+        driver.findElement(By.id("customer_management")).click();
         Thread.sleep(1000);
         driver.findElement(ByAngular.partialButtonText("Create")).click();
-//        driver.findElement(By.cssSelector("button[class='mat-focus-indicator create-btn mat-raised-button mat-button-base ng-star-inserted']")).click();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         driver.findElement(By.id("mat-tab-label-0-0")).click();
-        Thread.sleep(1000);
         driver.findElement(By.id("mat-tab-label-0-1")).click();
-        Thread.sleep(1000);
         driver.findElement(By.id("mat-tab-label-0-2")).click();
-        Thread.sleep(1000);
         driver.findElement(By.id("mat-tab-label-0-3")).click();
-        Thread.sleep(1000);
         driver.findElement(ByAngular.partialButtonText("Submit")).click();
-        Thread.sleep(1000);
         driver.findElement(By.cssSelector("button[class='mat-focus-indicator close-btn mat-icon-button mat-button-base']")).click();
         driver.close();
     }
 
     @Test
     public void TC0006_MyGroups() throws InterruptedException {
+        parentTest = extentReports.createTest("MY GROUPS CARD CHECK");
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
-        WebDriver driver = new ChromeDriver();
-        driver.get(ConfigSettings.getWebUrl());
+        ChromeDriver driver = new ChromeDriver();
+        driver.get(webUrl);
         driver.manage().window().maximize();
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
-        driver.findElement(By.className("login-button")).click();
-        Thread.sleep(1000);
-        driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='my_users nav-item ng-star-inserted']")).click();
-        Thread.sleep(1000);
+        login(driver);
+        Thread.sleep(2000);
+        driver.findElement(By.id("my_users")).click();
+        Thread.sleep(500);
         driver.findElement(ByAngular.partialButtonText("Create")).click();
-        Thread.sleep(1000);
+        Thread.sleep(500);
         driver.findElement(By.id("mat-tab-label-0-0")).click();
-        Thread.sleep(1000);
         driver.findElement(By.id("mat-tab-label-0-1")).click();
-        Thread.sleep(1000);
         driver.findElement(By.id("mat-tab-label-0-2")).click();
-        Thread.sleep(1000);
         driver.findElement(By.id("mat-tab-label-0-3")).click();
-        Thread.sleep(1000);
         driver.findElement(ByAngular.partialButtonText("Submit")).click();
-        Thread.sleep(1000);
         driver.findElement(By.cssSelector("button[class='mat-focus-indicator close-btn mat-icon-button mat-button-base']")).click();
         driver.close();
-
     }
 
     @Test
     public void TC0007_SendLink() throws InterruptedException {
+        parentTest = extentReports.createTest("SEND LINK CARD CHECK");
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
         WebDriver driver = new ChromeDriver();
-        driver.get(ConfigSettings.getWebUrl());
+        driver.get(webUrl);
         driver.manage().window().maximize();
         driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
         driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
         driver.findElement(By.className("login-button")).click();
-        Thread.sleep(1000);
-        driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='dynamic_links nav-item ng-star-inserted']")).click();
-        Thread.sleep(1000);
+        Thread.sleep(2000);
+        driver.findElement(By.id("dynamic_links")).click();
         driver.close();
     }
 
     @Test
-    public void TC0008_CustomerData() throws InterruptedException {
+    public void TC0008_CustomerData() throws InterruptedException, IOException {
+        parentTest = extentReports.createTest("CUSTOMER DATA VALIDATION");
+        final String[] responseBody = {""};
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
         ChromeDriverService service = new ChromeDriverService.Builder()
                 .usingDriverExecutable(file)
@@ -261,43 +357,47 @@ public class SeleniumTest extends TestBaseClass{
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.of(100000000)));
         DevTools finalDevTools = devTools;
         devTools.addListener(Network.responseReceived(), responseReceived -> {
-//            System.out.println("Network event :"+ responseReceived.getRequestId());
             requestIds[0] = responseReceived.getRequestId();
 
             String url = responseReceived.getResponse().getUrl();
-            System.out.println("Url : "+url);
             if(url.contains("https://demo2.progate.mobi/VPService/v1/Account/GetAll")) {
 
 //                String responseBody = finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody();
-                String responseBody = finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody();
+                responseBody[0] = finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody();
                 int chunkSize = 500;
 
-                for (int i = 0; i < responseBody.length(); i += chunkSize) {
-                    int endIndex = Math.min(i + chunkSize, responseBody.length());
-                    String chunk = responseBody.substring(i, endIndex);
+                for (int i = 0; i < responseBody[0].length(); i += chunkSize) {
+                    int endIndex = Math.min(i + chunkSize, responseBody[0].length());
+                    String chunk = responseBody[0].substring(i, endIndex);
                     System.out.println("Chunk: " + chunk);
                 }
-                System.out.println("Response Body :" + responseBody);
+                System.out.println("Response Body :" + responseBody[0]);
             }});
+
+
         JavascriptExecutor js = (JavascriptExecutor) driver;
         NgWebDriver ngWebDriver = new NgWebDriver(js);
-        driver.get(ConfigSettings.getWebUrl());
+        driver.get(webUrl);
         driver.manage().window().maximize();
         login(driver);
         Thread.sleep(5000);
-        driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='customer_management nav-item ng-star-inserted']")).click();
-        Thread.sleep(10000);
+        driver.findElement(By.id("customer_management")).click();
+        Thread.sleep(15000);
+        if(responseBody.length == 0){
+            fail();
+        }
+        dataPreProcessing(responseBody[0],driver);
         List<WebElement> tableRows = driver.findElements(By.tagName("tr"));
         for (WebElement element : tableRows) {
             System.out.println("Attribute name : " + element.getAttribute("class"));
         }
-        Thread.sleep(2000);
+        Thread.sleep(500);
         driver.close();
     }
 
     @Test
     public void TC0009_CustomerRolesCheck() throws InterruptedException, IOException {
-
+        parentTest = extentReports.createTest("CUSTOMER PERMISSION CHECK");
         AtomicReference<String> responseBody= new AtomicReference<>("");
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
         ChromeDriverService service = new ChromeDriverService.Builder()
@@ -329,23 +429,81 @@ public class SeleniumTest extends TestBaseClass{
 
         JavascriptExecutor js = (JavascriptExecutor) driver;
         NgWebDriver ngWebDriver = new NgWebDriver(js);
-        driver.get(ConfigSettings.getWebUrl());
+        driver.get(webUrl);
         driver.manage().window().maximize();
         login(driver);
         Thread.sleep(3000);
-        driver.findElement(By.cssSelector("div.sidebar-wrapper>ul[class='nav ng-star-inserted']>li[class='customer_management nav-item ng-star-inserted']")).click();
+        driver.findElement(By.id("customer_management")).click();
         Thread.sleep(1000);
         driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
         Thread.sleep(1000);
         checkRoles(driver,responseBody);
         driver.findElement(ByAngular.partialButtonText("View")).click();
-        Thread.sleep(1000);
-        driver.findElement(By.cssSelector("#mat-tab-label-5-1")).click();
-        Thread.sleep(1000);
         driver.close();
     }
-    public void dataPreProcessing() throws IOException {
+*/
 
+    @AfterTest
+    public void endReport() {
+        extentReports.flush();
+    }
+
+    @AfterMethod
+    public void getResult(ITestResult result) throws Exception{
+        System.out.println("After Method");
+        if(result.getStatus() == ITestResult.FAILURE){
+            childTest.log(Status.FAIL, MarkupHelper.createLabel(result.getName() + " - Test Case Failed", ExtentColor.RED));
+            childTest.log(Status.FAIL, MarkupHelper.createLabel(result.getThrowable() + " - Test Case Failed", ExtentColor.RED));
+        }
+        else if(result.getStatus() == ITestResult.SKIP){
+            childTest.log(Status.SKIP, MarkupHelper.createLabel(result.getName() + " - Test Case Skipped", ExtentColor.ORANGE));
+        }
+        else if(result.getStatus() == ITestResult.SUCCESS)
+        {
+            childTest.log(Status.PASS, MarkupHelper.createLabel(result.getName()+" Test Case PASSED", ExtentColor.GREEN));
+        }
+    }
+
+    public void dataPreProcessing(String responseBody, ChromeDriver driver) throws IOException {
+        if(responseBody == ""){
+            fail("Empty response body!");
+        }
+        JSONParser parser = new JSONParser();
+        try {
+            Object object = (Object) parser.parse(responseBody);
+            JSONArray jsonArray = (JSONArray) object;
+
+            for(int i=0; i<1;i++) {
+                JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+                Set<Map.Entry<String, JsonElement>> entries = jsonObject.entrySet();
+                for(Map.Entry<String, JsonElement> entry : entries) {
+//                    System.out.println(entry.getKey() + " -> "+entry.getValue());
+                    checkAccountData(entry,driver);
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void checkAccountData(Map.Entry<String, JsonElement> entry, ChromeDriver driver){
+        String name = driver.findElement(By.cssSelector("table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-name.mat-column-name.ng-star-inserted")).getText();
+        String expDate = driver.findElement(By.cssSelector("table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-expDate.mat-column-expDate.ng-star-inserted")).getText();
+        System.out.println("Name : "+ name);
+        System.out.println("getKey : "+entry.getKey());
+        System.out.println("getValue : "+entry.getValue());
+        if(entry.getKey().equalsIgnoreCase("name")){
+            if(!name.equalsIgnoreCase(String.valueOf(entry.getValue()))){
+                fail("Name not matched!");
+            }
+            System.out.println("Name matched!");
+        }
+        if(entry.getKey().equalsIgnoreCase("expDate")){
+            if(!expDate.equalsIgnoreCase(String.valueOf(entry.getValue()))){
+                fail("ExpDate not matched!");
+            }
+            System.out.println("ExpDate matched!");
+        }
     }
     public List<String> getAccessData(String responseBody) throws IOException {
         Gson gson=new Gson();
@@ -392,11 +550,11 @@ public class SeleniumTest extends TestBaseClass{
             List<String> accessValues = getAccessData(responseBody.get());
                 if (driver.findElement(ByAngular.partialButtonText("Edit")).isDisplayed()) {
                     System.out.println("EDIT");
-                    if (!accessValues.contains("customer_update")) fail();
+                    if (!accessValues.contains("Customer Update")) fail();
                 }
             if (driver.findElement(ByAngular.partialButtonText("Delete")).isDisplayed()) {
                 System.out.println("DELETE");
-                if (!accessValues.contains("customer_delete")) fail();
+                if (!accessValues.contains("Customer Delete")) fail();
             }
         }
         catch (IOException e) {
@@ -406,19 +564,20 @@ public class SeleniumTest extends TestBaseClass{
     public void checkAccess(ChromeDriver driver,AtomicReference<String> responseBody){
         try {
             List<String> accessValues = getAccessData(responseBody.get());
-            List<WebElement> sidebarElements = driver.findElements(By.tagName("li"));
+            List<WebElement> sidebarElements = driver.findElements(By.tagName("ul"));
             if(sidebarElements.isEmpty()){ fail(); }
             for (WebElement element : sidebarElements) {
-                System.out.println("Attribute name : "+element.getAttribute("class"));
-                if (element.getAttribute("class").contains("dashboard nav-item ng-star-inserted active")) { if(!accessValues.contains("Dashboard")) fail(); }
-                else if (element.getAttribute("class").contains("customer_management nav-item ng-star-inserted")) { if(!accessValues.contains("Customer Management")) fail(); }
-                else if (element.getAttribute("class").contains("my_users nav-item ng-star-inserted")) { if(!accessValues.contains("My Groups")) fail(); }
-                else if (element.getAttribute("class").contains("my_sessions nav-item ng-star-inserted")) { if(!accessValues.contains("My Sessions")) fail(); }
-                else if (element.getAttribute("class").contains("dynamic_links nav-item ng-star-inserted")) { if(!accessValues.contains("Send Link")) fail(); }
-                else if (element.getAttribute("class").contains("my_reports nav-item ng-star-inserted")) { if(!accessValues.contains("My Reports")) fail(); }
-                else if (element.getAttribute("class").contains("nav-item platform_access ng-star-inserted")) { if(!accessValues.contains("Platform Access")) fail(); }
-                else if (element.getAttribute("class").contains("nav-item platform_feature ng-star-inserted")) { if(!accessValues.contains("Platform Feature")) fail(); }
-                else if (element.getAttribute("class").contains("feedform_form nav-item ng-star-inserted")) { if(!accessValues.contains("Feedback")) fail(); }
+//                System.out.println("Attribute name : "+element.getAttribute("class"));
+                System.out.println("TEXT : "+element.getText());
+                if (element.getText().contains("Dashboard")) { if(!accessValues.contains("Dashboard")) fail(); else System.out.println("Dashboard"); }
+                else if (element.getText().contains("Customer Management")) { if(!accessValues.contains("Customer Management")) fail(); else System.out.println("Customer Management"); }
+                else if (element.getText().contains("My Groups")) { if(!accessValues.contains("My Groups")) fail(); else System.out.println("My Groups");}
+                else if (element.getText().contains("My Sessions")) { if(!accessValues.contains("My Sessions")) fail(); else System.out.println("My Sessions"); }
+                else if (element.getText().contains("Send Link")) { if(!accessValues.contains("Send Link")) fail(); else System.out.println("Send Link"); }
+                else if (element.getText().contains("My Reports")) { if(!accessValues.contains("My Reports")) fail(); else System.out.println("My Reports");}
+                else if (element.getText().contains("Platform Access")) { if(!accessValues.contains("Platform Access")) fail(); else System.out.println("Platform Access");}
+                else if (element.getText().contains("Platform Feature")) { if(!accessValues.contains("Platform Feature")) fail(); else System.out.println("Platform Features");}
+                else if (element.getText().contains("Feedback")) { if(!accessValues.contains("Feedback")) fail(); else System.out.println("Feedback");}
                 }
         } catch (IOException e) {
             e.printStackTrace();

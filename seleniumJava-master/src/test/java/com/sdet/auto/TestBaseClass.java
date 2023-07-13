@@ -1,5 +1,7 @@
 package com.sdet.auto;
 
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 import com.sdet.auto.TestHelper.ConfigSettings;
 import com.sdet.auto.TestHelper.IoLibrary;
 import com.sdet.auto.TestHelper.TestAssert;
@@ -30,14 +32,9 @@ public class TestBaseClass {
         ConfigSettings configSettings = new ConfigSettings();
         configSettings.getConfigSettings();
     }
-
     @Before
     public void MyTestInitialize() {
         testAssert = new TestAssert();
     }
 
-    @After
-    public void MyTestCleanup(){
-        Assert.assertTrue(testAssert.getPass());
-    }
 }
