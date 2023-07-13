@@ -341,6 +341,17 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.openviduService.sendSignal(Signal.NICKNAME_CHANGED, [event.connection], data);
 				}
 			}
+			if (this.participantService.getMyNickname() == "Supervisor") {
+				const stream = this.openviduService.getRemoteConnections().find(con => JSON.parse(con.data.split('%/%')[0]).clientData == "Customer")?.stream;
+				if (stream?.videoActive || stream?.audioActive) {
+					const remoteParticipants = this.participantService.getRemoteParticipants();
+					const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
+					if (participantToUpdate) {
+						participantToUpdate.isOnHold = true;
+						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+					}
+				}
+			}
 		});
 
 		this.session.on('connectionDestroyed', (event: ConnectionEvent) => {
