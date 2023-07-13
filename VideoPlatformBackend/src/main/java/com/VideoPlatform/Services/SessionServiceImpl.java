@@ -316,7 +316,6 @@ public class SessionServiceImpl implements SessionService{
         if(params.containsKey("sendTo")){
             sendTo = (String) params.get("sendTo");
         }
-        sessionEntity = sessionRepository.findBySessionId(sessionId,"Supervisor");
         String callUrl = callPrefix+sessionEntity.getSessionKey();
         if(sendTo.equals("sms")){
             for(String contact : contactArray){

@@ -1007,7 +1007,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.cd.markForCheck();
 		});
 		this.supervisorButtonSub = this.libService.supervisorButtonObs.subscribe((value: boolean) => {
-			this.showSupervisorButton = value;
+			this.showSupervisorButton = !value;
 			this.cd.markForCheck();
 		});
 		this.MuteCameraButtonSub = this.libService.MuteCameraButtonObs.subscribe((value: boolean) => {
