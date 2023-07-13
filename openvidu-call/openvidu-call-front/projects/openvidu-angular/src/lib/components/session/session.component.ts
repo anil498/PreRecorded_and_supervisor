@@ -328,10 +328,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 				if(JSON.parse(data.split('%/%')[0]).clientData=="Supervisor"){
 					this.libService.isSupervisorActive.next(true)
 				}
+				try{
 				if(this.participantService.getMyNickname()=="Supervisor"){
 					const isOnHoldConnection=this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData=="Customer");
 					this.libService.isOnHold.next(isOnHoldConnection.stream.audioActive && isOnHoldConnection.stream.videoActive);
 				}
+			}catch(error){
+				console.log("This connection don't have clientData")
+			}
 				if(!this.libService.isOnHold.getValue()){
 					this.participantService.addRemoteConnection(connectionId, data, null);
 					}
