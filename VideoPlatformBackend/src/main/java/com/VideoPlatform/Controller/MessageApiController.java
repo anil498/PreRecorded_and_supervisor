@@ -77,8 +77,13 @@ public class MessageApiController {
         if(!commonService.authorizationCheck(authKey,token,"sms")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+        String msisdnArray= (String) params.get("msisdn");
 
-        String msisdn= (String) params.get("msisdn");
+        String[] myArray = msisdnArray.split(",");
+        System.out.println("Contents of the array ::"+Arrays.toString(myArray));
+        List <String> myList = Arrays.asList(myArray);
+
+
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
         String description=null;
         if(params.containsKey("description")){
@@ -98,8 +103,10 @@ public class MessageApiController {
         String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
         logger.info("callUrlCustomer : {}",callUrl);
 
-        SubmitResponse responseSms=messagingService.sendSms(request,response,msisdn,callUrl);
-        responseSms.setCallUrl(callUrl);
+        for(String msisdn : myList) {
+            SubmitResponse responseSms = messagingService.sendSms(request, response, msisdn, callUrl);
+            responseSms.setCallUrl(callUrl);
+        }
 
         HashMap<String,String> res=new HashMap<>();
         String returnUrl="";
@@ -125,7 +132,6 @@ public class MessageApiController {
                 res.put("customer_link",callUrl);
             }
         }
-        logger.info(String.valueOf(responseSms));
         return ResponseEntity.ok(res);
     }
 
@@ -140,9 +146,16 @@ public class MessageApiController {
         }
 
         String from= (String) params.get("from");
-        String to= (String) params.get("msisdn");
+        String msisdnArray= (String) params.get("msisdn");
         String type= (String) params.get("type");
         String templateId= (String) params.get("templateId");
+
+
+        String[] myArray = msisdnArray.split(",");
+        System.out.println("Contents of the array ::"+Arrays.toString(myArray));
+        List <String> myList = Arrays.asList(myArray);
+
+
         String description=null;
         if(params.containsKey("description")){
             description= String.valueOf(params.get("description"));
@@ -161,8 +174,11 @@ public class MessageApiController {
         logger.info("callUrlCustomer : {}",placeHolder);
 
         logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
-        SubmitResponse responseSms=messagingService.sendWA(request,response,to,placeHolder,from,type,templateId);
-        responseSms.setCallUrl(placeHolder);
+
+        for(String to : myList) {
+            SubmitResponse responseSms = messagingService.sendWA(request, response, to, placeHolder, from, type, templateId);
+            responseSms.setCallUrl(placeHolder);
+        }
         HashMap<String,String> res=new HashMap<>();
         String returnUrl="";
         if(sessionEntitySupport==null){
@@ -189,7 +205,6 @@ public class MessageApiController {
                 res.put("customer_link",placeHolder);
             }
         }
-        logger.info("Request response {}",responseSms);
         return ResponseEntity.ok(res);
     }
 
@@ -203,20 +218,12 @@ public class MessageApiController {
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
-        String phoneNumber= (String) params.get("msisdn");
+        String msisdnArray= (String) params.get("msisdn");
         String title = (String) params.get("title");
         String body = (String) params.get("body");
 
         try {
-            DocumentReference docRef = db.collection(firebaseCollection).document(phoneNumber);
-            ApiFuture<DocumentSnapshot> future = docRef.get();
-            DocumentSnapshot document = future.get();
-            AppNotification appNotification=new AppNotification();
-            if (document.exists()) {
-                appNotification=document.toObject(AppNotification.class);
-            } else {
-                System.out.println("No such document!");
-            }
+
             String description=null;
             if(params.containsKey("description")){
                 description= String.valueOf(params.get("description"));
@@ -239,13 +246,28 @@ public class MessageApiController {
             map.put("SESSION_ID",sessionEntityCustomer.getSessionId());
             map.put("BODY",body);
 
-            Message message = Message.builder()
-                    .setToken(appNotification.getUsertoken())
-                    .putAllData(map)
-                    .build();
+            String[] myArray = msisdnArray.split(",");
+            System.out.println("Contents of the array ::"+Arrays.toString(myArray));
+            List <String> myList = Arrays.asList(myArray);
 
-            String id=firebaseMessaging.send(message);
-            logger.info("FCM Id : {}",id);
+            for(String phoneNumber : myList) {
+                DocumentReference docRef = db.collection(firebaseCollection).document(phoneNumber);
+                ApiFuture<DocumentSnapshot> future = docRef.get();
+                DocumentSnapshot document = future.get();
+                AppNotification appNotification = new AppNotification();
+                if (document.exists()) {
+                    appNotification = document.toObject(AppNotification.class);
+                } else {
+                    System.out.println("No such document!");
+                }
+                Message message = Message.builder()
+                        .setToken(appNotification.getUsertoken())
+                        .putAllData(map)
+                        .build();
+
+                String id = firebaseMessaging.send(message);
+                logger.info("FCM Id : {}", id);
+            }
             HashMap<String,String> res=new HashMap<>();
             String returnUrl="";
             if(sessionEntitySupport==null){

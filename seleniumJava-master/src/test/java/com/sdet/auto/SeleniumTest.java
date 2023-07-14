@@ -106,7 +106,7 @@ public class SeleniumTest extends TestBaseClass{
 //            Thread.sleep(30);
             //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
             if(false)
-            childTest.log(Status.PASS,MarkupHelper.createLabel("Empty fields giving right response label",ExtentColor.BLUE));
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Empty fields giving right response label",ExtentColor.GREEN));
             else
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty fields giving wrong response label",ExtentColor.RED));
         }
@@ -118,7 +118,7 @@ public class SeleniumTest extends TestBaseClass{
 //            Thread.sleep(30);
             //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
             if(false)
-                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty username field giving right response label",ExtentColor.BLUE));
+                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty username field giving right response label",ExtentColor.GREEN));
             else
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty username field giving wrong response label",ExtentColor.RED));
         }
@@ -131,7 +131,7 @@ public class SeleniumTest extends TestBaseClass{
 //            Thread.sleep(30);
             //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
             if(false)
-                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty password field giving right response label",ExtentColor.BLUE));
+                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty password field giving right response label",ExtentColor.GREEN));
             else
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty password field giving wrong response label",ExtentColor.RED));
         }
@@ -141,12 +141,12 @@ public class SeleniumTest extends TestBaseClass{
 
         userName.sendKeys("abcedfg");
         password.sendKeys("abcde");
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.GREEN));
         loginButton.click();
         Thread.sleep(50);
         if(driver.findElement(By.cssSelector(".mat-simple-snack-bar-content")).getText().contains(expectedText)){
 //        if(false){
-            childTest.log(Status.PASS,MarkupHelper.createLabel("Bad info label text correct",ExtentColor.BLUE));
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Bad info label text correct",ExtentColor.GREEN));
         }
         else{
             childTest.log(Status.FAIL,MarkupHelper.createLabel("Bad info label text wrong",ExtentColor.RED));
@@ -156,13 +156,13 @@ public class SeleniumTest extends TestBaseClass{
         childTest = parentTest.createNode("VALID USER CREDENTIALS");
         userName.sendKeys("mcarbon");
         userName.sendKeys("mcarbon");
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.GREEN));
         loginButton.click();
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Login button clicked",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login button clicked",ExtentColor.GREEN));
         driver.navigate().to("https://demo2.progate.mobi/#/app/dashboard");
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Login Successful",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login Successful",ExtentColor.GREEN));
         driver.close();
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Driver closed",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Driver closed",ExtentColor.GREEN));
 
     }
 
@@ -175,20 +175,20 @@ public class SeleniumTest extends TestBaseClass{
         driver.get(webUrl);
         login(driver);
         childTest = parentTest.createNode("LOGOUT CHECK");
-        Thread.sleep(1000);
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Login Successful",ExtentColor.BLUE));
+        Thread.sleep(2000);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login Successful",ExtentColor.GREEN));
         driver.findElement(By.cssSelector("#user-menu")).click();
         System.out.println("ICON PRESSED");
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Menu icon pressed",ExtentColor.BLUE));
-        Thread.sleep(100);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Menu icon pressed",ExtentColor.GREEN));
+        Thread.sleep(200);
         driver.findElement(ByAngular.partialButtonText("Log Out")).click();
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Logout button pressed",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Logout button pressed",ExtentColor.GREEN));
         System.out.println("LogOut button pressed!");
 
         childTest = parentTest.createNode("LOGOUT DONE");
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Logout Successful",ExtentColor.BLUE));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Logout Successful",ExtentColor.GREEN));
         if(driver.getCurrentUrl().equals(webUrl))
-            childTest.log(Status.PASS,MarkupHelper.createLabel("Navigated to login page",ExtentColor.BLUE));
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Navigated to login page",ExtentColor.GREEN));
         else
             childTest.log(Status.FAIL,MarkupHelper.createLabel("Navigated to wrong page",ExtentColor.RED));
         driver.close();
@@ -196,7 +196,7 @@ public class SeleniumTest extends TestBaseClass{
 
     @Test
     public void TC0004_ProfileCheck() throws InterruptedException, IOException {
-        parentTest = extentReports.createTest("PROFILE ACCESS AND FEATURE CHECK");
+        parentTest = extentReports.createTest("PROFILE ACCESS AND FEATURE TEST");
         AtomicReference<String> responseBody= new AtomicReference<>("");
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
 
@@ -226,21 +226,26 @@ public class SeleniumTest extends TestBaseClass{
         driver.get(webUrl);
         childTest = parentTest.createNode("PROFILE CHECK");
         login(driver);
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Login done",ExtentColor.BLUE));
-        Thread.sleep(1000);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Login done, entered portal",ExtentColor.GREEN));
+        Thread.sleep(2000);
         driver.findElement(By.cssSelector("#user-menu")).click();
-        Thread.sleep(1000);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("User menu clicked",ExtentColor.GREEN));
         driver.findElement(ByAngular.partialButtonText("Profile")).click();
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Profile button clicked",ExtentColor.GREEN));
         System.out.println("Profile button pressed!");
         Thread.sleep(1000);
+        childTest = parentTest.createNode("PROFILE FEATURE AND ACCESS CHECK");
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Profile page opened",ExtentColor.GREEN));
         List<WebElement> elementA = driver.findElements(By.tagName("h6"));
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Validating feature and access values",ExtentColor.GREEN));
         checkAccessAndFeatures(responseBody,elementA);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Validation done",ExtentColor.GREEN));
         driver.close();
     }
-/*
+
     @Test
     public void TC0005_SideNavCheck() throws InterruptedException {
-        parentTest = extentReports.createTest("SIDE-NAV ELEMENTS CHECK");
+        parentTest = extentReports.createTest("SIDE-NAV ELEMENTS TEST");
         AtomicReference<String> responseBody= new AtomicReference<>("");
         File file = new File("D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
         ChromeDriverService service = new ChromeDriverService.Builder().usingDriverExecutable(file).usingAnyFreePort().build();
@@ -252,16 +257,13 @@ public class SeleniumTest extends TestBaseClass{
         devTools.createSession();
         devTools.send(Network.clearBrowserCache());
         devTools.send(Network.setCacheDisabled(true));
-
         final RequestId[] requestIds = new RequestId[1];
         devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
         DevTools finalDevTools = devTools;
-
         devTools.addListener(Network.responseReceived(), responseReceived -> {
 //            System.out.println("Network event :"+ responseReceived.getRequestId());
             requestIds[0] = responseReceived.getRequestId();
             String url = responseReceived.getResponse().getUrl();
-
             if(url.contains("/VPService/v1/User/login")) {
                 responseBody.set(finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody());
                 System.out.println("Response Body :"+responseBody);
@@ -269,35 +271,69 @@ public class SeleniumTest extends TestBaseClass{
         });
         driver.get(webUrl);
         login(driver);
-        Thread.sleep(5000);
+        Thread.sleep(2000);
+        childTest = parentTest.createNode("SIDE-NAV CHECK");
+        if(driver.findElement(By.cssSelector(".sidebar")).isDisplayed()){
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Side-nav displayed",ExtentColor.GREEN));
+        }
+        else childTest.log(Status.FAIL,MarkupHelper.createLabel("Side-nav not displayed",ExtentColor.RED));
+        Thread.sleep(2000);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Validating list of elements",ExtentColor.GREEN));
         checkAccess(driver,responseBody);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Validation done",ExtentColor.GREEN));
         driver.close();
     }
 
     @Test
     public void TC0006_CustomerManagement() throws InterruptedException {
-        parentTest = extentReports.createTest("CUSTOMER MANAGEMENT CARD CHECK");
+        parentTest = extentReports.createTest("CUSTOMER MANAGEMENT CARD TEST");
         System.setProperty("webdriver.chrome.driver", "D:\\VideoPlatformBackend\\videoPlatform\\seleniumJava-master\\src\\main\\resources\\chromedriver");
         ChromeDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
         JavascriptExecutor js = (JavascriptExecutor) driver;
         NgWebDriver ngWebDriver = new NgWebDriver(js);
         driver.get(webUrl);
-        driver.manage().window().maximize();
+        childTest = parentTest.createNode("CUSTOMER MANAGEMENT ELEMENT");
         login(driver);
-        Thread.sleep(3000);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Entered portal, sidenav elements displayed",ExtentColor.GREEN));
+        Thread.sleep(2000);
         driver.findElement(By.id("customer_management")).click();
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Customer Management found and clicked",ExtentColor.GREEN));
         Thread.sleep(1000);
         driver.findElement(ByAngular.partialButtonText("Create")).click();
-        Thread.sleep(500);
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Create button clicked",ExtentColor.GREEN));
+        Thread.sleep(1000);
+        childTest = parentTest.createNode("CUSTOMER MANAGEMENT CARD");
+        if(driver.findElement(By.cssSelector("#cdk-overlay-0")).isDisplayed())
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Creation card opened",ExtentColor.GREEN));
+        else childTest.log(Status.FAIL,MarkupHelper.createLabel("Creation card not opened",ExtentColor.RED));
+        int page=0;
         driver.findElement(By.id("mat-tab-label-0-0")).click();
+        if(!mandatoryFieldCheck(driver,page)){
+            childTest.log(Status.FAIL,MarkupHelper.createLabel("Mandatory fields not filled",ExtentColor.RED));
+            driver.findElement(By.id("mat-tab-label-0-1")).click();
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Next tab clicked",ExtentColor.GREEN));
+            if(driver.findElement(By.id("mat-tab-label-0-1")).isSelected()){
+                System.out.println("selected");
+                childTest.log(Status.FAIL,MarkupHelper.createLabel("Mandatory fields empty, moved to new tab",ExtentColor.RED));
+            }
+        }
+
         driver.findElement(By.id("mat-tab-label-0-1")).click();
         driver.findElement(By.id("mat-tab-label-0-2")).click();
         driver.findElement(By.id("mat-tab-label-0-3")).click();
+        childTest.log(Status.PASS,MarkupHelper.createLabel("Mat-tab working fine",ExtentColor.GREEN));
         driver.findElement(ByAngular.partialButtonText("Submit")).click();
         driver.findElement(By.cssSelector("button[class='mat-focus-indicator close-btn mat-icon-button mat-button-base']")).click();
         driver.close();
     }
-
+    public Boolean mandatoryFieldCheck(ChromeDriver driver,int page){
+        String name = driver.findElement(By.id("mat-input-3")).getText();
+        System.out.println("Name check : " + name);
+       // if(name.isEmpty() || )
+        return false;
+    }
+/*
     @Test
     public void TC0006_MyGroups() throws InterruptedException {
         parentTest = extentReports.createTest("MY GROUPS CARD CHECK");
