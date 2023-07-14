@@ -52,6 +52,8 @@ import { FeedbackFormComponent } from "app/feedback-form/feedback-form.component
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { QuestionTemplateComponent } from "app/templates/question-template/question-template.component";
 import { AnswerTemplateComponent } from "app/templates/answer-template/answer-template.component";
+import { QuestionIconComponent } from "app/question-icon/question-icon.component";
+import { SessionJoinDialogComponent } from "app/session-join-dialog/session-join-dialog.component";
 
 @NgModule({
   imports: [
@@ -109,7 +111,9 @@ import { AnswerTemplateComponent } from "app/templates/answer-template/answer-te
     UpdateFeatureDialogComponent,
     FeedbackFormComponent,
     QuestionTemplateComponent,
-    AnswerTemplateComponent
+    AnswerTemplateComponent,
+    QuestionIconComponent,
+    SessionJoinDialogComponent,
   ],
   entryComponents: [FormDialogComponent, DeleteDialogComponent],
 })

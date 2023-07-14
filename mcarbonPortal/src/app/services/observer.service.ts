@@ -14,6 +14,8 @@ export class ObserverService {
   totalAnswerObs: Observable<number>;
   isAnswerDisable = <BehaviorSubject<boolean>>new BehaviorSubject(true);
   isAnswerDisableObs: Observable<boolean>;
+  isQuestionDisable = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+  isQuestionDisableObs: Observable<boolean>;
 
   formData: BehaviorSubject<Form[]> = new BehaviorSubject<Form[]>([]);
   formDataObs: Observable<Form[]>;
@@ -32,12 +34,15 @@ export class ObserverService {
   //ansMeta = <BehaviorSubject<any>>new BehaviorSubject([]);
   ansMeta: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
   ansMetaObs: Observable<any[]>;
+  quesEdit = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+  quesEditObs: Observable<boolean>;
   constructor() {
     this.isBrowserRefreshedObs = this.isBrowserRefreshed.asObservable();
     this.questionTypeObs = this.questionType.asObservable();
     this.totalAnswerObs = this.totalAnswer.asObservable();
     this.totalQuestionObs = this.totalQuestion.asObservable();
     this.isAnswerDisableObs = this.isAnswerDisable.asObservable();
+    this.isQuestionDisableObs = this.isQuestionDisable.asObservable();
     this.formDataObs = this.formData.asObservable();
     this.questionFormObs = this.questionForm.asObservable();
     this.ansFormObs = this.ansForm.asObservable();
@@ -46,5 +51,6 @@ export class ObserverService {
     this.ansMetaObs = this.ansMeta.asObservable();
     this.urlObs = this.url.asObservable();
     this.authKeyObs = this.authKey.asObservable();
+    this.quesEditObs = this.quesEdit.asObservable();
   }
 }
