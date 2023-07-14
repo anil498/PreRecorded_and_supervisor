@@ -53,6 +53,8 @@ public class SessionController {
     String token;
     @Value(("${OPENVIDU_URL}"))
     String OPENVIDU_URL;
+    @Value(("${VIDEO_PATH:-}"))
+    String VIDEO_PATH;
 	@Autowired
 	private OpenViduService openviduService;
     @Autowired
@@ -163,6 +165,7 @@ public class SessionController {
           HashMap<String,Object> map= (HashMap<String, Object>) sessionProperty.getSettings().getPreRecordedDetails();
             if (!Boolean.TRUE.equals(map.get("share_pre_recorded_video"))) {
               sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(), "prerecorded");
+              sessionService.copyFileToMediaPath(map.get("pre_recorded_video_file").toString(),VIDEO_PATH);
               Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
               sessionProperty.setScreenToken(screenConnection.getToken());
             } else {

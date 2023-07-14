@@ -15,5 +15,7 @@ cd /opt/openvidu-call
 [ ! -z "${SERVER_PORT}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${SERVER_PORT}"
 [ ! -z "${Authorization}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DAuthorization=${Authorization}"
 [ ! -z "${Token}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DToken=${Token}"
+[ ! -z "${VIDEO_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DVIDEO_PATH=${VIDEO_PATH}"
+[ ! -z "${MEDIA_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DMEDIA_PATH=${MEDIA_PATH}"
 
 java ${JAVA_PROPERTIES} -jar target/openvidu-call-back-java.jar
