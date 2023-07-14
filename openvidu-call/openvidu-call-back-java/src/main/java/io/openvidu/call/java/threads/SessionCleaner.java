@@ -2,6 +2,7 @@ package io.openvidu.call.java.threads;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import io.openvidu.call.java.config.SessionApplicationContext;
 import io.openvidu.call.java.core.SessionContext;
 import io.openvidu.call.java.services.OpenViduService;
 import io.openvidu.call.java.util.SessionUtil;
@@ -19,11 +20,11 @@ import java.util.stream.Collectors;
 public class SessionCleaner implements Runnable {
   private static final Logger looger= LoggerFactory.getLogger(SessionCleaner.class);
 
-  private OpenViduService openViduService;
   @Override
   public void run() {
     looger.info("Going to clean session context map");
     try {
+      OpenViduService openViduService= SessionApplicationContext.getBean(OpenViduService.class);
       ConcurrentMap<String, SessionContext> sessionContextConcurrentMap = SessionUtil.getInstance().getSessionIdToSessionContextMap();
       for (String key : sessionContextConcurrentMap.keySet()) {
         SessionContext sessionContext = sessionContextConcurrentMap.get(key);
@@ -38,7 +39,10 @@ public class SessionCleaner implements Runnable {
                   return true;
                 })
                 .collect(Collectors.toList());
-        if (filterConnectionList.size()==0) {
+        if (connectionList.size()==0) {
+          if (filterConnectionList.size()==0){
+            session.close();
+          }
           looger.info("Removing session context from map sessionId is {} and joined participant is {}",sessionContext.getSessionUniqueId(),sessionContext.getParticipantJoined());
           sessionContextConcurrentMap.remove(key);
         }else {
