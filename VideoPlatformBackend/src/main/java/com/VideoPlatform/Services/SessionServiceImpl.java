@@ -247,8 +247,10 @@ public class SessionServiceImpl implements SessionService{
 
                         logger.info("Map1 : {}",map2);
                         settingsEntity.setIcdcDetails(map2);
-//                        IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
-//                        settingsEntity.setIcdcQuestions(icdcEntity.getIcdcData());
+                        IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
+                        logger.info("ICDC : {}",icdcEntity);
+                        if(icdcEntity!=null)
+                            settingsEntity.setIcdcQuestions(icdcEntity.getIcdcData());
                     }
 
                 }
@@ -311,9 +313,13 @@ public class SessionServiceImpl implements SessionService{
             return new ResponseEntity<>(commonService.responseData("401","Invalid sessionId"),HttpStatus.UNAUTHORIZED);
 
         }
-        List<String> contactArray = new ArrayList<>(){};
+        String contacts="";
+        List <String> contactArray = new ArrayList<>();
         if(params.containsKey("contactArray")){
-            contactArray = (List<String>) params.get("contactArray");
+            contacts = (String) params.get("contactArray");
+            String[] myArray1 = contacts.toString().split(",");
+            System.out.println("Contents of the array ::"+Arrays.toString(myArray1));
+            contactArray = Arrays.asList(myArray1);
             logger.info("Contact list is : {}",contactArray);
             if(type.equalsIgnoreCase("Supervisor")){
               sessionEntitySupervisor = createSession(userAuthEntity.getAuthKey(),userAuthEntity.getToken(),true,sessionId,sessionEntity.getSessionKey(),"","Supervisor","Supervisor");
@@ -323,11 +329,15 @@ public class SessionServiceImpl implements SessionService{
             UserEntity userEntity = userRepository.findByUserId(sessionEntity.getUserId());
             HashMap<String,Object> map = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("9");
             if(map.containsKey("supervisor_contacts") && type.equalsIgnoreCase("Supervisor")){
-                contactArray = (List<String>) map.get("supervisor_contacts");
+                String[] myArray1 = map.get("supervisor_contacts").toString().split(",");
+                System.out.println("Contents of the array ::"+Arrays.toString(myArray1));
+                contactArray = Arrays.asList(myArray1);
                 sessionEntitySupervisor = createSession(userAuthEntity.getAuthKey(),userAuthEntity.getToken(),true,sessionId,sessionEntity.getSessionKey(),"","Supervisor","Supervisor");
             }
             else if(map.containsKey("customer_contacts") && type.equals("Customer")){
-                contactArray = (List<String>) map.get("customer_contacts");
+                String[] myArray2 = map.get("customer_contacts").toString().split(",");
+                System.out.println("Contents of the array ::"+Arrays.toString(myArray2));
+                contactArray = Arrays.asList(myArray2);
             }
             else{
                 logger.info("contact list not present in feature meta.");

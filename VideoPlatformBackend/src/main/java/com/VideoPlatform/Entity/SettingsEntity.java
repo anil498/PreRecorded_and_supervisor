@@ -29,6 +29,7 @@ public class SettingsEntity {
 //    private Boolean editIcdc;
 //    private Object titleIcdc;
     private Object icdcDetails;
+    private  Object icdcQuestions;
 
 
     public Integer getDuration() {
@@ -171,13 +172,13 @@ public class SettingsEntity {
         if(landingPage != null) this.landingPage = landingPage;
     }
 
-    public Object getIcdcDetails() {
-        return icdcDetails;
-    }
+    public Object getIcdcDetails() { return icdcDetails; }
 
-    public void setIcdcDetails(Object icdcDetails) {
-        this.icdcDetails = icdcDetails;
-    }
+    public void setIcdcDetails(Object icdcDetails) { this.icdcDetails = icdcDetails; }
+
+    public Object getIcdcQuestions() { return icdcQuestions; }
+
+    public void setIcdcQuestions(Object icdcQuestions) { this.icdcQuestions = icdcQuestions; }
 
     @Override
     public String toString() {
@@ -201,6 +202,7 @@ public class SettingsEntity {
                 ", landingPage=" + landingPage +
                 ", preRecordedDetails=" + preRecordedDetails +
                 ", icdcDetails=" + icdcDetails +
+                ", icdcQuestions=" + icdcQuestions +
                 '}';
     }
 }

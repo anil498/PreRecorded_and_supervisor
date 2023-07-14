@@ -6,4 +6,5 @@ public class RequestMappings {
     final public static String APICALLSESSION="/VPService/v1/Session";
     final public static String APICALLFEATURE="/VPService/v1/Feature";
     final public static String APICALLACCESS="/VPService/v1/Access";
+    final public static String APICALLICDC="/VPService/v1/Icdc";
 }
