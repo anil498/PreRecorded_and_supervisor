@@ -9,6 +9,7 @@ import { SessionDialogComponent } from "../session-dialog/session-dialog.compone
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
 import { browserRefresh } from "app/app.component";
+import { SessionJoinDialogComponent } from "app/session-join-dialog/session-join-dialog.component";
 
 @Component({
   selector: "app-session-management",
@@ -122,5 +123,22 @@ export class SessionManagementComponent implements OnInit {
       ViewSessionSettingDialogComponent,
       dialogConfig
     );
+  }
+
+  joinSessionDialog(session: any) {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.width = "50%";
+    dialogConfig.maxHeight = "70%";
+    dialogConfig.data = session;
+    console.log("Dialog Session Join Opened");
+    const dialogRef = this.dialog.open(
+      SessionJoinDialogComponent,
+      dialogConfig
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.restService.closeDialog();
+      this.viewTable();
+    });
   }
 }
