@@ -53,7 +53,7 @@ public class SessionController {
     String token;
     @Value(("${OPENVIDU_URL}"))
     String OPENVIDU_URL;
-    @Value(("${VIDEO_PATH}"))
+    @Value(("${VIDEO_PATH:-}"))
     String VIDEO_PATH;
 	@Autowired
 	private OpenViduService openviduService;

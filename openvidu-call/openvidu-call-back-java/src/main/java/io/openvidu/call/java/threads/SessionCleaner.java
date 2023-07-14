@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 
 public class SessionCleaner implements Runnable {
   private static final Logger looger= LoggerFactory.getLogger(SessionCleaner.class);
-  @Autowired
-  OpenViduService openViduService;
+
+  private OpenViduService openViduService;
   @Override
   public void run() {
     looger.info("Going to clean session context map");
