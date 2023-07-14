@@ -63,6 +63,7 @@ import { OpenViduAngularDirectiveModule } from './directives/template/openvidu-a
 import { AppMaterialModule } from './openvidu-angular.material.module';
 import { TranslateService } from './services/translate/translate.service';
 import { QuestionPanelComponent } from './components/panel/question-panel/question-panel.component';
+import { ScreenDialogTemplateComponent } from './components/dialogs/screen-dialog.component';
 
 const publicComponents = [
 	AdminDashboardComponent,
@@ -86,6 +87,7 @@ const privateComponents = [
 	AudioWaveComponent,
 	CaptionsComponent,
 	DialogTemplateComponent,
+    ScreenDialogTemplateComponent,
     ProFeatureDialogTemplateComponent,
 	RecordingDialogComponent,
 	DeleteDialogComponent,

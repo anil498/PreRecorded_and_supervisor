@@ -23,6 +23,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -36,6 +37,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 		MatInputModule,
 		MatFormFieldModule,
 		MatDialogModule,
+		MatRadioModule,
 		MatTooltipModule,
 		MatBadgeModule,
 		MatGridListModule,
