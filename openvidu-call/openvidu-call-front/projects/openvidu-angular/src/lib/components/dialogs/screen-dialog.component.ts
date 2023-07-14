@@ -11,7 +11,6 @@ import { DialogData } from '../../models/dialog.model';
     template: `
       <h1 mat-dialog-title class="dialog-title">{{ data.title }}</h1>
       <div class="dialog-content-wrapper">
-        <div mat-dialog-content class="dialog-content">{{ data.description }}</div>
         <div mat-dialog-content class="dialog-content">
           <mat-radio-group [(ngModel)]="audioOption" class="radio-group">
             <mat-radio-button [value]="true" [checked]="true" class="radio-button">Share Without Audio</mat-radio-button>
@@ -69,7 +68,7 @@ import { DialogData } from '../../models/dialog.model';
       .dialog-actions {
         display: flex;
         justify-content: flex-end;
-        margin-top: 24px;
+        margin-top: 5px;
       }
   
       .submit-button {
