@@ -24,6 +24,7 @@
               <div class="col-md-12 col-custom">
                 <mat-form-field>
                   <input
+                    id="user_fname"
                     matInput
                     type="text"
                     placeholder="First Name"
@@ -36,6 +37,7 @@
               <div class="col-md-12 col-custom">
                 <mat-form-field>
                   <input
+                    id="mobile"
                     matInput
                     type="tel"
                     placeholder="Mobile Number"
@@ -49,12 +51,14 @@
                 <mat-form-field>
                   <mat-label>Account Expiry Date</mat-label>
                   <input
+                    id="acc_exp_date"
                     matInput
                     [matDatepicker]="picker"
                     formControlName="acc_exp_date"
                   />
                   <mat-hint>MM/DD/YYYY</mat-hint>
                   <mat-datepicker-toggle
+                    id="date-btn"
                     matIconSuffix
                     [for]="picker"
                   ></mat-datepicker-toggle>
@@ -67,6 +71,7 @@
                 <mat-form-field>
                   <input
                     matInput
+                    id="login_id"
                     type="text"
                     placeholder="Login ID"
                     formControlName="login_id"
@@ -82,6 +87,7 @@
                 <mat-form-field>
                   <input
                     matInput
+                    id="user_lname"
                     type="text"
                     placeholder="Last Name"
                     formControlName="user_lname"
@@ -94,6 +100,7 @@
                 <mat-form-field>
                   <input
                     matInput
+                    id="email"
                     type="email"
                     placeholder="Email"
                     formControlName="email"
@@ -213,6 +220,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_sessions"
                 type="number"
                 placeholder="Number of Active Sessions"
                 formControlName="max_active_sessions"
@@ -223,6 +231,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_duration"
                 type="number"
                 placeholder="Duration of Sessions(in Minutes)"
                 formControlName="max_duration"
@@ -236,6 +245,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_participants"
                 type="number"
                 placeholder="Maximum Number of Participants"
                 formControlName="max_participants"

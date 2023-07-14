@@ -16,6 +16,7 @@
               <mat-label>Feature ID</mat-label>
               <input
                 matInput
+                id="featureId"
                 type="number"
                 placeholder="Feature ID"
                 formControlName="featureId"
@@ -31,6 +32,7 @@
               <mat-label>Feature Name</mat-label>
               <input
                 matInput
+                id="name"
                 type="text"
                 placeholder="Feature Name"
                 formControlName="name"
@@ -47,7 +49,7 @@
             <h4>Add Meta List</h4>
           </div>
           <div class="col-1">
-            <mat-icon (click)="addMeta()">add</mat-icon>
+            <mat-icon (click)="addMeta()" id="add">add</mat-icon>
           </div>
         </div>
         <div
@@ -95,7 +97,7 @@
             </mat-form-field>
           </div>
           <div class="col-1">
-            <mat-icon (click)="removeMeta(i)">close</mat-icon>
+            <mat-icon (click)="removeMeta(i)" id="remove">close</mat-icon>
           </div>
         </div>
       </div>

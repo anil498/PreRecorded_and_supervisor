@@ -24,6 +24,7 @@
                   <input
                     matInput
                     type="text"
+                    id="name"
                     placeholder="Name"
                     formControlName="name"
                     [matTooltip]="getErrorMessage1('name')"
@@ -61,6 +62,7 @@
                 <mat-form-field>
                   <input
                     matInput
+                    id="max_user"
                     type="number"
                     placeholder="Max User"
                     formControlName="max_user"
@@ -92,6 +94,7 @@
                   <mat-label>Account Expiry Date</mat-label>
                   <input
                     matInput
+                    id="acc_exp_date"
                     [matDatepicker]="picker"
                     formControlName="acc_exp_date"
                     [matTooltip]="getErrorMessage1('acc_exp_date')"
@@ -99,6 +102,7 @@
                   />
                   <mat-hint>MM/DD/YYYY</mat-hint>
                   <mat-datepicker-toggle
+                    id="date-btn"
                     matIconSuffix
                     [for]="picker"
                   ></mat-datepicker-toggle>
@@ -158,7 +162,11 @@
                 (change)="onPhotoSelected($event)"
                 formControlName="logo"
               />
-              <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
+              <button
+                class="btn btn-sm btn-photo"
+                id="logo-btn"
+                (click)="fileInput.click()"
+              >
                 Select a Logo
               </button>
             </div>
@@ -171,6 +179,7 @@
               <input
                 matInput
                 type="text"
+                id="address"
                 placeholder="Address"
                 formControlName="address"
                 [matTooltip]="getErrorMessage1('address')"
@@ -197,6 +206,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_sessions"
                 type="number"
                 placeholder="Maximum Active Sessions"
                 formControlName="max_active_sessions"
@@ -223,6 +233,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_duration"
                 type="number"
                 placeholder="Maximum Duration (in Minutes)"
                 formControlName="max_duration"
@@ -254,6 +265,7 @@
               <input
                 matInput
                 type="number"
+                id="max_participants"
                 placeholder="Maximum Participants"
                 formControlName="max_participants"
                 [matTooltip]="getErrorMessage2('max_participants')"

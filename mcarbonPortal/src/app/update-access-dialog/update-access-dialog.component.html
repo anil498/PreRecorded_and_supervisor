@@ -15,7 +15,7 @@
             <div class="col-12 col-custom">
               <mat-form-field disabled>
                 <mat-label>Parent</mat-label>
-                <mat-select formControlName="parentId">
+                <mat-select id="parentId" formControlName="parentId">
                   <mat-option [value]="0">0</mat-option>
                   <mat-option
                     *ngFor="let access of parentAccess"
@@ -42,6 +42,7 @@
               <mat-form-field>
                 <input
                   matInput
+                  id="accessId"
                   type="number"
                   placeholder="Access ID"
                   formControlName="accessId"
@@ -67,6 +68,7 @@
               <mat-form-field>
                 <input
                   matInput
+                  id="seq"
                   type="number"
                   placeholder="Sequence"
                   formControlName="seq"
@@ -89,6 +91,7 @@
               <mat-form-field>
                 <input
                   matInput
+                  id="name"
                   type="text"
                   placeholder="Name"
                   formControlName="name"
@@ -113,6 +116,7 @@
               <mat-form-field>
                 <input
                   matInput
+                  id="systemName"
                   type="text"
                   placeholder="System Name"
                   formControlName="systemName"
@@ -142,7 +146,7 @@
             <div class="col-12 col-custom">
               <mat-form-field>
                 <mat-label>Status</mat-label>
-                <mat-select formControlName="status">
+                <mat-select id="status" formControlName="status">
                   <mat-option [value]="0">Deactive</mat-option>
                   <mat-option [value]="1">Active</mat-option>
                   <mat-option [value]="2">Deleted</mat-option>
