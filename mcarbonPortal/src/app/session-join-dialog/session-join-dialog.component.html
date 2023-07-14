@@ -1,0 +1,69 @@
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      Send Invitation Link
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+  <div class="card-body">
+    <div class="container" [formGroup]="sessionForm" *ngIf="sessionForm">
+      <div class="row">
+        <div class="col-md-12">
+          <mat-form-field appearance="outline">
+            <mat-label>Mobile Number</mat-label>
+            <input
+              matInput
+              id="mobile"
+              type="text"
+              placeholder="Mobile Number"
+              formControlName="msisdn"
+              [matTooltip]="getErrorMessage('msisdn')"
+              matTooltipClass="tooltip-style"
+            />
+            <mat-icon matSuffix>smartphone</mat-icon>
+            <!-- <mat-error
+              *ngIf="
+                sessionForm.get('msisdn').invalid &&
+                sessionForm.get('msisdn').required
+              "
+            >
+              Mobile Number is Required
+            </mat-error> -->
+          </mat-form-field>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <mat-form-field appearance="outline">
+            <mat-label>Type</mat-label>
+            <mat-select
+              id="type"
+              formControlName="type"
+              [matTooltip]="getErrorMessage('type')"
+              matTooltipClass="tooltip-style"
+            >
+              <mat-option *ngFor="let type of types" [value]="type.value">
+                {{ type.name }}
+              </mat-option>
+            </mat-select>
+            <!-- <mat-error
+              *ngIf="
+                sessionForm.get('type').invalid &&
+                sessionForm.get('type').required
+              "
+            >
+              Type is Required
+            </mat-error> -->
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer">
+    <button class="submit-btn" mat-raised-button (click)="submit()">
+      Send
+    </button>
+  </div>
+</div>

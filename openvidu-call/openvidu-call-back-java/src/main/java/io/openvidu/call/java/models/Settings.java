@@ -16,7 +16,7 @@ public class Settings {
   private Boolean recording=false;
   private Object recordingDetails;
   private Boolean screenShare=false;
-  private Boolean isScreenShareWithAudio=false;
+  private Boolean ScreenShareWithAudio=false;
   private Boolean isAutoFullScreen=true;
   private Boolean waitForModerator=false;
   private Boolean chat=false;
@@ -234,11 +234,11 @@ public class Settings {
   }
 
   public Boolean getScreenShareWithAudio() {
-    return isScreenShareWithAudio;
+    return ScreenShareWithAudio;
   }
 
   public void setScreenShareWithAudio(Boolean screenShareWithAudio) {
-    isScreenShareWithAudio = screenShareWithAudio;
+    ScreenShareWithAudio = screenShareWithAudio;
   }
 
   public Boolean getAutoFullScreen() {
@@ -277,7 +277,7 @@ public class Settings {
             ", recording=" + recording +
             ", recordingDetails=" + recordingDetails +
             ", screenShare=" + screenShare +
-            ", isScreenShareWithAudio=" + isScreenShareWithAudio +
+            ", isScreenShareWithAudio=" + ScreenShareWithAudio +
             ", isAutoFullScreen=" + isAutoFullScreen +
             ", waitForModerator=" + waitForModerator +
             ", chat=" + chat +

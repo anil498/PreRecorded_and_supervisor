@@ -16,6 +16,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { ObserverService } from "./services/observer.service";
+import { SharedService } from "./services/shared.service";
 @NgModule({
   imports: [
     BrowserAnimationsModule,
@@ -33,7 +34,7 @@ import { ObserverService } from "./services/observer.service";
     AppRoutingModule,
   ],
   declarations: [AppComponent, AdminLayoutComponent, LoginComponent],
-  providers: [ObserverService],
+  providers: [ObserverService, SharedService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

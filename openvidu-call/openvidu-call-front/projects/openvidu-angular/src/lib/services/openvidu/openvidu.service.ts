@@ -463,7 +463,7 @@ export class OpenViduService {
 	 * Hide the camera muted stream when screen is sharing.
 	 */
 	async toggleScreenshare() {
-			let confirmed;
+			let confirmed=true;
 			if (this.screenShareWithAudio) {
 				// Open dialog box and wait for user confirmation
 				confirmed= await this.actionService.openScreenDialog('Screen Share Mode', '', true);
