@@ -5,6 +5,7 @@
 	title: string;
 	description: string;
 	showActionButtons: boolean;
+	audioOption?: boolean;
 }
 
 /**

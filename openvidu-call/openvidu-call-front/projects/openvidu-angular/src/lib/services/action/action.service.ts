@@ -4,9 +4,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subscription } from 'rxjs';
 import { DeleteDialogComponent } from '../../components/dialogs/delete-recording.component';
 import { DialogTemplateComponent } from '../../components/dialogs/dialog.component';
+import {ScreenDialogTemplateComponent} from '../../components/dialogs/screen-dialog.component';
 import { ProFeatureDialogTemplateComponent } from '../../components/dialogs/pro-feature-dialog.component';
 import { RecordingDialogComponent } from '../../components/dialogs/recording-dialog.component';
 import { INotificationOptions } from '../../models/notification-options.model';
+import { OpenViduAngularConfigService } from '../config/openvidu-angular.config.service';
 
 /**
  * @internal
@@ -16,10 +18,10 @@ import { INotificationOptions } from '../../models/notification-options.model';
 })
 export class ActionService {
 	private dialogRef:
-		| MatDialogRef<DialogTemplateComponent | RecordingDialogComponent | DeleteDialogComponent | ProFeatureDialogTemplateComponent>
+		| MatDialogRef<DialogTemplateComponent | RecordingDialogComponent | DeleteDialogComponent | ProFeatureDialogTemplateComponent |ScreenDialogTemplateComponent>
 		|undefined;
 	private dialogSubscription: Subscription;
-	constructor(private snackBar: MatSnackBar, public dialog: MatDialog) {}
+	constructor(private snackBar: MatSnackBar, public dialog: MatDialog,private libService:OpenViduAngularConfigService) {}
 
 	launchNotification(options: INotificationOptions, callback): void {
 		if (!options.config) {
@@ -71,13 +73,40 @@ export class ActionService {
 			
 			this.dialogSubscription = this.dialogRef.afterClosed().subscribe((result) => {
 				// this.dialogRef = undefined;
-				console.log("Result",result)
 				if(result=='close'){
 					window.location.replace(redirectUrl);
 				}
 			});
 		}
 	}
+	async openScreenDialog(titleMessage: string, descriptionMessage: string, allowClose = true): Promise<boolean> {
+		try {
+		  await this.closeDialog();
+		} catch (error) {
+		  // Handle error if necessary
+		} finally {
+		  const config: MatDialogConfig = {
+			minWidth: '250px',
+			data: { title: titleMessage, description: descriptionMessage, showActionButtons: allowClose },
+			disableClose: !allowClose
+		  };
+		  this.dialogRef = this.dialog.open(ScreenDialogTemplateComponent, config);
+	  
+		  return new Promise<boolean>((resolve) => {
+			this.dialogSubscription = this.dialogRef.afterClosed().subscribe((result) => {
+			  if (result !== null) {
+				console.log('Selected audio option:', result);
+				if (result) {
+					resolve(true);
+				}else{
+					resolve(false);
+				}
+			  }
+			});
+		  });
+		}
+	  }
+	  
 
 	openProFeatureDialog(titleMessage: string, descriptionMessage: string, allowClose = true) {
 		try {
