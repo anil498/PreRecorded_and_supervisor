@@ -124,7 +124,7 @@
     "title": "Feedback Form",
     "icon": "receipt",
     "class": "feedform_form",
-    "show": true,
+    "show": false,
     "systemName": "feedback_form"
   }
 ]
