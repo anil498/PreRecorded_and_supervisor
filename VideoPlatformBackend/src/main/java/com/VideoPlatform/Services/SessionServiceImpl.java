@@ -43,6 +43,8 @@ public class SessionServiceImpl implements SessionService{
     private CommonService commonService;
     @Autowired
     MessagingService messagingService;
+    @Autowired
+    private IcdcRepository icdcRepository;
     @Value("${call.prefix}")
     private String callPrefix;
 
@@ -129,14 +131,27 @@ public class SessionServiceImpl implements SessionService{
             else if (3 == featureId) {
                 settingsEntity.setChat(true);
             }
-            else if (4 == featureId && moderator==true) {
-                settingsEntity.setPreRecorded(true);
-                try{
-                    logger.info("Pre recorded val : {}",userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+            else if (4 == featureId) {
+                HashMap<String,Object> fmeta = (HashMap<String, Object>) userEntity.getFeaturesMeta().get(featureId.toString());
+                if(moderator == true){
+                    settingsEntity.setPreRecorded(true);
+                    try{
+                        logger.info("Pre recorded val : {}",userEntity.getFeaturesMeta().get(featureId.toString()));
+                        settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    }
+                    catch (Exception e){
+                        logger.info("Getting null value from pre_recorded_video_file 1 !",e);
+                    }
                 }
-                catch (Exception e){
-                    logger.info("Getting null value from pre_recorded_video_file 1 !",e);
+                else if(fmeta.get("share_pre_recorded_video").equals(false)){
+                    settingsEntity.setPreRecorded(true);
+                    try{
+                        logger.info("Pre recorded val : {}",userEntity.getFeaturesMeta().get(featureId.toString()));
+                        settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+                    }
+                    catch (Exception e){
+                        logger.info("Getting null value from pre_recorded_video_file 1 !",e);
+                    }
                 }
             }
             else if (5 == featureId && moderator==false) {
@@ -232,7 +247,10 @@ public class SessionServiceImpl implements SessionService{
 
                         logger.info("Map1 : {}",map2);
                         settingsEntity.setIcdcDetails(map2);
+//                        IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
+//                        settingsEntity.setIcdcQuestions(icdcEntity.getIcdcData());
                     }
+
                 }
                 catch (Exception e){
                     logger.info("Getting null value from title_icdc !");
