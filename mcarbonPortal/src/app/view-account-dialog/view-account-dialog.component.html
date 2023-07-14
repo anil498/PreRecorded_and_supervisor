@@ -24,6 +24,7 @@
               <div class="col-12 col-custom">
                 <mat-form-field>
                   <input
+                    id="name"
                     matInput
                     type="text"
                     placeholder="Name"
@@ -36,6 +37,7 @@
               <div class="col-12 col-custom">
                 <mat-form-field>
                   <input
+                    id="max_user"
                     matInput
                     type="number"
                     placeholder="Max User"
@@ -49,12 +51,14 @@
                 <mat-form-field>
                   <mat-label>Account Expiry Date</mat-label>
                   <input
+                    id="acc_exp_date"
                     matInput
                     [matDatepicker]="picker"
                     formControlName="acc_exp_date"
                   />
                   <mat-hint>MM/DD/YYYY</mat-hint>
                   <mat-datepicker-toggle
+                    id="date-btn"
                     matIconSuffix
                     [for]="picker"
                   ></mat-datepicker-toggle>
@@ -98,6 +102,7 @@
           <div class="col-md-10 offset-md-1">
             <mat-form-field>
               <input
+                id="address"
                 matInput
                 type="text"
                 placeholder="Address"
@@ -116,6 +121,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_sessions"
                 type="number"
                 placeholder="Maximum Active Sessions"
                 formControlName="max_active_sessions"
@@ -126,6 +132,7 @@
           <div class="col-md-5">
             <mat-form-field>
               <input
+                id="max_duration"
                 matInput
                 type="number"
                 placeholder="Maximum Duration (in Minutes)"
@@ -140,6 +147,7 @@
           <div class="col-md-5 offset-md-1">
             <mat-form-field>
               <input
+                id="max_participants"
                 matInput
                 type="number"
                 placeholder="Maximum Participants"

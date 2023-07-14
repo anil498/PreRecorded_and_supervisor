@@ -36,7 +36,7 @@
 		*ngIf="!_stream.streamManager?.stream?.videoActive && _stream.type === 'CAMERA'"
 		[name]="_stream.participant.nickname"
 		[color]="_stream.participant.colorProfile"
-		[isOnHold]="isOnHold && !_stream.participant.local"
+		[isOnHold]="_stream.participant.isOnHold && !_stream.participant.local"
 	></ov-avatar-profile>
 
 	<ov-video
@@ -78,7 +78,7 @@
 				<mat-icon>picture_in_picture</mat-icon>
 				<span>{{ 'STREAM.REPLACE_SCREEN' | translate }}</span>
 			</button>
-			<button mat-menu-item id="holdButton" *ngIf="!this._stream.participant.local" (click)="toggleHold()">
+			<button mat-menu-item id="holdButton" *ngIf="!this._stream.participant.local && this._stream.participant.nickname=='Customer'" (click)="toggleHold()">
 				<mat-icon *ngIf="!this.isOnHold">pause</mat-icon>
 				<span *ngIf="!this.isOnHold">{{ 'STREAM.HOLD' | translate }}</span>
 

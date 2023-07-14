@@ -42,7 +42,7 @@ public class SessionService {
           .type(ConnectionType.IPCAM)
           .rtspUri("file://"+mediaPath+fileName)
           .adaptativeBitrate(true)
-          .onlyPlayWithSubscribers(true)
+          .onlyPlayWithSubscribers(true).data("{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}")
           .build();
         session.createConnection(connectionProperties);
         logger.info("Connection properties {}",connectionProperties.getRtspUri());

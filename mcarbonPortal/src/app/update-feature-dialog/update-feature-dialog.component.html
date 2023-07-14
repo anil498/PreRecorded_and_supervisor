@@ -16,6 +16,7 @@
               <mat-label>Feature ID</mat-label>
               <input
                 matInput
+                id="featureId"
                 type="number"
                 placeholder="Feature ID"
                 formControlName="featureId"
@@ -31,6 +32,7 @@
               <mat-label>Feature Name</mat-label>
               <input
                 matInput
+                id="name"
                 type="text"
                 placeholder="Feature Name"
                 formControlName="name"
@@ -46,7 +48,7 @@
           <div class="col-12 col-custom">
             <mat-form-field>
               <mat-label>Status</mat-label>
-              <mat-select formControlName="status">
+              <mat-select id="status" formControlName="status">
                 <mat-option [value]="0">Deactive</mat-option>
                 <mat-option [value]="1">Active</mat-option>
                 <mat-option [value]="2">Deleted</mat-option>

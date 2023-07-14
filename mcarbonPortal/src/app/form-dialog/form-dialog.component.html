@@ -25,6 +25,7 @@
                 <mat-form-field>
                   <input
                     matInput
+                    id="user_fname"
                     type="text"
                     placeholder="First Name"
                     formControlName="user_fname"
@@ -64,6 +65,7 @@
                   <input
                     matInput
                     type="tel"
+                    id="mobile"
                     placeholder="Mobile Number"
                     formControlName="mobile"
                     [matTooltip]="getErrorMessage1('mobile')"
@@ -103,6 +105,7 @@
                   <mat-label> Expiry Date</mat-label>
                   <input
                     matInput
+                    id="acc_exp_date"
                     [matDatepicker]="picker"
                     formControlName="acc_exp_date"
                     [matTooltip]="getErrorMessage1('acc_exp_date')"
@@ -110,6 +113,7 @@
                   />
                   <mat-hint>MM/DD/YYYY</mat-hint>
                   <mat-datepicker-toggle
+                    id="date-btn"
                     matIconSuffix
                     [for]="picker"
                   ></mat-datepicker-toggle>
@@ -138,6 +142,7 @@
                 <mat-form-field>
                   <input
                     matInput
+                    id="login_id"
                     type="text"
                     placeholder="Login ID"
                     formControlName="login_id"
@@ -180,6 +185,7 @@
                   <input
                     matInput
                     type="text"
+                    id="user_lname"
                     placeholder="Last Name"
                     formControlName="user_lname"
                     [matTooltip]="getErrorMessage1('user_lname')"
@@ -217,6 +223,7 @@
                 <mat-form-field>
                   <input
                     matInput
+                    id="email"
                     type="email"
                     placeholder="Email"
                     formControlName="email"
@@ -276,7 +283,11 @@
                 (change)="onPhotoSelected($event)"
                 formControlName="logo"
               />
-              <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
+              <button
+                class="btn btn-sm btn-photo"
+                class="logo"
+                (click)="fileInput.click()"
+              >
                 Select a Logo
               </button>
             </div>
@@ -292,6 +303,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="password"
                 type="password"
                 placeholder="Password"
                 formControlName="password"
@@ -333,6 +345,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="confirm_password"
                 type="password"
                 placeholder="Confirm Password"
                 formControlName="confirm_password"
@@ -418,6 +431,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_sessions"
                 type="number"
                 placeholder="Maximum Active Sessions"
                 formControlName="max_active_sessions"
@@ -444,6 +458,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_duration"
                 type="number"
                 placeholder="Maximum Duration (in Minutes)"
                 formControlName="max_duration"
@@ -475,6 +490,7 @@
               <input
                 matInput
                 type="number"
+                id="max_participants"
                 placeholder="Maximum Participants"
                 formControlName="max_participants"
                 [matTooltip]="getErrorMessage3('max_participants')"

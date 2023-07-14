@@ -15,7 +15,7 @@
             <div class="col-12 col-custom">
               <mat-form-field appearance="outline">
                 <mat-label>Parent</mat-label>
-                <mat-select formControlName="parentId">
+                <mat-select id="parentId" formControlName="parentId">
                   <mat-option [value]="0">0</mat-option>
                   <mat-option
                     *ngFor="let access of parentAccess"
@@ -42,6 +42,7 @@
               <mat-form-field appearance="outline">
                 <input
                   matInput
+                  id="accessId"
                   type="number"
                   placeholder="Access ID"
                   formControlName="accessId"
@@ -52,7 +53,7 @@
                     accessForm.get('accessId').required
                   "
                 >
-                  Access ID  is Required
+                  Access ID is Required
                 </mat-error>
                 <mat-error
                   *ngIf="
@@ -74,6 +75,7 @@
               <mat-form-field appearance="outline">
                 <input
                   matInput
+                  id="seq"
                   type="number"
                   placeholder="Sequence"
                   formControlName="seq"
@@ -96,6 +98,7 @@
               <mat-form-field appearance="outline">
                 <input
                   matInput
+                  id="name"
                   type="text"
                   placeholder="Name"
                   formControlName="name"
@@ -120,6 +123,7 @@
               <mat-form-field appearance="outline">
                 <input
                   matInput
+                  id="systemName"
                   type="text"
                   placeholder="System Name"
                   formControlName="systemName"

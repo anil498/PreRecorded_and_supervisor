@@ -122,6 +122,9 @@ export class OpenViduAngularConfigService {
 	supervisorButton = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 	supervisorButtonObs: Observable<boolean>;
 
+	supervisorWhenButton = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+	supervisorWhenButtonObs: Observable<boolean>;
+
 	MuteCameraButton = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	MuteCameraButtonObs: Observable<boolean>;
 
@@ -186,6 +189,7 @@ export class OpenViduAngularConfigService {
 		this.fullscreenButtonObs = this.fullscreenButton.asObservable();
 		this.autoFullScreenObs=this.autoFullScreen.asObservable();
 		this.supervisorButtonObs=this.supervisorButton.asObservable();
+		this.supervisorWhenButtonObs=this.supervisorWhenButton.asObservable();
 		this.MuteCameraButtonObs=this.MuteCameraButton.asObservable();
 		this.backgroundEffectsButtonObs = this.backgroundEffectsButton.asObservable();
 		this.leaveButtonObs = this.leaveButton.asObservable();
