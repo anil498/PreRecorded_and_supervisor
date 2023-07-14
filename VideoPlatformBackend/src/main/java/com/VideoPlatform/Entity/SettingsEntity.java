@@ -14,6 +14,7 @@ public class SettingsEntity {
     private Boolean recording;
     private Object recordingDetails;
     private Boolean screenShare;
+    private Boolean screenShareWithAudio;
     private Boolean waitForModerator;
     private Boolean chat;
     private Boolean activitiesButton;
@@ -180,6 +181,14 @@ public class SettingsEntity {
 
     public void setIcdcQuestions(Object icdcQuestions) { this.icdcQuestions = icdcQuestions; }
 
+    public Boolean getScreenShareWithAudio() {
+        return screenShareWithAudio;
+    }
+
+    public void setScreenShareWithAudio(Boolean screenShareWithAudio) {
+        this.screenShareWithAudio = screenShareWithAudio;
+    }
+
     @Override
     public String toString() {
         return "SettingsEntity{" +
@@ -191,6 +200,7 @@ public class SettingsEntity {
                 ", recording=" + recording +
                 ", recordingDetails=" + recordingDetails +
                 ", screenShare=" + screenShare +
+                ", screenShareWithAudio=" + screenShareWithAudio +
                 ", waitForModerator=" + waitForModerator +
                 ", chat=" + chat +
                 ", activitiesButton=" + activitiesButton +

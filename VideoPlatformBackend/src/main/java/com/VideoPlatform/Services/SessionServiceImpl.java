@@ -127,6 +127,13 @@ public class SessionServiceImpl implements SessionService{
             }
             else if (2 == featureId) {
                 settingsEntity.setScreenShare(true);
+                try{
+                    Map<String,Boolean> map= (Map<String, Boolean>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                    settingsEntity.setScreenShareWithAudio(map.get("share_with_audio"));
+                }
+                catch (Exception e){
+                    logger.info("Getting null value from participants_ticker_text 2 !");
+                }
             }
             else if (3 == featureId) {
                 settingsEntity.setChat(true);
