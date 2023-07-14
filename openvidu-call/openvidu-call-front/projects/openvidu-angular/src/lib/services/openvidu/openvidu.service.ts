@@ -463,22 +463,10 @@ export class OpenViduService {
 	 * Hide the camera muted stream when screen is sharing.
 	 */
 	async toggleScreenshare() {
-		if (this.participantService.haveICameraAndScreenActive()) {
-			// Disabling screenShare
-			this.participantService.disableScreenStream();
-			this.unpublish(this.participantService.getMyScreenPublisher());
-		}
-		if (this.participantService.haveICameraAndScreenActive()) {
-			// Disabling screenShare
-			this.participantService.disableScreenStream();
-			this.unpublish(this.participantService.getMyScreenPublisher());
-		}
-		// this screen share without audio
-		else if (this.participantService.isOnlyMyCameraActive()) {
 			let confirmed;
 			if (this.screenShareWithAudio) {
 				// Open dialog box and wait for user confirmation
-				confirmed= await this.actionService.openScreenDialog('Screen Share Mode', 'Please select mode', true);
+				confirmed= await this.actionService.openScreenDialog('Screen Share Mode', '', true);
 				console.log("confirmed", confirmed)
 			}
 				if (this.participantService.haveICameraAndScreenActive()) {
@@ -486,7 +474,7 @@ export class OpenViduService {
 					this.participantService.disableScreenStream();
 					this.unpublish(this.participantService.getMyScreenPublisher());
 				}
-				else if (this.participantService.isOnlyMyCameraActive() && !confirmed) {
+				else if (this.participantService.isOnlyMyCameraActive() && confirmed) {
 					console.log("Screen share without audio")
 					const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
 					const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
@@ -598,7 +586,6 @@ export class OpenViduService {
 					this.participantService.disableScreenStream();
 					this.unpublish(this.participantService.getMyScreenPublisher());
 				}
-			}
 	}
 	/**
 	 * @ignore
