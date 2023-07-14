@@ -428,6 +428,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 			if (this.participantService.getMyNickname() == "Support" && JSON.parse(data.split('%/%')[0]).clientData == "Customer") {
 				this.libService.supervisorWhenButton.next(false);
 			}
+			if (this.participantService.getMyNickname() == "Support" && JSON.parse(data.split('%/%')[0]).clientData == "Supervisor") {
+				this.libService.supervisorWhenButton.next(true);
+			}
 		});
 	}
 
@@ -489,7 +492,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.log.d("Going to hold the partiticpant: ", connectionId)
 					this.openviduService.holdPartiticipant(subscriber);
 					this.libService.isOnHold.next(true)
-
+					if(this.participantService.getMyNickname()=="Customer"){
+					const remoteParticipants = this.participantService.getRemoteParticipants();
+					const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Support');
+					if (participantToUpdate) {
+						participantToUpdate.isOnHold = true;
+						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+					}
+				}
 				}
 			}
 		});
