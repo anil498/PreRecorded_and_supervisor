@@ -160,14 +160,25 @@ export class UpdateUserDialogComponent implements OnInit {
     return this.videoSelect.hasOwnProperty(featureId);
   }
 
-  toggleFeatureSelection(featureId: number): void {
-    const index = this.selectedFeatures.indexOf(featureId);
+  toggleFeatureSelection(feature: any): void {
+    console.log(feature);
+    const index = this.selectedFeatures.indexOf(feature.featureId);
     if (index > -1) {
       this.selectedFeatures.splice(index, 1);
-      delete this.selectedFeaturesMeta[featureId.toString()];
+      delete this.selectedFeaturesMeta[feature.featureId.toString()];
     } else {
-      this.selectedFeatures.push(featureId);
-      this.selectedFeaturesMeta[featureId.toString()] = {};
+      this.selectedFeatures.push(feature.featureId);
+      this.selectedFeaturesMeta[feature.featureId.toString()] = {};
+      feature.metaList.forEach((meta) => {
+        if (meta.type == "bool")
+          this.setMetaValue(feature.featureId, meta.key, false);
+        else if (meta.type == "text")
+          this.setMetaValue(feature.featureId, meta.key, "");
+        else if (meta.type == "radio")
+          this.setMetaValue(feature.featureId, meta.key, meta.name[0]);
+        //this.selectedFeaturesMeta[feature.featureId.toString()] = {};
+      });
+      console.log(this.selectedFeaturesMeta);
     }
   }
   updateSelectedFeaturesMeta(featureId, metaValue) {
