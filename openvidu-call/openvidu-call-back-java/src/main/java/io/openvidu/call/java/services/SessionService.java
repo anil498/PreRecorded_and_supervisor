@@ -12,11 +12,10 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -70,5 +69,15 @@ public class SessionService {
       logger.error("Getting error while converting to base64 {}", e);
     }
     return base64Logo;
+  }
+  public void copyFileToMediaPath(String fileName, String filePath){
+    try {
+      Path mediaFilePath= Paths.get(mediaPath+fileName);
+      Path actualFilePath= Paths.get(filePath+fileName);
+      
+      Files.copy(actualFilePath,mediaFilePath , StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
