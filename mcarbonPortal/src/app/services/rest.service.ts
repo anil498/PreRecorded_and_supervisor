@@ -767,4 +767,21 @@ export class RestService {
       console.log(error);
     }
   }
+
+  async joinSession(
+    path: string,
+    contactArray: string,
+    sendTo: string,
+    sessionId: string
+  ) {
+    try {
+      return this.callRequest(path, {
+        contactArray,
+        sendTo,
+        sessionId,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }

@@ -84,14 +84,14 @@ export class DynamicSupportComponent implements OnInit {
     this.userForm1 = this.fb.group({
       msisdn: [
         "",
-        [Validators.required, Validators.pattern(/^(\d{10})(,\d{10})*$/)],
+        [
+          Validators.required,
+          Validators.pattern(/^([6789]\d{9})(,[6789]\d{9})*$/),
+        ],
       ],
     });
     this.userForm2 = this.fb.group({
-      msisdn: [
-        "",
-        [Validators.required, Validators.pattern(/^(\d{10})(,\d{10})*$/)],
-      ],
+      msisdn: ["", Validators.pattern(/^([6789]\d{9})(,[6789]\d{9})*$/)],
     });
 
     this.userForm3 = this.fb.group({
@@ -111,10 +111,7 @@ export class DynamicSupportComponent implements OnInit {
           Validators.maxLength(30),
         ],
       ],
-      msisdn: [
-        "",
-        [Validators.required, Validators.pattern(/^(\d{10})(,\d{10})*$/)],
-      ],
+      msisdn: ["", Validators.pattern(/^([6789]\d{9})(,[6789]\d{9})*$/)],
     });
   }
 
@@ -155,14 +152,8 @@ export class DynamicSupportComponent implements OnInit {
       }
       const msisdn = this.userForm1.value.msisdn;
       console.log("Form Submitted with value: ", this.userForm1.value.msisdn);
-      var splitted = msisdn.split(",");
-      for (let i = 0; i < splitted.length; i++) {
-        numbers.push(splitted[i]);
-      }
       try {
-        for (let i = 0; i < numbers.length; i++) {
-          messageResponse = await this.restService.sendSMS(numbers[i], getLink);
-        }
+        messageResponse = await this.restService.sendSMS(msisdn, getLink);
         console.warn(messageResponse);
         if (messageResponse.status_code == 200) {
           console.log(messageResponse.link);
@@ -194,24 +185,17 @@ export class DynamicSupportComponent implements OnInit {
       }
       const msisdn = this.userForm2.value.msisdn;
       console.log("Form Submitted with value: ", this.userForm2.value.msisdn);
-      var splitted = msisdn.split(",");
-      for (let i = 0; i < splitted.length; i++) {
-        numbers.push(splitted[i]);
-      }
       const type = "template";
       const from = "919811026184";
       const templateId = "53571";
-
       try {
-        for (let i = 0; i < numbers.length; i++) {
-          messageResponse = await this.restService.sendWhatsapp(
-            numbers[i],
-            from,
-            type,
-            templateId,
-            getLink
-          );
-        }
+        messageResponse = await this.restService.sendWhatsapp(
+          msisdn,
+          from,
+          type,
+          templateId,
+          getLink
+        );
         if (messageResponse.status_code == 200) {
           console.log(messageResponse.link);
           this.goTo(messageResponse.link);
@@ -243,22 +227,17 @@ export class DynamicSupportComponent implements OnInit {
       }
       const msisdn = this.userForm3.value.msisdn;
       console.log("Form Submitted with value: ", this.userForm3.value.msisdn);
-      var splitted = msisdn.split(",");
-      for (let i = 0; i < splitted.length; i++) {
-        numbers.push(splitted[i]);
-      }
 
       this.titleValue = this.userForm3.value.title;
       this.bodyValue = this.userForm3.value.body;
       try {
-        for (let i = 0; i < numbers.length; i++) {
-          messageResponse = await this.restService.sendNotify(
-            this.titleValue,
-            this.bodyValue,
-            numbers[i],
-            getLink
-          );
-        }
+        messageResponse = await this.restService.sendNotify(
+          this.titleValue,
+          this.bodyValue,
+          msisdn,
+          getLink
+        );
+
         if (messageResponse.status_code == 200) {
           this.goTo(messageResponse.link);
         } else {
