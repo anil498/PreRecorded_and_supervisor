@@ -24,6 +24,7 @@
                   <input
                     matInput
                     type="text"
+                    id="name"
                     placeholder="Name"
                     formControlName="name"
                     [matTooltip]="getErrorMessage1('name')"
@@ -62,6 +63,7 @@
                   <input
                     matInput
                     type="number"
+                    id="max_user"
                     placeholder="Max User"
                     formControlName="max_user"
                     [matTooltip]="getErrorMessage1('max_user')"
@@ -92,6 +94,7 @@
                   <mat-label>Account Expiry Date</mat-label>
                   <input
                     matInput
+                    id="acc_exp_date"
                     [matDatepicker]="picker"
                     formControlName="acc_exp_date"
                     [matTooltip]="getErrorMessage1('acc_exp_date')"
@@ -101,6 +104,7 @@
                   <mat-datepicker-toggle
                     matIconSuffix
                     [for]="picker"
+                    id="date-btn"
                   ></mat-datepicker-toggle>
                   <mat-datepicker #picker></mat-datepicker>
                   <mat-error
@@ -158,7 +162,11 @@
                 (change)="onPhotoSelected($event)"
                 formControlName="logo"
               />
-              <button class="btn btn-sm btn-photo" (click)="fileInput.click()">
+              <button
+                class="btn btn-sm btn-photo"
+                id="logo-btn"
+                (click)="fileInput.click()"
+              >
                 Select a Logo
               </button>
             </div>
@@ -170,6 +178,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="address"
                 type="text"
                 placeholder="Address"
                 formControlName="address"
@@ -197,6 +206,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_sessions"
                 type="number"
                 placeholder="Maximum Active Sessions"
                 formControlName="max_active_sessions"
@@ -223,6 +233,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_duration"
                 type="number"
                 placeholder="Maximum Duration (in Minutes)"
                 formControlName="max_duration"
@@ -253,6 +264,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="max_participants"
                 type="number"
                 placeholder="Maximum Participants"
                 formControlName="max_participants"
@@ -580,6 +592,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="user_fname"
                 type="text"
                 placeholder="First Name"
                 formControlName="user_fname"
@@ -616,6 +629,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="user_lname"
                 type="text"
                 placeholder="Last Name"
                 formControlName="user_lname"
@@ -655,6 +669,7 @@
               <input
                 matInput
                 type="tel"
+                id="mobile"
                 placeholder="Mobile Number"
                 formControlName="mobile"
                 [matTooltip]="getErrorMessage4('mobile')"
@@ -691,6 +706,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="email"
                 type="email"
                 placeholder="Email"
                 formControlName="email"
@@ -718,6 +734,7 @@
               <input
                 matInput
                 type="text"
+                id="login_id"
                 placeholder="Login ID"
                 formControlName="login_id"
                 [matTooltip]="getErrorMessage4('login_id')"
@@ -757,6 +774,7 @@
               <input
                 matInput
                 type="password"
+                id="password"
                 placeholder="Password"
                 formControlName="password"
                 [(ngModel)]="password"
@@ -797,6 +815,7 @@
             <mat-form-field>
               <input
                 matInput
+                id="confirm_password"
                 type="password"
                 placeholder="Confirm Password"
                 formControlName="confirm_password"

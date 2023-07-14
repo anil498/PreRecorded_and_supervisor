@@ -102,7 +102,11 @@ public class MessageApiController {
         responseSms.setCallUrl(callUrl);
 
         HashMap<String,String> res=new HashMap<>();
-        String returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
+        String returnUrl="";
+        if(sessionEntitySupport==null){
+            returnUrl = callPrefix+sessionEntityCustomer.getSessionKey();
+        }else
+            returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
             if(getLink.equals("0")){
@@ -161,12 +165,12 @@ public class MessageApiController {
         responseSms.setCallUrl(placeHolder);
         HashMap<String,String> res=new HashMap<>();
         String returnUrl="";
-//        if(sessionEntitySupport==null){
-//            returnUrl = callPrefix+sessionEntityCustomer.getSessionKey();
-//        }
-//        else {
+        if(sessionEntitySupport==null){
+            returnUrl = callPrefix+sessionEntityCustomer.getSessionKey();
+        }
+        else {
             returnUrl = callPrefix + sessionEntitySupport.getSessionKey();
-//        }
+        }
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
             if(getLink.equals("0")){
@@ -243,7 +247,11 @@ public class MessageApiController {
             String id=firebaseMessaging.send(message);
             logger.info("FCM Id : {}",id);
             HashMap<String,String> res=new HashMap<>();
-            String returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
+            String returnUrl="";
+            if(sessionEntitySupport==null){
+                returnUrl = callPrefix+sessionEntityCustomer.getSessionKey();
+            }else
+                returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
             if(params.containsKey("getLink")){
                 String getLink = String.valueOf(params.get("getLink"));
                 if(getLink.equals("0")){

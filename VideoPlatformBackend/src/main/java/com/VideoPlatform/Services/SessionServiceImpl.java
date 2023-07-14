@@ -59,11 +59,15 @@ public class SessionServiceImpl implements SessionService{
         AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
         UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
 
-//        HashMap<String,Object> fMeta = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("4");
-//        if(moderator==true)
-//        if(fMeta.get("share_pre_recorded_video").equals(false)){
-//            return null;
-//        }
+        HashMap<String,Object> fMeta = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("4");
+        if(moderator==true) {
+            if (fMeta == null){
+                logger.info("Pre recorded video property is not present !");
+            }
+            else if(fMeta.get("share_pre_recorded_video").equals(false)){
+                return null;
+            }
+        }
 
         Gson gson = new Gson();
         if(type.equalsIgnoreCase("Customer")){
