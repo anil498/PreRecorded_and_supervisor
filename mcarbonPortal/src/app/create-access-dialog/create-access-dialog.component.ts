@@ -17,6 +17,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { DomSanitizer } from "@angular/platform-browser";
 import { Router } from "@angular/router";
+import { AccessObject } from "app/model/access_object";
 import { RestService } from "app/services/rest.service";
 
 @Component({
@@ -29,6 +30,7 @@ export class CreateAccessDialogComponent implements OnInit {
   parentAccess: any;
   accessIds: number[] = [];
   systemName: string[] = [];
+  accessObject: AccessObject;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<CreateAccessDialogComponent>,
@@ -118,6 +120,12 @@ export class CreateAccessDialogComponent implements OnInit {
       if (response.status_code == 200) {
         this.openSnackBar(response.msg, "snackBar");
         console.log("Access Created");
+        this.accessObject.class = this.accessForm.value.systemName;
+        this.accessObject.systemName = this.accessForm.value.systemName;
+        this.accessObject.icon = "";
+        this.accessObject.path = "/app/" + this.accessForm.value.systemName;
+        this.accessObject.title = this.accessForm.value.name;
+        this.accessObject.show = false;
         this.dialogRef.close();
         this.restService.closeDialog();
       }

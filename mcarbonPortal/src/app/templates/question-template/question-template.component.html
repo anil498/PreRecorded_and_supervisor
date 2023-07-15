@@ -1,11 +1,19 @@
 <div class="container q-container" [formGroup]="questionForm">
   <div class="row">
+    <div class="col-md-1">
+      <strong>Q {{ this.questionId + 1 }}</strong>
+    </div>
     <div class="col-md-8">
       <mat-form-field>
-        <input matInput type="text" placeholder="Write a question" formControlName="question"/>
+        <input
+          matInput
+          type="text"
+          placeholder="Write a question"
+          formControlName="question"
+        />
       </mat-form-field>
     </div>
-    <div class="col-md-3 offset-md-1">
+    <div class="col-md-3">
       <mat-form-field appearance="outline">
         <mat-label>Type</mat-label>
         <mat-select
