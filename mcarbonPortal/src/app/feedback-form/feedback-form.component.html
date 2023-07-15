@@ -45,19 +45,22 @@
         <div class="row card card-body question-body">
           <div class="" id="question-div" cdkDropList></div>
         </div>
-        <div class="row card card-body answer-body" *ngIf="questionDisable">
+        <div
+          class="row card card-body answer-body"
+          *ngIf="checkQuestionDisable()"
+        >
           <div class="" id="answer-div" cdkDropList></div>
         </div>
       </div>
     </div>
     <div class="row section-2">
       <div class="col-md-12">
-        <div class="card card-body question-tab"></div>
+        <div class="card card-body" id="question-tab"></div>
       </div>
     </div>
   </div>
   <div class="footer">
-    <button class="btn btn-danger">Cancel</button>
+    <button class="btn btn-danger" (click)="onCancel()">Cancel</button>
     <button class="btn btn-success" (click)="saveQuestion()">Save</button>
   </div>
 </div>
