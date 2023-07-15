@@ -450,14 +450,16 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const connectionId = event.stream.connection.connectionId;
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
 
-			if (isRemoteConnection && !this.libService.isOnHold.getValue()) {
+			if (isRemoteConnection && this.libService.isOnHold.getValue()) {
 				this.participantService.updateRemoteParticipants();
-				// }else{
-				// 	const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === connectionId);
-				// 	const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
-				// 	subscriber.subscribeToAudio(false);
-				// 	subscriber.subscribeToVideo(false);
-			}
+			}else if(this.participantService.getMyNickname()=="Customer" ){
+					const remoteParticipants = this.participantService.getRemoteParticipants();
+					const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Support');
+					if (participantToUpdate) {
+						participantToUpdate.isOnHold = true;
+						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+					}
+				}
 		});
 	}
 
