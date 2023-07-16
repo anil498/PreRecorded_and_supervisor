@@ -119,7 +119,7 @@ export class Settings {
     max_dur?: number;
   };
   private _screenShare?: boolean;
-  private _isScreenShareWithAudio?: boolean;
+  private _ScreenShareWithAudio?: boolean;
   private _isAutoFullScreen?: boolean;
   private _waitForModerator?: boolean;
   private _chat?: boolean;
@@ -231,12 +231,12 @@ export class Settings {
     this._screenShare = value;
   }
 
-  get isScreenShareWithAudio(): boolean | undefined {
-    return this._isScreenShareWithAudio;
+  get ScreenShareWithAudio(): boolean | undefined {
+    return this._ScreenShareWithAudio;
   }
 
-  set isScreenShareWithAudio(value: boolean | undefined) {
-    this._isScreenShareWithAudio = value;
+  set ScreenShareWithAudio(value: boolean | undefined) {
+    this._ScreenShareWithAudio = value;
   }
 
   get isAutoFullScreen(): boolean | undefined {
