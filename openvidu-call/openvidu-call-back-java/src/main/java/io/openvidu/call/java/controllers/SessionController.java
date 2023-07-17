@@ -11,12 +11,10 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.openvidu.call.java.Constants.SessionConstant;
 import io.openvidu.call.java.core.SessionContext;
-import io.openvidu.call.java.models.ErrorResponse;
 import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.call.java.models.Settings;
 import io.openvidu.call.java.services.SessionService;
@@ -169,7 +167,7 @@ public class SessionController {
               Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
               sessionProperty.setScreenToken(screenConnection.getToken());
             } else {
-              sessionProperty.getSettings().setFileUrl(OPENVIDU_URL + "/downloadFile/" + map.get("pre_recorded_video_file").toString());
+              sessionProperty.getSettings().setFileUrl("downloadFile/" + map.get("pre_recorded_video_file").toString());
             }
         }else{
         sessionProperty.getSettings().setPreRecorded(false);

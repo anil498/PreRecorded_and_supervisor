@@ -39,9 +39,9 @@ public class SessionCleaner implements Runnable {
                   return true;
                 })
                 .collect(Collectors.toList());
-        if (connectionList.size()==0) {
+        if (connectionList.size()==1) {
           if (filterConnectionList.size()==0){
-            session.close();
+               session.close();
           }
           looger.info("Removing session context from map sessionId is {} and joined participant is {}",sessionContext.getSessionUniqueId(),sessionContext.getParticipantJoined());
           sessionContextConcurrentMap.remove(key);

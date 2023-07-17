@@ -57,6 +57,7 @@ export class OpenViduService {
 	showSessionTimer: boolean;
 	videoFilePath: string;
 	screenShareWithAudio: boolean;
+	baseHref:string;
 	tune: Howl | null = null;
 
 	private sessionTime: Date;
@@ -79,6 +80,7 @@ export class OpenViduService {
 		this.log = this.loggerSrv.get('OpenViduService');
 		this.isSttReadyObs = this._isSttReady.asObservable();
 		this.sessionTimerObs = this.sessionTimerStatus.asObservable();
+		this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/' : '');
 	}
 
 	/**
@@ -683,14 +685,18 @@ export class OpenViduService {
 	/**
 	 * @internal
 	 */
-	async unholdPartiticipant(subscriber:Subscriber) {
-			console.log("unholding")
-			this.stopTune();
+	async unholdPartiticipant(subscriber: Subscriber,videoActive:boolean,audioActive:boolean) {
+		console.log("unholding")
+		this.stopTune();
+		subscriber.subscribeToAudio(true);
+		subscriber.subscribeToVideo(true);
+		if(videoActive){
 			this.publishVideo(true);
-			subscriber.subscribeToAudio(true);
-			subscriber.subscribeToVideo(true);
+		}
+		if(audioActive){
 			this.publishAudio(true);
-			this.libService.isOnHold.next(false)
+		}
+		this.libService.isOnHold.next(false)
 	}
 	/**
 	 * @internal
@@ -918,7 +924,7 @@ export class OpenViduService {
 				this.participantService.disablePublishVideoStream();
 				await this.screenSession.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
-				const videoBlob = await this.http.get(this.videoFilePath, { responseType: 'blob' }).toPromise();
+				const videoBlob = await this.http.get(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
 
 				// Create a local URL for the video file
 				const videoURL = URL.createObjectURL(videoBlob);
