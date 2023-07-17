@@ -532,7 +532,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 						}
 					}
 				}
-			}
 		});
 	}
 
