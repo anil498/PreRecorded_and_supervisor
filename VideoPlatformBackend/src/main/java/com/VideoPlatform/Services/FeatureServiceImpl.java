@@ -60,7 +60,7 @@ public class FeatureServiceImpl implements FeatureService{
     public List<FeatureEntity> getAllFeatures(){
         return featureRepository.findAll();
     }
-    
+
     @Override
     public ResponseEntity<?> updateFeature(String params1) {
         logger.info("Params Update : {}",params1);
