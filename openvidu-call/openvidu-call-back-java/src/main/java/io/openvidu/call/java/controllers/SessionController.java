@@ -144,7 +144,7 @@ public class SessionController {
         OpenViduRole role = isSessionCreator ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
 
         Connection cameraConnection = null;
-        boolean isOnHold=sessionProperty.getSettings().getHold();
+        boolean isOnHold=sessionProperty.getHold();
         if (validateParticipantJoined(sessionProperty, sessionCreated,sessionIdToSessionContextMap)) {
           if(sessionCreated!=null) {
             cameraConnection = this.openviduService.createConnection(sessionCreated, nickname, role,isOnHold);

@@ -70,6 +70,14 @@ export class SessionComponent implements OnInit, OnDestroy {
 	@Output() onSessionCreated = new EventEmitter<any>();
 
 	@Output() onNodeCrashed = new EventEmitter<any>();
+	/**
+	 * Provides event notifications that fire when hold button has been clicked.
+	 */
+	@Output() onHoldButtonClicked: EventEmitter<void> = new EventEmitter<void>();
+	/**
+	 * Provides event notifications that fire when hold button has been clicked.
+	 */
+	@Output() onUnHoldButtonClicked: EventEmitter<void> = new EventEmitter<void>();
 
 	session: Session;
 	sessionScreen: Session;
@@ -312,10 +320,12 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
 			const isCameraConnection: boolean = !nickname?.includes(`_${VideoType.SCREEN}`);
 			const data = event.connection?.data;
-			console.log(data)
-
 			if (isRemoteConnection && isCameraConnection) {
-
+				if(this.participantService.getMyNickname()=="Support" && JSON.parse(data.split('%/%')[0]).clientData == "Customer"){
+					if(JSON.parse(data.split('%/%')[0]).isOnHold){
+						this.openviduService.unholdPartiticipantSignal(connectionId)
+					}
+				}
 				// Adding participant when connection is created and it's not screen
 				if (this.participantService.getMyNickname() == "Support") {
 					this.libService.supervisorWhenButton.next(true);
@@ -493,6 +503,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.openviduService.holdPartiticipant(subscriber);
 					this.libService.isOnHold.next(true)
 					if(this.participantService.getMyNickname()=="Customer"){
+						this.onHoldButtonClicked.emit();
 					const remoteParticipants = this.participantService.getRemoteParticipants();
 					const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Support');
 					if (participantToUpdate) {
@@ -514,7 +525,13 @@ export class SessionComponent implements OnInit, OnDestroy {
 
 			if (isLocalConnection) {
 				if (this.participantService.getMyNickname() == "Customer") {
-					const sconnectionId = this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData == "Supervisor");
+					this.onUnHoldButtonClicked.emit();
+					let sconnectionId;
+					if(this.libService.isSupervisorActive.getValue()){
+						sconnectionId= this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData == "Supervisor");
+					}else{
+						sconnectionId = this.openviduService.getRemoteConnections().find(connection => JSON.parse(connection.data.split('%/%')[0]).clientData == "Support");
+					}
 					const subscriber: Subscriber = this.session.subscribe(sconnectionId?.stream, undefined);
 					this.participantService.addRemoteConnection(sconnectionId.connectionId, sconnectionId.data, subscriber);
 				}

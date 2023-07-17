@@ -269,6 +269,12 @@ export class StreamComponent implements OnInit {
 			this.log.d('Going to unhold the partiticpant: ', connectionId);
 			this.openviduService.unholdPartiticipantSignal(connectionId);
 			this.libService.isOnHold.next(false);
+			const remoteParticipants = this.participantService.getRemoteParticipants();
+			const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
+			if (participantToUpdate) {
+				participantToUpdate.isOnHold = false;
+				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+			}
 		}
 	}
 
