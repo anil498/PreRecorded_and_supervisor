@@ -685,17 +685,13 @@ export class OpenViduService {
 	/**
 	 * @internal
 	 */
-	async unholdPartiticipant(subscriber: Subscriber,videoActive:boolean,audioActive:boolean) {
+	async unholdPartiticipant(subscriber: Subscriber) {
 		console.log("unholding")
 		this.stopTune();
 		subscriber.subscribeToAudio(true);
 		subscriber.subscribeToVideo(true);
-		if(videoActive){
-			this.publishVideo(true);
-		}
-		if(audioActive){
-			this.publishAudio(true);
-		}
+		this.publishVideo(true);
+		this.publishAudio(true);
 		this.libService.isOnHold.next(false)
 	}
 	/**
