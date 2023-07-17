@@ -321,11 +321,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const isCameraConnection: boolean = !nickname?.includes(`_${VideoType.SCREEN}`);
 			const data = event.connection?.data;
 			if (isRemoteConnection && isCameraConnection) {
-				if(this.participantService.getMyNickname()=="Support" && JSON.parse(data.split('%/%')[0]).clientData == "Customer"){
-					if(JSON.parse(data.split('%/%')[1]).isOnHold){
-						this.openviduService.holdPartiticipantSiganl(connectionId)
-					}
-				}
 				// Adding participant when connection is created and it's not screen
 				if (this.participantService.getMyNickname() == "Support") {
 					this.libService.supervisorWhenButton.next(true);
@@ -360,6 +355,20 @@ export class SessionComponent implements OnInit, OnDestroy {
 						participantToUpdate.isOnHold = true;
 						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
 					}
+				}
+			}
+			if(this.participantService.getMyNickname()=="Support" && JSON.parse(data.split('%/%')[0]).clientData == "Customer"){
+				if(JSON.parse(data.split('%/%')[1]).isOnHold){
+					this.openviduService
+					.getRemoteConnections()
+					.filter((connection) => this.openviduService.holdPartiticipantSiganl(connection.connectionId));
+				const remoteParticipants = this.participantService.getRemoteParticipants();
+				const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
+				if (participantToUpdate) {
+					participantToUpdate.isOnHold = true;
+					this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+				}
+				this.libService.isOnHold.next(true);
 				}
 			}
 		});
