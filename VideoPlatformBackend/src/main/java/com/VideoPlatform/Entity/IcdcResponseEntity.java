@@ -6,6 +6,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Entity
 @EntityScan
@@ -17,12 +19,15 @@ public class IcdcResponseEntity {
         @Column(name = "icdc_id")
         private int icdcId;
 
-        @Column(name = "icdc_result",columnDefinition = "text")
-        @Type(type="com.VideoPlatform.Utils.MapType")
-        private HashMap<String, Object> icdcResult = new HashMap<String, Object>(0);
+//        @Column(name = "icdc_result",columnDefinition = "text")
+//        private String icdcResult;
+
+    @Column(name="icdc_result",columnDefinition="text")
+    @Type(type="com.VideoPlatform.Utils.MapType")
+    private List<Map<String, Object>> icdcResult;
 
 
-        public int getIcdcId() {
+    public int getIcdcId() {
             return icdcId;
         }
 
@@ -30,11 +35,11 @@ public class IcdcResponseEntity {
             this.icdcId = icdcId;
         }
 
-        public HashMap<String, Object> getIcdcResult() {
+        public List<Map<String, Object>> getIcdcResult() {
             return icdcResult;
         }
 
-        public void setIcdcResult(HashMap<String, Object> icdcResult) {
+        public void setIcdcResult(List<Map<String, Object>> icdcResult) {
             this.icdcResult = icdcResult;
         }
 
@@ -42,7 +47,7 @@ public class IcdcResponseEntity {
         public String toString() {
             return "IcdcEntity{" +
                     "icdcId=" + icdcId +
-                    ", icdcData=" + icdcResult +
+                    ", icdcResult=" + icdcResult +
                     '}';
         }
     }
