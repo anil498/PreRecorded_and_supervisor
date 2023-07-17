@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
@@ -171,15 +172,12 @@ public class OpenViduService {
 
 	public Connection createConnection(Session session, String nickname, OpenViduRole role,boolean isOnHold)
 			throws OpenViduJavaClientException, OpenViduHttpException {
-		Map<String, Object> params = new HashMap<String, Object>();
-		Map<String, Object> connectionData = new HashMap<String, Object>();
-
-		if (!nickname.isEmpty()) {
-			connectionData.put("openviduCustomConnectionId", nickname);
-		}
+		Map<String, String> params = new HashMap<String, String>();
+		JsonObject jsonObject=new JsonObject();
+		jsonObject.addProperty("isOnHold",isOnHold);
 		params.put("role", role.name());
-		params.put("data", connectionData.toString());
-		params.put("isOnHold",isOnHold);
+		params.put("data", jsonObject.toString());
+		System.out.println(params);
 		ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
 
 		Connection connection = session.createConnection(properties);

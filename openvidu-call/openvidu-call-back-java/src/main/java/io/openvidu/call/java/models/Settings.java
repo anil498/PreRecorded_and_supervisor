@@ -36,9 +36,6 @@ public class Settings {
 
   private  Object icdcQuestions;
 
-  private Boolean hold=false;
-
-  
   public Integer getDuration() {
     return duration;
   }
@@ -259,14 +256,6 @@ public class Settings {
     this.icdcDetails = icdcDetails;
   }
 
-  public Boolean getHold() {
-    return hold;
-  }
-
-  public void setHold(Boolean hold) {
-    this.hold = hold;
-  }
-
   public Object getIcdcQuestions() {
     return icdcQuestions;
   }
@@ -304,7 +293,6 @@ public class Settings {
             ", fileUrl='" + fileUrl + '\'' +
             ", icdcDetails=" + icdcDetails +
             ", icdcQuestions=" + icdcQuestions +
-            ", hold=" + hold +
             '}';
   }
 }

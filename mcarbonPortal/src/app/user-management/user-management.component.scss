@@ -39,8 +39,19 @@ th {
   color: #009688 !important;
 }
 
-.btn-dark{
+.btn-dark {
   background-color: black;
+}
+
+.btn-secondary {
+  background-color: #e1e1e1 !important;
+}
+
+.btn-danger,
+.btn-dark,
+.btn-secondary,
+.btn-success {
+  min-width: 90.41px;
 }
 
 .box {

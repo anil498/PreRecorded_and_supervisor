@@ -31,6 +31,7 @@ public class SessionProperty {
   private String type="Customer";
   private String recordingMode="MANUAL"; // for auto recording need to set {ALWAYS}
   private Boolean isSessionExpired=false;
+  private Boolean hold=false;
 
   public String getSessionId() {
     return sessionId;
@@ -180,6 +181,14 @@ public class SessionProperty {
     isSessionExpired = sessionExpired;
   }
 
+  public Boolean getHold() {
+    return hold;
+  }
+
+  public void setHold(Boolean hold) {
+    this.hold = hold;
+  }
+
   @Override
   public String toString() {
     return "SessionProperty{" +
@@ -201,6 +210,7 @@ public class SessionProperty {
             ", type='" + type + '\'' +
             ", recordingMode='" + recordingMode + '\'' +
             ", isSessionExpired=" + isSessionExpired +
+            ", hold=" + hold +
             '}';
   }
 }

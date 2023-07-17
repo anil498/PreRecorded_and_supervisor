@@ -97,6 +97,16 @@ export class AccessManagementComponent implements OnInit {
         this.access = response;
         console.log(this.access);
         this.dataSourceWithPageSize.data = this.access;
+        this.dataSourceWithPageSize.sortingDataAccessor = (
+          data,
+          sortHeaderId
+        ) => {
+          const value = data[sortHeaderId];
+          if (typeof value !== "string") {
+            return value;
+          }
+          return value.toLocaleLowerCase();
+        };
       },
       (err) => {
         let msg = "";

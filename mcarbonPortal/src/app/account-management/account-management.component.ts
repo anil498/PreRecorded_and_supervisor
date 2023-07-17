@@ -107,12 +107,38 @@ export class AccountManagementComponent implements OnInit {
     // });
   }
 
+  checkStatus(acc: Accounts) {
+    let currentDate = new Date();
+    let currentDateString = currentDate.toISOString().split("T")[0];
+    currentDateString =
+      currentDateString +
+      " " +
+      currentDate.toISOString().split("T")[1].substring(0, 8);
+    if (acc.expDate < currentDateString) {
+      console.log(acc.expDate + "  " + currentDateString);
+      acc.status = 3;
+    }
+  }
+
   viewTable() {
     this.restService.getAccountList(this.token, this.userId).then(
       (response) => {
         this.accounts = response;
         console.log(this.accounts);
+        this.accounts.forEach(async (account) => {
+          await this.checkStatus(account);
+        });
         this.dataSourceWithPageSize.data = this.accounts;
+        this.dataSourceWithPageSize.sortingDataAccessor = (
+          data,
+          sortHeaderId
+        ) => {
+          const value = data[sortHeaderId];
+          if (typeof value !== "string") {
+            return value;
+          }
+          return value.toLocaleLowerCase();
+        };
       },
       (err) => {
         let msg = "";
