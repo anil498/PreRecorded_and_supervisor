@@ -322,7 +322,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const data = event.connection?.data;
 			if (isRemoteConnection && isCameraConnection) {
 				if(this.participantService.getMyNickname()=="Support" && JSON.parse(data.split('%/%')[0]).clientData == "Customer"){
-					if(JSON.parse(data.split('%/%')[0]).isOnHold){
+					if(JSON.parse(data.split('%/%')[1]).isOnHold){
 						this.openviduService.unholdPartiticipantSignal(connectionId)
 					}
 				}
