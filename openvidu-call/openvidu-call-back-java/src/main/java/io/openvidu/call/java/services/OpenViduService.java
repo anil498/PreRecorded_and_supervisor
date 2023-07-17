@@ -177,9 +177,9 @@ public class OpenViduService {
 		if (!nickname.isEmpty()) {
 			connectionData.put("openviduCustomConnectionId", nickname);
 		}
+		connectionData.put("isOnHold",isOnHold);
 		params.put("role", role.name());
 		params.put("data", connectionData.toString());
-		params.put("isOnHold",isOnHold);
 		ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
 
 		Connection connection = session.createConnection(properties);
