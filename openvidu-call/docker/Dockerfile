@@ -37,4 +37,5 @@ RUN apt-get install curl && \
 
 CMD ["/usr/local/bin/entrypoint.sh"]
 WORKDIR /opt/videoplatform/prerecorded
+WORKDIR /opt/openvidu/kurento-logs/prerecorded
 
