@@ -248,7 +248,6 @@ export class StreamComponent implements OnInit {
 	 * @ignore
 	 */
 	toggleHold() {
-		console.log('Toggling hold');
 		const connectionId = this._stream.connectionId;
 
 		const participantAdded = this.openviduService.getRemoteConnections().find((connection) => connection.connectionId === connectionId);
@@ -265,7 +264,6 @@ export class StreamComponent implements OnInit {
 				participantToUpdate.isOnHold = true;
 				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
 			}
-			console.log("update partiticpant",participantToUpdate)
 		} else {
 			this.onUnHoldButtonClicked.emit();
 			this.log.d('Going to unhold the partiticpant: ', connectionId);
@@ -331,7 +329,6 @@ export class StreamComponent implements OnInit {
 		});
 		this.isOnHoldSubs = this.libService.isOnHoldObs.subscribe((value: boolean) => {
 			this.isOnHold = value;
-			console.error('p', this._stream.participant.local, this.isOnHold);
 			// this.cd.markForCheck();
 		});
 	}

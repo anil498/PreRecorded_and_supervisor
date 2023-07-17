@@ -366,6 +366,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 			if (JSON.parse(event.connection.data.split('%/%')[0]).clientData != "Supervisor") {
 				this.libService.isOnHold.next(false)
 			}
+			if (this.participantService.getMyNickname() == "Customer" && JSON.parse(event.connection.data.split('%/%')[0]).clientData == "Support") {
+				this.openviduService.stopTune();
+			}
 
 		});
 	}
@@ -517,10 +520,17 @@ export class SessionComponent implements OnInit, OnDestroy {
 				}
 				const participantAdded = this.openviduService.getRemoteConnections().find(connection => connection.connectionId === eventConnectionId);
 				const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
-				if (data.message.includes("unhold")) {
-					this.log.d("Going to unhold the partiticpant: ", connectionId)
-					this.openviduService.unholdPartiticipant(subscriber);
-					this.libService.isOnHold.next(false)
+					if (data.message.includes("unhold")) {
+						this.log.d("Going to unhold the partiticpant: ", connectionId)
+						this.openviduService.unholdPartiticipant(subscriber,participantAdded.stream.videoActive,participantAdded.stream.audioActive);
+						this.libService.isOnHold.next(false)
+						const remoteParticipants = this.participantService.getRemoteParticipants();
+						const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Support');
+						if (participantToUpdate) {
+							participantToUpdate.isOnHold = false;
+							this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+						}
+					}
 				}
 			}
 		});
