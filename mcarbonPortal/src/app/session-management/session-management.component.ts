@@ -23,6 +23,11 @@ export class SessionManagementComponent implements OnInit {
   userId: string;
   accessList: any[];
   search = "";
+  showCreateButton = false;
+  showEdit = false;
+  showDelete = false;
+  showInvite = false;
+  showExpire = false;
   pageSizes = [10, 25, 50, 100, 500];
 
   displayedColumns: string[] = [
@@ -70,6 +75,7 @@ export class SessionManagementComponent implements OnInit {
     this.token = this.restService.getToken();
     this.userId = this.restService.getUserId();
     this.accessList = this.restService.getData().Access;
+    this.show();
     this.viewTable();
   }
 
@@ -78,12 +84,64 @@ export class SessionManagementComponent implements OnInit {
     this.dataSourceWithPageSize.sort = this.sort;
   }
 
+  checkStatus(session: Sessions) {
+    let currentDate = new Date();
+    let currentDateString = currentDate.toISOString().split("T")[0];
+    currentDateString =
+      currentDateString +
+      " " +
+      currentDate.toISOString().split("T")[1].substring(0, 8);
+    console.log(currentDate);
+    console.log(currentDateString);
+    if (session.expDate < currentDateString) {
+      session.status = 3;
+    } else {
+      console.log(session.expDate + "  " + currentDateString);
+    }
+  }
+
+  show() {
+    this.accessList.forEach((access) => {
+      if (access.systemName == "session_create") {
+        this.showCreateButton = true;
+      }
+
+      if (access.systemName == "dynamic_links") {
+        this.showInvite = true;
+      }
+
+      if (access.systemName == "session_update") {
+        this.showEdit = true;
+      }
+
+      if (access.systemName == "session_delete") {
+        this.showDelete = true;
+      }
+      if (access.systemName == "session_expire") {
+        this.showExpire = true;
+      }
+    });
+  }
+
   viewTable() {
     this.restService.getSessionList(this.token, this.userId).then(
       (response) => {
         this.session = response;
         console.log(this.session);
+        this.session.forEach(async (session) => {
+          await this.checkStatus(session);
+        });
         this.dataSourceWithPageSize.data = this.session;
+        this.dataSourceWithPageSize.sortingDataAccessor = (
+          data,
+          sortHeaderId
+        ) => {
+          const value = data[sortHeaderId];
+          if (typeof value !== "string") {
+            return value;
+          }
+          return value.toLocaleLowerCase();
+        };
       },
       (err) => {
         let msg = "";
@@ -92,10 +150,6 @@ export class SessionManagementComponent implements OnInit {
         } else {
           msg = err.error.error;
         }
-        // this.snackBar.open(msg, "Close", {
-        //   duration: 3000,
-        //   panelClass: ["snackBar"],
-        // });
       }
     );
   }

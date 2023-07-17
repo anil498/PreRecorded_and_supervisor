@@ -35,6 +35,7 @@ export class UserManagementComponent implements OnInit {
   showCreateButton = false;
   showEdit = false;
   showDelete = false;
+  showExpire = false;
   private updateSubscription: Subscription;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
@@ -51,16 +52,6 @@ export class UserManagementComponent implements OnInit {
     "expDate",
     "status",
     "Action",
-  ];
-  cols: any[] = [
-    "User Code",
-    "user ID",
-    "Mobile",
-    "Email",
-    "User Type",
-    "Service Type",
-    "Account Status",
-    "Account Expiry Date",
   ];
 
   users: Users[] = [];
@@ -123,6 +114,19 @@ export class UserManagementComponent implements OnInit {
     // });
   }
 
+  checkStatus(user: Users) {
+    let currentDate = new Date();
+    let currentDateString = currentDate.toISOString().split("T")[0];
+    currentDateString =
+      currentDateString +
+      " " +
+      currentDate.toISOString().split("T")[1].substring(0, 8);
+    if (user.expDate < currentDateString) {
+      console.log(user.expDate + "  " + currentDateString);
+      user.status = 3;
+    }
+  }
+
   show() {
     if (this.accessList.length > 0) {
       this.accessList.forEach((access) => {
@@ -139,11 +143,6 @@ export class UserManagementComponent implements OnInit {
         }
       });
     }
-  }
-
-  ngAfterViewInit() {
-    this.dataSourceWithPageSize.paginator = this.paginator;
-    this.dataSourceWithPageSize.sort = this.sort;
   }
 
   openSnackBar(message: string, color: string) {
@@ -172,7 +171,20 @@ export class UserManagementComponent implements OnInit {
       (response) => {
         this.users = response;
         console.log(this.users);
+        this.users.forEach(async (user) => {
+          await this.checkStatus(user);
+        });
         this.dataSourceWithPageSize.data = this.users;
+        this.dataSourceWithPageSize.sortingDataAccessor = (
+          data,
+          sortHeaderId
+        ) => {
+          const value = data[sortHeaderId];
+          if (typeof value !== "string") {
+            return value;
+          }
+          return value.toLocaleLowerCase();
+        };
       },
       (err) => {
         let msg = "";
@@ -192,6 +204,11 @@ export class UserManagementComponent implements OnInit {
   searchData(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSourceWithPageSize.filter = filterValue.trim().toLowerCase();
+  }
+
+  ngAfterViewInit() {
+    this.dataSourceWithPageSize.paginator = this.paginator;
+    this.dataSourceWithPageSize.sort = this.sort;
   }
 
   viewUserDialog(user: any) {
