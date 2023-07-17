@@ -323,7 +323,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			if (isRemoteConnection && isCameraConnection) {
 				if(this.participantService.getMyNickname()=="Support" && JSON.parse(data.split('%/%')[0]).clientData == "Customer"){
 					if(JSON.parse(data.split('%/%')[1]).isOnHold){
-						this.openviduService.unholdPartiticipantSignal(connectionId)
+						this.openviduService.holdPartiticipantSiganl(connectionId)
 					}
 				}
 				// Adding participant when connection is created and it's not screen

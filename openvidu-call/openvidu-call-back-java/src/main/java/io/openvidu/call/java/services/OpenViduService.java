@@ -177,7 +177,6 @@ public class OpenViduService {
 		jsonObject.addProperty("isOnHold",isOnHold);
 		params.put("role", role.name());
 		params.put("data", jsonObject.toString());
-		System.out.println(params);
 		ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
 
 		Connection connection = session.createConnection(properties);
