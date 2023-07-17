@@ -31,17 +31,18 @@ public class SessionService {
     List<String> alreadyPublishedCameras = session.getActiveConnections().stream()
       .filter(connection -> "IPCAM".equals(connection.getPlatform()))
       .map(connection -> connection.getServerData()).collect(Collectors.toList());
+    logger.info(alreadyPublishedCameras.toString());
     try {
       // Publish the camera only if it is not already published
-      if (!alreadyPublishedCameras.contains(cameraName)) {
-
+      if (!alreadyPublishedCameras.contains("{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}")) {
         File file = new File(cameraUri);
         String fileName = file.getName();
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
           .type(ConnectionType.IPCAM)
           .rtspUri("file://"+mediaPath+fileName)
           .adaptativeBitrate(true)
-          .onlyPlayWithSubscribers(true).data("{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}")
+          .onlyPlayWithSubscribers(true)
+                .data("{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}")
           .build();
         session.createConnection(connectionProperties);
         logger.info("Connection properties {}",connectionProperties.getRtspUri());

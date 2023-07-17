@@ -104,7 +104,9 @@
                   <td mat-cell *matCellDef="let session">
                     <button
                       class=""
-                      matTooltip="Show settings of {{ session.sessionName }} session"
+                      matTooltip="Show settings of {{
+                        session.sessionName
+                      }} session"
                       (click)="viewSessionSettings(session)"
                       style="
                         background-color: transparent;
@@ -157,7 +159,7 @@
                   >
                     <span>Action</span>
                   </th>
-                  <td mat-cell *matCellDef="let user">
+                  <td mat-cell *matCellDef="let session">
                     <button
                       mat-icon-button
                       [matMenuTriggerFor]="menu"
@@ -170,7 +172,7 @@
                         class="btn-action"
                         id="view"
                         mat-menu-item
-                        (click)="viewUserDialog(user)"
+                        (click)="viewSessionDialog(session)"
                       >
                         <mat-icon style="color: #009688"
                           >remove_red_eye</mat-icon
@@ -179,9 +181,18 @@
                       </button>
                       <button
                         class="btn-action"
+                        id="join"
+                        mat-menu-item
+                        (click)="joinSessionDialog(session)"
+                      >
+                        <mat-icon style="color: #009688">send</mat-icon>
+                        <span>Invite</span>
+                      </button>
+                      <button
+                        class="btn-action"
                         id="edit"
                         mat-menu-item
-                        (click)="updateUserDialog(user)"
+                        (click)="updateSessionDialog(session)"
                         *ngIf="showEdit"
                       >
                         <mat-icon style="color: #009688">edit</mat-icon>
@@ -191,7 +202,7 @@
                         class="btn-action"
                         id="delete"
                         mat-menu-item
-                        (click)="deleteUser(user.userId)"
+                        (click)="deleteSession(session.sessionId)"
                         *ngIf="showDelete"
                       >
                         <mat-icon style="color: #009688"

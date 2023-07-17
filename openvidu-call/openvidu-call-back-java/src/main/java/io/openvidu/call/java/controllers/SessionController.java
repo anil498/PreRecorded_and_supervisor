@@ -164,7 +164,7 @@ public class SessionController {
         if(sessionProperty.getSettings().getPreRecorded() && !"null".equals(sessionProperty.getSettings().getPreRecordedDetails())){
           HashMap<String,Object> map= (HashMap<String, Object>) sessionProperty.getSettings().getPreRecordedDetails();
             if (!Boolean.TRUE.equals(map.get("share_pre_recorded_video"))) {
-              sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(), "prerecorded");
+              sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(), "{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}");
               sessionService.copyFileToMediaPath(map.get("pre_recorded_video_file").toString(),VIDEO_PATH);
               Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
               sessionProperty.setScreenToken(screenConnection.getToken());

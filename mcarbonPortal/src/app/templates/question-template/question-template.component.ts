@@ -1,4 +1,5 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ObserverService } from "app/services/observer.service";
 import { Subscription } from "rxjs";
@@ -62,14 +63,15 @@ export class QuestionTemplateComponent implements OnInit {
     this.questionForm.value.type = this.selectedValue.type;
     this.observerService.questionForm.next(this.questionForm);
 
-    // this.questionForm.valueChanges.subscribe((ques) => {
-    //   console.log(ques);
-    //   this.questionForm.value.question = ques;
-    //   this.observerService.questionType.next(this.selectedValue.type);
-    //   this.questionForm.value.type = this.selectedValue.type;
-    //   this.observerService.questionForm.next(this.questionForm);
-    //   console.log(this.questionForm);
-    // });
+    this.questionForm.valueChanges.subscribe((ques) => {
+      console.log(ques);
+      this.questionForm.value.question = ques.question;
+      this.observerService.questionType.next(this.selectedValue.type);
+      this.questionForm.value.type = this.selectedValue.type;
+      this.observerService.questionForm.next(this.questionForm);
+      console.log(this.questionForm);
+    });
+    this.observerService.quesEditObs.subscribe((ques) => {});
   }
 
   onTypeChange(event: any) {

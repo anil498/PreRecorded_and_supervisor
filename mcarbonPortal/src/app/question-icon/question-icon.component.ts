@@ -57,7 +57,7 @@ export class QuestionIconComponent implements OnInit {
       QuestionTemplateComponent
     );
     //quesComponent.instance.questionId = this.question.qId + 1;
-    quesComponent.instance.question = this.question;
+    //quesComponent.instance.question = this.question;
     const quesDiv = document.getElementById("question-div");
     this.sharedService.setForm(this.question);
     this.renderer.appendChild(quesDiv, quesComponent.location.nativeElement);

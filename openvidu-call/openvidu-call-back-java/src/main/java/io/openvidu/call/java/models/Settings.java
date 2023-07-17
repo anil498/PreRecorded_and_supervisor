@@ -34,6 +34,8 @@ public class Settings {
 
   private Object icdcDetails;
 
+  private  Object icdcQuestions;
+
   private Boolean hold=false;
 
   
@@ -265,6 +267,14 @@ public class Settings {
     this.hold = hold;
   }
 
+  public Object getIcdcQuestions() {
+    return icdcQuestions;
+  }
+
+  public void setIcdcQuestions(Object icdcQuestions) {
+    this.icdcQuestions = icdcQuestions;
+  }
+
   @Override
   public String toString() {
     return "Settings{" +
@@ -277,7 +287,7 @@ public class Settings {
             ", recording=" + recording +
             ", recordingDetails=" + recordingDetails +
             ", screenShare=" + screenShare +
-            ", isScreenShareWithAudio=" + ScreenShareWithAudio +
+            ", ScreenShareWithAudio=" + ScreenShareWithAudio +
             ", isAutoFullScreen=" + isAutoFullScreen +
             ", waitForModerator=" + waitForModerator +
             ", chat=" + chat +
@@ -293,6 +303,7 @@ public class Settings {
             ", landingPage='" + landingPage + '\'' +
             ", fileUrl='" + fileUrl + '\'' +
             ", icdcDetails=" + icdcDetails +
+            ", icdcQuestions=" + icdcQuestions +
             ", hold=" + hold +
             '}';
   }

@@ -58,13 +58,6 @@ export class AnswerTemplateComponent implements OnInit {
         console.log("TYPE CHANGED");
         console.log(value);
         this.questionType = value;
-        if (this.questionType == "text") {
-          this.observerService.isAnswerDisable.next(true);
-          this.ansForm.get("meta").setValue("");
-        } else {
-          this.observerService.isAnswerDisable.next(false);
-          this.ansForm.get("meta").setValue(`Option ${this.ansIndex}`);
-        }
       }
     );
 
