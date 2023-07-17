@@ -10,6 +10,7 @@
                   class="create-btn"
                   mat-raised-button
                   (click)="openDialog()"
+                  *ngIf="showCreateButton"
                 >
                   <mat-icon>add</mat-icon>Create
                 </button>
@@ -44,6 +45,8 @@
                 matSort
                 [dataSource]="dataSourceWithPageSize"
                 #sort="matSort"
+                matSortActive="creationDate"
+                matSortDirection="desc"
               >
                 <ng-container matColumnDef="sessionName">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -184,6 +187,7 @@
                         id="join"
                         mat-menu-item
                         (click)="joinSessionDialog(session)"
+                        *ngIf="showInvite && session.status == 1"
                       >
                         <mat-icon style="color: #009688">send</mat-icon>
                         <span>Invite</span>
@@ -193,7 +197,7 @@
                         id="edit"
                         mat-menu-item
                         (click)="updateSessionDialog(session)"
-                        *ngIf="showEdit"
+                        *ngIf="showEdit && session.status == 1"
                       >
                         <mat-icon style="color: #009688">edit</mat-icon>
                         <span>Edit</span>
@@ -203,7 +207,7 @@
                         id="delete"
                         mat-menu-item
                         (click)="deleteSession(session.sessionId)"
-                        *ngIf="showDelete"
+                        *ngIf="showDelete && session.status == 1"
                       >
                         <mat-icon style="color: #009688"
                           >delete_outline</mat-icon
@@ -215,6 +219,7 @@
                         id="expire"
                         mat-menu-item
                         (click)="expireData()"
+                        *ngIf="showExpire && session.status !== 1"
                       >
                         <mat-icon style="color: #009688"
                           >power_settings_new</mat-icon

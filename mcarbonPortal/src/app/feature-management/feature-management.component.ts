@@ -55,9 +55,7 @@ export class FeatureManagementComponent implements OnInit {
     private domSanitizer: DomSanitizer,
     private restService: RestService,
     private snackBar: MatSnackBar
-  ) {
-    
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.browserRefresh = browserRefresh;
@@ -96,6 +94,16 @@ export class FeatureManagementComponent implements OnInit {
         this.features = response;
         console.log(this.features);
         this.dataSourceWithPageSize.data = this.features;
+        this.dataSourceWithPageSize.sortingDataAccessor = (
+          data,
+          sortHeaderId
+        ) => {
+          const value = data[sortHeaderId];
+          if (typeof value !== "string") {
+            return value;
+          }
+          return value.toLocaleLowerCase();
+        };
       },
       (err) => {
         let msg = "";

@@ -43,6 +43,8 @@
                 matSort
                 [dataSource]="dataSourceWithPageSize"
                 #sort="matSort"
+                matSortActive="userFname"
+                matSortDirection="desc"
               >
                 <ng-container matColumnDef="userFname">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -177,7 +179,7 @@
                         id="edit"
                         mat-menu-item
                         (click)="updateUserDialog(user)"
-                        *ngIf="showEdit"
+                        *ngIf="showEdit && user.status !== 2"
                       >
                         <mat-icon style="color: #009688">edit</mat-icon>
                         <span>Edit</span>
@@ -187,7 +189,7 @@
                         id="delete"
                         mat-menu-item
                         (click)="deleteUser(user.userId)"
-                        *ngIf="showDelete"
+                        *ngIf="showDelete && user.status !== 2"
                       >
                         <mat-icon style="color: #009688"
                           >delete_outline</mat-icon
@@ -199,6 +201,7 @@
                         id="expire"
                         mat-menu-item
                         (click)="expireData()"
+                        *ngIf="user.status !== 2"
                       >
                         <mat-icon style="color: #009688"
                           >power_settings_new</mat-icon
@@ -227,17 +230,6 @@
                 [pageSizeOptions]="pageSizes"
                 showFirstLastButtons
               ></mat-paginator>
-
-              <!-- <mat-sort #sort (matSortChange)="dataSourceWithPageSize.sort = sort">
-                <ng-container *ngFor="let column of displayedColumns">
-                  <mat-sort-header
-                    [matSortHeaderDisableClear]="true"
-                    [direction]="dataSourceWithPageSize.sort?.direction"
-                    [active]="column === dataSourceWithPageSize.sort?.active"
-                    >{{ column | titlecase }}</mat-sort-header
-                  >
-                </ng-container>
-              </mat-sort> -->
             </div>
           </div>
         </div>

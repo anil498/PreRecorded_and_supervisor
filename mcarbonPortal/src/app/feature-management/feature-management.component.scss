@@ -23,6 +23,17 @@ th {
   background-color: black;
 }
 
+.btn-secondary {
+  background-color: #e1e1e1 !important;
+}
+
+.btn-danger,
+.btn-dark,
+.btn-secondary,
+.btn-success {
+  min-width: 90.41px;
+}
+
 ::ng-deep .mat-snack-bar-container {
   background: linear-gradient(60deg, #e8f1ee, #ffffff) !important;
   color: #009688 !important;
