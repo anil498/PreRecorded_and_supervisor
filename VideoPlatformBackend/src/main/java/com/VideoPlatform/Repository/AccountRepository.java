@@ -55,10 +55,4 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
     @Query(nativeQuery=true, value = "UPDATE account_data SET features_meta=:featuresMeta where name = :name ")
     void updateFeatureMeta(@Param("name") String name, @Param("featuresMeta") String featuresMeta);
 
-    @Modifying
-    @Transactional
-    @Query(nativeQuery = true, value = "UPDATE account_data SET features = :features WHERE account_id = :accountId")
-    void updateFeatures(@Param("accountId") Integer accountId,@Param("features") Integer[] features);
-
-
 }

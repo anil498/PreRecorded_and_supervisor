@@ -36,24 +36,31 @@ public class FeatureServiceImpl implements FeatureService{
     public String createFeature(FeatureEntity featureEntity,String authKey, String token){
         if(featureRepository.findByFeatureId(featureEntity.getFeatureId())!=null) return null;
         featureRepository.save(featureEntity);
-//        UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
-//        if(userAuthEntity == null) return null;
-//        UserEntity userEntity = userRepository.findByUserId(userAuthEntity.getUserId());
-//        List<Integer> features = Arrays.asList(userEntity.getFeatures());
-//        logger.info("Features : {}",features);
-//        int f = featureEntity.getFeatureId();
-//        logger.info("featureEntity.getFeatureId() :  {} ",featureEntity.getFeatureId());
-//        features.add(f);
-//        Integer[] featureId = (Integer[]) features.toArray();
-//        logger.info("Updated features  : {},{}",features,featureId);
-//        accountRepository.updateFeatures(userEntity.getAccountId(),featureId);
-//        userRepository.updateFeatures(userEntity.getUserId(),featureId);
+        UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
+        if(userAuthEntity == null) return null;
+        UserEntity userEntity = userRepository.findByUserId(userAuthEntity.getUserId());
+        if(userEntity==null) return null;
+        AccountEntity accountEntity = accountRepository.findByAccountId(userEntity.getAccountId());
+        if(accountEntity==null) return null;
+        List<Integer> features = new ArrayList<>(Arrays.asList(userEntity.getFeatures()));
+        logger.info("Features : {}",features);
+        Integer f = featureEntity.getFeatureId();
+        logger.info("featureEntity.getFeatureId() :  {} ",featureEntity.getFeatureId());
+        features.add(f);
+        Integer[] featureId = features.toArray(new Integer[0]);
+        logger.info("Updated features  : {},{}",features,featureId);
+        accountEntity.setFeatures(featureId);
+        accountRepository.save(accountEntity);
+        userEntity.setFeatures(featureId);
+        userRepository.save(userEntity);
         return "";
     }
+
     @Override
     public List<FeatureEntity> getAllFeatures(){
         return featureRepository.findAll();
     }
+    
     @Override
     public ResponseEntity<?> updateFeature(String params1) {
         logger.info("Params Update : {}",params1);

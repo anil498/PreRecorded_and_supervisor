@@ -43,7 +43,7 @@ public class FeatureController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         if(featureService.createFeature(featureEntity,authKey,token)==null){
-            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return  new ResponseEntity<>(commonService.responseData("401","Feature created but not updated to user"),HttpStatus.UNAUTHORIZED);
         }
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");

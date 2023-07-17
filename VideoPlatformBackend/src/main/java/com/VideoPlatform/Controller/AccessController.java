@@ -33,7 +33,7 @@ public class AccessController {
         if(!commonService.authorizationCheck(authKey,token,"manage_platform_access")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        if(accessService.createAccess(accessEntity)==null){
+        if(accessService.createAccess(accessEntity,authKey,token)==null){
             return  new ResponseEntity<>("Access Entity already exist !",HttpStatus.UNAUTHORIZED);
         }
         Map<String,String> result = new HashMap<>();

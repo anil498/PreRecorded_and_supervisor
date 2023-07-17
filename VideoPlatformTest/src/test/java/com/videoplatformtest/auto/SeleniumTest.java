@@ -39,7 +39,7 @@ public class SeleniumTest extends TestBaseClass{
     File file = new File(relativePath);
     String absolutePath = file.getAbsolutePath();
 
-    public String webUrl = "https://demo2.progate.mobi/#/";
+    public String webUrl = "https://demos.progate.mobi/#/";
     public ExtentReports extentReports;
     public ExtentSparkReporter extentSparkReporter;
 
@@ -47,7 +47,7 @@ public class SeleniumTest extends TestBaseClass{
     public void beforeClass(){
         System.out.println("Before class!");
         extentReports = new ExtentReports();
-        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_demo2.html");
+        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_demos.html");
         extentReports.setSystemInfo("Environment", "Dev");
         extentReports.setSystemInfo("User Name", "mCarbon");
         extentSparkReporter.config().setDocumentTitle("Video Platform Test Report");
