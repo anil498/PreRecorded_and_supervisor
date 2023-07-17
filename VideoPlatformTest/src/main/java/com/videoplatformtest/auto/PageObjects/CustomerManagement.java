@@ -5,16 +5,26 @@ import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
 import com.aventstack.extentreports.markuputils.ExtentColor;
 import com.aventstack.extentreports.markuputils.MarkupHelper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.paulhammant.ngwebdriver.ByAngular;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.DevTools;
+import org.openqa.selenium.devtools.v108.network.Network;
+import org.openqa.selenium.devtools.v108.network.model.RequestId;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+
+import static org.junit.Assert.fail;
 
 public class CustomerManagement {
     static ExtentTest parentTest;
@@ -78,7 +88,77 @@ public class CustomerManagement {
         driver.close();
     }
 
-    public static Boolean custMandatoryFieldCheck(ChromeDriver driver, int page) {
+    public static void customerRolesCheck(ChromeDriver driver, ExtentReports extentReports, String loginId, String password, String webUrl) throws InterruptedException {
+        parentTest = extentReports.createTest("CUSTOMER PERMISSION CHECK");
+        AtomicReference<String> responseBody= new AtomicReference<>("");
+        driver.manage().window().maximize();
+        DevTools devTools = driver.getDevTools();
+
+        devTools = ((ChromeDriver) driver).getDevTools();
+        devTools.createSession();
+        devTools.send(Network.clearBrowserCache());
+        devTools.send(Network.setCacheDisabled(true));
+
+        final RequestId[] requestIds = new RequestId[1];
+        devTools.send(Network.enable(Optional.empty(), Optional.empty(), Optional.empty()));
+        DevTools finalDevTools = devTools;
+
+        devTools.addListener(Network.responseReceived(), responseReceived -> {
+//            System.out.println("Network event :"+ responseReceived.getRequestId());
+            requestIds[0] = responseReceived.getRequestId();
+            String url = responseReceived.getResponse().getUrl();
+            if(url.contains("/VPService/v1/User/login")) {
+                responseBody.set(finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody());
+//                System.out.println("Response Body :"+responseBody);
+            }
+        });
+
+        driver.get(webUrl);
+        driver.manage().window().maximize();
+        login(driver,loginId,password);
+        Thread.sleep(3000);
+        driver.findElement(By.id("customer_management")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
+        Thread.sleep(1000);
+        checkRoles(driver,responseBody);
+        driver.findElement(ByAngular.partialButtonText("View")).click();
+        driver.close();
+    }
+
+    public static void checkRoles(ChromeDriver driver, AtomicReference<String> responseBody) {
+        try {
+            List<String> accessValues = getAccessData(responseBody.get());
+            if (driver.findElement(ByAngular.partialButtonText("Edit")).isDisplayed()) {
+                System.out.println("EDIT");
+                if (!accessValues.contains("Customer Update")) fail();
+            }
+            if (driver.findElement(ByAngular.partialButtonText("Delete")).isDisplayed()) {
+                System.out.println("DELETE");
+                if (!accessValues.contains("Customer Delete")) fail();
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static List<String> getAccessData(String responseBody) throws IOException {
+        Gson gson=new Gson();
+        JsonObject params=gson.fromJson(responseBody,JsonObject.class);
+//        System.out.println("Params : "+params);
+        ObjectMapper objectMapper=new ObjectMapper();
+        if(params.isJsonNull()) return null;
+
+        List<String>name = new ArrayList<>();
+        if(!params.get("Access").isJsonNull()){
+            List<HashMap> dataAsMap = objectMapper.readValue(params.get("Access").toString(), List.class);
+            for(Map<String,String> map : dataAsMap){
+                name.add(map.get("name"));
+            }
+        }
+        return name;
+    }
+        public static Boolean custMandatoryFieldCheck(ChromeDriver driver, int page) {
         String name = driver.findElement(By.id("name")).getText();
         String address = driver.findElement(By.id("address")).getText();
         String maxUser = driver.findElement(By.id("max_user")).getText();

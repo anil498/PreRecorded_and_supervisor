@@ -32,21 +32,19 @@ public class LoginPage {
         String cardLabelText = "Enter Username & Password";
         if(userName.getText().isEmpty() && password.getText().isEmpty()){
             loginButton.click();
-//            Thread.sleep(30);
-            //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
-            if(false)
+            if(driver.findElement(By.cssSelector(".//html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelText))
                 childTest.log(Status.PASS,MarkupHelper.createLabel("Empty fields giving right response label",ExtentColor.GREEN));
             else
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty fields giving wrong response label",ExtentColor.RED));
         }
         childTest = parentTest.createNode("EMPTY USERNAME");
         String cardLabelTextU = "Must Enter Username";
-        password.sendKeys("abcde");
+
         if(userName.getText().isEmpty() && password.getText().equals("")){
+            password.sendKeys("abcde");
             loginButton.click();
 //            Thread.sleep(30);
-            //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
-            if(false)
+            if(driver.findElement(By.xpath(".//html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelTextU))
                 childTest.log(Status.PASS,MarkupHelper.createLabel("Empty username field giving right response label",ExtentColor.GREEN));
             else
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty username field giving wrong response label",ExtentColor.RED));
@@ -54,12 +52,11 @@ public class LoginPage {
         password.clear();
         childTest = parentTest.createNode("EMPTY PASSWORD");
         String cardLabelTextP = "Must Enter Password";
-        userName.sendKeys("abcedfg");
+
         if(userName.getText().equals("") && password.getText().isEmpty()){
+            userName.sendKeys("abcedfg");
             loginButton.click();
-//            Thread.sleep(30);
-            //if(driver.findElement(By.cssSelector("body>app-root>app-login>div>div>mat-card>mat-card-content>form>div.col-10.offset-1.text-center.ng-star-inserted")).getText().contains(cardLabelText))
-            if(false)
+            if(driver.findElement(By.xpath(".//html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelTextP))
                 childTest.log(Status.PASS,MarkupHelper.createLabel("Empty password field giving right response label",ExtentColor.GREEN));
             else
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty password field giving wrong response label",ExtentColor.RED));
@@ -73,7 +70,7 @@ public class LoginPage {
         childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.GREEN));
         loginButton.click();
         Thread.sleep(50);
-        if(driver.findElement(By.cssSelector(".mat-simple-snack-bar-content")).getText().contains(expectedText)){
+        if(driver.findElement(By.xpath(".//html/body/div[2]")).getText().contains(expectedText)){
 //        if(false){
             childTest.log(Status.PASS,MarkupHelper.createLabel("Bad info label text correct",ExtentColor.GREEN));
         }
