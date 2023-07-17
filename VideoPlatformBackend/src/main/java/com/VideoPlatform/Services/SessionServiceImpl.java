@@ -245,6 +245,10 @@ public class SessionServiceImpl implements SessionService{
 
                         logger.info("Map1 : {}",map1);
                         settingsEntity.setIcdcDetails(map1);
+                        IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
+                        logger.info("ICDC : {}",icdcEntity);
+                        if(icdcEntity!=null)
+                            settingsEntity.setIcdcQuestions(icdcEntity.getIcdcData());
                     }
                     else {
                         map2.replace("icdc",true);
