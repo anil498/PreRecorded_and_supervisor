@@ -675,12 +675,6 @@ export class OpenViduService {
 				connectionId:connectionId
 			};
 			this.sendSignal(Signal.UNHOLD, undefined, data);
-			// this.publishVideo(true);
-			// subscriber.subscribeToAudio(true);
-			// subscriber.subscribeToVideo(true);
-			// this.libService.isOnHold.next(false);
-			// this.publishAudio(true);
-		
 	}
 	/**
 	 * @internal
