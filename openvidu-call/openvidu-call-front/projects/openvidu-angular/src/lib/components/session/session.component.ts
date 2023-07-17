@@ -522,7 +522,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 				const subscriber: Subscriber = this.session.subscribe(participantAdded?.stream, undefined);
 					if (data.message.includes("unhold")) {
 						this.log.d("Going to unhold the partiticpant: ", connectionId)
-						this.openviduService.unholdPartiticipant(subscriber,participantAdded.stream.videoActive,participantAdded.stream.audioActive);
+						this.openviduService.unholdPartiticipant(subscriber);
 						this.libService.isOnHold.next(false)
 						const remoteParticipants = this.participantService.getRemoteParticipants();
 						const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Support');
