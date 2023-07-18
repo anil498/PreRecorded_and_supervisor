@@ -63,6 +63,14 @@ export class RestService {
 		return this.postRequest('recordings/stop', { sessionId });
 	}
 
+	saveIcdcResponse(icdcResponse:any)
+	{
+		//const icdcResponseEntity =JSON.parse(icdcResponse);
+		return this.postRequest('/saveICDC',  icdcResponse );
+		// return this.formpostRequest('/saveICDC',  icdcResponse );
+
+	}
+	
 	deleteRecording(recordingId: string): Promise<RecordingInfo[]> {
 		return this.deleteRequest(`recordings/delete/${recordingId}`);
 	}
@@ -77,6 +85,7 @@ export class RestService {
 			throw error;
 		}
 	}
+	
 
 	private getRequest(path: string, responseType?: string): any {
 		try {

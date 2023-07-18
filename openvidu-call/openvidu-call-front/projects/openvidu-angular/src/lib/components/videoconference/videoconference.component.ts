@@ -398,6 +398,10 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	@Output() onToolbarStopRecordingClicked: EventEmitter<void> = new EventEmitter<void>();
 
 	/**
+	 * Provides event notifications that fire when form submit button has been clicked.
+	 */
+	@Output() onSubmitButtonClicked: EventEmitter<string> = new EventEmitter<any>();
+	/**
 	 * Provides event notifications that fire when start recording button is clicked {@link ActivitiesPanelComponent}.
 	 *  The recording should be stopped using the REST API.
 	 */
@@ -719,6 +723,14 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 		} else if (from === 'panel') {
 			this.onActivitiesPanelStopRecordingClicked.emit();
 		}
+	}
+	
+	/**
+	 * @internal
+	 */
+	onSubmitButton(value: string)
+	{
+       this.onSubmitButtonClicked.emit(value);
 	}
 
 	/**

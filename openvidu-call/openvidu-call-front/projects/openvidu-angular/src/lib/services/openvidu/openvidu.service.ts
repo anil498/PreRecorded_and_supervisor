@@ -716,6 +716,10 @@ export class OpenViduService {
 			this.tune = null;
 		}
 	}
+	
+	closeQuestionpanel() {
+		this.sendSignal(Signal.QUESTION, undefined,"close");
+	}
 
 	/**
 	 * @internal
