@@ -54,7 +54,7 @@ export class CallComponent implements OnInit {
 	isediticdc: boolean;
 	istitleicdc: string;
 	questionsicdc: string;
-	icdcId: number;
+	icdcId: string;
 
 	constructor(
 		private restService: RestService,
@@ -245,7 +245,7 @@ export class CallComponent implements OnInit {
 
 			console.log('anil :: run for icdcQuestions');
 			if (response.settings.icdcQuestions) {
-				this.icdcId = response.settings.icdcQuestions.icdc_id;
+				this.icdcId = String(response.settings.icdcQuestions.icdc_id);
 				this.questionsicdc = JSON.stringify(response.settings.icdcQuestions);
 				console.log('anil: question list is in call component ' + this.questionsicdc);
 			}
