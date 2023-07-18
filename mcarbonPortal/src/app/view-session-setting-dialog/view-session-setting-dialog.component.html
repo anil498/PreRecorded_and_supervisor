@@ -7,17 +7,44 @@
       </button>
     </h4>
   </div>
-  <div class="row justify-content-center">
-    <ng-container *ngFor="let setting of settings | keyvalue">
-      <div class="col-md-10 offset-md-1" *ngIf="checkType(setting.value)">
-        <div class="row">
-          <div class="col-md-4 key">
-            <h6>{{ setting.key }}</h6>
+  <div class="row">
+    <div class="col-6">
+      <div class="row justify-content-center">
+        <ng-container *ngFor="let setting of settings | keyvalue">
+          <div
+            class="col-md-10 offset-md-1"
+            *ngIf="checkType(setting.value) && setting.key !== logo"
+          >
+            <div class="row">
+              <div class="col-md-8 key">
+                <h6>{{ setting.key }} :</h6>
+              </div>
+              <div class="col-md-3">{{ setting.value }}</div>
+            </div>
           </div>
-          <div class="col-md-1 key">:</div>
-          <div class="col-md-7">{{ setting.value }}</div>
-        </div>
+        </ng-container>
       </div>
-    </ng-container>
+    </div>
+    <div class="col-6">
+      <div class="row justify-content-center">
+        <div class="col-md-12"><h4 class="label">Logo Image</h4></div>
+        <ng-container *ngIf="checkImg()"
+          ><img
+            [src]="photoUrl"
+            style="border-radius: 50%"
+            alt="selected logo"
+            height="150px"
+            width="150px"
+        /></ng-container>
+        <ng-container *ngIf="!checkImg()"
+          ><img
+            src="./assets/img/user_profile.png"
+            style="border-radius: 50%"
+            alt="default"
+            height="150px"
+            width="150px"
+        /></ng-container>
+      </div>
+    </div>
   </div>
 </div>

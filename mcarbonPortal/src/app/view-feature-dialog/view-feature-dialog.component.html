@@ -7,13 +7,161 @@
       </button>
     </h4>
   </div>
-  <div class="row">
-    <ng-container *ngFor="let feature of featureName">
-      <div class="col-md-5 offset-md-1 justify-content-center">
-        <mat-checkbox checked disabled>
-          {{ feature }}
-        </mat-checkbox>
+  <div class="card-body card-body-1">
+    <section class="feature-section">
+      <div class="grid-container">
+        <div
+          *ngFor="let feature of featureData1"
+          class="grid-item"
+          id="feature{{ feature.featureId }}"
+        >
+          <ng-container *ngIf="isCheckFeature(feature)">
+            <mat-checkbox [value]="feature.featureId" [checked]="true" disabled>
+              {{ feature.name }}
+            </mat-checkbox>
+
+            <div
+              class="grid-item-content"
+              *ngIf="
+                (featureIds.includes(feature.featureId) ||
+                  isCheckFeature(feature)) &&
+                selectedFeaturesMeta[feature.featureId]
+              "
+            >
+              <div *ngFor="let meta of feature.metaList">
+                <ng-container [ngSwitch]="meta.type">
+                  <mat-slide-toggle
+                    *ngSwitchCase="'bool'"
+                    checked="{{
+                      selectedFeaturesMeta[feature.featureId][meta.key]
+                    }}"
+                    disabled
+                  >
+                    {{ meta.name }}
+                  </mat-slide-toggle>
+
+                  <div *ngSwitchCase="'file'">
+                    <label for="{{ meta.key }}">{{ meta.name }}</label>
+                    <input
+                      type="file"
+                      id="{{ meta.key }}"
+                      name="{{ meta.key }}"
+                      accept="video/*"
+                      disabled
+                    />
+                  </div>
+
+                  <mat-form-field *ngSwitchCase="'text'">
+                    <input
+                      value="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
+                      matInput
+                      #metaValue
+                      type="text"
+                      placeholder="{{ meta.name }}"
+                      disabled
+                    />
+                  </mat-form-field>
+
+                  <ng-container *ngSwitchCase="'radio'">
+                    <mat-radio-group
+                      aria-labelledby="example-radio-group-label"
+                      class="example-radio-group"
+                      (change)="
+                        setMetaValue(feature.featureId, meta.key, $event.value)
+                      "
+                    >
+                      <mat-radio-button
+                        class="example-radio-button"
+                        *ngFor="let name of meta.name"
+                        [value]="name"
+                      >
+                        {{ name }}
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>
       </div>
-    </ng-container>
+
+      <div class="grid-container">
+        <div *ngFor="let feature of featureData2" class="grid-item">
+          <ng-container *ngIf="isCheckFeature(feature)">
+            <mat-checkbox [value]="feature.featureId" [checked]="true" disabled>
+              {{ feature.name }}
+            </mat-checkbox>
+
+            <div
+              class="grid-item-content"
+              *ngIf="
+                (featureIds.includes(feature.featureId) ||
+                  isCheckFeature(feature)) &&
+                selectedFeaturesMeta[feature.featureId]
+              "
+            >
+              <div *ngFor="let meta of feature.metaList">
+                <ng-container [ngSwitch]="meta.type">
+                  <mat-slide-toggle
+                    *ngSwitchCase="'bool'"
+                    checked="{{
+                      selectedFeaturesMeta[feature.featureId][meta.key]
+                    }}"
+                    disabled
+                  >
+                    {{ meta.name }}
+                  </mat-slide-toggle>
+
+                  <div *ngSwitchCase="'file'">
+                    <label for="{{ meta.key }}">{{ meta.name }}</label>
+                    <input
+                      type="file"
+                      id="{{ meta.key }}"
+                      name="{{ meta.key }}"
+                      disabled
+                    />
+                  </div>
+
+                  <mat-form-field *ngSwitchCase="'text'">
+                    <input
+                      value="{{
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      }}"
+                      matInput
+                      #metaValue
+                      type="text"
+                      placeholder="{{ meta.name }}"
+                      disabled
+                    />
+                  </mat-form-field>
+
+                  <ng-container *ngSwitchCase="'radio'">
+                    <mat-radio-group
+                      aria-labelledby="example-radio-group-label"
+                      class="example-radio-group"
+                      [value]="
+                        selectedFeaturesMeta[feature.featureId][meta.key]
+                      "
+                      disabled
+                    >
+                      <mat-radio-button
+                        class="example-radio-button"
+                        *ngFor="let name of meta.name"
+                        [value]="name"
+                      >
+                        {{ name }}
+                      </mat-radio-button>
+                    </mat-radio-group>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </section>
   </div>
 </div>

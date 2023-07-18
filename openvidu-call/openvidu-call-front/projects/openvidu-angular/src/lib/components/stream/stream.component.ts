@@ -254,7 +254,6 @@ export class StreamComponent implements OnInit {
 		const subscriber: Subscriber = this.openviduService.getWebcamSession().subscribe(participantAdded?.stream, undefined);
 		this.isOnHold = this.libService.isOnHold.getValue();
 		if (!this.isOnHold) {
-			this.onHoldButtonClicked.emit();
 			this.log.d('Going to hold the partiticpant: ', connectionId);
 			this.openviduService.holdPartiticipantSiganl(connectionId);
 			this.libService.isOnHold.next(true);
@@ -265,7 +264,6 @@ export class StreamComponent implements OnInit {
 				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
 			}
 		} else {
-			this.onUnHoldButtonClicked.emit();
 			this.log.d('Going to unhold the partiticpant: ', connectionId);
 			this.openviduService.unholdPartiticipantSignal(connectionId);
 			this.libService.isOnHold.next(false);

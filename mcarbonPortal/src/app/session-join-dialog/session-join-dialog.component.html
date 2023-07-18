@@ -1,4 +1,4 @@
-<div class="card card-1">
+<!-- <div class="card card-1">
   <div class="card-header card-header-danger">
     <h4 class="card-title">
       Send Invitation Link
@@ -23,14 +23,6 @@
               matTooltipClass="tooltip-style"
             />
             <mat-icon matSuffix>smartphone</mat-icon>
-            <!-- <mat-error
-              *ngIf="
-                sessionForm.get('msisdn').invalid &&
-                sessionForm.get('msisdn').required
-              "
-            >
-              Mobile Number is Required
-            </mat-error> -->
           </mat-form-field>
         </div>
       </div>
@@ -48,14 +40,6 @@
                 {{ type.name }}
               </mat-option>
             </mat-select>
-            <!-- <mat-error
-              *ngIf="
-                sessionForm.get('type').invalid &&
-                sessionForm.get('type').required
-              "
-            >
-              Type is Required
-            </mat-error> -->
           </mat-form-field>
         </div>
       </div>
@@ -66,4 +50,270 @@
       Send
     </button>
   </div>
+</div> -->
+<div class="card card-1">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      Send Invitation Link
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+  <mat-tab-group mat-align-tabs="center">
+    <mat-tab label="SMS" *ngIf="showSMSTab">
+      <form id="form1" [formGroup]="sessionForm" *ngIf="sessionForm">
+        <div class="">
+          <div class="row row-content">
+            <div class="col-12 offset-xl-2 col-xl-8">
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Mobile Number</mat-label>
+                <input
+                  matInput
+                  id="mobile-1"
+                  type="text"
+                  placeholder="Mobile Number"
+                  formControlName="msisdn"
+                  [(ngModel)]="inputValue"
+                  [matTooltip]="getErrorMessage1('msisdn')"
+                  matTooltipClass="tooltip-style"
+                />
+                <mat-icon matSuffix>smartphone</mat-icon>
+                <mat-error
+                  *ngIf="
+                    sessionForm.get('msisdn').invalid &&
+                    sessionForm.get('msisdn').errors.required
+                  "
+                >
+                  Mobile Number is required
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    sessionForm.get('msisdn').invalid &&
+                    sessionForm.get('msisdn').errors.pattern
+                  "
+                >
+                  Enter valid mobile numbers
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-center">
+              <button class="fbutton1 fbutton btn" (click)="submit()">
+                <i>SMS</i>
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="row" *ngIf="showDescription">
+              <div class="col-12 offset-xl-2 col-xl-8">
+                <p class="alert alert-success">
+                  <strong>{{ state }}!</strong> Please find video call link:-
+                  {{ callUrl }}
+                </p>
+              </div>
+            </div>
+            <div class="row" *ngIf="failedMessage">
+              <div class="col-12 offset-xl-2 col-xl-8">
+                <p class="alert alert-danger">
+                  <strong>{{ state }}!</strong>{{ failedMessageShow }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form></mat-tab
+    >
+    <mat-tab label="Whatsapp" *ngIf="showWhatsappTab"
+      ><form id="form1" [formGroup]="sessionForm" *ngIf="sessionForm">
+        <div class="">
+          <div class="row row-content">
+            <div class="col-12 offset-xl-2 col-xl-8">
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Mobile Number</mat-label>
+                <input
+                  matInput
+                  id="mobile-2"
+                  type="text"
+                  placeholder="Mobile Number"
+                  formControlName="msisdn"
+                  [(ngModel)]="inputValue"
+                  [matTooltip]="getErrorMessage1('msisdn')"
+                  matTooltipClass="tooltip-style"
+                />
+                <mat-icon matSuffix>smartphone</mat-icon>
+                <mat-error
+                  *ngIf="
+                    sessionForm.get('msisdn').invalid &&
+                    sessionForm.get('msisdn').errors.required
+                  "
+                >
+                  Mobile Number is required
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    sessionForm.get('msisdn').invalid &&
+                    sessionForm.get('msisdn').errors.pattern
+                  "
+                >
+                  Enter valid mobile numbers
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-center">
+              <button class="fbutton1 fbutton btn" (click)="submit()">
+                <i>Whatsapp</i>
+              </button>
+            </div>
+          </div>
+          <!-- <div class="row">
+              <div class="row" *ngIf="showDescription">
+                <div class="col-12 offset-xl-2 col-xl-8">
+                  <p class="alert alert-success">
+                    <strong>{{ state }}!</strong> Please find video call link:-
+                    {{ callUrl }}
+                  </p>
+                </div>
+              </div>
+              <div class="row" *ngIf="failedMessage">
+                <div class="col-12 offset-xl-2 col-xl-8">
+                  <p class="alert alert-danger">
+                    <strong>{{ state }}!</strong>{{ failedMessageShow }}
+                  </p>
+                </div>
+              </div>
+            </div> -->
+        </div>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Call on App" *ngIf="showAppTab">
+      <form id="form1" [formGroup]="sessionForm" *ngIf="sessionForm">
+        <div class="row row-content">
+          <div class="fields col-12 offset-xl-2 col-xl-8">
+            <mat-form-field appearance="outline">
+              <mat-label>Enter Mobile Number</mat-label>
+              <input
+                matInput
+                id="mobile-3"
+                type="text"
+                placeholder="Mobile Number"
+                formControlName="msisdn"
+                [(ngModel)]="inputValue"
+                [matTooltip]="getErrorMessage3('msisdn')"
+                matTooltipClass="tooltip-style"
+              />
+              <mat-icon matSuffix>smartphone</mat-icon>
+              <mat-error
+                *ngIf="
+                  sessionForm.get('msisdn').invalid &&
+                  sessionForm.get('msisdn').errors.required
+                "
+              >
+                Mobile Number is required
+              </mat-error>
+              <mat-error
+                *ngIf="
+                  sessionForm.get('msisdn').invalid &&
+                  sessionForm.get('msisdn').errors.pattern
+                "
+              >
+                Enter valid mobile numbers
+              </mat-error>
+            </mat-form-field>
+            <!-- <mat-form-field appearance="outline">
+                <mat-label>Enter Notification Title</mat-label>
+                <input
+                  matInput
+                  id="title"
+                  type="text"
+                  placeholder="Notification Title"
+                  formControlName="title"
+                  [(ngModel)]="titleValue"
+                  [matTooltip]="getErrorMessage3('title')"
+                  matTooltipClass="tooltip-style"
+                />
+                <mat-icon matSuffix>title</mat-icon>
+                <mat-error
+                  *ngIf="
+                    sessionForm.get('title').invalid &&
+                    userForm3.get('title').errors.required
+                  "
+                >
+                  Title is required
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    userForm3.get('title').invalid &&
+                    (userForm3.get('title').errors.minlength ||
+                      userForm3.get('title').errors.maxlength)
+                  "
+                >
+                  Title should contain 4-16 characters only
+                </mat-error>
+              </mat-form-field>
+              <mat-form-field appearance="outline">
+                <mat-label>Enter Notification Body</mat-label>
+                <input
+                  matInput
+                  id="body"
+                  type="text"
+                  placeholder="Notification Body"
+                  formControlName="body"
+                  [(ngModel)]="bodyValue"
+                  [matTooltip]="getErrorMessage3('body')"
+                  matTooltipClass="tooltip-style"
+                />
+                <mat-icon matSuffix>subtitles</mat-icon>
+                <mat-error
+                  *ngIf="
+                    userForm3.get('body').invalid &&
+                    userForm3.get('body').errors.required
+                  "
+                >
+                  Body is required
+                </mat-error>
+                <mat-error
+                  *ngIf="
+                    userForm3.get('body').invalid &&
+                    (userForm3.get('body').errors.minlength ||
+                      userForm3.get('body').errors.maxlength)
+                  "
+                >
+                  Body should contain 6-30 characters only
+                </mat-error>
+              </mat-form-field> -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 text-center">
+            <button class="fbutton1 fbutton btn" (click)="submit()">
+              <i>Notification</i>
+            </button>
+          </div>
+        </div>
+        <!-- <div class="row">
+            <div class="row" *ngIf="showDescription">
+              <div class="col-12">
+                <p class="alert alert-success">
+                  <strong>{{ state }}!</strong> Please find video call
+                  link:-
+                  {{ callUrl }}
+                </p>
+              </div>
+            </div>
+            <div class="row" *ngIf="failedMessage">
+              <div class="col-12">
+                <p class="alert alert-danger">
+                  <strong>{{ state }}!</strong>{{ failedMessageShow }}
+                </p>
+              </div>
+            </div>
+          </div> -->
+      </form>
+    </mat-tab>
+  </mat-tab-group>
 </div>

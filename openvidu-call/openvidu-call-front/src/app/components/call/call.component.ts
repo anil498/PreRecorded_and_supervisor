@@ -224,6 +224,7 @@ export class CallComponent implements OnInit {
 			if(response.settings.supervisor && this.type === "Support"){
 				this.participantNameValue="Support";
 				this.addSupervisor=true;
+				this.isVideoMuted=true;
 			}
 		} catch (error) {
 			console.log(error)
