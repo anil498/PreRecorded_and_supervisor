@@ -36,8 +36,6 @@ export class AccountManagementComponent implements OnInit {
   pageSizes = [10, 25, 50, 100, 500];
   displayedColumns: any[] = [
     "name",
-    // "contact",
-    // "email",
     "access",
     "features",
     "expDate",
@@ -49,6 +47,7 @@ export class AccountManagementComponent implements OnInit {
   dataSourceWithPageSize = new MatTableDataSource(this.accounts);
   browserRefresh: boolean;
   accessList: any[];
+  featureList: any[];
   showCreateButton = false;
   showTable = false;
   showDelete = false;
@@ -89,6 +88,7 @@ export class AccountManagementComponent implements OnInit {
     console.warn(this.token + "\n" + this.userId);
 
     this.accessList = this.restService.getData().Access;
+    this.featureList = this.restService.getData().Features;
 
     this.show();
     this.viewTable();
@@ -249,6 +249,9 @@ export class AccountManagementComponent implements OnInit {
     const dialogRef = this.dialog.open(ViewAccessDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
+      this.accessList.forEach((access) => {
+        access.status = 1;
+      });
       this.restService.closeDialog();
     });
   }
@@ -267,6 +270,9 @@ export class AccountManagementComponent implements OnInit {
     );
 
     dialogRef.afterClosed().subscribe(() => {
+      this.featureList.forEach((feature) => {
+        feature.status = 1;
+      });
       this.restService.closeDialog();
     });
   }
