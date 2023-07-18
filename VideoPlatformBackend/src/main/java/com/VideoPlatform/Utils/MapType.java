@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -25,25 +26,20 @@ public class MapType implements UserType {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MapType.class);
     public static final ObjectMapper MAPPER = new ObjectMapper();
-    private static int[]    types    = new int[] { Types.VARCHAR };
+    private static int[] types = new int[] { Types.VARCHAR };
     private static JavaType javaType;
 
-    public  static JavaType getJavaType()
-    {
-        if (javaType==null)
-        {
-            synchronized (MapType.class)
-            {
-                javaType = MAPPER.getTypeFactory().constructType(new TypeReference<Map<String,Object>>()
-                {
-                });        return javaType;
+    public static JavaType getJavaType() {
+        if (javaType == null) {
+            synchronized (MapType.class) {
+                javaType = MAPPER.getTypeFactory().constructType(new TypeReference<Map<String, Object>>() {});
+                return javaType;
             }
-        }
-        else
-        {
+        } else {
             return javaType;
         }
     }
+
     @Override
     public int[] sqlTypes() {
         return types;
@@ -55,8 +51,7 @@ public class MapType implements UserType {
     }
 
     @Override
-    public boolean equals(Object x, Object y) throws HibernateException
-    {
+    public boolean equals(Object x, Object y) throws HibernateException {
         if (x == y)
             return true;
         if (null == x || null == y)
@@ -68,8 +63,6 @@ public class MapType implements UserType {
     public int hashCode(Object x) throws HibernateException {
         return x.hashCode();
     }
-
-
 
     @Override
     public Object deepCopy(Object value) throws HibernateException {
@@ -87,61 +80,56 @@ public class MapType implements UserType {
     }
 
     @Override
-    public Object assemble(Serializable cached, Object owner)
-            throws HibernateException {
+    public Object assemble(Serializable cached, Object owner) throws HibernateException {
         return cached;
     }
 
     @Override
-    public Object replace(Object original, Object target, Object owner)
-            throws HibernateException {
+    public Object replace(Object original, Object target, Object owner) throws HibernateException {
         return original;
     }
-    @Override
-    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor arg2, Object arg3) throws HibernateException, SQLException
-    {
 
+    @Override
+    public Object nullSafeGet(ResultSet rs, String[] names, SharedSessionContractImplementor session, Object owner)
+            throws HibernateException, SQLException {
         String json = rs.getString(names[0]);
-        try
-        {
-            if (json!=null)
-            {
-                Map<String, String> map = MAPPER.readValue(json, MapType.getJavaType()  );
-                return map;
+        try {
+            if (json != null) {
+                if (json.startsWith("[")) {
+                    LOGGER.debug("Deserializing JSON array: {}", json);
+                    List<Map<String, Object>> deserializedList = MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>(){});
+                    LOGGER.debug("Deserialization result: {}", deserializedList);
+                    return deserializedList;
+                } else {
+                    LOGGER.debug("Deserializing JSON object: {}", json);
+                    Map<String, Object> deserializedMap = MAPPER.readValue(json, MapType.getJavaType());
+                    LOGGER.debug("Deserialization result: {}", deserializedMap);
+                    return deserializedMap;
+                }
             }
-        }
-        catch (JsonParseException e)
-        {
-            LOGGER.error(e.getMessage());
-            LOGGER.debug(e.getMessage(),e);
-        }
-        catch (JsonMappingException e)
-        {
-            LOGGER.error(e.getMessage());
-            LOGGER.debug(e.getMessage(),e);
-        }
-        catch (IOException e)
-        {
-            LOGGER.error(e.getMessage());
-            LOGGER.debug(e.getMessage(),e);
+        } catch (JsonParseException e) {
+            LOGGER.error("Error parsing JSON string: {}", json);
+            LOGGER.error(e.getMessage(), e);
+        } catch (JsonMappingException e) {
+            LOGGER.error("Error mapping JSON string: {}", json);
+            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.error("IO error while parsing JSON string: {}", json);
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
+
     @Override
-    public void nullSafeSet(PreparedStatement st, Object value, int index, SharedSessionContractImplementor arg3) throws HibernateException, SQLException
-    {
-        String json ="";
-        try
-        {
+    public void nullSafeSet(PreparedStatement st, Object value, int index,
+                            SharedSessionContractImplementor session) throws HibernateException, SQLException {
+        String json = "";
+        try {
             json = MAPPER.writeValueAsString(value);
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             LOGGER.error(e.getMessage());
-            LOGGER.debug(e.getMessage(),e);
+            LOGGER.debug(e.getMessage(), e);
         }
         st.setString(index, json);
     }
-
-
-
 }

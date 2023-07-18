@@ -33,7 +33,7 @@ public class SeleniumTest extends TestBaseClass{
     public void beforeClass(){
         System.out.println("Before class!");
         extentReports = new ExtentReports();
-        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport.html");
+        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_video.html");
         extentReports.setSystemInfo("Environment", "Dev");
         extentReports.setSystemInfo("User Name", "mCarbon");
         extentSparkReporter.config().setDocumentTitle("Video Platform Test Report");

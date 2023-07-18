@@ -89,11 +89,10 @@ public class CustomerManagement {
     }
 
     public static void customerRolesCheck(ChromeDriver driver, ExtentReports extentReports, String loginId, String password, String webUrl) throws InterruptedException {
-        parentTest = extentReports.createTest("CUSTOMER PERMISSION CHECK");
+        parentTest = extentReports.createTest("CUSTOMER PERMISSION TEST");
         AtomicReference<String> responseBody= new AtomicReference<>("");
         driver.manage().window().maximize();
         DevTools devTools = driver.getDevTools();
-
         devTools = ((ChromeDriver) driver).getDevTools();
         devTools.createSession();
         devTools.send(Network.clearBrowserCache());
@@ -104,43 +103,45 @@ public class CustomerManagement {
         DevTools finalDevTools = devTools;
 
         devTools.addListener(Network.responseReceived(), responseReceived -> {
-//            System.out.println("Network event :"+ responseReceived.getRequestId());
             requestIds[0] = responseReceived.getRequestId();
             String url = responseReceived.getResponse().getUrl();
             if(url.contains("/VPService/v1/User/login")) {
                 responseBody.set(finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody());
-//                System.out.println("Response Body :"+responseBody);
             }
         });
-
         driver.get(webUrl);
         driver.manage().window().maximize();
         login(driver,loginId,password);
-        Thread.sleep(3000);
+        Thread.sleep(2000);
+        childTest = parentTest.createNode("CUSTOMER ROLES CHECK");
         driver.findElement(By.id("customer_management")).click();
-        Thread.sleep(1000);
+        childTest.log(Status.PASS, MarkupHelper.createLabel("Customer Management clicked", ExtentColor.GREEN));
+        Thread.sleep(500);
         driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
+        childTest.log(Status.PASS, MarkupHelper.createLabel("Mat icon clicked, roles displayed", ExtentColor.GREEN));
         Thread.sleep(1000);
-        checkRoles(driver,responseBody);
-        driver.findElement(ByAngular.partialButtonText("View")).click();
+        if(checkRoles(driver,responseBody)){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Roles displayed and present in customer's permission", ExtentColor.GREEN));
+        }else childTest.log(Status.FAIL, MarkupHelper.createLabel("Roles displayed but not present in customer's permission", ExtentColor.RED));
         driver.close();
     }
 
-    public static void checkRoles(ChromeDriver driver, AtomicReference<String> responseBody) {
+    public static Boolean checkRoles(ChromeDriver driver, AtomicReference<String> responseBody) {
         try {
             List<String> accessValues = getAccessData(responseBody.get());
             if (driver.findElement(ByAngular.partialButtonText("Edit")).isDisplayed()) {
                 System.out.println("EDIT");
-                if (!accessValues.contains("Customer Update")) fail();
+                if (!accessValues.contains("Customer Update")) {fail(); return false;}
             }
             if (driver.findElement(ByAngular.partialButtonText("Delete")).isDisplayed()) {
                 System.out.println("DELETE");
-                if (!accessValues.contains("Customer Delete")) fail();
+                if (!accessValues.contains("Customer Delete")) {fail(); return false;}
             }
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+        return true;
     }
     public static List<String> getAccessData(String responseBody) throws IOException {
         Gson gson=new Gson();

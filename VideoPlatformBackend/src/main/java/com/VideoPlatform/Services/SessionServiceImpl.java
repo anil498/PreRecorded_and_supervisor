@@ -237,6 +237,7 @@ public class SessionServiceImpl implements SessionService{
                 try {
                     Map<String, Object> map1 = (Map<String, Object>) (userEntity.getFeaturesMeta().get(featureId.toString()));
                     Map<String, Object> map2 = map1;
+                    Map<String, Object> ques = new HashMap<>();
                     if(moderator == false){
                         map1.replace("icdc",false);
                         map1.replace("display_icdc",true);
@@ -247,8 +248,14 @@ public class SessionServiceImpl implements SessionService{
                         settingsEntity.setIcdcDetails(map1);
                         IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
                         logger.info("ICDC : {}",icdcEntity);
-                        if(icdcEntity!=null)
-                            settingsEntity.setIcdcQuestions(icdcEntity.getIcdcData());
+                        if(icdcEntity!=null) {
+                            List<Map<String, Object>> icdcData1 = icdcEntity.getIcdcData();
+                            logger.info("ICDC DATA : {}", icdcData1);
+                            ques.put("icdc_id", icdcEntity.getIcdcId());
+                            ques.put("question_data", icdcData1);
+                            logger.info("Ques {}", ques);
+                            settingsEntity.setIcdcQuestions(ques);
+                        }
                     }
                     else {
                         map2.replace("icdc",true);
@@ -260,13 +267,19 @@ public class SessionServiceImpl implements SessionService{
                         settingsEntity.setIcdcDetails(map2);
                         IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
                         logger.info("ICDC : {}",icdcEntity);
-                        if(icdcEntity!=null)
-                            settingsEntity.setIcdcQuestions(icdcEntity.getIcdcData());
+                        if(icdcEntity!=null) {
+                            List<Map<String,Object>> icdcData = icdcEntity.getIcdcData();
+                            logger.info("ICDC DATA : {}",icdcData);
+                            ques.put("icdc_id", icdcEntity.getIcdcId());
+                            ques.put("question_data",icdcData);
+                            logger.info("Ques {}",ques );
+                            settingsEntity.setIcdcQuestions(ques);
+                        }
                     }
 
                 }
                 catch (Exception e){
-                    logger.info("Getting null value from title_icdc !");
+                    logger.error("Getting exception while setting object for featureId 16 {}",e.getMessage());
                 }
             }
         }

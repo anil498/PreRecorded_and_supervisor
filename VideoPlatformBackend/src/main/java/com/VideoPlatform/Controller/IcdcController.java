@@ -7,6 +7,7 @@ import com.VideoPlatform.Entity.UserEntity;
 import com.VideoPlatform.Repository.IcdcRepository;
 import com.VideoPlatform.Repository.IcdcResponseRepository;
 import com.VideoPlatform.Services.CommonService;
+import com.VideoPlatform.Services.IcdcService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ public class IcdcController {
     @Autowired
     private IcdcRepository icdcRepository;
     @Autowired
+    private IcdcService icdcService;
+    @Autowired
     private IcdcResponseRepository icdcResponseRepository;
 
     private static final Logger logger= LoggerFactory.getLogger(UserController.class);
@@ -42,7 +45,15 @@ public class IcdcController {
 
     @PostMapping("/Save")
     public ResponseEntity<?> icdcResponse(@RequestBody IcdcResponseEntity icdcResponseEntity, HttpServletRequest request) {
-        icdcResponseRepository.save(icdcResponseEntity);
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        if(!commonService.authorizationCheck(authKey,token,"session_create")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        logger.info("IcdcResponseEntity : {}",icdcResponseEntity);
+        if(icdcService.saveIcdcResponse(icdcResponseEntity)==null)
+            return new ResponseEntity<>(commonService.responseData("406","Null entity"),HttpStatus.NOT_ACCEPTABLE);
         return new ResponseEntity<>(commonService.responseData("200","Response saved!"),HttpStatus.OK);
     }
 }
