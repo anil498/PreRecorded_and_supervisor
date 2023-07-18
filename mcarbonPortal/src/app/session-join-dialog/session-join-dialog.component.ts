@@ -20,7 +20,11 @@ import { RestService } from "app/services/rest.service";
 export class SessionJoinDialogComponent implements OnInit {
   sessionForm: FormGroup;
   parentAccess: any;
+  showSMSTab = false;
+  showWhatsappTab = false;
+  showAppTab = false;
   types: any[];
+  accessList: any[];
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<SessionJoinDialogComponent>,
@@ -48,10 +52,26 @@ export class SessionJoinDialogComponent implements OnInit {
           Validators.pattern(/^([6789]\d{9})(,[6789]\d{9})*$/),
         ],
       ],
-      type: ["", [Validators.required]],
     });
+    this.accessList = this.restService.getData().Access;
+    this.show();
   }
 
+  show() {
+    this.accessList.forEach((access) => {
+      if (access.systemName == "sms") {
+        this.showSMSTab = true;
+      }
+
+      if (access.systemName == "whatsapp") {
+        this.showWhatsappTab = true;
+      }
+
+      if (access.systemName == "send_notification") {
+        this.showAppTab = true;
+      }
+    });
+  }
   openSnackBar(message: string, color: string) {
     const snackBarConfig = new MatSnackBarConfig();
     snackBarConfig.duration = 3000;
@@ -99,9 +119,23 @@ export class SessionJoinDialogComponent implements OnInit {
     }
   }
 
-  getErrorMessage(controlName: string): string {
-    const control = this.sessionForm.get(controlName);
+  // getErrorMessage(controlName: string): string {
+  //   const control = this.sessionForm.get(controlName);
 
+  //   if (control.hasError("required")) {
+  //     return "This field is required";
+  //   }
+
+  //   if (controlName === "msisdn") {
+  //     if (control?.hasError("pattern")) {
+  //       return "Enter Valid mobile numbers";
+  //     }
+  //   }
+
+  //   return "";
+  // }
+  getErrorMessage1(controlName: string): string {
+    const control = this.sessionForm.get(controlName);
     if (control.hasError("required")) {
       return "This field is required";
     }
@@ -109,6 +143,44 @@ export class SessionJoinDialogComponent implements OnInit {
     if (controlName === "msisdn") {
       if (control?.hasError("pattern")) {
         return "Enter Valid mobile numbers";
+      }
+    }
+
+    return "";
+  }
+  getErrorMessage2(controlName: string): string {
+    const control = this.sessionForm.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "msisdn") {
+      if (control?.hasError("pattern")) {
+        return "Enter Valid mobile numbers";
+      }
+    }
+
+    return "";
+  }
+  getErrorMessage3(controlName: string): string {
+    const control = this.sessionForm.get(controlName);
+    if (control.hasError("required")) {
+      return "This field is required";
+    }
+
+    if (controlName === "msisdn") {
+      if (control?.hasError("pattern")) {
+        return "Enter Valid mobile numbers";
+      }
+    }
+    if (controlName === "title") {
+      if (control?.hasError("minlength") || control?.hasError("maxlength")) {
+        return "Title length should be between 4-16 characters";
+      }
+    }
+    if (controlName === "body") {
+      if (control?.hasError("minlength") || control?.hasError("maxlength")) {
+        return "Body length should be between 6-30 characters";
       }
     }
 

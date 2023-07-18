@@ -143,7 +143,7 @@ button[type="button"] {
   font-size: 1rem;
 }
 
-.card-profile .card-avatar .logo{
+.card-profile .card-avatar .logo {
   min-width: 130px !important;
   max-width: 130px !important;
   min-height: 130px !important;
@@ -152,7 +152,7 @@ button[type="button"] {
 
 .feature-section {
   display: flex;
-  padding-left: 10%;
+  justify-content: space-around;
 }
 
 .grid-container {
@@ -160,7 +160,6 @@ button[type="button"] {
   flex-direction: column;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: min-content;
-  width: 50%;
 }
 
 .grid-item {

@@ -239,8 +239,11 @@ export class UserManagementComponent implements OnInit {
   viewFeature(user: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "50%";
-    dialogConfig.height = "50%";
-    dialogConfig.data = user.features;
+    dialogConfig.height = "60%";
+    dialogConfig.data = {
+      featureId: user.features,
+      featuresMeta: user.featuresMeta,
+    };
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(
       ViewFeatureDialogComponent,
