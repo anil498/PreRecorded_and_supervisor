@@ -17,6 +17,6 @@ cd /opt/openvidu-call
 [ ! -z "${Token}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DToken=${Token}"
 [ ! -z "${VIDEO_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DVIDEO_PATH=${VIDEO_PATH}"
 [ ! -z "${MEDIA_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DMEDIA_PATH=${MEDIA_PATH}"
-[ ! -z "${file.upload-dir}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dfile.upload-dir=${file.upload-dir}"
+[ ! -z "${UPLOAD_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dfile.upload-dir=${UPLOAD_PATH}"
 
 java ${JAVA_PROPERTIES} -jar target/openvidu-call-back-java.jar
