@@ -97,14 +97,14 @@ public class MapType implements UserType {
         try {
             if (json != null) {
                 if (json.startsWith("[")) {
-                    LOGGER.debug("Deserializing JSON array: {}", json);
-                    List<Map<String, Object>> deserializedList = MAPPER.readValue(json, new TypeReference<ArrayList<Map<String, Object>>>(){});
-                    LOGGER.debug("Deserialization result: {}", deserializedList);
+                    LOGGER.info("Deserializing JSON array: {}", json);
+                    List<Map<String, Object>> deserializedList = MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>(){});
+                    LOGGER.info("Deserialization result: {}", deserializedList);
                     return deserializedList;
                 } else {
-                    LOGGER.debug("Deserializing JSON object: {}", json);
+                    LOGGER.info("Deserializing JSON object: {}", json);
                     Map<String, Object> deserializedMap = MAPPER.readValue(json, MapType.getJavaType());
-                    LOGGER.debug("Deserialization result: {}", deserializedMap);
+                    LOGGER.info("Deserialization result: {}", deserializedMap);
                     return deserializedMap;
                 }
             }
@@ -126,10 +126,18 @@ public class MapType implements UserType {
                             SharedSessionContractImplementor session) throws HibernateException, SQLException {
         String json = "";
         try {
+            LOGGER.info("Deserializing JSON array: {}", json);
             json = MAPPER.writeValueAsString(value);
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            LOGGER.debug(e.getMessage(), e);
+            LOGGER.info("Deserializing JSON array: {}", json);
+        } catch (JsonParseException e) {
+            LOGGER.error("Error parsing JSON string: {}", json);
+            LOGGER.error(e.getMessage(), e);
+        } catch (JsonMappingException e) {
+            LOGGER.error("Error mapping JSON string: {}", json);
+            LOGGER.error(e.getMessage(), e);
+        } catch (IOException e) {
+            LOGGER.error("IO error while parsing JSON string: {}", json);
+            LOGGER.error(e.getMessage(), e);
         }
         st.setString(index, json);
     }

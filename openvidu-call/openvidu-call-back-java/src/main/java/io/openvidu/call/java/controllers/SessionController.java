@@ -296,7 +296,7 @@ public class SessionController {
     logger.info("Request API /saveICDC Headers {} and Parameters {}",headers,params);
     String sessionId=" ";
     String icdcId="";
-    String icdcResult="";
+    Object icdcResult="";
     if (params.containsKey("sessionId")){
       sessionId=params.get("sessionId").toString();
     }else{
@@ -304,7 +304,7 @@ public class SessionController {
     }
     if(params.containsKey("icdcId") && params.containsKey("icdcResult")){
       icdcId=params.get("icdcId").toString();
-      icdcResult=params.get("icdcResult").toString();
+      icdcResult=params.get("icdcResult");
     }else{
       return new ResponseEntity<>("ICDC params is missing", HttpStatus.FORBIDDEN);
     }
