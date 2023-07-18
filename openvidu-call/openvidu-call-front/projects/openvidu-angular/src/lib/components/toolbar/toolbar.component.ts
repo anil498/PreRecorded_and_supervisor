@@ -642,10 +642,12 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 * @ignore
 	 */
 	leaveSession() {
+
 		this.log.d('Leaving session...');
+		//this.openviduService.closeQuestionpanel();
 		this.openviduService.disconnect();
 		this.openviduService.stopTune();
-		this.onLeaveButtonClicked.emit();
+        this.onLeaveButtonClicked.emit();
 	}
 
 	/**

@@ -555,6 +555,8 @@ export class AudioMutedDirective implements OnDestroy {
 @Directive({
 	selector: 'ov-videoconference[usertype]'
 })
+
+
 export class usertypeDirective implements OnInit {
 	/**
 
@@ -612,6 +614,81 @@ export class usertypeDirective implements OnInit {
 		this.libService.usertype.next(value);
 	}
 }
+
+/**
+ * The **questionsicdc** directive allows get list of question in form.
+ *
+ * Default: ` `
+ *
+ * It can be used in the parent element {@link VideoconferenceComponent} specifying the name of the `questionpanel` component:
+ *
+ * @example
+ * <ov-videoconference [questionsicdc]=""></ov-videoconference>
+ *
+ */
+@Directive({
+	selector: 'ov-videoconference[questionsicdc]'
+})
+
+
+export class questionsicdcDirective implements OnInit {
+	/**
+
+     * @ignore
+
+     */
+
+	@Input() questionsicdc: string;
+
+	/**
+
+     * @ignore
+
+     */
+
+	constructor(public elementRef: ElementRef, private libService: OpenViduAngularConfigService) {}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnInit(): void {
+		this.update(this.questionsicdc);
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	ngOnDestroy(): void {
+		this.clear();
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	clear() {
+		this.update('');
+	}
+
+	/**
+
+     * @ignore
+
+     */
+
+	update(value: string) {
+		this.libService.questionsicdc.next(value);
+	}
+}
+
 
 
 /**

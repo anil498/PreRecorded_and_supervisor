@@ -12,6 +12,7 @@
 	(onActivitiesPanelStartRecordingClicked)="onStartRecordingClicked()"
 	(onToolbarStopRecordingClicked)="onStopRecordingClicked()"
 	(onActivitiesPanelStopRecordingClicked)="onStopRecordingClicked()"
+	(onSubmitButtonClicked)="onSubmitButtonClicked($event)"
 	(onActivitiesPanelDeleteRecordingClicked)="onDeleteRecordingClicked($event)"
 	(onNodeCrashed)="onNodeCrashed()"
 	[activitiesPanelRecordingActivity]="recordingEnabled"
@@ -64,6 +65,7 @@
 	[displayicdc]="isdisplayicdc"
 	[editicdc]="isediticdc"
 	[titleicdc]="istitleicdc"
+	[questionsicdc]="questionsicdc"
 >
 </ov-videoconference>
 
