@@ -293,7 +293,7 @@ public class SessionController {
   @PostMapping("/saveICDC")
   public ResponseEntity<?> saveICDC(@RequestBody(required = false) Map<String, Object> params,HttpServletRequest request,HttpServletResponse res) throws HttpException, IOException {
     Map<String,String> headers=getHeaders(request);
-    logger.info("Request API /updateSession Headers {} and Parameters {}",headers,params);
+    logger.info("Request API /saveICDC Headers {} and Parameters {}",headers,params);
     String sessionId=" ";
     String icdcId="";
     String icdcResult="";
