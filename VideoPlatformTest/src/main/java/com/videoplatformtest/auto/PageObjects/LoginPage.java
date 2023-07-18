@@ -32,7 +32,7 @@ public class LoginPage {
         String cardLabelText = "Enter Username & Password";
         if(userName.getText().isEmpty() && password.getText().isEmpty()){
             loginButton.click();
-            if(driver.findElement(By.cssSelector(".//html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelText))
+            if(driver.findElement(By.xpath(".//html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelText))
                 childTest.log(Status.PASS,MarkupHelper.createLabel("Empty fields giving right response label",ExtentColor.GREEN));
             else
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty fields giving wrong response label",ExtentColor.RED));

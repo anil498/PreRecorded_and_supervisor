@@ -208,8 +208,7 @@
                       topAccess.accessId === access.pId && access.pId !== 0
                     "
                     [value]="access.accessId"
-                    (change)="toggleAccessId(access, $event.checked)"
-                    [checked]="isCheckAccess(access)"
+                    [checked]="true"
                     disabled
                   >
                     {{ access.name }}
