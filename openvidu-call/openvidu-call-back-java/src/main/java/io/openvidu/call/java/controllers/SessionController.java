@@ -265,6 +265,8 @@ public class SessionController {
     String sessionId=" ";
     if (params.containsKey("sessionId")){
       sessionId=params.get("sessionId").toString();
+    }else{
+      return new ResponseEntity<>("Session Id is missing", HttpStatus.FORBIDDEN);
     }
     ResponseEntity<?> response=videoPlatformService.sendLink(authorization,token,sessionId);
     return response;
@@ -277,11 +279,36 @@ public class SessionController {
     Boolean isOnHold=false;
     if (params.containsKey("sessionKey")){
       sessionKey=params.get("sessionKey").toString();
+    }else {
+      return new ResponseEntity<>("Session key is missing", HttpStatus.FORBIDDEN);
     }
     if (params.containsKey("isOnHold")){
       isOnHold= (Boolean) params.get("isOnHold");
+    }else{
+      return new ResponseEntity<>("Hold value is missing", HttpStatus.FORBIDDEN);
     }
     ResponseEntity<?> response=videoPlatformService.updateSession(authorization,token,sessionKey,isOnHold);
+    return response;
+  }
+  @PostMapping("/saveICDC")
+  public ResponseEntity<?> saveICDC(@RequestBody(required = false) Map<String, Object> params,HttpServletRequest request,HttpServletResponse res) throws HttpException, IOException {
+    Map<String,String> headers=getHeaders(request);
+    logger.info("Request API /updateSession Headers {} and Parameters {}",headers,params);
+    String sessionId=" ";
+    String icdcId="";
+    String icdcResult="";
+    if (params.containsKey("sessionId")){
+      sessionId=params.get("sessionId").toString();
+    }else{
+      return new ResponseEntity<>("Session Id is missing", HttpStatus.FORBIDDEN);
+    }
+    if(params.containsKey("icdcId") && params.containsKey("icdcResult")){
+      icdcId=params.get("icdcId").toString();
+      icdcResult=params.get("icdcResult").toString();
+    }else{
+      return new ResponseEntity<>("ICDC params is missing", HttpStatus.FORBIDDEN);
+    }
+    ResponseEntity<?> response=videoPlatformService.saveICDC(authorization,token,sessionId,icdcId,icdcResult);
     return response;
   }
   @DeleteMapping("/sessions/{sessionId}")

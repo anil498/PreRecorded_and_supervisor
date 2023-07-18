@@ -34,6 +34,9 @@ public class VideoPlatformService {
   public ResponseEntity<?> updateSession(String authorization, String token, String sessionKey,Boolean isOnHold) throws IOException, HttpException {
     return videoPlatform.updateSession(authorization,token,sessionKey,isOnHold);
   }
+  public ResponseEntity<?> saveICDC(String authorization, String token, String sessionId,String icdcId,String icdcResult) throws IOException, HttpException {
+    return videoPlatform.saveICDC(authorization,token,sessionId,icdcId,icdcResult);
+  }
   public HashMap<String,Integer> getExpiredSession(){
 //    return videoPlatform.getExpiredTimer();
     HashMap<String,Integer> hashMap=new HashMap<>();

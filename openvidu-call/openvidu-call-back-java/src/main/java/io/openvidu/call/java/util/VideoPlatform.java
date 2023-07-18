@@ -35,11 +35,13 @@ public class VideoPlatform {
   protected String hostname;
   protected CloseableHttpClient httpClient;
   protected static final String API_PATH = "VPService/v1/Session";
+  protected static final String ICDC_API_PATH="/v1/Icdc";
   protected static final String API_FEATURES = "/GetByKey";
   protected static final String API_SESSION = "/sessionDetails";
   protected static final String API_CALLBACK = "/sessionCallback";
   protected static final String API_LINK="/sendLink";
   protected static final String API_SESSION_UPDATE="/Update";
+  protected static final String SAVE="/Save";
 
   public VideoPlatform() {
 
@@ -137,6 +139,33 @@ public class VideoPlatform {
     ResponseEntity<String> response;
     try {
       response = restTemplate.exchange(url, HttpMethod.PUT, entity, String.class);
+    } catch (RestClientException e) {
+      throw new RuntimeException(e.getMessage(), e.getCause());
+    }
+    if (response.getStatusCode().is2xxSuccessful()) {
+      return response;
+    } else {
+      throw new HttpException(String.valueOf(response.getStatusCodeValue()));
+    }
+  }
+  public ResponseEntity<?> saveICDC(String authorization, String token, String sessionId,String icdcId,String icdcResult) throws HttpException {
+    RestTemplate restTemplate = new RestTemplate();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set("Authorization", authorization);
+    headers.set("Token", token);
+
+    JsonObject json = new JsonObject();
+    json.addProperty("sessionId",sessionId);
+    json.addProperty("icdcId",icdcId);
+    json.addProperty("icdcResult",icdcResult);
+    HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
+
+    String url = this.hostname + ICDC_API_PATH + SAVE;
+
+    ResponseEntity<String> response;
+    try {
+      response = restTemplate.exchange(url, HttpMethod.POST, entity, String.class);
     } catch (RestClientException e) {
       throw new RuntimeException(e.getMessage(), e.getCause());
     }
