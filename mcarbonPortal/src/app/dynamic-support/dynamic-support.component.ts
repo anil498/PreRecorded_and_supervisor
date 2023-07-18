@@ -157,6 +157,7 @@ export class DynamicSupportComponent implements OnInit {
         console.warn(messageResponse);
         if (messageResponse.status_code == 200) {
           console.log(messageResponse.link);
+          this.callUrl = messageResponse.link;
           this.goTo(messageResponse.link);
         } else {
         }
@@ -198,6 +199,7 @@ export class DynamicSupportComponent implements OnInit {
         );
         if (messageResponse.status_code == 200) {
           console.log(messageResponse.link);
+          this.callUrl = messageResponse.link;
           this.goTo(messageResponse.link);
         } else {
         }
@@ -239,6 +241,8 @@ export class DynamicSupportComponent implements OnInit {
         );
 
         if (messageResponse.status_code == 200) {
+          this.callUrl = messageResponse.link;
+
           this.goTo(messageResponse.link);
         } else {
         }

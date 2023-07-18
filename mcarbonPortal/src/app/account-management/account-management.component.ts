@@ -255,8 +255,11 @@ export class AccountManagementComponent implements OnInit {
   viewFeature(account: any) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.width = "50%";
-    dialogConfig.height = "50%";
-    dialogConfig.data = account.features;
+    dialogConfig.height = "60%";
+    dialogConfig.data = {
+      featureId: account.features,
+      featuresMeta: account.featuresMeta,
+    };
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(
       ViewFeatureDialogComponent,
