@@ -18,6 +18,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +98,7 @@ public class MapType implements UserType {
             if (json != null) {
                 if (json.startsWith("[")) {
                     LOGGER.debug("Deserializing JSON array: {}", json);
-                    List<Map<String, Object>> deserializedList = MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>(){});
+                    List<Map<String, Object>> deserializedList = MAPPER.readValue(json, new TypeReference<ArrayList<Map<String, Object>>>(){});
                     LOGGER.debug("Deserialization result: {}", deserializedList);
                     return deserializedList;
                 } else {
