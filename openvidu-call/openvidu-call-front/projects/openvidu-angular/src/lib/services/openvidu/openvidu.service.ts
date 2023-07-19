@@ -718,7 +718,11 @@ export class OpenViduService {
 	}
 	
 	closeQuestionpanel() {
-		this.sendSignal(Signal.QUESTION, undefined,"close");
+		const data = {
+			message: 'CloseQuestionPanel',
+			nickname: this.participantService.getMyNickname()
+		};
+		this.sendSignal(Signal.CLOSEQUESTIONPANEL, undefined,data);
 	}
 
 	/**
