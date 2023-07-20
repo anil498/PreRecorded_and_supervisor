@@ -142,7 +142,7 @@ export class Settings {
 		edit_icdc?: boolean;
 		title_icdc?: string;
 	};
-	
+
 	private _icdcQuestions: IcdcQuestions;
 
 	get icdcQuestions(): IcdcQuestions | undefined {
@@ -373,18 +373,17 @@ export class Settings {
 	}
 }
 
-//anil
 export class IcdcQuestions {
 	private _question_data: QuestionData[];
 	private _icdc_id: number;
+
 	public get icdc_id(): number {
 		return this._icdc_id;
 	}
+
 	public set icdc_id(value: number) {
 		this._icdc_id = value;
 	}
-
-	
 
 	public get question_data(): QuestionData[] {
 		return this._question_data;
@@ -398,7 +397,7 @@ export class QuestionData {
 	private _type: string;
 	private _question: string;
 	private _meta: any;
-	
+
 	public get q_id(): string {
 		return this._q_id;
 	}

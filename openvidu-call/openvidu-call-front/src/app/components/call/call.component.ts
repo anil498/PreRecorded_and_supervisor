@@ -54,7 +54,7 @@ export class CallComponent implements OnInit {
 	isediticdc: boolean;
 	istitleicdc: string;
 	questionsicdc: string;
-	icdcId: number;
+	icdcId: string;
 
 	constructor(
 		private restService: RestService,
@@ -121,17 +121,10 @@ export class CallComponent implements OnInit {
 		}
 	}
 	async onSubmitButtonClicked(value: string) {
-		const formjson = JSON.parse(value);
 		console.log('Submit Form button clicked');
+		const formjson = JSON.parse(value);
 		const questionjson = JSON.parse(this.questionsicdc);
-		//questionjson.question_data give array of questions
-
-		const responsejson = {};
-
-		responsejson['sessionId'] = this.sessionId;
-		responsejson['icdcId'] = this.icdcId;
-		var ansarray: any[] = []; // store json object which contain ans as key
-
+		var ansarray: any[] = [];
 		for (let i = 0; i < questionjson.question_data.length; i++) {
 			const item = {};
 			const formkey = String(i + 1);
@@ -141,10 +134,10 @@ export class CallComponent implements OnInit {
 			item['meta'] = questionjson.question_data[i]['meta'];
 
 			if (questionjson.question_data[i]['type'] === 'checkbox') {
-				const res = formjson[formkey];
+				const checkboxjson = formjson[formkey];
 				var checkanswers: string[] = [];
-				for (let key in res) {
-					if (res[key]) {
+				for (let key in checkboxjson) {
+					if (checkboxjson[key]) {
 						checkanswers.push(key);
 					}
 				}
@@ -154,10 +147,9 @@ export class CallComponent implements OnInit {
 			}
 			ansarray.push(item);
 		}
-		responsejson['icdcResult'] = ansarray;
-		console.log('anil response json ', responsejson);
+
 		try {
-			await this.restService.saveIcdcResponse(responsejson);
+			await this.restService.saveIcdcResponse(this.sessionId, this.icdcId, ansarray);
 		} catch (error) {
 			console.error('Getting error while calling Submit ICDC form response API');
 		}
@@ -243,11 +235,9 @@ export class CallComponent implements OnInit {
 			this.isScreenShareWithAudio = response.settings.ScreenShareWithAudio;
 			this.isAutoFullScreen = response.settings.isAutoFullScreen;
 
-			console.log('anil :: run for icdcQuestions');
 			if (response.settings.icdcQuestions) {
-				this.icdcId = response.settings.icdcQuestions.icdc_id;
+				this.icdcId = String(response.settings.icdcQuestions.icdc_id);
 				this.questionsicdc = JSON.stringify(response.settings.icdcQuestions);
-				console.log('anil: question list is in call component ' + this.questionsicdc);
 			}
 
 			if (response.settings.icdcDetails) {
