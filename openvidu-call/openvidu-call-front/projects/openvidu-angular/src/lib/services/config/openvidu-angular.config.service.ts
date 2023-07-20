@@ -98,6 +98,9 @@ export class OpenViduAngularConfigService {
 	titleicdc = <BehaviorSubject<string>>new BehaviorSubject('');
 	titleicdcObs: Observable<string>;
 
+	questionsicdc = <BehaviorSubject<string>>new BehaviorSubject('');
+	questionsicdcObs: Observable<string>;
+
 	usertype = <BehaviorSubject<string>>new BehaviorSubject('');
 	usertypeObs: Observable<string>;
 
@@ -173,6 +176,7 @@ export class OpenViduAngularConfigService {
 		this.floatingLayoutTypeObs=this.floatingLayoutType.asObservable();
 		this.displayTickerValueObs = this.displayTickerValue.asObservable();
 		this.usertypeObs = this.usertype.asObservable();
+		this.questionsicdcObs = this.questionsicdc.asObservable();
 		this.displayicdcObs = this.displayicdc.asObservable();
 		this.editicdcObs = this.editicdc.asObservable();
 		this.titleicdcObs = this.titleicdc.asObservable();

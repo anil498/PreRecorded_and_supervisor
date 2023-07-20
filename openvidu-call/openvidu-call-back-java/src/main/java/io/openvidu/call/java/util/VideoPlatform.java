@@ -1,5 +1,7 @@
 package io.openvidu.call.java.util;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.openvidu.call.java.models.SessionProperty;
 import io.openvidu.java.client.OpenViduHttpException;
@@ -35,7 +37,7 @@ public class VideoPlatform {
   protected String hostname;
   protected CloseableHttpClient httpClient;
   protected static final String API_PATH = "VPService/v1/Session";
-  protected static final String ICDC_API_PATH="/v1/Icdc";
+  protected static final String ICDC_API_PATH="VPService/v1/Icdc";
   protected static final String API_FEATURES = "/GetByKey";
   protected static final String API_SESSION = "/sessionDetails";
   protected static final String API_CALLBACK = "/sessionCallback";
@@ -148,7 +150,7 @@ public class VideoPlatform {
       throw new HttpException(String.valueOf(response.getStatusCodeValue()));
     }
   }
-  public ResponseEntity<?> saveICDC(String authorization, String token, String sessionId,String icdcId,String icdcResult) throws HttpException {
+  public ResponseEntity<?> saveICDC(String authorization, String token, String sessionId,String icdcId,Object icdcResult) throws HttpException {
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -158,7 +160,9 @@ public class VideoPlatform {
     JsonObject json = new JsonObject();
     json.addProperty("sessionId",sessionId);
     json.addProperty("icdcId",icdcId);
-    json.addProperty("icdcResult",icdcResult);
+    Gson gson = new Gson();
+    JsonArray icdcResultArray = gson.toJsonTree(icdcResult).getAsJsonArray();
+    json.add("icdcResult", icdcResultArray);
     HttpEntity<String> entity = new HttpEntity<String>(json.toString(), headers);
 
     String url = this.hostname + ICDC_API_PATH + SAVE;

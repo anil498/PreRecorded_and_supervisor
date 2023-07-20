@@ -59,7 +59,7 @@ export class OpenViduService {
 	screenShareWithAudio: boolean;
 	baseHref:string;
 	tune: Howl | null = null;
-
+	confirmed=true;
 	private sessionTime: Date;
 	private sessionTimeInterval: NodeJS.Timer;
 
@@ -439,8 +439,10 @@ export class OpenViduService {
 	async publishAudio(publish: boolean): Promise<void> {
 		if (this.participantService.isMyCameraActive()) {
 			//this commented for screenshare with audio
-			if (this.participantService.isMyScreenActive() && this.participantService.hasScreenAudioActive()) {
-				this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
+			if (this.participantService.isMyScreenActive() && this.participantService.isMyAudioActive()) {
+				if(this.confirmed){
+					this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
+				}
 			}
 			//
 			if (!this.libService.isOnHold.getValue()) {
@@ -464,19 +466,18 @@ export class OpenViduService {
 	 * Share or unshare the screen.
 	 * Hide the camera muted stream when screen is sharing.
 	 */
-	async toggleScreenshare() {
-			let confirmed=true;
-			if (this.screenShareWithAudio) {
+	async toggleScreenshare(isScreenShareActive:boolean) {
+			console.log(isScreenShareActive)
+			if (this.screenShareWithAudio && !isScreenShareActive) {
 				// Open dialog box and wait for user confirmation
-				confirmed= await this.actionService.openScreenDialog('Screen Share Mode', '', true);
-				console.log("confirmed", confirmed)
+				this.confirmed= await this.actionService.openScreenDialog('Screen Share Mode', '', true);
 			}
 				if (this.participantService.haveICameraAndScreenActive()) {
 					// Disabling screenShare
 					this.participantService.disableScreenStream();
 					this.unpublish(this.participantService.getMyScreenPublisher());
 				}
-				else if (this.participantService.isOnlyMyCameraActive() && confirmed) {
+				else if (this.participantService.isOnlyMyCameraActive() && this.confirmed) {
 					console.log("Screen share without audio")
 					const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
 					const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
@@ -498,7 +499,7 @@ export class OpenViduService {
 							.getVideoTracks()[0]
 							.addEventListener('ended', async () => {
 								this.log.d('Clicked native stop button. Stopping screen sharing');
-								await this.toggleScreenshare();
+								await this.toggleScreenshare(!isScreenShareActive);
 							});
 		
 						// Enabling screenShare
@@ -533,7 +534,7 @@ export class OpenViduService {
 						publishAudio: hasAudio,
 						mirror: false,
 						frameRate: 30,
-						resolution: "1920x1080"
+						resolution: "1280x720"
 					};
 					this.log.d('Initializing publisher with properties2: ', displayMediaStream);
 		
@@ -546,7 +547,7 @@ export class OpenViduService {
 							.getVideoTracks()[0]
 							.addEventListener('ended', async () => {
 								this.log.d('Clicked native stop button. Stopping screen sharing');
-								await this.toggleScreenshare();
+								await this.toggleScreenshare(!isScreenShareActive);
 							});
 		
 						// Enabling screenShare
@@ -715,6 +716,14 @@ export class OpenViduService {
 			this.tune.stop();
 			this.tune = null;
 		}
+	}
+	
+	closeQuestionpanel() {
+		const data = {
+			message: 'CloseQuestionPanel',
+			nickname: this.participantService.getMyNickname()
+		};
+		this.sendSignal(Signal.CLOSEQUESTIONPANEL, undefined,data);
 	}
 
 	/**
@@ -910,12 +919,14 @@ export class OpenViduService {
 		try {
 			if (this.participantService.isMyVideoPublishActive()) {
 				// Unpublishing video 
-				console.log("Unpublishing");
 				this.participantService.disablePublishVideoStream();
 				await this.screenSession.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
-				const videoBlob = await this.http.get(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
-
+				let videoBlob
+				try{
+				videoBlob = await this.http.get(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
+				}catch(error){
+				}
 				// Create a local URL for the video file
 				const videoURL = URL.createObjectURL(videoBlob);
 

@@ -539,7 +539,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.subscribeToScreenSize();
 		this.subscribeToCaptionsToggling();
 		this.subscribeToSessionTimergStatus();
-		this.subscribeToSignal();
 	}
 
 	ngAfterViewInit() {
@@ -625,7 +624,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.onScreenshareButtonClicked.emit();
 
 		try {
-			await this.openviduService.toggleScreenshare();
+			await this.openviduService.toggleScreenshare(this.isScreenShareActive);
 		} catch (error) {
 			this.log.e('There was an error toggling screen share', error.code, error.message);
 			if (error && error.name === 'SCREEN_SHARING_NOT_SUPPORTED') {
@@ -643,6 +642,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	leaveSession() {
 		this.log.d('Leaving session...');
+		this.openviduService.closeQuestionpanel();
 		this.openviduService.disconnect();
 		this.openviduService.stopTune();
 		this.onLeaveButtonClicked.emit();
@@ -719,7 +719,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		}
 
 		const data = {
-			message: 'Question Panel Signal From Support',
+			message: 'Question Panel Signal From Support to open Question Panel in Customer side',
 			nickname: this.participantService.getMyNickname()
 		};
 
@@ -736,15 +736,16 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	togglePublishVideo() {
+	async togglePublishVideo() {
 		this.onPublishVideoButtonClicked.emit();
 		try {
 			this.showVideoControlButton = !this.showVideoControlButton;
 			console.log('Publishing video');
-			this.openviduService.publishRecordedVideo();
+			await this.openviduService.publishRecordedVideo();
 			this.libService.screenshareButton.next(this.isPublishVideoActive);
 			this.isPublishVideoActive = !this.isPublishVideoActive;
 		} catch (error) {
+			this.showVideoControlButton = !this.showVideoControlButton;
 			this.log.e('There was an error toggling Publish video:', error.code, error.message);
 			this.actionService.openDialog(
 				this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'),
@@ -802,13 +803,13 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.openviduService
 					.getRemoteConnections()
 					.filter((connection) => this.openviduService.holdPartiticipantSiganl(connection.connectionId));
-			const remoteParticipants = this.participantService.getRemoteParticipants();
-			const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
-			if (participantToUpdate) {
-				participantToUpdate.isOnHold = true;
-				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
-			}
-			console.log("update partiticpant",participantToUpdate)
+				const remoteParticipants = this.participantService.getRemoteParticipants();
+				const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
+				if (participantToUpdate) {
+					participantToUpdate.isOnHold = true;
+					this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+				}
+				console.log('update partiticpant', participantToUpdate);
 				this.libService.isOnHold.next(true);
 			} else if (this.isSupervisorActive) {
 				this.openviduService
@@ -817,12 +818,12 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 				this.libService.isOnHold.next(false);
 				this.libService.supervisorWhenButton.next(false);
 				const remoteParticipants = this.participantService.getRemoteParticipants();
-			const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
-			if (participantToUpdate) {
-				participantToUpdate.isOnHold = false;
-				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
-			}
-			console.log("update partiticpant",participantToUpdate)
+				const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
+				if (participantToUpdate) {
+					participantToUpdate.isOnHold = false;
+					this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+				}
+				console.log('update partiticpant', participantToUpdate);
 			}
 		} catch (error) {
 			this.log.d('Getting error while adding supervisor', error.message);
@@ -846,21 +847,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 	}
 
-	protected subscribeToSignal() {
-		this.session.on(`signal:${Signal.QUESTION}`, (event: any) => {
-			const connectionId = event.from.connectionId;
-			const data = JSON.parse(event.data);
-			const isMyOwnConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
-
-			this.log.d('Connection ID From Signal: ' + connectionId);
-			this.log.d('Is the Signal for this id ? ' + !isMyOwnConnection);
-			this.log.d('Recieved : ' + event.data);
-
-			if (!isMyOwnConnection) {
-				this.panelService.togglePanel(PanelType.QUESTIONS);
-			}
-		});
-	}
 	private subscribeToFullscreenChanged() {
 		document.addEventListener('fullscreenchange', (event) => {
 			this.isFullscreenActive = Boolean(document.fullscreenElement);

@@ -15,9 +15,7 @@
 	</div>
 
 	<div [@inOutAnimation] id="vc-container" *ngIf="showVideoconference || (!showPrejoin && !loading && !error)">
-		<ov-session  *ngIf="isSessionInitialized && !nodeCrashed" (onSessionCreated)="_onSessionCreated($event)" (onNodeCrashed)="_onNodeCrashed()"
-		(onUnHoldButtonClicked)="onUnHoldButtonClicked()"
-	    (onHoldButtonClicked)="onHoldButtonClicked()">
+		<ov-session  *ngIf="isSessionInitialized && !nodeCrashed" (onSessionCreated)="_onSessionCreated($event)" (onNodeCrashed)="_onNodeCrashed()">
 			<ng-template #toolbar>
 				<ng-container *ngIf="openviduAngularToolbarTemplate">
 					<ng-container *ngTemplateOutlet="openviduAngularToolbarTemplate"></ng-container>
@@ -102,7 +100,7 @@
 </ng-template>
 
 <ng-template #defaultQuestionPanel>
-	<ov-question-panel id="default-question-panel"></ov-question-panel>
+	<ov-question-panel (onSubmitButtonClicked)="onSubmitButton($event)" id="default-question-panel"></ov-question-panel>
 </ng-template>
 
 <ng-template #defaultActivitiesPanel>

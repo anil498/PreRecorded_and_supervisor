@@ -7,7 +7,7 @@
       </button>
     </h4>
   </div>
-  <div class="row">
+  <!-- <div class="row">
     <ng-container *ngFor="let access of accessName">
       <div class="col-md-5 offset-md-1 justify-content-center">
         <mat-checkbox  checked disabled>
@@ -15,5 +15,65 @@
         </mat-checkbox>
       </div>
     </ng-container>
+  </div> -->
+  <div class="card-body card-body-1">
+    <section class="feature-section">
+      <div class="grid-container">
+        <div *ngFor="let topAccess of topLevelAccess1" class="grid-item">
+          <ng-container *ngIf="isCheckAccess(topAccess)">
+            <mat-checkbox
+              [value]="topAccess.accessId"
+              [checked]="true"
+              disabled
+            >
+              {{ topAccess.name }}
+            </mat-checkbox>
+            <div
+              class="grid-item-content"
+              *ngIf="accessId.includes(topAccess.accessId)"
+            >
+              <div *ngFor="let access of accessData">
+                <mat-checkbox
+                  *ngIf="topAccess.accessId === access.pId && access.pId !== 0"
+                  [value]="access.accessId"
+                  [checked]="true"
+                  disabled
+                >
+                  {{ access.name }}
+                </mat-checkbox>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="grid-container">
+        <div *ngFor="let topAccess of topLevelAccess2" class="grid-item">
+          <ng-container *ngIf="isCheckAccess(topAccess)">
+            <mat-checkbox
+              [value]="topAccess.accessId"
+              [checked]="true"
+              disabled
+            >
+              {{ topAccess.name }}
+            </mat-checkbox>
+            <div
+              class="grid-item-content"
+              *ngIf="accessId.includes(topAccess.accessId)"
+            >
+              <div *ngFor="let access of accessData">
+                <mat-checkbox
+                  *ngIf="topAccess.accessId === access.pId && access.pId !== 0"
+                  [value]="access.accessId"
+                  [checked]="true"
+                  disabled
+                >
+                  {{ access.name }}
+                </mat-checkbox>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </section>
   </div>
 </div>

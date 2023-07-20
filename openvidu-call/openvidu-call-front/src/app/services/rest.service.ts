@@ -22,27 +22,17 @@ export class RestService {
 		return await this.getRequest('call/config');
 	}
 
-	async getTokens(
-		sessionKey: string,
-		nickname?: string
-	): Promise<SessionResponse> {
+	async getTokens(sessionKey: string, nickname?: string): Promise<SessionResponse> {
 		return this.postRequest('sessions', { sessionKey, nickname });
 	}
-	async removeSession(
-		sessionId: string
-	): Promise<any> {
-		return this.deleteRequest('sessions/'+{sessionId});
+	async removeSession(sessionId: string): Promise<any> {
+		return this.deleteRequest('sessions/' + { sessionId });
 	}
-	async sendLink(
-		sessionId: string
-	): Promise<any> {
+	async sendLink(sessionId: string): Promise<any> {
 		return this.postRequest('sendLink', { sessionId });
 	}
-	async updateSession(
-		sessionKey: string,
-		isOnHold: boolean
-	): Promise<any> {
-		return this.postRequest('updateSession', { sessionKey,isOnHold });
+	async updateSession(sessionKey: string, isOnHold: boolean): Promise<any> {
+		return this.postRequest('updateSession', { sessionKey, isOnHold });
 	}
 	adminLogin(password: string): Promise<any[]> {
 		return this.postRequest('auth/admin/login', { password });
@@ -61,6 +51,10 @@ export class RestService {
 
 	stopRecording(sessionId: string) {
 		return this.postRequest('recordings/stop', { sessionId });
+	}
+
+	saveIcdcResponse(sessionId: string, icdcId: string, icdcResult: any) {
+		return this.postRequest('saveICDC', { sessionId, icdcId, icdcResult });
 	}
 
 	deleteRecording(recordingId: string): Promise<RecordingInfo[]> {

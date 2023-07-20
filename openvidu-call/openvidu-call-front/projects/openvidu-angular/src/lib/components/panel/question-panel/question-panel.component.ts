@@ -1,4 +1,14 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef,
+	OnInit,
+	ViewChild,
+	Output,
+	EventEmitter
+} from '@angular/core';
 import { PanelType } from '../../../models/panel.model';
 import { PanelService } from '../../../services/panel/panel.service';
 import { HttpClient } from '@angular/common/http';
@@ -45,7 +55,12 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	@ViewChild('chatScroll') chatScroll: ElementRef;
+	@ViewChild('formScroll') formScroll: ElementRef;
+
+	/**
+	 * Provides event notifications that fire when submit button has been clicked.
+	 */
+	@Output() onSubmitButtonClicked: EventEmitter<string> = new EventEmitter<any>();
 
 	private log: ILogger;
 
@@ -62,11 +77,13 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	usertype: string = '';
 	editicdc: boolean;
 	titleicdc: string = '';
+	questionsicdc: string = '';
 	isClose: boolean = true;
 
 	private usertypeSub: Subscription;
 	private editicdcSub: Subscription;
 	private titleicdcSub: Subscription;
+	private questionsicdcSub: Subscription;
 
 	constructor(
 		private panelService: PanelService,
@@ -86,63 +103,60 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 
 		//Build a Form Group
 		this.form = this.formBuilder.group({});
-
-		//Harcoded Json imported From assets folder . It can be modifeied to get a json object from an API
-		this.http.get<any>('assets/json/data.json').subscribe((response) => {
-			this.questions = response.Question_data;
-			this.questions.forEach((question) => {
-				//Set custom Controls for a Checkbox Question
-				if (question.type === 'checkbox') {
-					const checkboxOptions = question.meta.reduce((options, option) => {
-						options[option] = false; // Set all options to false initially
-						return options;
-					}, {});
-					this.selectedAnswers[question.q_id] = [];
-					this.form.addControl(question.q_id, this.formBuilder.control(checkboxOptions));
-				} else {
-					//Add Controls for Questions other than the checkbox
-					this.form.addControl(question.q_id, this.formBuilder.control('', Validators.required));
-				}
-			});
-
-			this.log.d(this.titleicdc);
-			//Give Form Access to user based on the paramters Recieved from backend
-			if (!this.editicdc) {
-				this.form.disable();
-				this.isSubmit = false;
-			} else {
-				this.isSubmit = true;
-			}
-
-			if (this.usertype == 'Customer') {
-				this.isClose = false;
-			}
-
-			//Update UI
-			if (this.panelService.isQuestionPanelOpened()) {
-				this.cd.markForCheck();
-			}
-		});
 	}
 
 	ngOnInit(): void {
 		this.subscribetoParameters();
 		this.subscribeToSignal();
 		this.form.valueChanges.subscribe((value) => {
-			// Handle the real-time form values here
-			this.log.d(value);
-
 			if (!this.form.pristine) {
 				this.openviduService.sendSignal(Signal.SUPPORT, undefined, value);
 			}
 		});
 	}
 
-	ngAfterViewInit() {}
+	ngAfterViewInit() {
+		this.fillform();
+	}
+
+	fillform() {
+		const questionjson = JSON.parse(this.questionsicdc);
+		this.questions = questionjson.question_data;
+
+		this.questions.forEach((question) => {
+			//Set custom Controls for a Checkbox Question
+			if (question.type === 'checkbox') {
+				const checkboxOptions = question.meta.reduce((options, option) => {
+					options[option] = false; // Set all options to false initially
+					return options;
+				}, {});
+				this.selectedAnswers[question.q_id] = [];
+				this.form.addControl(question.q_id, this.formBuilder.control(checkboxOptions));
+			} else {
+				//Add Controls for Questions other than the checkbox
+				this.form.addControl(question.q_id, this.formBuilder.control('', Validators.required));
+			}
+		});
+		//Give Form Access to user based on the paramters Recieved from backend
+		if (!this.editicdc) {
+			this.form.disable();
+			this.isSubmit = false;
+		} else {
+			this.isSubmit = true;
+		}
+
+		if (this.usertype == 'Customer') {
+			this.isClose = false;
+		}
+
+		//Update UI
+		if (this.panelService.isQuestionPanelOpened()) {
+			this.cd.markForCheck();
+		}
+	} //fill form fun end
 
 	//Subscribe to Signals
 	protected subscribeToSignal() {
-
 		// Data Signal From Other Participant
 		this.session.on(`signal:${Signal.SUPPORT}`, (event: any) => {
 			const connectionId = event.from.connectionId;
@@ -150,7 +164,6 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
 
 			if (!isMyOwnConnection) {
-
 				//For Checkbox Question
 				if (data.options) {
 					const control = this.form.get(data.qid);
@@ -161,12 +174,10 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 					} else {
 						value[data.options] = false; // Set the specific option to true
 					}
-				
+
 					control.patchValue(value);
 					this.form.markAsPristine();
-
 				} else {
-
 					//For Questions other than the checkbox
 					this.form.patchValue(data);
 					this.form.markAsPristine();
@@ -190,9 +201,9 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 			const connectionId = event.from.connectionId;
 			const data = JSON.parse(event.data);
 			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
-			
+
 			if (!isMyOwnConnection) {
-				const formElement = this.chatScroll.nativeElement;
+				const formElement = this.formScroll.nativeElement;
 				formElement.scrollTop = data.scrollValue;
 				this.scrolling = false;
 			}
@@ -203,6 +214,10 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	protected subscribetoParameters() {
 		this.usertypeSub = this.libService.usertype.subscribe((usertype: string) => {
 			this.usertype = usertype;
+		});
+
+		this.questionsicdcSub = this.libService.questionsicdc.subscribe((questionsicdc: string) => {
+			this.questionsicdc = questionsicdc;
 		});
 
 		this.editicdcSub = this.libService.editicdc.subscribe((editicdc: boolean) => {
@@ -235,7 +250,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 
 		const control = this.form.get(questionId);
 		const value = control.value;
-		
+
 		// Add the selected option to the selectedOptions array
 		if (checked) {
 			value[option] = true; // Set the specific option to true
@@ -262,9 +277,10 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	}
 
 	submitForm() {
-		this.log.d('Form Submitted Succesfully');
-		this.log.d("Form Value : "+this.form.value);
+		const formresponse = JSON.stringify(this.form.value);
+		this.onSubmitButtonClicked.emit(formresponse);
 		this.form.reset();
+
 		this.selectedAnswers = [];
 		this.close();
 
@@ -291,7 +307,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	//Function to calculate scroll Value
 	onScroll() {
 		if (this.scrolling == true) {
-			const formElement = this.chatScroll.nativeElement;
+			const formElement = this.formScroll.nativeElement;
 			const scrollTop = formElement.scrollTop;
 
 			const data = {

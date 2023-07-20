@@ -199,7 +199,12 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Account Settings" [formGroup]="userForm2" *ngIf="userForm2">
+    <mat-tab
+      label="Account Settings"
+      [formGroup]="userForm2"
+      *ngIf="userForm2"
+      [disabled]="userForm1.invalid"
+    >
       <div class="container">
         <div class="row">
           <div class="col-md-5 offset-md-1">
@@ -356,7 +361,12 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="Feature List" [formGroup]="userForm3" *ngIf="userForm3">
+    <mat-tab
+      label="Feature List"
+      [formGroup]="userForm3"
+      *ngIf="userForm3"
+      [disabled]="userForm2.invalid || userForm1.invalid"
+    >
       <div class="container">
         <div class="row">
           <div class="col-md-10 offset-md-1">
@@ -585,7 +595,12 @@
       </div>
     </mat-tab>
 
-    <mat-tab label="User Information" [formGroup]="userForm4" *ngIf="userForm4">
+    <mat-tab
+      label="User Information"
+      [formGroup]="userForm4"
+      *ngIf="userForm4"
+      [disabled]="userForm3.invalid || userForm1.invalid || userForm2.invalid"
+    >
       <div class="container">
         <div class="row">
           <div class="col-md-5 offset-md-1">

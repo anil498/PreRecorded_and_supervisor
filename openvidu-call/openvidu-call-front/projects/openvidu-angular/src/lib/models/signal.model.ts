@@ -6,6 +6,7 @@ export enum Signal {
 	CHAT = 'chat',
 	SCREEN='screen',
 	QUESTION='question',
+	CLOSEQUESTIONPANEL='closequestionpanel',
 	SUPERVISOR="supervisor",
 	HOLD="hold",
 	UNHOLD="unhold",

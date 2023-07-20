@@ -1,361 +1,429 @@
 import { RecordingInfo } from 'openvidu-angular';
 
 export class SessionResponse {
-  private _sessionId: string | undefined;
-  private _sessionName: string | undefined;
-  private _participantName: string | undefined;
-  private _redirectUrl: string | undefined;
-  private _settings: Settings;
-  private _cameraToken: string | undefined;
-  private _screenToken: string | undefined;
-  private _recordings: RecordingInfo[] | undefined;
-  private _type: string | undefined;
-  private _recordingMode: string | undefined;
-  private _isSessionExpired: boolean | undefined;
+	private _sessionId: string | undefined;
+	private _sessionName: string | undefined;
+	private _participantName: string | undefined;
+	private _redirectUrl: string | undefined;
+	private _settings: Settings;
+	private _cameraToken: string | undefined;
+	private _screenToken: string | undefined;
+	private _recordings: RecordingInfo[] | undefined;
+	private _type: string | undefined;
+	private _recordingMode: string | undefined;
+	private _isSessionExpired: boolean | undefined;
 
-  get sessionId(): string | undefined {
-    return this._sessionId;
-  }
+	get sessionId(): string | undefined {
+		return this._sessionId;
+	}
 
-  set sessionId(value: string | undefined) {
-    this._sessionId = value;
-  }
+	set sessionId(value: string | undefined) {
+		this._sessionId = value;
+	}
 
-  get sessionName(): string | undefined {
-    return this._sessionName;
-  }
+	get sessionName(): string | undefined {
+		return this._sessionName;
+	}
 
-  set sessionName(value: string | undefined) {
-    this._sessionName = value;
-  }
+	set sessionName(value: string | undefined) {
+		this._sessionName = value;
+	}
 
-  get participantName(): string | undefined {
-    return this._participantName;
-  }
+	get participantName(): string | undefined {
+		return this._participantName;
+	}
 
-  set participantName(value: string | undefined) {
-    this._participantName = value;
-  }
+	set participantName(value: string | undefined) {
+		this._participantName = value;
+	}
 
-  get redirectUrl(): string | undefined {
-    return this._redirectUrl;
-  }
+	get redirectUrl(): string | undefined {
+		return this._redirectUrl;
+	}
 
-  set redirectUrl(value: string | undefined) {
-    this._redirectUrl = value;
-  }
+	set redirectUrl(value: string | undefined) {
+		this._redirectUrl = value;
+	}
 
-  get settings(): Settings | undefined {
-    return this._settings;
-  }
+	get settings(): Settings | undefined {
+		return this._settings;
+	}
 
-  set settings(value: Settings | undefined) {
-    this._settings = value;
-  }
+	set settings(value: Settings | undefined) {
+		this._settings = value;
+	}
 
-  get cameraToken(): string | undefined {
-    return this._cameraToken;
-  }
+	get cameraToken(): string | undefined {
+		return this._cameraToken;
+	}
 
-  set cameraToken(value: string | undefined) {
-    this._cameraToken = value;
-  }
+	set cameraToken(value: string | undefined) {
+		this._cameraToken = value;
+	}
 
-  get screenToken(): string | undefined {
-    return this._screenToken;
-  }
+	get screenToken(): string | undefined {
+		return this._screenToken;
+	}
 
-  set screenToken(value: string | undefined) {
-    this._screenToken = value;
-  }
+	set screenToken(value: string | undefined) {
+		this._screenToken = value;
+	}
 
-  get recordings(): RecordingInfo[] | undefined {
-    return this._recordings;
-  }
+	get recordings(): RecordingInfo[] | undefined {
+		return this._recordings;
+	}
 
-  set recordings(value: RecordingInfo[] | undefined) {
-    this._recordings = value;
-  }
+	set recordings(value: RecordingInfo[] | undefined) {
+		this._recordings = value;
+	}
 
-  get type(): string | undefined {
-    return this._type;
-  }
+	get type(): string | undefined {
+		return this._type;
+	}
 
-  set type(value: string | undefined) {
-    this._type = value;
-  }
+	set type(value: string | undefined) {
+		this._type = value;
+	}
 
-  get recordingMode(): string | undefined {
-    return this._recordingMode;
-  }
+	get recordingMode(): string | undefined {
+		return this._recordingMode;
+	}
 
-  set recordingMode(value: string | undefined) {
-    this._recordingMode = value;
-  }
+	set recordingMode(value: string | undefined) {
+		this._recordingMode = value;
+	}
 
-  get isSessionExpired(): boolean | undefined {
-    return this._isSessionExpired;
-  }
+	get isSessionExpired(): boolean | undefined {
+		return this._isSessionExpired;
+	}
 
-  set isSessionExpired(value: boolean | undefined) {
-    this._isSessionExpired = value;
-  }
+	set isSessionExpired(value: boolean | undefined) {
+		this._isSessionExpired = value;
+	}
 }
 export class Settings {
-  private _duration?: number;
-  private _showLogo?: boolean;
-  private _logo?: {
-    byte?: string;
-    type?: string;
-  };
-  private _description?: string;
-  private _landingPage?: string;
-  private _moderators?: boolean;
-  private _displayTicker?: boolean;
-  private _displayTimer?: boolean;
-  private _recording?: boolean;
-  private _recordingDetails?: {
-    max_time?: number;
-    max_dur?: number;
-  };
-  private _screenShare?: boolean;
-  private _ScreenShareWithAudio?: boolean;
-  private _isAutoFullScreen?: boolean;
-  private _waitForModerator?: boolean;
-  private _chat?: boolean;
-  private _activitiesButton?: boolean;
-  private _participantsButton?: boolean;
-  private _floatingLayout?: boolean;
-  private _layoutNumber?: number;
-  private _supervisor?: boolean;
-  private _preRecorded?: boolean;
-  private _preRecordedDetails?: {
-    pre_recorded_video_file?: string;
-    share_pre_recorded_video?: boolean;
-  };
-  private _broadcast?: boolean;
-  private _fileUrl?: string;
- 
-  private _icdcDetails?: {
-    icdc?:boolean;
-    display_icdc?:boolean;
-    edit_icdc?:boolean;
-    title_icdc?:string;
-  };
+	private _duration?: number;
+	private _showLogo?: boolean;
+	private _logo?: {
+		byte?: string;
+		type?: string;
+	};
+	private _description?: string;
+	private _landingPage?: string;
+	private _moderators?: boolean;
+	private _displayTicker?: boolean;
+	private _displayTimer?: boolean;
+	private _recording?: boolean;
+	private _recordingDetails?: {
+		max_time?: number;
+		max_dur?: number;
+	};
+	private _screenShare?: boolean;
+	private _ScreenShareWithAudio?: boolean;
+	private _isAutoFullScreen?: boolean;
+	private _waitForModerator?: boolean;
+	private _chat?: boolean;
+	private _activitiesButton?: boolean;
+	private _participantsButton?: boolean;
+	private _floatingLayout?: boolean;
+	private _layoutNumber?: number;
+	private _supervisor?: boolean;
+	private _preRecorded?: boolean;
+	private _preRecordedDetails?: {
+		pre_recorded_video_file?: string;
+		share_pre_recorded_video?: boolean;
+	};
+	private _broadcast?: boolean;
+	private _fileUrl?: string;
 
-  get duration(): number | undefined {
-    return this._duration;
-  }
+	private _icdcDetails?: {
+		icdc?: boolean;
+		display_icdc?: boolean;
+		edit_icdc?: boolean;
+		title_icdc?: string;
+	};
 
-  set duration(value: number | undefined) {
-    this._duration = value;
-  }
+	private _icdcQuestions: IcdcQuestions;
 
-  get showLogo(): boolean | undefined {
-    return this._showLogo;
-  }
+	get icdcQuestions(): IcdcQuestions | undefined {
+		return this._icdcQuestions;
+	}
+	set icdcQuestions(value: IcdcQuestions | undefined) {
+		this._icdcQuestions = value;
+	}
 
-  set showLogo(value: boolean | undefined) {
-    this._showLogo = value;
-  }
+	get duration(): number | undefined {
+		return this._duration;
+	}
 
-  get logo(): { byte?: string; type?: string } | undefined {
-    return this._logo;
-  }
+	set duration(value: number | undefined) {
+		this._duration = value;
+	}
 
-  set logo(value: { byte?: string; type?: string } | undefined) {
-    this._logo = value;
-  }
+	get showLogo(): boolean | undefined {
+		return this._showLogo;
+	}
 
-  get description(): string | undefined {
-    return this._description;
-  }
+	set showLogo(value: boolean | undefined) {
+		this._showLogo = value;
+	}
 
-  set description(value: string | undefined) {
-    this._description = value;
-  }
+	get logo(): { byte?: string; type?: string } | undefined {
+		return this._logo;
+	}
 
-  get landingPage(): string | undefined {
-    return this._landingPage;
-  }
+	set logo(value: { byte?: string; type?: string } | undefined) {
+		this._logo = value;
+	}
 
-  set landingPage(value: string | undefined) {
-    this._landingPage = value;
-  }
+	get description(): string | undefined {
+		return this._description;
+	}
 
-  get moderators(): boolean | undefined {
-    return this._moderators;
-  }
+	set description(value: string | undefined) {
+		this._description = value;
+	}
 
-  set moderators(value: boolean | undefined) {
-    this._moderators = value;
-  }
+	get landingPage(): string | undefined {
+		return this._landingPage;
+	}
 
-  get displayTicker(): boolean | undefined {
-    return this._displayTicker;
-  }
+	set landingPage(value: string | undefined) {
+		this._landingPage = value;
+	}
 
-  set displayTicker(value: boolean | undefined) {
-    this._displayTicker = value;
-  }
+	get moderators(): boolean | undefined {
+		return this._moderators;
+	}
 
-  get displayTimer(): boolean | undefined {
-    return this._displayTimer;
-  }
+	set moderators(value: boolean | undefined) {
+		this._moderators = value;
+	}
 
-  set displayTimer(value: boolean | undefined) {
-    this._displayTimer = value;
-  }
+	get displayTicker(): boolean | undefined {
+		return this._displayTicker;
+	}
 
-  get recording(): boolean | undefined {
-    return this._recording;
-  }
+	set displayTicker(value: boolean | undefined) {
+		this._displayTicker = value;
+	}
 
-  set recording(value: boolean | undefined) {
-    this._recording = value;
-  }
+	get displayTimer(): boolean | undefined {
+		return this._displayTimer;
+	}
 
-  get recordingDetails(): { max_time?: number; max_dur?: number } | undefined {
-    return this._recordingDetails;
-  }
+	set displayTimer(value: boolean | undefined) {
+		this._displayTimer = value;
+	}
 
-  set recordingDetails(value: { max_time?: number; max_dur?: number } | undefined) {
-    this._recordingDetails = value;
-  }
+	get recording(): boolean | undefined {
+		return this._recording;
+	}
 
-  get screenShare(): boolean | undefined {
-    return this._screenShare;
-  }
+	set recording(value: boolean | undefined) {
+		this._recording = value;
+	}
 
-  set screenShare(value: boolean | undefined) {
-    this._screenShare = value;
-  }
+	get recordingDetails(): { max_time?: number; max_dur?: number } | undefined {
+		return this._recordingDetails;
+	}
 
-  get ScreenShareWithAudio(): boolean | undefined {
-    return this._ScreenShareWithAudio;
-  }
+	set recordingDetails(value: { max_time?: number; max_dur?: number } | undefined) {
+		this._recordingDetails = value;
+	}
 
-  set ScreenShareWithAudio(value: boolean | undefined) {
-    this._ScreenShareWithAudio = value;
-  }
+	get screenShare(): boolean | undefined {
+		return this._screenShare;
+	}
 
-  get isAutoFullScreen(): boolean | undefined {
-    return this._isAutoFullScreen;
-  }
+	set screenShare(value: boolean | undefined) {
+		this._screenShare = value;
+	}
 
-  set isAutoFullScreen(value: boolean | undefined) {
-    this._isAutoFullScreen = value;
-  }
+	get ScreenShareWithAudio(): boolean | undefined {
+		return this._ScreenShareWithAudio;
+	}
 
-  get waitForModerator(): boolean | undefined {
-    return this._waitForModerator;
-  }
+	set ScreenShareWithAudio(value: boolean | undefined) {
+		this._ScreenShareWithAudio = value;
+	}
 
-  set waitForModerator(value: boolean | undefined) {
-    this._waitForModerator = value;
-  }
+	get isAutoFullScreen(): boolean | undefined {
+		return this._isAutoFullScreen;
+	}
 
-  get chat(): boolean | undefined {
-    return this._chat;
-  }
+	set isAutoFullScreen(value: boolean | undefined) {
+		this._isAutoFullScreen = value;
+	}
 
-  set chat(value: boolean | undefined) {
-    this._chat = value;
-  }
+	get waitForModerator(): boolean | undefined {
+		return this._waitForModerator;
+	}
 
-  get activitiesButton(): boolean | undefined {
-    return this._activitiesButton;
-  }
+	set waitForModerator(value: boolean | undefined) {
+		this._waitForModerator = value;
+	}
 
-  set activitiesButton(value: boolean | undefined) {
-    this._activitiesButton = value;
-  }
+	get chat(): boolean | undefined {
+		return this._chat;
+	}
 
-  get participantsButton(): boolean | undefined {
-    return this._participantsButton;
-  }
+	set chat(value: boolean | undefined) {
+		this._chat = value;
+	}
 
-  set participantsButton(value: boolean | undefined) {
-    this._participantsButton = value;
-  }
+	get activitiesButton(): boolean | undefined {
+		return this._activitiesButton;
+	}
 
-  get floatingLayout(): boolean | undefined {
-    return this._floatingLayout;
-  }
+	set activitiesButton(value: boolean | undefined) {
+		this._activitiesButton = value;
+	}
 
-  set floatingLayout(value: boolean | undefined) {
-    this._floatingLayout = value;
-  }
+	get participantsButton(): boolean | undefined {
+		return this._participantsButton;
+	}
 
-  get layoutNumber(): number | undefined {
-    return this._layoutNumber;
-  }
+	set participantsButton(value: boolean | undefined) {
+		this._participantsButton = value;
+	}
 
-  set layoutNumber(value: number | undefined) {
-    this._layoutNumber = value;
-  }
+	get floatingLayout(): boolean | undefined {
+		return this._floatingLayout;
+	}
 
-  get supervisor(): boolean | undefined {
-    return this._supervisor;
-  }
+	set floatingLayout(value: boolean | undefined) {
+		this._floatingLayout = value;
+	}
 
-  set supervisor(value: boolean | undefined) {
-    this._supervisor = value;
-  }
+	get layoutNumber(): number | undefined {
+		return this._layoutNumber;
+	}
 
-  get preRecorded(): boolean | undefined {
-    return this._preRecorded;
-  }
+	set layoutNumber(value: number | undefined) {
+		this._layoutNumber = value;
+	}
 
-  set preRecorded(value: boolean | undefined) {
-    this._preRecorded = value;
-  }
+	get supervisor(): boolean | undefined {
+		return this._supervisor;
+	}
 
-  get preRecordedDetails(): {
-    pre_recorded_video_file?: string;
-    share_pre_recorded_video?: boolean;
-  } | undefined {
-    return this._preRecordedDetails;
-  }
+	set supervisor(value: boolean | undefined) {
+		this._supervisor = value;
+	}
 
-  set preRecordedDetails(
-    value: { pre_recorded_video_file?: string; share_pre_recorded_video?: boolean } | undefined
-  ) {
-    this._preRecordedDetails = value;
-  }
+	get preRecorded(): boolean | undefined {
+		return this._preRecorded;
+	}
 
-  get broadcast(): boolean | undefined {
-    return this._broadcast;
-  }
+	set preRecorded(value: boolean | undefined) {
+		this._preRecorded = value;
+	}
 
-  set broadcast(value: boolean | undefined) {
-    this._broadcast = value;
-  }
+	get preRecordedDetails():
+		| {
+				pre_recorded_video_file?: string;
+				share_pre_recorded_video?: boolean;
+		  }
+		| undefined {
+		return this._preRecordedDetails;
+	}
 
-  get fileUrl(): string | undefined {
-    return this._fileUrl;
-  }
+	set preRecordedDetails(value: { pre_recorded_video_file?: string; share_pre_recorded_video?: boolean } | undefined) {
+		this._preRecordedDetails = value;
+	}
 
-  set fileUrl(value: string | undefined) {
-    this._fileUrl = value;
-  }
-  get icdcDetails(): {
-    icdc?:boolean;
-    display_icdc?:boolean;
-    edit_icdc?:boolean;
-    title_icdc?:string;
-  } | undefined {
-    return this._icdcDetails;
-  }
+	get broadcast(): boolean | undefined {
+		return this._broadcast;
+	}
 
-  set icdcDetails(
-      value: { 
-      icdc?:boolean;
-      display_icdc?:boolean;
-      edit_icdc?:boolean;
-      title_icdc?:string; 
-    } | undefined
-  ) {
-    this._icdcDetails = value;
-  }
+	set broadcast(value: boolean | undefined) {
+		this._broadcast = value;
+	}
+
+	get fileUrl(): string | undefined {
+		return this._fileUrl;
+	}
+
+	set fileUrl(value: string | undefined) {
+		this._fileUrl = value;
+	}
+	get icdcDetails():
+		| {
+				icdc?: boolean;
+				display_icdc?: boolean;
+				edit_icdc?: boolean;
+				title_icdc?: string;
+		  }
+		| undefined {
+		return this._icdcDetails;
+	}
+
+	set icdcDetails(
+		value:
+			| {
+					icdc?: boolean;
+					display_icdc?: boolean;
+					edit_icdc?: boolean;
+					title_icdc?: string;
+			  }
+			| undefined
+	) {
+		this._icdcDetails = value;
+	}
 }
+
+export class IcdcQuestions {
+	private _question_data: QuestionData[];
+	private _icdc_id: number;
+
+	public get icdc_id(): number {
+		return this._icdc_id;
+	}
+
+	public set icdc_id(value: number) {
+		this._icdc_id = value;
+	}
+
+	public get question_data(): QuestionData[] {
+		return this._question_data;
+	}
+	public set question_data(value: QuestionData[]) {
+		this._question_data = value;
+	}
+}
+export class QuestionData {
+	private _q_id: string;
+	private _type: string;
+	private _question: string;
+	private _meta: any;
+
+	public get q_id(): string {
+		return this._q_id;
+	}
+	public set q_id(value: string) {
+		this._q_id = value;
+	}
+
+	public get type(): string {
+		return this._type;
+	}
+	public set type(value: string) {
+		this._type = value;
+	}
+
+	public get question(): string {
+		return this._question;
+	}
+	public set question(value: string) {
+		this._question = value;
+	}
+
+	public get meta(): any {
+		return this._meta;
+	}
+	public set meta(value: any) {
+		this._meta = value;
+	}
+}
+///--------------

@@ -32,6 +32,7 @@ export class UserManagementComponent implements OnInit {
   token: string;
   userId: string;
   accessList: any[];
+  featureList: any[];
   showCreateButton = false;
   showEdit = false;
   showDelete = false;
@@ -91,6 +92,7 @@ export class UserManagementComponent implements OnInit {
     this.token = this.restService.getToken();
     this.userId = this.restService.getUserId();
     this.accessList = this.restService.getData().Access;
+    this.featureList = this.restService.getData().Features;
     // this.restService.dialogClosed$.subscribe(() => {
     //   this.openSnackBar("User Created", "snackBar");
     // });
@@ -233,6 +235,9 @@ export class UserManagementComponent implements OnInit {
     const dialogRef = this.dialog.open(ViewAccessDialogComponent, dialogConfig);
 
     dialogRef.afterClosed().subscribe(() => {
+      this.accessList.forEach((access) => {
+        access.status = 1;
+      });
       this.restService.closeDialog();
     });
   }
@@ -251,6 +256,9 @@ export class UserManagementComponent implements OnInit {
     );
 
     dialogRef.afterClosed().subscribe(() => {
+      this.featureList.forEach((feature) => {
+        feature.status = 1;
+      });
       this.restService.closeDialog();
     });
   }
