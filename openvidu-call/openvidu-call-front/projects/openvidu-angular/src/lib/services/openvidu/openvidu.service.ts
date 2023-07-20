@@ -922,8 +922,9 @@ export class OpenViduService {
 				this.participantService.disablePublishVideoStream();
 				await this.screenSession.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
+				let videoBlob
 				try{
-				const videoBlob = await this.http.get(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
+				videoBlob = await this.http.get(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
 				}catch(error){
 				}
 				// Create a local URL for the video file
