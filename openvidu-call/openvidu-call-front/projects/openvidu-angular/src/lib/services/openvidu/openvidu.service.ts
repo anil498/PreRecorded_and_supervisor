@@ -440,7 +440,7 @@ export class OpenViduService {
 		if (this.participantService.isMyCameraActive()) {
 			//this commented for screenshare with audio
 			if (this.participantService.isMyScreenActive() && this.participantService.isMyAudioActive()) {
-				if(!this.confirmed){
+				if(this.confirmed){
 					this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
 				}
 			}
