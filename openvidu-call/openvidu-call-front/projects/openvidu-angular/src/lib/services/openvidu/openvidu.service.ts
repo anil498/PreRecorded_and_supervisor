@@ -467,7 +467,7 @@ export class OpenViduService {
 	 * Hide the camera muted stream when screen is sharing.
 	 */
 	async toggleScreenshare(isScreenShareActive:boolean) {
-			
+			console.log(isScreenShareActive)
 			if (this.screenShareWithAudio && !isScreenShareActive) {
 				// Open dialog box and wait for user confirmation
 				this.confirmed= await this.actionService.openScreenDialog('Screen Share Mode', '', true);
@@ -499,7 +499,7 @@ export class OpenViduService {
 							.getVideoTracks()[0]
 							.addEventListener('ended', async () => {
 								this.log.d('Clicked native stop button. Stopping screen sharing');
-								await this.toggleScreenshare(isScreenShareActive);
+								await this.toggleScreenshare(!isScreenShareActive);
 							});
 		
 						// Enabling screenShare
@@ -547,7 +547,7 @@ export class OpenViduService {
 							.getVideoTracks()[0]
 							.addEventListener('ended', async () => {
 								this.log.d('Clicked native stop button. Stopping screen sharing');
-								await this.toggleScreenshare(isScreenShareActive);
+								await this.toggleScreenshare(!isScreenShareActive);
 							});
 		
 						// Enabling screenShare
@@ -919,12 +919,13 @@ export class OpenViduService {
 		try {
 			if (this.participantService.isMyVideoPublishActive()) {
 				// Unpublishing video 
-				console.log("Unpublishing");
 				this.participantService.disablePublishVideoStream();
 				await this.screenSession.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
+				try{
 				const videoBlob = await this.http.get(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
-
+				}catch(error){
+				}
 				// Create a local URL for the video file
 				const videoURL = URL.createObjectURL(videoBlob);
 

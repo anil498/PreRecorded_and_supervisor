@@ -736,15 +736,16 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
-	togglePublishVideo() {
+	async togglePublishVideo() {
 		this.onPublishVideoButtonClicked.emit();
 		try {
 			this.showVideoControlButton = !this.showVideoControlButton;
 			console.log('Publishing video');
-			this.openviduService.publishRecordedVideo();
+			await this.openviduService.publishRecordedVideo();
 			this.libService.screenshareButton.next(this.isPublishVideoActive);
 			this.isPublishVideoActive = !this.isPublishVideoActive;
 		} catch (error) {
+			this.showVideoControlButton = !this.showVideoControlButton;
 			this.log.e('There was an error toggling Publish video:', error.code, error.message);
 			this.actionService.openDialog(
 				this.translateService.translate('ERRORS.TOGGLE_PLAYVIDEO'),
