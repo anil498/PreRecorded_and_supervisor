@@ -439,10 +439,10 @@ export class OpenViduService {
 	async publishAudio(publish: boolean): Promise<void> {
 		if (this.participantService.isMyCameraActive()) {
 			//this commented for screenshare with audio
-			if (this.participantService.isMyScreenActive() && this.confirmed && !this.participantService.isMyAudioActive()) {
-				this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
-			}else{
-				this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
+			if (this.participantService.isMyScreenActive() && this.participantService.isMyAudioActive()) {
+				if(!this.confirmed){
+					this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
+				}
 			}
 			//
 			if (!this.libService.isOnHold.getValue()) {
