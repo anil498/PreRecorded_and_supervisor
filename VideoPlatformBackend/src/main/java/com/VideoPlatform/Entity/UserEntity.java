@@ -72,6 +72,9 @@ public class UserEntity implements Serializable {
     @Type(type="com.VideoPlatform.Utils.MapType")
     private HashMap<String, Object> featuresMeta = new HashMap<String, Object>(0);
 
+    @Column(name = "icdc_id")
+    private int icdcId;
+
     @Column(name = "status")
     private int status = 1;
 

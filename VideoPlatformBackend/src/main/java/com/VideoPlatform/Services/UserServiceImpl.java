@@ -89,17 +89,6 @@ public class UserServiceImpl implements UserService{
             return new ResponseEntity<>(commonService.responseData("406","Max limit exceed, No more users are allowed."),HttpStatus.NOT_ACCEPTABLE);
         }
 
-//        logger.info("feature_meta 4 val {}",user.getFeaturesMeta().get("4"));
-//        if(user.getFeaturesMeta().get("4") != null) {
-//            Map<String, Object> map = (Map<String, Object>) (user.getFeaturesMeta().get("4"));
-//            HashMap<String,Object> vidByte = (HashMap<String, Object>) map.get("pre_recorded_video_file");
-//            logger.info("VidByte : {}", vidByte);
-//
-//            String encodedString = (String) vidByte.get("byte");
-////            HashMap<String,Object> map = (HashMap<String, Object>) user.getFeaturesMeta().get("4");
-//            commonService.writeByteToFile(user.getLoginId());
-//        }
-
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
@@ -130,6 +119,7 @@ public class UserServiceImpl implements UserService{
         user.setParentId(userAuthEntity.getUserId());
         String myPass = passwordEncoder.encode(user.getPassword());
         user.setPassword(myPass);
+
         userRepository.save(user);
 
         Map<String,String> result = new HashMap<>();

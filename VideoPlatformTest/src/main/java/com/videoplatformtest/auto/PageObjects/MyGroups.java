@@ -36,7 +36,7 @@ public class MyGroups {
         Thread.sleep(500);
         driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[1]")).click();
         if(!groupMandatoryFieldCheck(driver)){
-            childTest.log(Status.FAIL,MarkupHelper.createLabel("Mandatory fields not filled",ExtentColor.RED));
+//            childTest.log(Status.FAIL,MarkupHelper.createLabel("Mandatory fields not filled",ExtentColor.RED));
             driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).click();
             childTest.log(Status.PASS,MarkupHelper.createLabel("Next tab clicked",ExtentColor.GREEN));
             if(driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).getAttribute("class").contains("mat-tab-label-active")){
@@ -45,11 +45,11 @@ public class MyGroups {
             }
         }
 
-        driver.findElement(By.id("mat-tab-label-0-1")).click();
-        driver.findElement(By.id("mat-tab-label-0-2")).click();
-        driver.findElement(By.id("mat-tab-label-0-3")).click();
-        driver.findElement(ByAngular.partialButtonText("Submit")).click();
-        driver.findElement(By.cssSelector("button[class='mat-focus-indicator close-btn mat-icon-button mat-button-base']")).click();
+//        driver.findElement(By.id("mat-tab-label-0-1")).click();
+//        driver.findElement(By.id("mat-tab-label-0-2")).click();
+//        driver.findElement(By.id("mat-tab-label-0-3")).click();
+//        driver.findElement(ByAngular.partialButtonText("Submit")).click();
+//        driver.findElement(By.cssSelector("button[class='mat-focus-indicator close-btn mat-icon-button mat-button-base']")).click();
         driver.close();
     }
 

@@ -63,13 +63,13 @@ public class CustomerManagement {
         driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/mat-tab-header/div/div/div/div[1]")).click();
         System.out.println("Account Clicked!");
         if (!custMandatoryFieldCheck(driver, page)) {
-            childTest.log(Status.FAIL, MarkupHelper.createLabel("Mandatory fields not filled", ExtentColor.RED));
             driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).click();
             childTest.log(Status.PASS, MarkupHelper.createLabel("Next tab clicked", ExtentColor.GREEN));
             if (driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).getAttribute("class").contains("mat-tab-label-active")) {
                 System.out.println("Account Setting tab opened");
                 childTest.log(Status.FAIL, MarkupHelper.createLabel("Mandatory fields empty, moved to new tab", ExtentColor.RED));
             }
+            else childTest.log(Status.PASS, MarkupHelper.createLabel("Mandatory fields empty, can't switch to next tab", ExtentColor.GREEN));
         }
 
         driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/mat-tab-header/div/div/div/div[1]")).click();
@@ -116,13 +116,25 @@ public class CustomerManagement {
         childTest = parentTest.createNode("CUSTOMER ROLES CHECK");
         driver.findElement(By.id("customer_management")).click();
         childTest.log(Status.PASS, MarkupHelper.createLabel("Customer Management clicked", ExtentColor.GREEN));
-        Thread.sleep(500);
-        driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
-        childTest.log(Status.PASS, MarkupHelper.createLabel("Mat icon clicked, roles displayed", ExtentColor.GREEN));
         Thread.sleep(1000);
-        if(checkRoles(driver,responseBody)){
-            childTest.log(Status.PASS, MarkupHelper.createLabel("Roles displayed and present in customer's permission", ExtentColor.GREEN));
-        }else childTest.log(Status.FAIL, MarkupHelper.createLabel("Roles displayed but not present in customer's permission", ExtentColor.RED));
+        if(driver.findElement(By.xpath(".//app-account-management/div/div/div/div/div/div[2]/div/table/tbody/tr[1]/td[5]/button")).getText().equalsIgnoreCase("Deleted")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Deleted User", ExtentColor.GREEN));
+            driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
+            Thread.sleep(1000);
+            if(driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("Edit") || driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("Delete"))
+                childTest.log(Status.FAIL, MarkupHelper.createLabel("Deleted user must not contain delete and edit properties", ExtentColor.RED));
+            if(driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("View"))
+                childTest.log(Status.PASS, MarkupHelper.createLabel("Edit and Delete is not allowed for deleted user, only view is displayed", ExtentColor.GREEN));
+            Thread.sleep(1000);
+        }
+        else{
+            driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Mat icon clicked, roles displayed", ExtentColor.GREEN));
+            Thread.sleep(1000);
+            if(checkRoles(driver,responseBody)){
+                childTest.log(Status.PASS, MarkupHelper.createLabel("Roles displayed and are present in customer's permission", ExtentColor.GREEN));
+            }else childTest.log(Status.FAIL, MarkupHelper.createLabel("Roles displayed but not present in customer's permission", ExtentColor.RED));
+        }
         driver.close();
     }
 

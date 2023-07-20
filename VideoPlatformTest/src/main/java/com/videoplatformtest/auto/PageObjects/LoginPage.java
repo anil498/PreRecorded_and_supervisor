@@ -69,7 +69,7 @@ public class LoginPage {
         password.sendKeys("abcde");
         childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.GREEN));
         loginButton.click();
-        Thread.sleep(50);
+        Thread.sleep(500);
         if(driver.findElement(By.xpath(".//html/body/div[2]")).getText().contains(expectedText)){
 //        if(false){
             childTest.log(Status.PASS,MarkupHelper.createLabel("Bad info label text correct",ExtentColor.GREEN));

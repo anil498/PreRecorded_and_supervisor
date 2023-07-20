@@ -32,16 +32,17 @@ public class IcdcController {
     private IcdcResponseRepository icdcResponseRepository;
 
     private static final Logger logger= LoggerFactory.getLogger(UserController.class);
-//    @PostMapping("/Create")
-//    public ResponseEntity<?> createIcdc(@RequestBody IcdcEntity icdcEntity, HttpServletRequest request) {
-//
-////        String authKey = request.getHeader("Authorization");
-////        String token = request.getHeader("Token");
-////        if(!commonService.authorizationCheck(authKey,token,"icdc_creation")){
-////            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-////        }
-//
-//    }
+    @PostMapping("/Create")
+    public ResponseEntity<?> createIcdc(@RequestBody IcdcEntity icdcEntity, HttpServletRequest request) {
+
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+        if(!commonService.authorizationCheck(authKey,token,"session_create")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        icdcService.createIcdc(icdcEntity,authKey,token);
+        return new ResponseEntity<>(commonService.responseData("200","Form Created!"),HttpStatus.OK);
+    }
 
     @PostMapping("/Save")
     public ResponseEntity<?> icdcResponse(@RequestBody IcdcResponseEntity icdcResponseEntity, HttpServletRequest request) {

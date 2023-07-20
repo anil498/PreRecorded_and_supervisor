@@ -1,7 +1,6 @@
 package com.VideoPlatform.Services;
 
-import com.VideoPlatform.Entity.IcdcResponseEntity;
-import com.VideoPlatform.Entity.SessionEntity;
+import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import org.slf4j.Logger;
@@ -24,7 +23,19 @@ public class IcdcServiceImpl implements IcdcService{
     private SessionRepository sessionRepository;
     @Autowired
     private IcdcResponseRepository icdcResponseRepository;
+    @Autowired
+    private AccountAuthRepository accountAuthRepository;
+    @Autowired
+    private UserAuthRepository userAuthRepository;
 
+    @Override
+    public IcdcEntity createIcdc(IcdcEntity icdcEntity, String authKey, String token){
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
+        UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
+        icdcEntity.setAccountId(accountAuthEntity.getAccountId());
+        icdcEntity.setUserId(userAuthEntity.getUserId());
+        return icdcRepository.save(icdcEntity);
+    }
     @Override
     public IcdcResponseEntity saveIcdcResponse(IcdcResponseEntity icdcResponseEntity){
         if(icdcResponseEntity==null) {
@@ -42,4 +53,5 @@ public class IcdcServiceImpl implements IcdcService{
         icdcResponseEntity.setUserId(sessionEntity.getUserId());
         return icdcResponseRepository.save(icdcResponseEntity);
     }
+
 }
