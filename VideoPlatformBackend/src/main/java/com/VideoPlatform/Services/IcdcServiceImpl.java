@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class IcdcServiceImpl implements IcdcService{
@@ -27,6 +29,10 @@ public class IcdcServiceImpl implements IcdcService{
     private AccountAuthRepository accountAuthRepository;
     @Autowired
     private UserAuthRepository userAuthRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
     public IcdcEntity createIcdc(IcdcEntity icdcEntity, String authKey, String token){
@@ -53,5 +59,17 @@ public class IcdcServiceImpl implements IcdcService{
         icdcResponseEntity.setUserId(sessionEntity.getUserId());
         return icdcResponseRepository.save(icdcResponseEntity);
     }
-
+    @Override
+    public List<Map<String,Object>> getNames(Map<String,Object> params){
+        Integer userId = (Integer) params.get("userId");
+        Integer accountId = (Integer) params.get("accountId");
+        List<Map<String,Object>> list = icdcRepository.findNamesByUserId(userId);
+        if(list.isEmpty() || list==null){
+            list = icdcRepository.findNamesByAccountId(accountId);
+            if(list.isEmpty()|| list==null){
+                logger.info("Both user and account doesn't contain any form");
+            }
+        }
+        return list;
+    }
 }

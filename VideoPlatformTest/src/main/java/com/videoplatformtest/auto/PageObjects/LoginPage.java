@@ -14,6 +14,8 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+import static org.junit.Assert.fail;
+
 public class LoginPage {
     static ExtentTest parentTest;
     static ExtentTest childTest;
@@ -41,13 +43,15 @@ public class LoginPage {
         String cardLabelTextU = "Must Enter Username";
 
         if(userName.getText().isEmpty() && password.getText().equals("")){
-            password.sendKeys("abcde");
+            password.sendKeys("abcde@123");
             loginButton.click();
-//            Thread.sleep(30);
-            if(driver.findElement(By.xpath(".//html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelTextU))
-                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty username field giving right response label",ExtentColor.GREEN));
-            else
-                childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty username field giving wrong response label",ExtentColor.RED));
+            Thread.sleep(30);
+            if(driver.findElement(By.xpath("/html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelTextU)) {
+                childTest.log(Status.PASS, MarkupHelper.createLabel("Empty username field giving right response label", ExtentColor.GREEN));
+            }
+            else {
+                childTest.log(Status.FAIL, MarkupHelper.createLabel("Empty username field giving wrong response label", ExtentColor.RED));
+            }
         }
         password.clear();
         childTest = parentTest.createNode("EMPTY PASSWORD");
@@ -56,10 +60,16 @@ public class LoginPage {
         if(userName.getText().equals("") && password.getText().isEmpty()){
             userName.sendKeys("abcedfg");
             loginButton.click();
-            if(driver.findElement(By.xpath(".//html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelTextP))
-                childTest.log(Status.PASS,MarkupHelper.createLabel("Empty password field giving right response label",ExtentColor.GREEN));
-            else
-                childTest.log(Status.FAIL,MarkupHelper.createLabel("Empty password field giving wrong response label",ExtentColor.RED));
+            Thread.sleep(30);
+//            System.out.println("Element val is : " +driver.findElement(By.xpath("/html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText());
+            if(driver.findElement(By.xpath("/html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelTextP)) {
+//                System.out.println("COrrect label ");
+                childTest.log(Status.PASS, MarkupHelper.createLabel("Empty password field giving right response label", ExtentColor.GREEN));
+            }
+            else {
+//                System.out.println("wrong label");
+                childTest.log(Status.FAIL, MarkupHelper.createLabel("Empty password field giving wrong response label", ExtentColor.RED));
+            }
         }
         userName.clear();
         childTest = parentTest.createNode("LABEL TEXT");

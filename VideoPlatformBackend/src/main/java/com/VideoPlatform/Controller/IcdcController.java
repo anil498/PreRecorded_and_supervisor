@@ -16,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -37,7 +39,7 @@ public class IcdcController {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-        if(!commonService.authorizationCheck(authKey,token,"session_create")){
+        if(!commonService.authorizationCheck(authKey,token,"icdc")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         icdcService.createIcdc(icdcEntity,authKey,token);
@@ -49,12 +51,22 @@ public class IcdcController {
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
-        if(!commonService.authorizationCheck(authKey,token,"session_create")){
+        if(!commonService.authorizationCheck(authKey,token,"icdc")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         logger.info("IcdcResponseEntity : {}",icdcResponseEntity);
         if(icdcService.saveIcdcResponse(icdcResponseEntity)==null)
             return new ResponseEntity<>(commonService.responseData("406","Null entity"),HttpStatus.NOT_ACCEPTABLE);
         return new ResponseEntity<>(commonService.responseData("200","Response saved!"),HttpStatus.OK);
+    }
+    @PostMapping("/GetNames")
+    public ResponseEntity<?> getNames(@RequestBody Map<String,Object> params, HttpServletRequest request) {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+        if(!commonService.authorizationCheck(authKey,token,"icdc")){
+            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+        }
+        List<Map<String,Object>> list = icdcService.getNames(params);
+        return ResponseEntity.ok(list);
     }
 }

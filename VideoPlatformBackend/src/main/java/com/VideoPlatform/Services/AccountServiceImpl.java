@@ -191,6 +191,8 @@ public class AccountServiceImpl implements AccountService {
                 existing.setName(params.get("name").getAsString());
             if(!params.get("address").isJsonNull())
                 existing.setAddress(params.get("address").getAsString());
+            if(!params.get("icdcId").isJsonNull())
+                existing.setIcdcId(params.get("icdcId").getAsInt());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }

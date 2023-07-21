@@ -198,6 +198,8 @@ public class UserServiceImpl implements UserService{
                     existing.setContact(params.get("contact").getAsString());
                 if(!params.get("email").isJsonNull())
                     existing.setEmail(params.get("email").getAsString());
+                if(!params.get("icdcId").isJsonNull())
+                    existing.setIcdcId(params.get("icdcId").getAsInt());
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }

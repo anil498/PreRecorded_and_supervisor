@@ -73,7 +73,7 @@ public class UserEntity implements Serializable {
     private HashMap<String, Object> featuresMeta = new HashMap<String, Object>(0);
 
     @Column(name = "icdc_id")
-    private int icdcId;
+    private int icdcId=0;
 
     @Column(name = "status")
     private int status = 1;
@@ -240,11 +240,20 @@ public class UserEntity implements Serializable {
             this.logo = logo;
     }
 
+    public int getIcdcId() {
+        return icdcId;
+    }
+
+    public void setIcdcId(int icdcId) {
+        this.icdcId = icdcId;
+    }
+
     @Override
     public String toString() {
         return "{" +
                 "userId=" + userId +
                 ", accountId=" + accountId +
+                ", icdcId=" + icdcId +
                 ", loginId='" + loginId + '\'' +
                 ", password='" + password + '\'' +
                 ", fname='" + fname + '\'' +
