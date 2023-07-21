@@ -486,6 +486,25 @@
                         </mat-radio-button>
                       </mat-radio-group>
                     </ng-container>
+
+                    <ng-container *ngSwitchCase="'dropdown'">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Form</mat-label>
+                        <mat-select
+                          [(value)]="
+                            selectedFeaturesMeta[feature.featureId][meta.key]
+                          "
+                        >
+                          <mat-option [value]="0">None</mat-option>
+                          <mat-option
+                            *ngFor="let form of forms"
+                            [value]="form.icdc_id"
+                          >
+                            {{ form.form_name }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </ng-container>
                   </ng-container>
                 </div>
               </div>
@@ -601,6 +620,25 @@
                           {{ name }}
                         </mat-radio-button>
                       </mat-radio-group>
+                    </ng-container>
+
+                    <ng-container *ngSwitchCase="'dropdown'">
+                      <mat-form-field appearance="outline">
+                        <mat-label>Form</mat-label>
+                        <mat-select
+                          [(value)]="
+                            selectedFeaturesMeta[feature.featureId][meta.key]
+                          "
+                        >
+                          <mat-option [value]="0">None</mat-option>
+                          <mat-option
+                            *ngFor="let form of forms"
+                            [value]="form.icdc_id"
+                          >
+                            {{ form.form_name }}
+                          </mat-option>
+                        </mat-select>
+                      </mat-form-field>
                     </ng-container>
                   </ng-container>
                 </div>

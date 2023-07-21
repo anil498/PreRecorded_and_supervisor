@@ -23,12 +23,17 @@ import { Subscription, timeout } from "rxjs";
 import { FormGroup } from "@angular/forms";
 import { QuestionIconComponent } from "app/question-icon/question-icon.component";
 import { SharedService } from "app/services/shared.service";
+import { RestService } from "app/services/rest.service";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 @Component({
   selector: "app-feedback-form",
   templateUrl: "./feedback-form.component.html",
   styleUrls: ["./feedback-form.component.scss"],
 })
 export class FeedbackFormComponent implements OnInit {
+  showQuestionIcon: boolean = true;
+  showAnswerIcon: boolean = true;
+  formName: string;
   questions: any[];
   droppedItems: string[] = [];
   index = 0;
@@ -61,6 +66,8 @@ export class FeedbackFormComponent implements OnInit {
     private elementRef: ElementRef,
     private appRef: ApplicationRef,
     private renderer: Renderer2,
+    private snackBar: MatSnackBar,
+    private restService: RestService,
     private observerService: ObserverService,
     private sharedService: SharedService,
     private changeDetectorRef: ChangeDetectorRef
@@ -144,7 +151,15 @@ export class FeedbackFormComponent implements OnInit {
     if (this.ansMetaSub) this.ansMetaSub.unsubscribe();
   }
 
+  arrangeAnswer(event: CdkDragDrop<string[]>) {
+    const answers = <any>document.getElementsByTagName("app-answer-template");
+    console.log(answers, event.previousIndex, event.currentIndex);
+    moveItemInArray(answers, event.previousIndex, event.currentIndex);
+  }
+
   onQuestionDrop(event) {
+    //moveItemInArray(this.selectedAnswers, event.previousIndex, event.currentIndex);
+    this.showQuestionIcon = false;
     console.log("Dropped");
     console.log(event);
     const droppedIndex = event.currentIndex;
@@ -162,6 +177,7 @@ export class FeedbackFormComponent implements OnInit {
     this.answerDisable = false;
   }
   onAnswerDrop(event) {
+    this.showAnswerIcon = false;
     if (this.questionType !== "text" || this.totalAnswer < 1) {
       console.log("Dropped");
       console.log(event);
@@ -237,9 +253,38 @@ export class FeedbackFormComponent implements OnInit {
     );
     this.sharedService.setForm(this.feedbackForm);
     this.sharedService.setFormArray(this.questionArray);
+    this.showQuestionIcon = true;
+    this.showAnswerIcon = true;
   }
 
-  onFormSave() {}
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    this.snackBar.open(message, "Dismiss", snackBarConfig);
+  }
+
+  async onFormSave() {
+    console.log("form saved");
+    console.log(this.formName, this.questionArray);
+    let response: any;
+    try {
+      response = await this.restService.createForm(
+        "Icdc/Create",
+        this.formName,
+        this.questionArray
+      );
+      console.log(response);
+      if (response.status_code == 200) {
+        console.log("created");
+        this.openSnackBar(response.msg, "snackBar");
+        this.onCancel();
+      } else {
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   // removeAns(id: any) {
   //   const ansEle = document.getElementById(`${id}`);
   //   const ansDiv = document.getElementById("answer-div");
@@ -277,5 +322,7 @@ export class FeedbackFormComponent implements OnInit {
     this.observerService.ansMeta.next([]);
     this.observerService.totalQuestion.next(0);
     this.observerService.totalAnswer.next(0);
+    this.showQuestionIcon = true;
+    this.showAnswerIcon = true;
   }
 }
