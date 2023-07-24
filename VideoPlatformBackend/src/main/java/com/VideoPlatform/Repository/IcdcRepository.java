@@ -13,6 +13,9 @@ public interface IcdcRepository extends JpaRepository<IcdcEntity, Integer> {
     @Query(nativeQuery=true, value = "SELECT * from icdc where user_id = :userId limit 1")
     IcdcEntity findByUserId(@Param("userId") Integer userId);
 
+    @Query(nativeQuery=true, value = "SELECT * from icdc where icdc_id = :icdcId")
+    IcdcEntity findByIcdcId(@Param("icdcId") Integer icdcId);
+
     @Query(nativeQuery=true, value = "SELECT icdc_id,form_name from icdc where user_id = :userId")
     List<Map<String, Object>> findNamesByUserId(@Param("userId") Integer userId);
 
