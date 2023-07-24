@@ -36,7 +36,7 @@ export class UpdateFeatureDialogComponent implements OnInit {
     private renderer: Renderer2,
     @Inject(MAT_DIALOG_DATA) public featureData: any
   ) {
-    this.metaTypes = ["text", "bool", "radio", "file"];
+    this.metaTypes = ["text", "bool", "radio", "file", "dropdown"];
     this.metaListNumber = 0;
   }
 

@@ -106,7 +106,19 @@ export class CreateAccessDialogComponent implements OnInit {
       this.focusOnInvalidFields();
       return;
     }
+
+    this.accessObject = {
+      path: "/app/" + this.accessForm.value.systemName,
+      title: this.accessForm.value.name,
+      icon: "",
+      class: this.accessForm.value.systemName,
+      show: false,
+      systemName: this.accessForm.value.systemName,
+    };
+    console.log(this.accessObject);
+    //this.addAccess(this.accessObject);
     let response: any;
+
     try {
       response = await this.restService.createAccess(
         "Access/Create",
@@ -120,19 +132,38 @@ export class CreateAccessDialogComponent implements OnInit {
       if (response.status_code == 200) {
         this.openSnackBar(response.msg, "snackBar");
         console.log("Access Created");
-        this.accessObject.class = this.accessForm.value.systemName;
-        this.accessObject.systemName = this.accessForm.value.systemName;
-        this.accessObject.icon = "";
-        this.accessObject.path = "/app/" + this.accessForm.value.systemName;
-        this.accessObject.title = this.accessForm.value.name;
-        this.accessObject.show = false;
         this.dialogRef.close();
         this.restService.closeDialog();
       }
     } catch (error) {
-      this.openSnackBar(error.error.error, "snackBar");
+      this.openSnackBar(error, "snackBar");
       console.log(error);
       console.log("access not created");
     }
   }
+
+  // addAccess(accessObject: AccessObject): void {
+  //   const url = "./assets/json/access.json";
+  //   this.http.get(url).subscribe(
+  //     (data: AccessObject[]) => {
+  //       data.push(accessObject);
+  //       console.log(
+  //         "🚀 ~ file: create-access-dialog.component.ts:145 ~ CreateAccessDialogComponent ~ addAccess ~ ̥:",
+  //         data
+  //       );
+
+  //       this.http.put(url, data).subscribe(
+  //         () => {
+  //           console.log("Access object saved successfully.");
+  //         },
+  //         (error) => {
+  //           console.error("Error saving access object:", error);
+  //         }
+  //       );
+  //     },
+  //     (error) => {
+  //       console.error("Error retrieving access.json:", error);
+  //     }
+  //   );
+  //}
 }

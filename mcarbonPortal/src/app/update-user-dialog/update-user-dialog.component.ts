@@ -63,6 +63,8 @@ export class UpdateUserDialogComponent implements OnInit {
   topLevelAccess2: any[] = [];
   videoSelect: any = {};
   formData: FormData = null;
+  icdcId: number = 0;
+  forms: any;
   selectedFeaturesMeta = {};
   constructor(
     private router: Router,
@@ -231,6 +233,13 @@ export class UpdateUserDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
+    await this.restService
+      .getIcdcData("Icdc/GetNames", this.user.userId, this.user.accountId)
+      .then((response) => {
+        this.forms = response;
+      });
+    console.log(this.forms);
+
     this.userForm1 = this.fb.group({
       user_fname: [
         this.user.fname,
@@ -463,6 +472,10 @@ export class UpdateUserDialogComponent implements OnInit {
     console.log(this.acc_exp_date);
     console.log(this.exp_date);
     let response: any;
+    if (this.selectedFeaturesMeta.hasOwnProperty("16")) {
+      this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
+    }
+    console.log(this.icdcId);
     try {
       response = await this.restService.updateUser(
         "Update",
@@ -482,7 +495,8 @@ export class UpdateUserDialogComponent implements OnInit {
         this.max_participants,
 
         this.selectedFeatures.sort(),
-        this.selectedFeaturesMeta
+        this.selectedFeaturesMeta,
+        this.icdcId
       );
       console.warn(response);
       console.log(this.login_id);

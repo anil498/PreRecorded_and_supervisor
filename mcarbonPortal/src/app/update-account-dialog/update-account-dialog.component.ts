@@ -64,6 +64,8 @@ export class UpdateAccountDialogComponent implements OnInit {
   topLevelAccess2: any[] = [];
   selectedFeaturesMeta = {};
   formData: FormData = null;
+  icdcId: number = 0;
+  forms: any;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<UpdateAccountDialogComponent>,
@@ -133,7 +135,7 @@ export class UpdateAccountDialogComponent implements OnInit {
     console.warn(featureId);
     console.warn(this.selectedFeaturesMeta[featureId]);
     // const file: File = event.target.files[0];
-    // //const file: File = files[0];
+    // const file: File = files[0];
     // const reader = new FileReader();
     // reader.readAsBinaryString(file);
     // console.log(file);
@@ -471,7 +473,10 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.selectedAccessId = this.userForm2.value.accessList;
     this.selectedFeatures = this.userForm3.value.featureList;
     this.selectedFeaturesMeta = this.userForm3.value.featureMeta;
-
+    if (this.selectedFeaturesMeta.hasOwnProperty("16")) {
+      this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
+    }
+    console.log(this.icdcId);
     let response: any;
 
     try {
@@ -490,7 +495,8 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.selectedAccessId.sort(),
 
         this.selectedFeatures.sort(),
-        this.selectedFeaturesMeta
+        this.selectedFeaturesMeta,
+        this.icdcId
       );
       console.warn(response);
       let videoResponse;

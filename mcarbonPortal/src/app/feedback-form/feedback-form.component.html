@@ -1,4 +1,4 @@
-<div class="main-content form-content">
+<!-- <div class="main-content form-content">
   <div class="container-fluid">
     <div class="row section-1">
       <div class="col-md-12">
@@ -62,5 +62,99 @@
   <div class="footer">
     <button class="btn btn-danger" (click)="onCancel()">Cancel</button>
     <button class="btn btn-success" (click)="saveQuestion()">Save</button>
+  </div>
+</div> -->
+
+<div class="main-content form-content">
+  <div class="container-fluid">
+    <div class="row section-1">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-danger">
+            <div class="col-md-8 form-field">
+              <mat-form-field>
+                <mat-label class="form-name">Form Name</mat-label>
+                <input
+                  matInput
+                  type="text"
+                  placeholder="Form Name"
+                  [(ngModel)]="formName"
+                />
+              </mat-form-field>
+            </div>
+            <div
+              class="col-md-2"
+              cdkDropList
+              (cdkDropListDropped)="onQuestionDrop($event)"
+            >
+              <div
+                class="question-box"
+                [cdkDragDisabled]="questionDisable"
+                cdkDragBoundary="#question-div"
+                cdkDrag
+              >
+                Question
+              </div>
+            </div>
+            <div
+              class="col-md-2"
+              cdkDropList
+              (cdkDropListDropped)="onAnswerDrop($event)"
+            >
+              <div
+                class="answer-box"
+                [cdkDragDisabled]="answerDisable"
+                cdkDrag
+                cdkDragBoundary="#answer-div"
+              >
+                Answer
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body card-body-1">
+            <div class="card card-body question-body">
+              <div class="add-icon" *ngIf="showQuestionIcon">
+                <mat-icon>add_circle</mat-icon>
+              </div>
+              <div class="question-placeholder" *ngIf="showQuestionIcon">
+                <p>Drag and drop a question here</p>
+              </div>
+              <div class="" id="question-div" cdkDropList></div>
+            </div>
+            <div
+              class="card card-body answer-body"
+              *ngIf="checkQuestionDisable()"
+            >
+              <div class="add-icon" *ngIf="showAnswerIcon">
+                <mat-icon>add_circle</mat-icon>
+              </div>
+              <div class="question-placeholder" *ngIf="showAnswerIcon">
+                <p>Drag and drop a question here</p>
+              </div>
+              <div class="" id="answer-div" cdkDropList (cdkDropListDropped)="arrangeAnswer($event)"></div>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <!-- <button class="btn btn-danger" (click)="onCancel()">Cancel</button> -->
+            <button class="btn btn-success" (click)="saveQuestion()">
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row section-2">
+      <div class="col-md-12">
+        <div class="card ques-tab">
+          <div class="card-body" id="question-tab"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <button class="btn btn-danger" (click)="onCancel()">Reset</button>
+    <button class="btn btn-success" (click)="onFormSave()">Save</button>
   </div>
 </div>

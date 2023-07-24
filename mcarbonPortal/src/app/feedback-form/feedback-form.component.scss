@@ -55,18 +55,51 @@
 
 .card-body-1 {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .question-body,
 .answer-body {
   display: flex;
   flex-direction: column;
+  background: rgb(249, 255, 255);
+}
+
+.question-body,
+.answer-body {
+  border: 2px dashed #ccc;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  .add-icon {
+    font-size: 50px;
+    color: #ccc;
+  }
+
+  .question-placeholder {
+    text-align: center;
+    font-size: 18px;
+    color: #ccc;
+  }
+}
+
+.answer-body {
+  margin-top: 0px;
 }
 
 #question-tab {
   border-radius: 50px;
   min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ques-tab {
+  border-radius: 50px;
 }
 
 .section-1 {
@@ -88,4 +121,22 @@
   margin-top: 60px !important;
   padding: 30px 15px 0px 30px !important;
   min-height: calc(100vh - 60px) !important;
+}
+
+.card-header {
+  display: flex;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-end !important;
+}
+
+.form-name {
+  color: white;
+}
+
+#question-div,
+#answer-div {
+  width: inherit;
 }

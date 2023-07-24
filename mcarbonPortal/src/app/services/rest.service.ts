@@ -429,7 +429,8 @@ export class RestService {
     max_participants: number,
 
     features: number[],
-    featuresMeta: any
+    featuresMeta: any,
+    icdcId: number
   ) {
     return this.putRequest1(type, {
       accountId,
@@ -451,6 +452,7 @@ export class RestService {
 
       features,
       featuresMeta,
+      icdcId,
     });
   }
 
@@ -520,7 +522,8 @@ export class RestService {
     accessId: number[],
 
     features: number[],
-    featuresMeta: any
+    featuresMeta: any,
+    icdcId: number
   ) {
     return this.putRequest2(type, {
       accountId,
@@ -540,6 +543,7 @@ export class RestService {
 
       features,
       featuresMeta,
+      icdcId,
     });
   }
 
@@ -782,6 +786,43 @@ export class RestService {
       });
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async createForm(path: string, formName: string, icdcData: any) {
+    try {
+      return this.postRequest(path, {
+        formName,
+        icdcData,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async getIcdcData(path: string, userId: number, accountId: number) {
+    const headers = new HttpHeaders({
+      Token: `${this._token}`,
+      Authorization: `${this.authKey}`,
+      "Content-Type": "application/json",
+    });
+    const body = {
+      userId,
+      accountId,
+    };
+    console.log(body);
+    try {
+      return lastValueFrom(
+        this.http.post<any>(this.baseHref + path, body, { headers })
+      );
+    } catch (error) {
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
     }
   }
 }
