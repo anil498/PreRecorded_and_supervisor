@@ -20,7 +20,7 @@ public class IcdcEntity {
     @SequenceGenerator(name="icdc_data_generator", sequenceName = "icdc_data_seq",allocationSize = 1)
     private int icdcId;
 
-    @Column(name = "form_name")
+    @Column(name = "form_name",unique = true)
     private String formName;
 
     @Column(name = "account_id")

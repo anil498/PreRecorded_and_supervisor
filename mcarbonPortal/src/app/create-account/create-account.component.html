@@ -162,6 +162,15 @@
                 (change)="onPhotoSelected($event)"
                 formControlName="logo"
               />
+              <image-cropper
+                *ngIf="photoControl"
+                [image]="photoUrl"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="130 / 29"
+                (imageCropped)="onImageCropped($event)"
+                (cropperReady)="onCropperReady($event)"
+                (loadImageFailed)="onLoadImageFailed()"
+              ></image-cropper>
               <button
                 class="btn btn-sm btn-photo"
                 id="logo-btn"

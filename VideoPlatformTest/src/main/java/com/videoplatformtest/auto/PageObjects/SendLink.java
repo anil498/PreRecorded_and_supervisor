@@ -30,7 +30,7 @@ public class SendLink {
     static ExtentTest parentTest;
     static ExtentTest childTest;
 
-    public static void sendLinkCheck(ChromeDriver driver, ExtentReports extentReports, String loginId, String password, String webUrl) throws InterruptedException {
+    public static void sendLinkCheck(ChromeDriver driver, ExtentReports extentReports, String loginId, String password, String webUrl) throws InterruptedException, IOException {
         parentTest = extentReports.createTest("SEND LINK TEST");
         AtomicReference<String> responseBody= new AtomicReference<>("");
         driver.manage().window().maximize();
@@ -54,28 +54,51 @@ public class SendLink {
         driver.get(webUrl);
         driver.manage().window().maximize();
         login(driver, loginId, password);
-        Thread.sleep(2000);
+        Thread.sleep(3000);
         childTest = parentTest.createNode("CUSTOMER ROLES CHECK");
         driver.findElement(By.id("dynamic_links")).click();
         if(driver.getCurrentUrl().equals(webUrl+"app/dynamic_links"))
             childTest.log(Status.PASS, MarkupHelper.createLabel("Send Link clicked, navigated to dynamic link page", ExtentColor.GREEN));
         else
             childTest.log(Status.FAIL, MarkupHelper.createLabel("Send Link clicked, not navigated to dynamic link page", ExtentColor.RED));
-        checkPermissions(driver,responseBody);
+
+        if(checkPermissions(driver,responseBody)){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("All permission displayed are given to user", ExtentColor.GREEN));
+        }
+        else {
+            childTest.log(Status.FAIL, MarkupHelper.createLabel("Permission displayed are not given to user", ExtentColor.RED));
+        }
         driver.close();
     }
 
-    public static Boolean checkPermissions(ChromeDriver driver, AtomicReference<String> responseBody){
+    public static Boolean checkPermissions(ChromeDriver driver, AtomicReference<String> responseBody) throws IOException {
 
         List<WebElement> list = driver.findElements(By.xpath(".//mat-tab-group/mat-tab-header/div/div/div")).stream().filter(row -> {
             if (row.findElements(By.className("mat-tab-label-content")) == null)
                 return false;
             return true;
         }).collect(Collectors.toList());
-//        try {
-        for (WebElement row : list) {
+        List<String> accessData = getAccessData(responseBody);
+        for(WebElement row : list){
+            if (row.getText().contains("SMS")) {
+                if(!accessData.contains("SMS")){
+                    fail(); return false;
+                }
+            }
+            if (row.getText().contains("Whatsapp")) {
+                if(!accessData.contains("Whatsapp")){
+                    fail(); return false;
+                }
+            }
+            if (row.getText().contains("Call on App")) {
+                if(!accessData.contains("Send Notification")){
+                    fail(); return false;
+                }
+            }
             System.out.println(row.getText());
         }
+        return true;
+    }
 
 //            List<String> accessValues = getAccessData(responseBody.get());
 //            if (driver.findElement(ByAngular.partialButtonText("Edit")).isDisplayed()) {
@@ -90,11 +113,10 @@ public class SendLink {
 //        catch (IOException e) {
 //            e.printStackTrace();
 //        }
-        return true;
-    }
-    public static List<String> getAccessData(String responseBody) throws IOException {
+
+    public static List<String> getAccessData(AtomicReference<String> responseBody) throws IOException {
         Gson gson=new Gson();
-        JsonObject params=gson.fromJson(responseBody,JsonObject.class);
+        JsonObject params=gson.fromJson(String.valueOf(responseBody),JsonObject.class);
 //        System.out.println("Params : "+params);
         ObjectMapper objectMapper=new ObjectMapper();
         if(params.isJsonNull()) return null;

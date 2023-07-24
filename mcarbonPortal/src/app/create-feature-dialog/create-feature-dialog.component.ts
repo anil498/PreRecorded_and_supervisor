@@ -34,7 +34,7 @@ export class CreateFeatureDialogComponent implements OnInit {
     private changeDetectorRef: ChangeDetectorRef,
     private renderer: Renderer2
   ) {
-    this.metaTypes = ["text", "bool", "radio", "file"];
+    this.metaTypes = ["text", "bool", "radio", "file", "dropdown"];
     this.metaListNumber = 0;
   }
 

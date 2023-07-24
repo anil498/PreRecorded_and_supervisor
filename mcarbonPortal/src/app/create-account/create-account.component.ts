@@ -26,7 +26,7 @@ import { ImageFile } from "app/model/image-file";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { async } from "@angular/core/testing";
 import { HttpClient } from "@angular/common/http";
-
+import { ImageCroppedEvent } from "ngx-image-cropper";
 @Component({
   selector: "app-create-account",
   templateUrl: "./create-account.component.html",
@@ -76,6 +76,7 @@ export class CreateAccountComponent implements OnInit {
   login_id: string;
   photoUrl: any;
   photoControl: boolean = false;
+  croppedImage: any = null;
   password: string;
   confirm_password: string;
   max_duration: number;
@@ -153,6 +154,20 @@ export class CreateAccountComponent implements OnInit {
     this.photoUrl = {};
     this.photoControl = false;
     this.logo = {};
+  }
+
+  onImageCropped(event: ImageCroppedEvent) {
+    console.log(event);
+    this.croppedImage = event.base64;
+    console.log(this.croppedImage);
+  }
+
+  onCropperReady(event) {
+    // Cropper is ready
+  }
+
+  onLoadImageFailed() {
+    // Image loading failed
   }
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const file: File = event.target.files[0];
@@ -556,11 +571,9 @@ export class CreateAccountComponent implements OnInit {
       if (error.status == 401) {
         this.openSnackBar(error.error, "snackBar");
         this.timeOut(3000);
-      }
-      else{
+      } else {
         this.openSnackBar(error.error.error, "snackBar");
         this.timeOut(3000);
-
       }
     }
   }

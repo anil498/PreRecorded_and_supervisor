@@ -55,7 +55,7 @@ export class QuestionTemplateComponent implements OnInit {
       }
     );
     this.questionForm = this.fb.group({
-      qId: [this.questionId, [Validators.required]],
+      q_id: [this.questionId, [Validators.required]],
       question: ["", [Validators.required]],
       type: [this.selectedValue.type, [Validators.required]],
     });

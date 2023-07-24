@@ -55,6 +55,9 @@ public class AccountEntity {
     @Type(type="com.VideoPlatform.Utils.GenericArrayUserType")
     private Integer[] accessId = {};
 
+    @Column(name = "icdc_id")
+    private int icdcId=0;
+
     @Column(name = "status")
     private int status=1;
 
@@ -166,10 +169,19 @@ public class AccountEntity {
             this.expDate = expDate;
     }
 
+    public int getIcdcId() {
+        return icdcId;
+    }
+
+    public void setIcdcId(int icdcId) {
+        this.icdcId = icdcId;
+    }
+
     @Override
     public String toString() {
         return "AccountEntity{" +
                 "accountId=" + accountId +
+                ", icdcId=" + icdcId +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", logo=" + logo +

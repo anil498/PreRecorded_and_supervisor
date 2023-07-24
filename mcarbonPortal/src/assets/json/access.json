@@ -120,11 +120,11 @@
     "systemName": "manage_platform_access"
   },
   {
-    "path": "/app/feedback_form",
-    "title": "Feedback Form",
+    "path": "/app/icdc",
+    "title": "ICDC",
     "icon": "receipt",
-    "class": "feedform_form",
+    "class": "icdc",
     "show": false,
-    "systemName": "feedback_form"
+    "systemName": "icdc"
   }
 ]

@@ -19,5 +19,5 @@ export const AdminLayoutRoutes: Routes = [
   { path: "dynamic_links", component: DynamicSupportComponent },
   { path: "manage_platform_access", component: AccessManagementComponent },
   { path: "manage_platform_feature", component: FeatureManagementComponent },
-  { path: "feedback_form", component: FeedbackFormComponent },
+  { path: "icdc", component: FeedbackFormComponent },
 ];

@@ -10,3 +10,25 @@
 .select-icon {
   margin-right: 15px;
 }
+
+.ques-no {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+}
+
+.ques-id {
+  bottom: 15px;
+}
+
+mat-label {
+  color: #009688;
+}
+
+::ng-deep .mat-primary .mat-option.mat-selected:not(.mat-option-disabled) {
+  color: #009688;
+}
+
+::ng-deep .mat-select-value {
+  color: #009688;
+}

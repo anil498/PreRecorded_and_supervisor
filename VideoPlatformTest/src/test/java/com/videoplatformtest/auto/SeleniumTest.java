@@ -19,7 +19,7 @@ import java.io.IOException;
 import static org.junit.Assert.fail;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class SeleniumTest extends TestBaseClass{
+public class SeleniumTest extends TestBaseClass {
 
     String relativePath = "src/main/resources/chromedriver";
     File file = new File(relativePath);
@@ -30,7 +30,7 @@ public class SeleniumTest extends TestBaseClass{
     public ExtentSparkReporter extentSparkReporter;
 
     @BeforeClass
-    public void beforeClass(){
+    public void beforeClass() {
         System.out.println("Before class!");
         extentReports = new ExtentReports();
         extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_video.html");
@@ -48,62 +48,71 @@ public class SeleniumTest extends TestBaseClass{
     }
 
     @AfterTest
-    public void endReport() { extentReports.flush(); }
+    public void endReport() { extentReports.flush();}
 
     @Test
     public void TC0001_LoginTest() throws Exception {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        LoginPage.loginPage(driver,extentReports,webUrl);
+        LoginPage.loginPage(driver, extentReports, webUrl);
     }
 
     @Test
     public void TC0002_LogOutTest() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        LogoutCheck.logOut(driver,extentReports,"mcarbon","mcarbon",webUrl);
+        LogoutCheck.logOut(driver, extentReports, "mcarbon", "mcarbon", webUrl);
+    }
+
+    @Test
+    public void TC0001_DashboardTest() throws Exception {
+        System.setProperty("webdriver.chrome.driver", absolutePath);
+        ChromeDriver driver = new ChromeDriver();
+        Dashboard.dashboard(driver,extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
     public void TC0004_ProfileCheck() throws InterruptedException, IOException {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        ProfileCheck.profileCheck(driver,extentReports,"mcarbon","mcarbon",webUrl);
+        ProfileCheck.profileCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
     public void TC0005_SideNavCheck() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        SideNavCheck.sideNavCheck(driver,extentReports,"mcarbon","mcarbon",webUrl);
+        SideNavCheck.sideNavCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
     public void TC0006_CustomerManagement() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        CustomerManagement.customerManagementCheck(driver,extentReports,"mcarbon","mcarbon",webUrl);
+        CustomerManagement.customerManagementCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
+
     @Test
     public void TC0006_MyGroups() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        MyGroups.myGroupsCheck(driver,extentReports,"mcarbon","mcarbon",webUrl);
+        MyGroups.myGroupsCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
-    public void TC0007_SendLink() throws InterruptedException {
+    public void TC0007_SendLink() throws InterruptedException, IOException {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        SendLink.sendLinkCheck(driver,extentReports,"mcarbon","mcarbon",webUrl);
+        SendLink.sendLinkCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
     public void TC0008_CustomerRolesCheck() throws InterruptedException, IOException {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         ChromeDriver driver = new ChromeDriver();
-        CustomerManagement.customerRolesCheck(driver,extentReports,"mcarbon","mcarbon",webUrl);
+        CustomerManagement.customerRolesCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
+}
 /*
     @Test
     public void TC0008_CustomerData() throws InterruptedException, IOException {
@@ -209,66 +218,7 @@ public class SeleniumTest extends TestBaseClass{
 //            System.out.println("ExpDate matched!");
 //        }
 //    }
-//    public List<String> getAccessData(String responseBody) throws IOException {
-//        Gson gson=new Gson();
-//        JsonObject params=gson.fromJson(responseBody,JsonObject.class);
-////        System.out.println("Params : "+params);
-//        ObjectMapper objectMapper=new ObjectMapper();
-//        if(params.isJsonNull()) return null;
-//
-//       List<String>name = new ArrayList<>();
-//        if(!params.get("Access").isJsonNull()){
-//            List<HashMap> dataAsMap = objectMapper.readValue(params.get("Access").toString(), List.class);
-//            for(Map<String,String>map : dataAsMap){
-//                name.add(map.get("name"));
-//            }
-//        }
-//        return name;
-//    }
-//    public List<String> getFeatureData(String responseBody) throws IOException {
-//        Gson gson=new Gson();
-//        JsonObject params=gson.fromJson(responseBody,JsonObject.class);
-//        System.out.println("Params : "+params);
-//        ObjectMapper objectMapper=new ObjectMapper();
-//        if(params.isJsonNull()) return null;
-//        List<String>name = new ArrayList<>();
-//        if(!params.get("Features").isJsonNull()){
-//            List<HashMap> dataAsMap = objectMapper.readValue(params.get("Features").toString(), List.class);
-//            for(Map<String,String>map : dataAsMap){
-//                name.add(map.get("name"));
-//            }
-//        }
-//        return name;
-//    }
 
-
-//    public void checkAccess(ChromeDriver driver,AtomicReference<String> responseBody){
-//        try {
-//            List<String> accessValues = getAccessData(responseBody.get());
-//            List<WebElement> sidebarElements = driver.findElements(By.tagName("ul"));
-//            if(sidebarElements.isEmpty()){ fail(); }
-//            for (WebElement element : sidebarElements) {
-////                System.out.println("Attribute name : "+element.getAttribute("class"));
-//                System.out.println("TEXT : "+element.getText());
-//                if (element.getText().contains("Dashboard")) { if(!accessValues.contains("Dashboard")) fail(); else System.out.println("Dashboard"); }
-//                else if (element.getText().contains("Customer Management")) { if(!accessValues.contains("Customer Management")) fail(); else System.out.println("Customer Management"); }
-//                else if (element.getText().contains("My Groups")) { if(!accessValues.contains("My Groups")) fail(); else System.out.println("My Groups");}
-//                else if (element.getText().contains("My Sessions")) { if(!accessValues.contains("My Sessions")) fail(); else System.out.println("My Sessions"); }
-//                else if (element.getText().contains("Send Link")) { if(!accessValues.contains("Send Link")) fail(); else System.out.println("Send Link"); }
-//                else if (element.getText().contains("My Reports")) { if(!accessValues.contains("My Reports")) fail(); else System.out.println("My Reports");}
-//                else if (element.getText().contains("Platform Access")) { if(!accessValues.contains("Platform Access")) fail(); else System.out.println("Platform Access");}
-//                else if (element.getText().contains("Platform Feature")) { if(!accessValues.contains("Platform Feature")) fail(); else System.out.println("Platform Features");}
-//                else if (element.getText().contains("Feedback")) { if(!accessValues.contains("Feedback")) fail(); else System.out.println("Feedback");}
-//                }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (Exception e) {
-//            fail("Unexpected error");
-//        }
-//    }
-
-
-    }
 
 //    @Test
 //    public void getLogs() {
