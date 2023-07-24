@@ -259,13 +259,14 @@ export class CallComponent implements OnInit {
 				} else {
 					this.isVideoMuted = true;
 				}
-			} else {
-				this.isAudioMuted = false;
-				this.isVideoMuted = false;
-			}
-			if (response.settings.supervisor && this.type === 'Support') {
+			} else if(response.settings.supervisor) {
 				this.participantNameValue = 'Support';
 				this.addSupervisor = true;
+				this.isVideoMuted=false
+			}
+			else{
+				this.isAudioMuted = false;
+				this.isVideoMuted = false;
 			}
 		} catch (error) {
 			console.log(error);
