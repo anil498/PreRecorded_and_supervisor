@@ -322,7 +322,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const data = event.connection?.data;
 			if (isRemoteConnection && isCameraConnection) {
 				// Adding participant when connection is created and it's not screen
-				if (this.participantService.getMyNickname() == 'Support' && !(JSON.parse(data.split('%/%')[0]).clientData == 'Customer') ) {
+				if (this.participantService.getMyNickname() == 'Support' && !this.libService.isSupervisorActive ) {
 					this.libService.supervisorWhenButton.next(true);
 				}
 				try {
