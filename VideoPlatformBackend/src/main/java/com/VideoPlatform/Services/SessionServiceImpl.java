@@ -85,10 +85,6 @@ public class SessionServiceImpl implements SessionService{
                 sessionKey = sessionKey + "_1";
         }
 
-//        if (sessionKey.length()==0)
-//            sessionKey = givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
-//        else
-//            sessionKey = sessionKey +"_1";
         if(sessionId.length()==0)
             sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
 
@@ -246,12 +242,13 @@ public class SessionServiceImpl implements SessionService{
 
                         logger.info("Map1 : {}",map1);
                         settingsEntity.setIcdcDetails(map1);
-                        IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
+                        Integer icdcId = userEntity.getIcdcId();
+                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
                         logger.info("ICDC : {}",icdcEntity);
                         if(icdcEntity!=null) {
                             List<Map<String, Object>> icdcData1 = icdcEntity.getIcdcData();
                             logger.info("ICDC DATA : {}", icdcData1);
-                            ques.put("icdc_id", icdcEntity.getIcdcId());
+                            ques.put("icdc_id", icdcId);
                             ques.put("question_data", icdcData1);
                             logger.info("Ques {}", ques);
                             settingsEntity.setIcdcQuestions(ques);
@@ -265,12 +262,13 @@ public class SessionServiceImpl implements SessionService{
 
                         logger.info("Map1 : {}",map2);
                         settingsEntity.setIcdcDetails(map2);
-                        IcdcEntity icdcEntity = icdcRepository.findByUserId(userEntity.getUserId());
+                        Integer icdcId = userEntity.getIcdcId();
+                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
                         logger.info("ICDC : {}",icdcEntity);
                         if(icdcEntity!=null) {
                             List<Map<String,Object>> icdcData = icdcEntity.getIcdcData();
                             logger.info("ICDC DATA : {}",icdcData);
-                            ques.put("icdc_id", icdcEntity.getIcdcId());
+                            ques.put("icdc_id", icdcId);
                             ques.put("question_data",icdcData);
                             logger.info("Ques {}",ques );
                             settingsEntity.setIcdcQuestions(ques);
