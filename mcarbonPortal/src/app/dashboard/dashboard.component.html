@@ -11,7 +11,6 @@
             <p class="card-category">Accounts</p>
             <h3 class="card-title">
               {{ accounts.activeAccounts }}/{{ accounts.totalAccounts }}
-              <small></small>
             </h3>
           </div>
           <div class="card-footer">
@@ -78,7 +77,10 @@
     <div class="row">
       <div class="col-md-12 graph-select">
         <button class="btn btn-graph">
-          <mat-select [(ngModel)]="selectedGraph" (selectionChange)="onChangeGraph($event)">
+          <mat-select
+            [(ngModel)]="selectedGraph"
+            (selectionChange)="onChangeGraph($event)"
+          >
             <mat-option value="daily">Daily</mat-option>
             <mat-option value="monthly">Monthly</mat-option>
             <mat-option value="yearly">Annually</mat-option>
@@ -93,7 +95,7 @@
             <div class="ct-chart" id="dailySalesChart"></div>
           </div>
           <div class="card-body">
-            <h4 class="card-title">{{accountTitle}}</h4>
+            <h4 class="card-title">{{ accountTitle }}</h4>
             <p class="card-category">
               <span class="text-success"
                 ><i class="fa fa-long-arrow-up"></i> 55%
@@ -114,7 +116,7 @@
             <div class="ct-chart" id="websiteViewsChart"></div>
           </div>
           <div class="card-body">
-            <h4 class="card-title">{{userTitle}}</h4>
+            <h4 class="card-title">{{ userTitle }}</h4>
             <p class="card-category">
               <span class="text-success"
                 ><i class="fa fa-long-arrow-up"></i> 75%
@@ -135,7 +137,7 @@
             <div class="ct-chart" id="completedTasksChart"></div>
           </div>
           <div class="card-body">
-            <h4 class="card-title">{{sessionTitle}}</h4>
+            <h4 class="card-title">{{ sessionTitle }}</h4>
             <p class="card-category">
               <span class="text-success"
                 ><i class="fa fa-long-arrow-up"></i> 20%

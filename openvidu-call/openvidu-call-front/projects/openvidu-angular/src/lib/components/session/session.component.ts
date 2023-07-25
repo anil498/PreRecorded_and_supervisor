@@ -322,8 +322,12 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const data = event.connection?.data;
 			if (isRemoteConnection && isCameraConnection) {
 				// Adding participant when connection is created and it's not screen
-				if (this.participantService.getMyNickname() == 'Support') {
-					this.libService.supervisorWhenButton.next(true);
+				if (this.participantService.getMyNickname() == 'Support' ) {
+					if(this.libService.isSupervisorActive.getValue()){
+						this.libService.supervisorWhenButton.next(false);
+					}else{
+						this.libService.supervisorWhenButton.next(true);
+					}
 				}
 				try {
 					if (JSON.parse(data.split('%/%')[0]).clientData == 'Supervisor') {
@@ -589,11 +593,19 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.openviduService.unholdPartiticipant(subscriber);
 					this.libService.isOnHold.next(false);
 					const remoteParticipants = this.participantService.getRemoteParticipants();
+					if(this.participantService.getMyNickname() == 'Customer'){
 					const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Support');
 					if (participantToUpdate) {
 						participantToUpdate.isOnHold = false;
 						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
 					}
+				}else if(this.participantService.getMyNickname() == 'Supervisor'){
+					const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
+					if (participantToUpdate) {
+						participantToUpdate.isOnHold = false;
+						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+					}
+				}
 				}
 			}
 		});

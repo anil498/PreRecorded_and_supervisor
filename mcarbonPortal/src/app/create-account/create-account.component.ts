@@ -24,9 +24,8 @@ import { Router } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ImageFile } from "app/model/image-file";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
-import { async } from "@angular/core/testing";
 import { HttpClient } from "@angular/common/http";
-import { ImageCroppedEvent } from "ngx-image-cropper";
+
 @Component({
   selector: "app-create-account",
   templateUrl: "./create-account.component.html",
@@ -124,6 +123,7 @@ export class CreateAccountComponent implements OnInit {
   }
 
   onPhotoSelected(event) {
+    console.log("image selected");
     const files: FileList = event.target.files;
     if (files && files.length > 0) {
       const file: File = files[0];
@@ -148,27 +148,16 @@ export class CreateAccountComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
       };
     }
+    event.target.value = "";
   }
 
   onPhotoDeselected() {
-    this.photoUrl = {};
+    console.log("image removed");
+    this.photoUrl = null;
     this.photoControl = false;
     this.logo = {};
   }
 
-  onImageCropped(event: ImageCroppedEvent) {
-    console.log(event);
-    this.croppedImage = event.base64;
-    console.log(this.croppedImage);
-  }
-
-  onCropperReady(event) {
-    // Cropper is ready
-  }
-
-  onLoadImageFailed() {
-    // Image loading failed
-  }
   onFileInputChange(event: any, meta: any, featureId: number): void {
     const file: File = event.target.files[0];
     console.log(file);

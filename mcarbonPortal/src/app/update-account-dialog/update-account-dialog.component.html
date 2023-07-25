@@ -366,7 +366,7 @@
       label="Feature List"
       [formGroup]="userForm3"
       *ngIf="userForm3"
-      [disabled]="userForm1.invalid || userForm2"
+      [disabled]="userForm1.invalid || userForm2.invalid"
     >
       <div class="container">
         <div class="row">

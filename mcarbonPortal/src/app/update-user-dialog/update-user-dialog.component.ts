@@ -117,6 +117,7 @@ export class UpdateUserDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
       };
     }
+    event.target.value = "";
   }
 
   onPhotoDeselected() {
