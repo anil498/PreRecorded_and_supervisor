@@ -25,6 +25,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { ImageFile } from "app/model/image-file";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { HttpClient } from "@angular/common/http";
+import { DateAdapter } from "@angular/material/core";
 
 @Component({
   selector: "app-create-account",
@@ -97,6 +98,7 @@ export class CreateAccountComponent implements OnInit {
   videoSelect: any = {};
   formData: FormData = null;
   constructor(
+    private dateAdapter: DateAdapter<Date>,
     private router: Router,
     private dialogRef: MatDialogRef<CreateAccountComponent>,
     private restService: RestService,
@@ -107,6 +109,7 @@ export class CreateAccountComponent implements OnInit {
     private http: HttpClient,
     private changeDetectorRef: ChangeDetectorRef
   ) {
+    this.dateAdapter.setLocale("en-IN");
     this.loginResponse = this.restService.getToken();
     this.topLevelAccess = this.accessData.filter((item) => item.pId === 0);
     const featureHalf = Math.ceil(this.featuresData.length / 2);
@@ -398,48 +401,6 @@ export class CreateAccountComponent implements OnInit {
     this.tabGroup.selectedIndex = this.currentTabIndex;
   }
 
-  // private getTabIndex(tabName: string): number {
-  //   switch (tabName) {
-  //     case "Account":
-  //       return 0;
-  //     case "Account Settings":
-  //       return 1;
-  //     case "Feature List":
-  //       return 2;
-  //     case "User Information":
-  //       return 3;
-  //     default:
-  //       return -1;
-  //   }
-  // }
-
-  // onTabGroupClick(event: MouseEvent) {
-  //   console.log(event);
-  //   const clickedTabIndex = this.getTabIndex(event.toElement.innerText);
-
-  //   if (clickedTabIndex === -1) {
-  //     return;
-  //   }
-
-  //   if (!(this.currentTabIndex === clickedTabIndex)) {
-  //     if (this.currentTabIndex === 0) {
-  //       if (this.userForm1.invalid) return;
-  //       this.currentTabIndex = clickedTabIndex;
-  //     } else if (this.currentTabIndex === 1) {
-  //       if (this.userForm2.invalid) return;
-  //       this.currentTabIndex = clickedTabIndex;
-  //     } else if (this.currentTabIndex === 2) {
-  //       if (this.userForm3.invalid) return;
-  //       this.currentTabIndex = clickedTabIndex;
-  //     } else if (this.currentTabIndex === 3) {
-  //       if (this.userForm4.invalid) return;
-  //       this.currentTabIndex = clickedTabIndex;
-  //     } else {
-  //       return;
-  //     }
-  //   }
-  // }
-
   isFirstTab(): boolean {
     return this.currentTabIndex === 0;
   }
@@ -479,12 +440,9 @@ export class CreateAccountComponent implements OnInit {
     this.address = this.userForm1.value.address;
     this.max_user = this.userForm1.value.max_user;
     this.acc_exp_date = this.userForm1.value.acc_exp_date;
+    this.acc_exp_date.setHours(23, 59, 59);
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
-    this.exp_date =
-      this.exp_date +
-      " " +
-      this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
-    //this.logo = this.userForm.value.logo;
+    this.exp_date = this.exp_date + " 23:59:59";
 
     this.max_duration = this.userForm2.value.max_duration;
     this.max_participants = this.userForm2.value.max_participants;
@@ -497,13 +455,11 @@ export class CreateAccountComponent implements OnInit {
     this.login_id = this.userForm4.value.login_id;
 
     this.password = this.userForm4.value.password;
-    console.log("Access ID: " + this.selectedAccessId);
-    console.log("Feature ID: " + this.selectedFeatures);
-    console.log("FeatureMetas " + `${this.selectedFeaturesMeta}`);
-    console.log(this.logo);
 
+    console.log("From Date selection: " + this.userForm1.value.acc_exp_date);
+    console.log("function toISOString(): " + this.acc_exp_date.toISOString());
+    console.log(this.exp_date);
     let response: any;
-
     try {
       response = await this.restService.createAccountUser(
         "Create",
@@ -530,7 +486,7 @@ export class CreateAccountComponent implements OnInit {
       console.warn(response);
       if (response.status_code == 200) {
         this.openSnackBar(response.msg, "snackBar");
-        console.log("Feature Created");
+        console.log("Account Created");
         this.dialogRef.close();
         this.restService.closeDialog();
       }
@@ -547,7 +503,7 @@ export class CreateAccountComponent implements OnInit {
           console.log(videoResponse);
           if (videoResponse.status_code == 200) {
             this.openSnackBar(videoResponse.msg, "snackBar");
-            console.log("Account Created");
+            console.log("Video Saved");
             this.dialogRef.close();
             this.restService.closeDialog();
           }

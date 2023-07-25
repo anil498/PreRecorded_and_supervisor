@@ -14,5 +14,5 @@ public interface AccountService {
     ResponseEntity<?> updateAccount(String params1);
     String deleteAccount(Integer accountId);
     Boolean checkAccountName(String accountName);
-    void saveFilePathToFeature(String fileName, String loginId, String name);
+    void saveFilePathToFeature(String filePath, String loginId, String name);
 }

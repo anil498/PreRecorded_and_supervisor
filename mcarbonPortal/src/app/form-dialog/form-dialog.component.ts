@@ -24,7 +24,7 @@ import { Router } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 import { ImageFile } from "app/model/image-file";
 import { HttpClient } from "@angular/common/http";
-
+import { DateAdapter } from "@angular/material/core";
 @Component({
   selector: "app-form-dialog",
   templateUrl: "./form-dialog.component.html",
@@ -78,6 +78,7 @@ export class FormDialogComponent implements OnInit {
   formData: FormData = null;
   constructor(
     private router: Router,
+    private dateAdapter: DateAdapter<Date>,
     private dialogRef: MatDialogRef<FormDialogComponent>,
     private restService: RestService,
     private fb: FormBuilder,
@@ -270,6 +271,7 @@ export class FormDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
+    this.dateAdapter.setLocale("en-IN");
     this.userForm1 = this.fb.group({
       user_fname: [
         "",
@@ -441,11 +443,9 @@ export class FormDialogComponent implements OnInit {
     this.email = this.userForm1.value.email;
     this.login_id = this.userForm1.value.login_id;
     this.acc_exp_date = this.userForm1.value.acc_exp_date;
+    this.acc_exp_date.setHours(23, 59, 59);
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
-    this.exp_date =
-      this.exp_date +
-      " " +
-      this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
+    this.exp_date = this.exp_date + " 23:59:59";
 
     this.password = this.userForm2.value.password;
     this.confirm_password = this.userForm2.value.confirm_password;

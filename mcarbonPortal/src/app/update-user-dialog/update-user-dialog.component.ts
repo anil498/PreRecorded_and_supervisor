@@ -459,11 +459,9 @@ export class UpdateUserDialogComponent implements OnInit {
     this.email = this.userForm1.value.email;
     this.login_id = this.user.loginId;
     this.acc_exp_date = this.userForm1.value.acc_exp_date;
+    this.acc_exp_date.setHours(23, 59, 59);
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
-    this.exp_date =
-      this.exp_date +
-      " " +
-      this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
+    this.exp_date = this.exp_date + " 23:59:59";
 
     this.max_duration = this.userForm3.value.max_duration;
     this.max_participants = this.userForm3.value.max_participants;

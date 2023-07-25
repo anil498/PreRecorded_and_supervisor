@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -145,25 +146,76 @@ public class UserController {
         catch(Exception e){
         }
 
-        Files.copy(file.getInputStream(), Paths.get(FILE_DIRECTORY,file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-        String fileName = file.getOriginalFilename();
-        logger.info("File Path : {}",(FILE_DIRECTORY+fileName));
-        String filePath = FILE_DIRECTORY+fileName;
-        logger.info("fileName : {}",fileName);
+        if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
+            return new ResponseEntity<>("Must contain loginId or name",HttpStatus.UNAUTHORIZED);
+        }
+        String fileName="";
+        String filePathA="";
+        String filePathU="";
+        try {
+            Path path = Paths.get(FILE_DIRECTORY);
+            if (!Files.exists(path)) {
+                logger.info("Data/Prerecorded doesnot exist, creating...");
+                Files.createDirectories(path);
+            }
+            if(!request.getHeader("loginId").isEmpty() && !request.getHeader("name").isEmpty()){
+                logger.info("New Account Creation Case!");
+                UserEntity userEntity = userRepository.findByLoginId(loginId);
+                Integer userId = userEntity.getUserId();
+                Integer accountId = userEntity.getAccountId();
+                Path path1 = Paths.get(FILE_DIRECTORY +"/"+accountId+"/"+userId+"/");
+                Path path2 = Paths.get(FILE_DIRECTORY +"/"+accountId+"/");
+                if (!Files.exists(path1)) {
+                    Files.createDirectories(path1);
+                }
+                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path1),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path2),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                filePathA = String.valueOf(path2);
+                filePathU = String.valueOf(path1);
+            }
+            else if (!request.getHeader("loginId").isEmpty()) {
+                logger.info("User Creation or update!");
+                UserEntity userEntity = userRepository.findByLoginId(loginId);
+                Integer userId = userEntity.getUserId();
+                Integer accountId = userEntity.getAccountId();
+                path = Paths.get(FILE_DIRECTORY +"/"+accountId+"/"+userId+"/");
+                if (!Files.exists(path)) {
+                    Files.createDirectories(path);
+                }
+                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                filePathU = String.valueOf(path);
+            }
+            else if (!request.getHeader("name").isEmpty()) {
+                logger.info("Account creation or update!");
+                AccountEntity accountEntity = accountRepository.findByAccountName(name);
+                Integer accountId = accountEntity.getAccountId();
+                path = Paths.get(FILE_DIRECTORY+"/"+accountId+"/");
+                if (!Files.exists(path)) {
+                    Files.createDirectories(path);
+                }
+                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                filePathA = String.valueOf(path);
+            }
+            fileName = file.getOriginalFilename();
+            logger.info("File Path : {}",(path));
+            logger.info("Path : {}",path);
+            logger.info("fileName : {}",fileName);
+
+        }catch (Exception e){
+            logger.info("Exception while uploading file is : ",e);
+        }
 
         logger.info("loginId : {}",loginId);
-        if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
-            return ResponseEntity.ok("File Uploaded but not updated to database !");
-        }
+
         if(request.getHeader("name").isEmpty()){
-            userService.saveFilePathToFeature(fileName,loginId,name);
+            userService.saveFilePathToFeature(filePathU,loginId,name);
         }
         else if(request.getHeader("loginId").isEmpty()){
-            accountService.saveFilePathToFeature(fileName,loginId,name);
+            accountService.saveFilePathToFeature(filePathA,loginId,name);
         }
         else{
-            userService.saveFilePathToFeature(fileName,loginId,name);
-            accountService.saveFilePathToFeature(fileName,loginId,name);
+            userService.saveFilePathToFeature(filePathU,loginId,name);
+            accountService.saveFilePathToFeature(filePathA,loginId,name);
         }
         return ResponseEntity.ok("File Uploaded Successfully");
     }

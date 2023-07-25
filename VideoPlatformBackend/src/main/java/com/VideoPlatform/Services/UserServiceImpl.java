@@ -332,12 +332,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void saveFilePathToFeature(String fileName, String loginId, String name){
+    public void saveFilePathToFeature(String filePath, String loginId, String name){
 
         UserEntity userEntity = userRepository.findByLoginId(loginId);
         HashMap<String,Object> featuresMeta=userEntity.getFeaturesMeta();
         HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
-        map.replace("pre_recorded_video_file",fileName);
+        map.replace("pre_recorded_video_file",filePath);
         featuresMeta.replace("4",map);
         logger.info("Features Meta {}",featuresMeta);
         userEntity.setFeaturesMeta(featuresMeta);

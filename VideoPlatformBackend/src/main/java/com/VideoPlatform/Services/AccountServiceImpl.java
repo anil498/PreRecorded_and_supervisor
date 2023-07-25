@@ -229,13 +229,13 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void saveFilePathToFeature(String fileName, String loginId, String name){
+    public void saveFilePathToFeature(String filePath, String loginId, String name){
 
         AccountEntity accountEntity= accountRepository.findByAccountName(name);
 
         HashMap<String,Object> featuresMeta=accountEntity.getFeaturesMeta();
         HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
-        map.replace("pre_recorded_video_file",fileName);
+        map.replace("pre_recorded_video_file",filePath);
         featuresMeta.replace("4",map);
         logger.info("Features Meta {}",featuresMeta);
         accountEntity.setFeaturesMeta(featuresMeta);

@@ -62,7 +62,7 @@ public class AccountEntity {
     private int status=1;
 
     @Column(name = "exp_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "IST")
     private Date expDate;
 
     public int getAccountId() {

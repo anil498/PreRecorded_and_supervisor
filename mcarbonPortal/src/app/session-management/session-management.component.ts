@@ -86,17 +86,15 @@ export class SessionManagementComponent implements OnInit {
 
   checkStatus(session: Sessions) {
     let currentDate = new Date();
+    let time = currentDate.toTimeString().split(" ")[0];
+    console.log("time " + time);
     let currentDateString = currentDate.toISOString().split("T")[0];
-    currentDateString =
-      currentDateString +
-      " " +
-      currentDate.toISOString().split("T")[1].substring(0, 8);
-    console.log(currentDate);
     console.log(currentDateString);
-    if (session.expDate < currentDateString) {
-      session.status = 3;
-    } else {
+    currentDateString = currentDateString + " " + time;
+
+    if (session.expDate < currentDateString && session.status !== 2) {
       console.log(session.expDate + "  " + currentDateString);
+      session.status = 3;
     }
   }
 

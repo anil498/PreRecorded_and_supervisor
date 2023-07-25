@@ -118,11 +118,12 @@ export class UserManagementComponent implements OnInit {
 
   checkStatus(user: Users) {
     let currentDate = new Date();
+    let time = currentDate.toTimeString().split(" ")[0];
+    console.log("time " + time);
     let currentDateString = currentDate.toISOString().split("T")[0];
-    currentDateString =
-      currentDateString +
-      " " +
-      currentDate.toISOString().split("T")[1].substring(0, 8);
+    console.log(currentDateString);
+    currentDateString = currentDateString + " " + time;
+
     if (user.expDate < currentDateString && user.status !== 2) {
       console.log(user.expDate + "  " + currentDateString);
       user.status = 3;
