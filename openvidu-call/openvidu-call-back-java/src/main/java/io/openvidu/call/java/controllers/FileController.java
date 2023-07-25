@@ -33,7 +33,7 @@ public class FileController {
 
     @Autowired
     public FileController(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
+        this.fileStorageLocation = Paths.get(fileStorageProperties.getFileDir())
                 .toAbsolutePath().normalize();
 
         try {

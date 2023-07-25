@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 public class SessionService {
   @Autowired
   VideoPlatformService videoPlatformService;
-  @Value(("${MEDIA_PATH:/opt/openvidu/kurento-logs/prerecorded/}"))
-  String mediaPath;
   private static final Logger logger = LoggerFactory.getLogger(SessionService.class);
 
   public void autoPlay(Session session, String cameraUri, String cameraName) throws OpenViduJavaClientException, OpenViduHttpException {
@@ -39,7 +37,7 @@ public class SessionService {
         String fileName = file.getName();
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
           .type(ConnectionType.IPCAM)
-          .rtspUri("file://"+mediaPath+fileName)
+          .rtspUri("file://"+fileName)
           .adaptativeBitrate(true)
           .onlyPlayWithSubscribers(true)
                 .data("{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}")
@@ -70,15 +68,5 @@ public class SessionService {
       logger.error("Getting error while converting to base64 {}", e);
     }
     return base64Logo;
-  }
-  public void copyFileToMediaPath(String fileName, String filePath){
-    try {
-      Path mediaFilePath= Paths.get(mediaPath+fileName);
-      Path actualFilePath= Paths.get(filePath+fileName);
-      
-      Files.copy(actualFilePath,mediaFilePath , StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 }
