@@ -42,47 +42,6 @@ public class FileController {
             throw new FileStorageException("Could not create the directory where the uploaded files will be stored.", ex);
         }
     }
-    @Value(("${FILE_PATH:C:\\Users\\jagdeep.khatana\\Downloads\\}"))
-    String filePath;
-
-    @GetMapping("/uploadFile")
-    public ResponseEntity<?> uploadFile(@RequestParam("file") String fileName) throws IOException {
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-
-        try {
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-            fis = new FileInputStream(filePath+fileName);
-            fos = new FileOutputStream(targetLocation.toFile());
-
-            int c;
-            while ((c = fis.read()) != -1) {
-                fos.write(c);
-            }
-            logger.info("copied the file successfully");
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-
-        catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } finally {
-
-            // Closing the streams
-
-            if (fis != null) {
-
-                // Closing the fileInputStream
-                fis.close();
-            }
-            if (fos != null) {
-
-                // Closing the fileOutputStream
-                fos.close();
-            }
-        }
-    }
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
