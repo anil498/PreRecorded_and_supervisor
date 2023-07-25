@@ -230,8 +230,8 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	}
 
 	//Function To Check if checkbox is checked or not
-	isOptionSelected(questionId: string, option: string): boolean {
-		const control = this.form.get(questionId);
+	isOptionSelected(questionId: number, option: string): boolean {
+		const control = this.form.get(questionId.toString());
 		const value = control.value;
 		if (value[option] == true) {
 			return true;
