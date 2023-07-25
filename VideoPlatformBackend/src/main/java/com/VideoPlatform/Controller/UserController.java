@@ -150,7 +150,8 @@ public class UserController {
             return new ResponseEntity<>("Must contain loginId or name",HttpStatus.UNAUTHORIZED);
         }
         String fileName="";
-        String filePath="";
+        String filePathA="";
+        String filePathU="";
         try {
             Path path = Paths.get(FILE_DIRECTORY);
             if (!Files.exists(path)) {
@@ -169,6 +170,8 @@ public class UserController {
                 }
                 Files.copy(file.getInputStream(), Paths.get(String.valueOf(path1),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
                 Files.copy(file.getInputStream(), Paths.get(String.valueOf(path2),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                filePathA = String.valueOf(path2);
+                filePathU = String.valueOf(path1);
             }
             else if (!request.getHeader("loginId").isEmpty()) {
                 logger.info("User Creation or update!");
@@ -180,6 +183,7 @@ public class UserController {
                     Files.createDirectories(path);
                 }
                 Files.copy(file.getInputStream(), Paths.get(String.valueOf(path),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                filePathU = String.valueOf(path);
             }
             else if (!request.getHeader("name").isEmpty()) {
                 logger.info("Account creation or update!");
@@ -190,10 +194,10 @@ public class UserController {
                     Files.createDirectories(path);
                 }
                 Files.copy(file.getInputStream(), Paths.get(String.valueOf(path),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
+                filePathA = String.valueOf(path);
             }
             fileName = file.getOriginalFilename();
             logger.info("File Path : {}",(path));
-            filePath = String.valueOf(path);
             logger.info("Path : {}",path);
             logger.info("fileName : {}",fileName);
 
@@ -204,14 +208,14 @@ public class UserController {
         logger.info("loginId : {}",loginId);
 
         if(request.getHeader("name").isEmpty()){
-            userService.saveFilePathToFeature(filePath,loginId,name);
+            userService.saveFilePathToFeature(filePathU,loginId,name);
         }
         else if(request.getHeader("loginId").isEmpty()){
-            accountService.saveFilePathToFeature(filePath,loginId,name);
+            accountService.saveFilePathToFeature(filePathA,loginId,name);
         }
         else{
-            userService.saveFilePathToFeature(filePath,loginId,name);
-            accountService.saveFilePathToFeature(filePath,loginId,name);
+            userService.saveFilePathToFeature(filePathU,loginId,name);
+            accountService.saveFilePathToFeature(filePathA,loginId,name);
         }
         return ResponseEntity.ok("File Uploaded Successfully");
     }
