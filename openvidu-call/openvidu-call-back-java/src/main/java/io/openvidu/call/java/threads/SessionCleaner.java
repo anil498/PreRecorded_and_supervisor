@@ -22,7 +22,7 @@ public class SessionCleaner implements Runnable {
 
   @Override
   public void run() {
-    looger.info("Going to clean session context map");
+
     try {
       OpenViduService openViduService= SessionApplicationContext.getBean(OpenViduService.class);
       ConcurrentMap<String, SessionContext> sessionContextConcurrentMap = SessionUtil.getInstance().getSessionIdToSessionContextMap();
@@ -39,14 +39,16 @@ public class SessionCleaner implements Runnable {
                   return true;
                 })
                 .collect(Collectors.toList());
+        looger.info("Going to clean session context map. Current Connection  Map Size is {} and Current Filter Connection Map Size is {}",connectionList.size(),filterConnectionList.size());
         if (connectionList.size()==1) {
           if (filterConnectionList.size()==0){
                session.close();
           }
           looger.info("Removing session context from map sessionId is {} and joined participant is {}",sessionContext.getSessionUniqueId(),sessionContext.getParticipantJoined());
           sessionContextConcurrentMap.remove(key);
+          looger.info("After removing from map. Current Connection  Map Size is {} and Current Filter Connection Map Size is {}",connectionList.size(),filterConnectionList.size());
         }else {
-          looger.info("No session removed from session context");
+          looger.info("No session removed from session context. Current Connection  Map Size is {} and Current Filter Connection Map Size is {}",connectionList.size(),filterConnectionList.size());
         }
       }
     }catch (Exception e){

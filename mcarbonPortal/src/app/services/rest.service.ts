@@ -806,10 +806,17 @@ export class RestService {
       Authorization: `${this.authKey}`,
       "Content-Type": "application/json",
     });
-    const body = {
-      userId,
-      accountId,
-    };
+    var body;
+    if (userId == null) {
+      body = {
+        accountId,
+      };
+    } else {
+      body = {
+        userId,
+        accountId,
+      };
+    }
     console.log(body);
     try {
       return lastValueFrom(
