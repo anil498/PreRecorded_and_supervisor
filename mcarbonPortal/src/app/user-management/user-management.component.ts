@@ -123,7 +123,7 @@ export class UserManagementComponent implements OnInit {
       currentDateString +
       " " +
       currentDate.toISOString().split("T")[1].substring(0, 8);
-    if (user.expDate < currentDateString) {
+    if (user.expDate < currentDateString && user.status !== 2) {
       console.log(user.expDate + "  " + currentDateString);
       user.status = 3;
     }

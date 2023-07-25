@@ -114,7 +114,8 @@ export class AccountManagementComponent implements OnInit {
       currentDateString +
       " " +
       currentDate.toISOString().split("T")[1].substring(0, 8);
-    if (acc.expDate < currentDateString) {
+
+    if (acc.expDate < currentDateString && acc.status !== 2) {
       console.log(acc.expDate + "  " + currentDateString);
       acc.status = 3;
     }

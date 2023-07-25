@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -61,13 +62,23 @@ public class IcdcServiceImpl implements IcdcService{
     }
     @Override
     public List<Map<String,Object>> getNames(Map<String,Object> params){
-        Integer userId = (Integer) params.get("userId");
-        Integer accountId = (Integer) params.get("accountId");
-        List<Map<String,Object>> list = icdcRepository.findNamesByUserId(userId);
-        if(list.isEmpty() || list==null){
+        List<Map<String, Object>> list = new ArrayList<>();
+        if(params.containsKey("userId") && params.containsKey("accountId")) {
+            Integer userId = (Integer) params.get("userId");
+            Integer accountId = (Integer) params.get("accountId");
+            list = icdcRepository.findNamesByUserId(userId);
+            if (list.isEmpty() || list == null) {
+                list = icdcRepository.findNamesByAccountId(accountId);
+                if (list.isEmpty() || list == null) {
+                    logger.info("Both user and account doesn't contain any form");
+                }
+            }
+        }
+        else {
+            Integer accountId = (Integer) params.get("accountId");
             list = icdcRepository.findNamesByAccountId(accountId);
-            if(list.isEmpty()|| list==null){
-                logger.info("Both user and account doesn't contain any form");
+            if (list.isEmpty() || list == null) {
+                logger.info("Account doesn't contain any form");
             }
         }
         return list;

@@ -255,6 +255,12 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    await this.restService
+      .getIcdcData("Icdc/GetNames", null, this.account.accountId)
+      .then((response) => {
+        this.forms = response;
+      });
+    console.log(this.forms);
     console.log(this.account.expDate);
     console.log(new Date(this.account.expDate));
     this.userForm1 = this.fb.group({
@@ -476,9 +482,13 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.selectedAccessId = this.userForm2.value.accessList;
     this.selectedFeatures = this.userForm3.value.featureList;
     this.selectedFeaturesMeta = this.userForm3.value.featureMeta;
-    if (this.selectedFeaturesMeta.hasOwnProperty("16")) {
+    if (
+      this.selectedFeaturesMeta.hasOwnProperty("16") &&
+      this.selectedFeaturesMeta["16"]["id_icdc"]
+    ) {
       this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
     }
+
     console.log(this.icdcId);
     let response: any;
 

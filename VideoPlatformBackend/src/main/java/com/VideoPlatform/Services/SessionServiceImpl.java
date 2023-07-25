@@ -235,15 +235,17 @@ public class SessionServiceImpl implements SessionService{
                     Map<String, Object> map2 = map1;
                     Map<String, Object> ques = new HashMap<>();
                     if(moderator == false){
+                        Integer icdcId = userEntity.getIcdcId();
+                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
+
                         map1.replace("icdc",false);
                         map1.replace("display_icdc",true);
                         map1.replace("edit_icdc",true);
-                        map1.replace("title_icdc","ICDC Panel");
+                        map1.replace("title_icdc",icdcEntity.getFormName());
 
                         logger.info("Map1 : {}",map1);
                         settingsEntity.setIcdcDetails(map1);
-                        Integer icdcId = userEntity.getIcdcId();
-                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
+
                         logger.info("ICDC : {}",icdcEntity);
                         if(icdcEntity!=null) {
                             List<Map<String, Object>> icdcData1 = icdcEntity.getIcdcData();
@@ -255,15 +257,17 @@ public class SessionServiceImpl implements SessionService{
                         }
                     }
                     else {
+                        Integer icdcId = userEntity.getIcdcId();
+                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
+
                         map2.replace("icdc",true);
                         map2.replace("display_icdc",true);
                         map2.replace("edit_icdc",false);
-                        map2.replace("title_icdc","ICDC Panel");
+                        map2.replace("title_icdc",icdcEntity.getFormName());
 
                         logger.info("Map1 : {}",map2);
                         settingsEntity.setIcdcDetails(map2);
-                        Integer icdcId = userEntity.getIcdcId();
-                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
+
                         logger.info("ICDC : {}",icdcEntity);
                         if(icdcEntity!=null) {
                             List<Map<String,Object>> icdcData = icdcEntity.getIcdcData();

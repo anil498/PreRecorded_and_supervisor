@@ -189,7 +189,9 @@
                         id="delete"
                         mat-menu-item
                         (click)="deleteUser(user.userId)"
-                        *ngIf="showDelete && user.status !== 2"
+                        *ngIf="
+                          showDelete && user.status !== 2 && user.status !== 3
+                        "
                       >
                         <mat-icon style="color: #009688"
                           >delete_outline</mat-icon
@@ -201,7 +203,7 @@
                         id="expire"
                         mat-menu-item
                         (click)="expireData()"
-                        *ngIf="user.status !== 2"
+                        *ngIf="user.status !== 2 && user.status !== 3"
                       >
                         <mat-icon style="color: #009688"
                           >power_settings_new</mat-icon
