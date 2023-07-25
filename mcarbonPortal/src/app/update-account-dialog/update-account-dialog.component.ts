@@ -254,6 +254,8 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    console.log(this.account.expDate);
+    console.log(new Date(this.account.expDate));
     this.userForm1 = this.fb.group({
       name: [
         this.account.name,
@@ -460,7 +462,7 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.address = this.userForm1.value.address;
     this.max_user = this.userForm1.value.max_user;
     this.acc_exp_date = this.userForm1.value.acc_exp_date;
-    this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
+      this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
     this.exp_date =
       this.exp_date +
       " " +
