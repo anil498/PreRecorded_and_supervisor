@@ -473,7 +473,10 @@ export class UpdateUserDialogComponent implements OnInit {
     console.log(this.acc_exp_date);
     console.log(this.exp_date);
     let response: any;
-    if (this.selectedFeaturesMeta.hasOwnProperty("16")) {
+    if (
+      this.selectedFeaturesMeta.hasOwnProperty("16") &&
+      this.selectedFeaturesMeta["16"]["id_icdc"]
+    ) {
       this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
     }
     console.log(this.icdcId);
