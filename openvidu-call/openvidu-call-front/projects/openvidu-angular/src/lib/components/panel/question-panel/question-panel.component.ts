@@ -7,7 +7,9 @@ import {
 	OnInit,
 	ViewChild,
 	Output,
-	EventEmitter
+	EventEmitter,
+	QueryList,
+	ViewChildren
 } from '@angular/core';
 import { PanelType } from '../../../models/panel.model';
 import { PanelService } from '../../../services/panel/panel.service';
@@ -21,7 +23,8 @@ import { ParticipantService } from '../../../services/participant/participant.se
 import { Session } from 'openvidu-browser';
 import { Subscription } from 'rxjs';
 import { OpenViduAngularConfigService } from '../../../services/config/openvidu-angular.config.service';
-
+import { TranslateService } from '../../../services/translate/translate.service';
+import { ActionService } from '../../../services/action/action.service';
 /**
  *
  * The **QuestionPanelComponent** is hosted inside of the {@link PanelComponent}.
@@ -57,6 +60,8 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	 */
 	@ViewChild('formScroll') formScroll: ElementRef;
 
+	@ViewChildren('inputFieldRef') inputFieldRefs: QueryList<ElementRef>;
+
 	/**
 	 * Provides event notifications that fire when submit button has been clicked.
 	 */
@@ -85,6 +90,8 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	private titleicdcSub: Subscription;
 	private questionsicdcSub: Subscription;
 
+	myTextQuestionMap: Map<number, number> = new Map<number, number>();
+
 	constructor(
 		private panelService: PanelService,
 		private cd: ChangeDetectorRef,
@@ -93,7 +100,9 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		private formBuilder: FormBuilder,
 		protected openviduService: OpenViduService,
 		protected participantService: ParticipantService,
-		private libService: OpenViduAngularConfigService
+		private libService: OpenViduAngularConfigService,
+		private actionService: ActionService,
+		private translateService: TranslateService
 	) {
 		//Get Logger Service
 		this.log = this.loggerSrv.get('Question Panel');
@@ -122,7 +131,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	fillform() {
 		const questionjson = JSON.parse(this.questionsicdc);
 		this.questions = questionjson.question_data;
-
+		let autoindexing = 0;
 		this.questions.forEach((question) => {
 			//Set custom Controls for a Checkbox Question
 			if (question.type === 'checkbox') {
@@ -133,6 +142,11 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				this.selectedAnswers[question.q_id] = [];
 				this.form.addControl(question.q_id, this.formBuilder.control(checkboxOptions));
 			} else {
+				//fill map
+				if (question.type === 'text') {
+					this.myTextQuestionMap.set(question.q_id, autoindexing);
+					autoindexing++;
+				}
 				//Add Controls for Questions other than the checkbox
 				this.form.addControl(question.q_id, this.formBuilder.control('', Validators.required));
 			}
@@ -177,6 +191,15 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 
 					control.patchValue(value);
 					this.form.markAsPristine();
+				} else if (data.index) {
+					this.form.patchValue(data);
+					let qindex = data.index - 1;
+					let inputElement22 = this.inputFieldRefs.toArray()[qindex].nativeElement;
+					if (inputElement22.scrollWidth > inputElement22.clientWidth) {
+						const scrollAmount = inputElement22.scrollWidth - inputElement22.clientWidth;
+						inputElement22.scrollLeft = scrollAmount;
+					}
+					this.form.markAsPristine();
 				} else {
 					//For Questions other than the checkbox
 					this.form.patchValue(data);
@@ -206,6 +229,19 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				const formElement = this.formScroll.nativeElement;
 				formElement.scrollTop = data.scrollValue;
 				this.scrolling = false;
+			}
+		});
+		//FORM SUBMITTED
+		this.session.on(`signal:${Signal.FORMSUBMITTED}`, (event: any) => {
+			const data = JSON.parse(event.data);
+			const connectionId = event.from.connectionId;
+			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
+			if (!isMyOwnConnection) {
+				this.actionService.openDialog(
+					this.translateService.translate('Form Submit'),
+					'From has been submitted by ' + data.nickname,
+					true
+				);
 			}
 		});
 	}
@@ -241,7 +277,8 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	}
 
 	//Function to Update CheckBox Questions Selection Array
-	updateSelectedAnswers(questionId: string, option: string, checked: boolean) {
+	updateSelectedAnswers(nquestionId: number, option: string, checked: boolean) {
+		const questionId = String(nquestionId);
 		this.selectedOptions = this.selectedAnswers[questionId];
 		if (!this.selectedOptions) {
 			this.selectedOptions = [];
@@ -276,6 +313,20 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		this.openviduService.sendSignal(Signal.SUPPORT, undefined, data);
 	}
 
+	updateValueOfTextQuestion(nquestionId: number) {
+		let qindex = this.myTextQuestionMap.get(nquestionId);
+		const questionId = String(nquestionId);
+		const control = this.form.get(questionId);
+		const value = control.value;
+
+		const data: object = {
+			qid: questionId,
+			value: value,
+			index: qindex + 1
+		};
+		this.openviduService.sendSignal(Signal.SUPPORT, undefined, data);
+	}
+
 	submitForm() {
 		const formresponse = JSON.stringify(this.form.value);
 		this.onSubmitButtonClicked.emit(formresponse);
@@ -285,8 +336,11 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		this.close();
 
 		const data = {
-			data: 'Submit Form Signal'
+			msg: 'Submit Form Signal',
+			nickname: this.participantService.getMyNickname()
 		};
+		this.openviduService.sendSignal(Signal.FORMSUBMITTED, undefined, data);
+
 		this.openviduService.sendSignal(Signal.CLOSE, undefined, data);
 	}
 
