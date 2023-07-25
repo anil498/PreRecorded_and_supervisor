@@ -129,6 +129,7 @@ export class FormDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
       };
     }
+    event.target.value = "";
   }
 
   onPhotoDeselected() {

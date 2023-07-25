@@ -117,6 +117,7 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
       };
     }
+    event.target.value = "";
   }
   onPhotoDeselected() {
     this.photoUrl = {};
@@ -254,6 +255,8 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    console.log(this.account.expDate);
+    console.log(new Date(this.account.expDate));
     this.userForm1 = this.fb.group({
       name: [
         this.account.name,
