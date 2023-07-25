@@ -15,6 +15,6 @@ cd /opt/openvidu-call
 [ ! -z "${SERVER_PORT}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${SERVER_PORT}"
 [ ! -z "${Authorization}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DAuthorization=${Authorization}"
 [ ! -z "${Token}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -DToken=${Token}"
-[ ! -z "${UPLOAD_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dfile.upload-dir=${UPLOAD_PATH}"
+[ ! -z "${UPLOAD_PATH}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dfile.fileDir=${UPLOAD_PATH}"
 
 java ${JAVA_PROPERTIES} -jar target/openvidu-call-back-java.jar
