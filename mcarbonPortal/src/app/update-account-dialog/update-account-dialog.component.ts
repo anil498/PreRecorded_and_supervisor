@@ -469,11 +469,9 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.address = this.userForm1.value.address;
     this.max_user = this.userForm1.value.max_user;
     this.acc_exp_date = this.userForm1.value.acc_exp_date;
+    this.acc_exp_date.setHours(23, 59, 59);
     this.exp_date = this.acc_exp_date.toISOString().split("T")[0];
-    this.exp_date =
-      this.exp_date +
-      " " +
-      this.acc_exp_date.toISOString().split("T")[1].substring(0, 8);
+    this.exp_date = this.exp_date + " 23:59:59";
 
     this.creationDate = this.account.creationDate;
     this.max_duration = this.userForm2.value.max_duration;

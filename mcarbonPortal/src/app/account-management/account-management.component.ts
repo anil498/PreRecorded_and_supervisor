@@ -21,6 +21,7 @@ import { ViewFeatureDialogComponent } from "app/view-feature-dialog/view-feature
 import { ViewAccountDialogComponent } from "app/view-account-dialog/view-account-dialog.component";
 import { DeleteDialogComponent } from "app/delete-dialog/delete-dialog.component";
 import { browserRefresh } from "app/app.component";
+import { DateAdapter } from "@angular/material/core";
 @Component({
   selector: "app-account-management",
   templateUrl: "./account-management.component.html",
@@ -59,10 +60,12 @@ export class AccountManagementComponent implements OnInit {
     private matIconRegistry: MatIconRegistry,
     private domSanitizer: DomSanitizer,
     private restService: RestService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dateAdapter: DateAdapter<Date>
   ) {}
 
   async ngOnInit(): Promise<void> {
+    this.dateAdapter.setLocale("en-IN");
     this.browserRefresh = browserRefresh;
     console.log("refreshed?:", browserRefresh);
     if (this.browserRefresh == true) {
@@ -109,11 +112,11 @@ export class AccountManagementComponent implements OnInit {
 
   checkStatus(acc: Accounts) {
     let currentDate = new Date();
+    let time = currentDate.toTimeString().split(" ")[0];
+    console.log("time " + time);
     let currentDateString = currentDate.toISOString().split("T")[0];
-    currentDateString =
-      currentDateString +
-      " " +
-      currentDate.toISOString().split("T")[1].substring(0, 8);
+    console.log(currentDateString);
+    currentDateString = currentDateString + " " + time;
 
     if (acc.expDate < currentDateString && acc.status !== 2) {
       console.log(acc.expDate + "  " + currentDateString);
