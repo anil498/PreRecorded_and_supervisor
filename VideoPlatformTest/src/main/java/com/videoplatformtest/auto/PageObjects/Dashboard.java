@@ -55,11 +55,13 @@ public class Dashboard {
         Thread.sleep(2000);
         childTest = parentTest.createNode("ROW ONE CARDS");
         if(accessCheck(driver,responseBody))
-            childTest.log(Status.PASS, MarkupHelper.createLabel("All Cards displayed according to user's permission", ExtentColor.GREEN));
+            childTest.log(Status.PASS, MarkupHelper.createLabel("All cards displayed according to user's permission", ExtentColor.GREEN));
         else childTest.log(Status.FAIL, MarkupHelper.createLabel("User don't have permission but card displayed", ExtentColor.RED));
-
-//        getDashboardData(responseBody);
-        driver.close();
+        if(countCheck(driver,responseBody)){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("All cards representing correct counts", ExtentColor.GREEN));
+        }
+        else childTest.log(Status.FAIL, MarkupHelper.createLabel("Wrong count displayed", ExtentColor.RED));
+//        driver.close();
     }
     public static Boolean accessCheck(ChromeDriver driver, AtomicReference<String> responseBody) throws IOException {
         List<String> accessData = getAccessData(responseBody);
@@ -78,13 +80,57 @@ public class Dashboard {
         return true;
     }
     public static Boolean countCheck(ChromeDriver driver, AtomicReference<String> responseBody) throws IOException {
+        String totalParticipant  = driver.findElement(By.xpath(".//app-dashboard/div/div/div[1]/div[4]/div/div[1]/h3")).getText();
+        HashMap<String,Object> dashboardDetails = getDashboardData(responseBody);
+        Integer participants = (Integer) dashboardDetails.get("participants");
+        System.out.println("Total participants : "+participants+","+" Participants : "+totalParticipant);
+        if(!(totalParticipant.contains(participants.toString()))){
+            fail("Total participant value didn't matched !"); return false;
+        }
+
+        Map<String,Object> usersData = (Map<String, Object>) dashboardDetails.get("users");
+        Integer totalUsers = (Integer) usersData.get("totalUsers");
+        Integer activeUsers = (Integer) usersData.get("activeUsers");
+        String aUsers = driver.findElement(By.xpath(".//app-dashboard/div/div/div[1]/div[2]/div/div[1]/h3")).getText();
+        List<String> listU = Arrays.asList(aUsers.split("/"));
+        if((totalUsers.toString().equals(listU.get(1)))){
+            System.out.println("Checking user data.");
+            if(!(activeUsers.toString().equals(listU.get(0)))){
+                fail("Wrong user count !"); return false;
+            }
+        }
+
+        Map<String,Object> sessionData = (Map<String, Object>) dashboardDetails.get("sessions");
+        String aSessions = driver.findElement(By.xpath(".//app-dashboard/div/div/div[1]/div[3]/div/div[1]/h3")).getText();
+        Integer activeSessions = (Integer) sessionData.get("activeSessions");
+        Integer totalSessions = (Integer) sessionData.get("totalSessions");
+        List<String> listS = Arrays.asList(aSessions.split("/"));
+        if((totalSessions.toString().equals(listS.get(1)))){
+            System.out.println("Checking session data.");
+            if(!(activeSessions.toString().equals(listS.get(0)))){
+                fail("Wrong session count !"); return false;
+            }
+        }
+
+        Map<String,Object> accountData = (Map<String, Object>) dashboardDetails.get("accounts");
+        String aAccounts = driver.findElement(By.xpath(".//app-dashboard/div/div/div[1]/div[1]/div/div[1]/h3")).getText();
+        Integer activeAccounts = (Integer) accountData.get("activeAccounts");
+        Integer totalAccounts = (Integer) accountData.get("totalAccounts");
+        List<String> listA = Arrays.asList(aAccounts.split("/"));
+        if((totalAccounts.toString().equals(listA.get(1)))){
+            System.out.println("Checking account data.");
+            if(!(activeAccounts.toString().equals(listA.get(0)))){
+                fail("Wrong account count !"); return false;
+            }
+        }
 
         return true;
     }
         public static void login(ChromeDriver driver, String loginId, String password) {
-        driver.findElement(By.id("mat-input-0")).sendKeys(loginId);
-        driver.findElement(By.id("mat-input-1")).sendKeys(password);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+            driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[1]/div/div[1]/div/input")).sendKeys(loginId);
+            driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[1]/input")).sendKeys(password);
+
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));
         loginButton.click();
     }
@@ -104,22 +150,17 @@ public class Dashboard {
         }
         return name;
     }
-    public static List<String> getDashboardData(AtomicReference<String> responseBody) throws IOException {
+    public static HashMap<String,Object> getDashboardData(AtomicReference<String> responseBody) throws IOException {
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(String.valueOf(responseBody),JsonObject.class);
-//        System.out.println("Params : "+params);
         ObjectMapper objectMapper=new ObjectMapper();
         if(params.isJsonNull()) return null;
 
-        List<String>name = new ArrayList<>();
+        HashMap<String,Object> dataAsMap = new HashMap<>();
         if(!params.get("Dashboard").isJsonNull()){
-            List<HashMap> dataAsMap = objectMapper.readValue(params.get("Dashboard").toString(), List.class);
-            System.out.println(dataAsMap.toString());
-            for(Map<String,String> map : dataAsMap){
-                System.out.println(map);
-//                name.add(map.get("name"));
-            }
+            dataAsMap = objectMapper.readValue(params.get("Dashboard").toString(), HashMap.class);
+            System.out.println(dataAsMap);
         }
-        return name;
+        return dataAsMap;
     }
 }

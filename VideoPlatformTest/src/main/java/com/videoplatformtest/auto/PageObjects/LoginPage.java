@@ -81,7 +81,6 @@ public class LoginPage {
         loginButton.click();
         Thread.sleep(500);
         if(driver.findElement(By.xpath(".//html/body/div[2]")).getText().contains(expectedText)){
-//        if(false){
             childTest.log(Status.PASS,MarkupHelper.createLabel("Bad info label text correct",ExtentColor.GREEN));
         }
         else{
@@ -91,14 +90,14 @@ public class LoginPage {
         password.clear();
         childTest = parentTest.createNode("VALID USER CREDENTIALS");
         userName.sendKeys("mcarbon");
-        userName.sendKeys("mcarbon");
+        password.sendKeys("mcarbon");
         childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.GREEN));
         loginButton.click();
         childTest.log(Status.PASS,MarkupHelper.createLabel("Login button clicked",ExtentColor.GREEN));
         driver.navigate().to("https://demo2.progate.mobi/#/app/dashboard");
         childTest.log(Status.PASS,MarkupHelper.createLabel("Login Successful",ExtentColor.GREEN));
-        driver.close();
-        childTest.log(Status.PASS,MarkupHelper.createLabel("Driver closed",ExtentColor.GREEN));
+//        driver.close();
+//        childTest.log(Status.PASS,MarkupHelper.createLabel("Driver closed",ExtentColor.GREEN));
 
     }
 

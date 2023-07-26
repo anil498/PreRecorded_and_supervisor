@@ -68,7 +68,7 @@ public class SendLink {
         else {
             childTest.log(Status.FAIL, MarkupHelper.createLabel("Permission displayed are not given to user", ExtentColor.RED));
         }
-        driver.close();
+//        driver.close();
     }
 
     public static Boolean checkPermissions(ChromeDriver driver, AtomicReference<String> responseBody) throws IOException {
@@ -132,8 +132,8 @@ public class SendLink {
     }
 
     public static void login(ChromeDriver driver, String loginId, String password) {
-        driver.findElement(By.id("mat-input-0")).sendKeys(loginId);
-        driver.findElement(By.id("mat-input-1")).sendKeys(password);
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[1]/div/div[1]/div/input")).sendKeys(loginId);
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[1]/input")).sendKeys(password);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));

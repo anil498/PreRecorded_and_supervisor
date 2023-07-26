@@ -219,7 +219,6 @@ public class UserController {
         return ResponseEntity.ok("File Uploaded Successfully");
     }
 
-
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> params,HttpServletRequest request) {
         String authKey = request.getHeader("Authorization");

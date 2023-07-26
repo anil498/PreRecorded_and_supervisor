@@ -64,7 +64,7 @@ public class SideNavCheck  {
             }
         });
         driver.get(webUrl);
-        login(driver);
+        login(driver,loginId,password);
         Thread.sleep(4000);
         childTest = parentTest.createNode("SIDE-NAV CHECK");
         if(driver.findElement(By.cssSelector(".sidebar")).isDisplayed()){
@@ -75,11 +75,11 @@ public class SideNavCheck  {
         childTest.log(Status.PASS,MarkupHelper.createLabel("Validating list of elements",ExtentColor.GREEN));
         checkAccess(driver,responseBody);
         childTest.log(Status.PASS,MarkupHelper.createLabel("Validation done",ExtentColor.GREEN));
-        driver.close();
+//        driver.close();
     }
-    public static void login(ChromeDriver driver){
-        driver.findElement(By.id("mat-input-0")).sendKeys("mcarbon");
-        driver.findElement(By.id("mat-input-1")).sendKeys("mcarbon");
+    public static void login(ChromeDriver driver, String loginId, String password) {
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[1]/div/div[1]/div/input")).sendKeys(loginId);
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[1]/input")).sendKeys(password);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));
@@ -91,17 +91,16 @@ public class SideNavCheck  {
             List<WebElement> sidebarElements = driver.findElements(By.tagName("ul"));
             if(sidebarElements.isEmpty()){ fail(); }
             for (WebElement element : sidebarElements) {
-//                System.out.println("Attribute name : "+element.getAttribute("class"));
                 System.out.println("TEXT : "+element.getText());
                 if (element.getText().contains("Dashboard")) { if(!accessValues.contains("Dashboard")) fail(); else System.out.println("Dashboard"); }
-                else if (element.getText().contains("Customer Management")) { if(!accessValues.contains("Customer Management")) fail(); else System.out.println("Customer Management"); }
-                else if (element.getText().contains("My Groups")) { if(!accessValues.contains("My Groups")) fail(); else System.out.println("My Groups");}
-                else if (element.getText().contains("My Sessions")) { if(!accessValues.contains("My Sessions")) fail(); else System.out.println("My Sessions"); }
-                else if (element.getText().contains("Send Link")) { if(!accessValues.contains("Send Link")) fail(); else System.out.println("Send Link"); }
-                else if (element.getText().contains("My Reports")) { if(!accessValues.contains("My Reports")) fail(); else System.out.println("My Reports");}
-                else if (element.getText().contains("Platform Access")) { if(!accessValues.contains("Platform Access")) fail(); else System.out.println("Platform Access");}
-                else if (element.getText().contains("Platform Feature")) { if(!accessValues.contains("Platform Feature")) fail(); else System.out.println("Platform Features");}
-                else if (element.getText().contains("Feedback")) { if(!accessValues.contains("Feedback")) fail(); else System.out.println("Feedback");}
+                if (element.getText().contains("Customer Management")) { if(!accessValues.contains("Customer Management")) fail(); else System.out.println("Customer Management"); }
+                if (element.getText().contains("My Groups")) { if(!accessValues.contains("My Groups")) fail(); else System.out.println("My Groups");}
+                if (element.getText().contains("My Sessions")) { if(!accessValues.contains("My Sessions")) fail(); else System.out.println("My Sessions"); }
+                if (element.getText().contains("Send Link")) { if(!accessValues.contains("Send Link")) fail(); else System.out.println("Send Link"); }
+                if (element.getText().contains("My Reports")) { if(!accessValues.contains("My Reports")) fail(); else System.out.println("My Reports");}
+                if (element.getText().contains("Platform Access")) { if(!accessValues.contains("Platform Access")) fail(); else System.out.println("Platform Access");}
+                if (element.getText().contains("Platform Feature")) { if(!accessValues.contains("Platform Feature")) fail(); else System.out.println("Platform Features");}
+                if (element.getText().contains("ICDC")) { if(!accessValues.contains("ICDC")) fail(); else System.out.println("ICDC");}
             }
         } catch (IOException e) {
             e.printStackTrace();
