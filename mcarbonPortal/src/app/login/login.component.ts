@@ -1,12 +1,9 @@
-import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FormGroup, FormBuilder, Validators } from "@angular/forms";
 import { RestService } from "../services/rest.service";
 import { Router } from "@angular/router";
 import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
-import { RouteInfo } from "app/model/ROUTE";
-import { HttpClient } from "@angular/common/http";
 
-export var ROUTE: RouteInfo[] = [];
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
@@ -31,8 +28,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private restService: RestService,
     private router: Router,
-    private snackBar: MatSnackBar,
-    private http: HttpClient
+    private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
       username: ["", Validators.required],
@@ -40,14 +36,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
-    this.http
-      .get<RouteInfo[]>("assets/json/access.json")
-      .subscribe((response: RouteInfo[]) => {
-        console.warn(response);
-        ROUTE = response;
-      });
-  }
+  ngOnInit(): void {}
 
   async login() {
     this.showDescription = false;

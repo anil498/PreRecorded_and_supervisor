@@ -147,13 +147,13 @@ img {
 
 ::ng-deep .mat-grid-tile-content {
   flex-direction: column !important;
-  justify-content: start !important;
+  justify-content: flex-start !important;
   align-items: self-start !important;
 }
 
 .container-1 {
   margin-top: 20px;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: self-start;
   margin-left: 8.33333333% !important;
 }
@@ -161,7 +161,7 @@ img {
 .meta {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: self-start;
   margin-left: 0 !important;
 }
