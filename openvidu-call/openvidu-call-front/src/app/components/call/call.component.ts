@@ -127,7 +127,7 @@ export class CallComponent implements OnInit {
 		var ansarray: any[] = [];
 		for (let i = 0; i < questionjson.question_data.length; i++) {
 			const item = {};
-			const formkey = String(i + 1);
+			const formkey = String(i);
 			item['q_id'] = questionjson.question_data[i]['q_id'];
 			item['type'] = questionjson.question_data[i]['type'];
 			item['question'] = questionjson.question_data[i]['question'];

@@ -453,6 +453,13 @@ export class UpdateUserDialogComponent implements OnInit {
       this.focusOnInvalidFields();
       return;
     }
+
+    if (this.selectedFeaturesMeta.hasOwnProperty("4")) {
+      if (this.formData == null) {
+        this.openSnackBar("Please Select a video file", "snackbar");
+        return;
+      }
+    }
     this.emptyField = false;
     this.user_fname = this.userForm1.value.user_fname;
     this.user_lname = this.userForm1.value.user_lname;

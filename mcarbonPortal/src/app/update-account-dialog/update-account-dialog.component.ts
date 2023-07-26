@@ -467,6 +467,14 @@ export class UpdateAccountDialogComponent implements OnInit {
       this.focusOnInvalidFields();
       return;
     }
+
+    
+    if (this.selectedFeaturesMeta.hasOwnProperty("4")) {
+      if (this.formData == null) {
+        this.openSnackBar("Please Select a video file", "snackbar");
+        return;
+      }
+    }
     this.name = this.userForm1.value.name;
     this.address = this.userForm1.value.address;
     this.max_user = this.userForm1.value.max_user;
