@@ -24,7 +24,7 @@ public class FileController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @PostMapping("/downloadFile")
+    @GetMapping("/downloadFile")
     public ResponseEntity<Resource> downloadFile(@RequestParam String fileName, HttpServletRequest request) {
         // Load file as Resource
         Resource resource = fileStorageService.loadFileAsResource(fileName);
