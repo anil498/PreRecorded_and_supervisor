@@ -145,7 +145,6 @@ public class UserController {
         }
         catch(Exception e){
         }
-
         if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
             return new ResponseEntity<>("Must contain loginId or name",HttpStatus.UNAUTHORIZED);
         }
@@ -155,7 +154,7 @@ public class UserController {
         try {
             Path path = Paths.get(FILE_DIRECTORY);
             if (!Files.exists(path)) {
-                logger.info("Data/Prerecorded doesnot exist, creating...");
+                logger.info("Data/Prerecorded does not exist, creating...");
                 Files.createDirectories(path);
             }
             if(!request.getHeader("loginId").isEmpty() && !request.getHeader("name").isEmpty()){
@@ -199,7 +198,7 @@ public class UserController {
             fileName = file.getOriginalFilename();
             logger.info("File Path : {}",(path));
             logger.info("Path : {}",path);
-            logger.info("fileName : {}",fileName);
+           // logger.info("fileName : {}",fileName);
 
         }catch (Exception e){
             logger.info("Exception while uploading file is : ",e);
@@ -208,14 +207,14 @@ public class UserController {
         logger.info("loginId : {}",loginId);
 
         if(request.getHeader("name").isEmpty()){
-            userService.saveFilePathToFeature(filePathU,loginId,name);
+            userService.saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
         }
         else if(request.getHeader("loginId").isEmpty()){
-            accountService.saveFilePathToFeature(filePathA,loginId,name);
+            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
         }
         else{
-            userService.saveFilePathToFeature(filePathU,loginId,name);
-            accountService.saveFilePathToFeature(filePathA,loginId,name);
+            userService.saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
+            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
         }
         return ResponseEntity.ok("File Uploaded Successfully");
     }

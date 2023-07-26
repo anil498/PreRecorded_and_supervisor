@@ -53,6 +53,16 @@
 								<option *ngFor="let option of question.meta" [value]="option">{{ option }}</option>
 							</select>
 						</div>
+						<div style="padding-left: 20px" *ngSwitchCase="'text'">
+							
+							<input
+								#inputFieldRef
+								type="text"
+								[formControlName]="question.q_id"
+								(input)="updateValueOfTextQuestion(question.q_id)"
+							/>
+                           
+						</div>
 						<div style="padding-left: 20px" *ngSwitchDefault>
 							<input type="text" [formControlName]="question.q_id" />
 						</div>
