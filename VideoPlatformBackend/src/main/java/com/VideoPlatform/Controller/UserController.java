@@ -207,14 +207,14 @@ public class UserController {
         logger.info("loginId : {}",loginId);
 
         if(request.getHeader("name").isEmpty()){
-            userService.saveFilePathToFeature(filePathU+fileName,loginId,name);
+            userService.saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
         }
         else if(request.getHeader("loginId").isEmpty()){
-            accountService.saveFilePathToFeature(filePathA+fileName,loginId,name);
+            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
         }
         else{
-            userService.saveFilePathToFeature(filePathU+fileName,loginId,name);
-            accountService.saveFilePathToFeature(filePathA+fileName,loginId,name);
+            userService.saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
+            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
         }
         return ResponseEntity.ok("File Uploaded Successfully");
     }
