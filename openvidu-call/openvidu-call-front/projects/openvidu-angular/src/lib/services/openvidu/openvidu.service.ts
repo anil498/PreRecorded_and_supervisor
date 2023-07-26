@@ -80,7 +80,7 @@ export class OpenViduService {
 		this.log = this.loggerSrv.get('OpenViduService');
 		this.isSttReadyObs = this._isSttReady.asObservable();
 		this.sessionTimerObs = this.sessionTimerStatus.asObservable();
-		this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '?' : '');
+		this.baseHref = '/' + (!!window.location.pathname.split('/')[1] ? window.location.pathname.split('/')[1] + '/' : '');
 	}
 
 	/**
@@ -924,7 +924,7 @@ export class OpenViduService {
 			} else {
 				let videoBlob
 				try{
-				videoBlob = await this.http.post(this.baseHref+'fileName='+this.videoFilePath, { responseType: 'blob' }).toPromise();
+				videoBlob = await this.http.post(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
 				}catch(error){
 				}
 				// Create a local URL for the video file
