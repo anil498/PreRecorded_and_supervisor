@@ -55,11 +55,11 @@ export class OpenViduService {
 	private videoFilePathSubs: Subscription;
 	private screenShareWithAudioSubs: Subscription;
 	showSessionTimer: boolean;
-	videoFilePath: string;
+	fileName: string;
 	screenShareWithAudio: boolean;
-	baseHref:string;
+	baseHref: string;
 	tune: Howl | null = null;
-	confirmed=true;
+	confirmed = true;
 	private sessionTime: Date;
 	private sessionTimeInterval: NodeJS.Timer;
 
@@ -75,7 +75,7 @@ export class OpenViduService {
 		protected deviceService: DeviceService,
 		protected libService: OpenViduAngularConfigService,
 		private http: HttpClient,
-		private actionService:ActionService
+		private actionService: ActionService
 	) {
 		this.log = this.loggerSrv.get('OpenViduService');
 		this.isSttReadyObs = this._isSttReady.asObservable();
@@ -242,7 +242,7 @@ export class OpenViduService {
 					this.showSessionTimer = value;
 				});
 				this.videoFilePathSubs = this.libService.videoFilePath.subscribe((value: string) => {
-					this.videoFilePath = value;
+					this.fileName = value;
 				});
 				this.screenShareWithAudioSubs = this.libService.screenShareWithAudio.subscribe((value: boolean) => {
 					this.screenShareWithAudio = value;
@@ -440,7 +440,7 @@ export class OpenViduService {
 		if (this.participantService.isMyCameraActive()) {
 			//this commented for screenshare with audio
 			if (this.participantService.isMyScreenActive() && this.participantService.isMyAudioActive()) {
-				if(this.confirmed){
+				if (this.confirmed) {
 					this.publishAudioAux(this.participantService.getMyScreenPublisher(), false);
 				}
 			}
@@ -466,129 +466,129 @@ export class OpenViduService {
 	 * Share or unshare the screen.
 	 * Hide the camera muted stream when screen is sharing.
 	 */
-	async toggleScreenshare(isScreenShareActive:boolean) {
-			console.log(isScreenShareActive)
-			if (this.screenShareWithAudio && !isScreenShareActive) {
-				// Open dialog box and wait for user confirmation
-				this.confirmed= await this.actionService.openScreenDialog('Screen Share Mode', '', true);
+	async toggleScreenshare(isScreenShareActive: boolean) {
+		console.log(isScreenShareActive)
+		if (this.screenShareWithAudio && !isScreenShareActive) {
+			// Open dialog box and wait for user confirmation
+			this.confirmed = await this.actionService.openScreenDialog('Screen Share Mode', '', true);
+		}
+		if (this.participantService.haveICameraAndScreenActive()) {
+			// Disabling screenShare
+			this.participantService.disableScreenStream();
+			this.unpublish(this.participantService.getMyScreenPublisher());
+		}
+		else if (this.participantService.isOnlyMyCameraActive() && this.confirmed) {
+			console.log("Screen share without audio")
+			const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
+			const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
+			const hasAudio = willWebcamBePresent ? false : hasAudioDevicesAvailable && this.participantService.isMyAudioActive();
+
+			const properties: PublisherProperties = {
+				videoSource: ScreenType.SCREEN,
+				audioSource: hasAudioDevicesAvailable ? this.deviceService.getMicrophoneSelected().device : false,
+				publishVideo: true,
+				publishAudio: hasAudio,
+				mirror: false
+			};
+			const screenPublisher = await this.initPublisher(undefined, properties);
+
+			screenPublisher.once('accessAllowed', async () => {
+				// Listen to event fired when native stop button is clicked
+				screenPublisher.stream
+					.getMediaStream()
+					.getVideoTracks()[0]
+					.addEventListener('ended', async () => {
+						this.log.d('Clicked native stop button. Stopping screen sharing');
+						await this.toggleScreenshare(!isScreenShareActive);
+					});
+
+				// Enabling screenShare
+				this.participantService.activeMyScreenShare(screenPublisher);
+
+				if (!this.isScreenSessionConnected()) {
+					await this.connectSession(this.getScreenSession(), this.getScreenToken());
+				}
+				await this.publish(this.participantService.getMyScreenPublisher());
+				if (!this.participantService.isMyVideoActive()) {
+					// Disabling webcam
+					this.participantService.disableWebcamStream();
+					this.unpublish(this.participantService.getMyCameraPublisher());
+				}
+			});
+
+			screenPublisher.once('accessDenied', (error: any) => {
+				return Promise.reject(error);
+			});
+			//this screen share with audio
+		} else if (this.participantService.isOnlyMyCameraActive()) {
+			// I only have the camera published
+			console.log("Screen share with	audio")
+			const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
+			const userMedia = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
+			const displayMediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
+			const hasAudio = displayMediaStream.getAudioTracks().length == 0 ? false : true;
+			const properties: PublisherProperties = {
+				videoSource: displayMediaStream.getVideoTracks()[0],
+				audioSource: displayMediaStream.getAudioTracks()[0],
+				publishVideo: true,
+				publishAudio: hasAudio,
+				mirror: false,
+				frameRate: 30,
+				resolution: "1280x720"
+			};
+			this.log.d('Initializing publisher with properties2: ', displayMediaStream);
+
+			const screenPublisher = await this.initPublisher(undefined, properties);
+
+			screenPublisher.once('accessAllowed', async () => {
+				// Listen to event fired when native stop button is clicked
+				screenPublisher.stream
+					.getMediaStream()
+					.getVideoTracks()[0]
+					.addEventListener('ended', async () => {
+						this.log.d('Clicked native stop button. Stopping screen sharing');
+						await this.toggleScreenshare(!isScreenShareActive);
+					});
+
+				// Enabling screenShare
+				this.participantService.activeMyScreenShare(screenPublisher);
+
+				if (!this.isScreenSessionConnected()) {
+					await this.connectSession(this.getScreenSession(), this.getScreenToken());
+				}
+				await this.publish(this.participantService.getMyScreenPublisher());
+
+				// This is commented for Publishing screen share and local partitcipant at same time
+				if (!this.participantService.isMyVideoActive()) {
+					// 	// Disabling webcam
+					// 	this.participantService.disableWebcamStream();
+					// 	this.unpublish(this.participantService.getMyCameraPublisher());
+					this.log.d('Disabling video', this.participantService.isMyVideoActive());
+				}
+			});
+
+			screenPublisher.once('accessDenied', (error: any) => {
+				return Promise.reject(error);
+			});
+
+		} else {
+			// I only have my screenshare active and I have no camera or it is muted
+			const hasAudio = this.participantService.hasScreenAudioActive();
+			this.log.d('has audio', hasAudio);
+
+			// Enable webcam
+			if (!this.isWebcamSessionConnected()) {
+				this.log.d('has webcam', this.isWebcamSessionConnected());
+				await this.connectSession(this.getWebcamSession(), this.getWebcamToken());
 			}
-				if (this.participantService.haveICameraAndScreenActive()) {
-					// Disabling screenShare
-					this.participantService.disableScreenStream();
-					this.unpublish(this.participantService.getMyScreenPublisher());
-				}
-				else if (this.participantService.isOnlyMyCameraActive() && this.confirmed) {
-					console.log("Screen share without audio")
-					const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
-					const willWebcamBePresent = this.participantService.isMyCameraActive() && this.participantService.isMyVideoActive();
-					const hasAudio = willWebcamBePresent ? false : hasAudioDevicesAvailable && this.participantService.isMyAudioActive();
-		
-					const properties: PublisherProperties = {
-						videoSource: ScreenType.SCREEN,
-						audioSource: hasAudioDevicesAvailable ? this.deviceService.getMicrophoneSelected().device : false,
-						publishVideo: true,
-						publishAudio: hasAudio,
-						mirror: false
-					};
-					const screenPublisher = await this.initPublisher(undefined, properties);
-		
-					screenPublisher.once('accessAllowed', async () => {
-						// Listen to event fired when native stop button is clicked
-						screenPublisher.stream
-							.getMediaStream()
-							.getVideoTracks()[0]
-							.addEventListener('ended', async () => {
-								this.log.d('Clicked native stop button. Stopping screen sharing');
-								await this.toggleScreenshare(!isScreenShareActive);
-							});
-		
-						// Enabling screenShare
-						this.participantService.activeMyScreenShare(screenPublisher);
-		
-						if (!this.isScreenSessionConnected()) {
-							await this.connectSession(this.getScreenSession(), this.getScreenToken());
-						}
-						await this.publish(this.participantService.getMyScreenPublisher());
-						if (!this.participantService.isMyVideoActive()) {
-							// Disabling webcam
-							this.participantService.disableWebcamStream();
-							this.unpublish(this.participantService.getMyCameraPublisher());
-						}
-					});
-		
-					screenPublisher.once('accessDenied', (error: any) => {
-						return Promise.reject(error);
-					});
-					//this screen share with audio
-				} else if (this.participantService.isOnlyMyCameraActive()) {
-					// I only have the camera published
-					console.log("Screen share with	audio")
-					const hasAudioDevicesAvailable = this.deviceService.hasAudioDeviceAvailable();
-					const userMedia = await navigator.mediaDevices.getUserMedia({ audio: false, video: true });
-					const displayMediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true, video: true });
-					const hasAudio = displayMediaStream.getAudioTracks().length == 0 ? false : true;
-					const properties: PublisherProperties = {
-						videoSource: displayMediaStream.getVideoTracks()[0],
-						audioSource: displayMediaStream.getAudioTracks()[0],
-						publishVideo: true,
-						publishAudio: hasAudio,
-						mirror: false,
-						frameRate: 30,
-						resolution: "1280x720"
-					};
-					this.log.d('Initializing publisher with properties2: ', displayMediaStream);
-		
-					const screenPublisher = await this.initPublisher(undefined, properties);
-		
-					screenPublisher.once('accessAllowed', async () => {
-						// Listen to event fired when native stop button is clicked
-						screenPublisher.stream
-							.getMediaStream()
-							.getVideoTracks()[0]
-							.addEventListener('ended', async () => {
-								this.log.d('Clicked native stop button. Stopping screen sharing');
-								await this.toggleScreenshare(!isScreenShareActive);
-							});
-		
-						// Enabling screenShare
-						this.participantService.activeMyScreenShare(screenPublisher);
-		
-						if (!this.isScreenSessionConnected()) {
-							await this.connectSession(this.getScreenSession(), this.getScreenToken());
-						}
-						await this.publish(this.participantService.getMyScreenPublisher());
-		
-						// This is commented for Publishing screen share and local partitcipant at same time
-						if (!this.participantService.isMyVideoActive()) {
-							// 	// Disabling webcam
-							// 	this.participantService.disableWebcamStream();
-							// 	this.unpublish(this.participantService.getMyCameraPublisher());
-							this.log.d('Disabling video', this.participantService.isMyVideoActive());
-						}
-					});
-		
-					screenPublisher.once('accessDenied', (error: any) => {
-						return Promise.reject(error);
-					});
-		
-				} else {
-					// I only have my screenshare active and I have no camera or it is muted
-					const hasAudio = this.participantService.hasScreenAudioActive();
-					this.log.d('has audio', hasAudio);
-		
-					// Enable webcam
-					if (!this.isWebcamSessionConnected()) {
-						this.log.d('has webcam', this.isWebcamSessionConnected());
-						await this.connectSession(this.getWebcamSession(), this.getWebcamToken());
-					}
-					await this.publish(this.participantService.getMyCameraPublisher());
-					this.publishAudioAux(this.participantService.getMyCameraPublisher(), hasAudio);
-					this.participantService.enableWebcamStream();
-		
-					// Disabling screenshare
-					this.participantService.disableScreenStream();
-					this.unpublish(this.participantService.getMyScreenPublisher());
-				}
+			await this.publish(this.participantService.getMyCameraPublisher());
+			this.publishAudioAux(this.participantService.getMyCameraPublisher(), hasAudio);
+			this.participantService.enableWebcamStream();
+
+			// Disabling screenshare
+			this.participantService.disableScreenStream();
+			this.unpublish(this.participantService.getMyScreenPublisher());
+		}
 	}
 	/**
 	 * @ignore
@@ -630,7 +630,7 @@ export class OpenViduService {
 	/**
 	 * @internal
 	 */
-	async holdPartiticipantSiganl(connectionId:string) {
+	async holdPartiticipantSiganl(connectionId: string) {
 		if (!this.libService.isOnHold.getValue()) {
 			// this.publishVideo(false);
 			// this.publishAudio(false);
@@ -639,7 +639,7 @@ export class OpenViduService {
 			const data = {
 				message: "hold",
 				nickname: this.participantService.getMyNickname(),
-				connectionId:connectionId
+				connectionId: connectionId
 			};
 			this.sendSignal(Signal.HOLD, undefined, data);
 			try {
@@ -668,14 +668,14 @@ export class OpenViduService {
 	/**
 	 * @internal
 	 */
-	async unholdPartiticipantSignal(connectionId:string) {
-			// this.stopTune();
-			const data = {
-				message: "unhold",
-				nickname: this.participantService.getMyNickname(),
-				connectionId:connectionId
-			};
-			this.sendSignal(Signal.UNHOLD, undefined, data);
+	async unholdPartiticipantSignal(connectionId: string) {
+		// this.stopTune();
+		const data = {
+			message: "unhold",
+			nickname: this.participantService.getMyNickname(),
+			connectionId: connectionId
+		};
+		this.sendSignal(Signal.UNHOLD, undefined, data);
 	}
 	/**
 	 * @internal
@@ -717,13 +717,13 @@ export class OpenViduService {
 			this.tune = null;
 		}
 	}
-	
+
 	closeQuestionpanel() {
 		const data = {
 			message: 'CloseQuestionPanel',
 			nickname: this.participantService.getMyNickname()
 		};
-		this.sendSignal(Signal.CLOSEQUESTIONPANEL, undefined,data);
+		this.sendSignal(Signal.CLOSEQUESTIONPANEL, undefined, data);
 	}
 
 	/**
@@ -923,9 +923,10 @@ export class OpenViduService {
 				await this.screenSession.unpublish(this.participantService.getMyVideoPublisher());
 			} else {
 				let videoBlob
-				try{
-				videoBlob = await this.http.post(this.baseHref+this.videoFilePath, { responseType: 'blob' }).toPromise();
-				}catch(error){
+				try {
+					const fileName = this.fileName
+					videoBlob = await this.http.post(this.baseHref + '/downloadFile', { fileName }, { responseType: 'blob' }).toPromise();
+				} catch (error) {
 				}
 				// Create a local URL for the video file
 				const videoURL = URL.createObjectURL(videoBlob);

@@ -164,7 +164,7 @@ public class SessionController {
               Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
               sessionProperty.setScreenToken(screenConnection.getToken());
             } else {
-              sessionProperty.getSettings().setFileUrl("downloadFile?fileName=" + map.get("pre_recorded_video_file").toString());
+              sessionProperty.getSettings().setFileUrl(map.get("pre_recorded_video_file").toString());
             }
         }else{
         sessionProperty.getSettings().setPreRecorded(false);

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -24,28 +25,38 @@ public class FileController {
     @Autowired
     private FileStorageService fileStorageService;
 
-    @GetMapping("/downloadFile")
-    public ResponseEntity<Resource> downloadFile(@RequestParam String fileName, HttpServletRequest request) {
+    @PostMapping("/downloadFile")
+    public ResponseEntity<?> downloadFile(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request) {
         // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(fileName);
-
-        // Try to determine file's content type
-        String contentType = null;
-
-        try {
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            logger.info("Could not determine file type.");
+        logger.info("Request API /downloadFile Parameters {}",params);
+        String fileName;
+        if(params==null){
+            return  ResponseEntity.internalServerError().body("Body not found");
         }
+        if (params.containsKey("fileName")) {
+            fileName = params.get("fileName").toString();
+            Resource resource = fileStorageService.loadFileAsResource(fileName);
 
-        // Fallback to the default content type if type could not be determined
-        if(contentType == null) {
-            contentType = "application/octet-stream";
+            // Try to determine file's content type
+            String contentType = null;
+
+            try {
+                contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+            } catch (IOException ex) {
+                logger.info("Could not determine file type.");
+            }
+
+            // Fallback to the default content type if type could not be determined
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        }else {
+            return ResponseEntity.internalServerError().body("File name not found");
         }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
     }
 }
