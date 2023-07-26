@@ -36,21 +36,26 @@ public class MyGroups {
         Thread.sleep(500);
         driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[1]")).click();
         if(!groupMandatoryFieldCheck(driver)){
-//            childTest.log(Status.FAIL,MarkupHelper.createLabel("Mandatory fields not filled",ExtentColor.RED));
             driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).click();
             childTest.log(Status.PASS,MarkupHelper.createLabel("Next tab clicked",ExtentColor.GREEN));
             if(driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).getAttribute("class").contains("mat-tab-label-active")){
                 System.out.println("Security tab opened");
                 childTest.log(Status.FAIL,MarkupHelper.createLabel("Mandatory fields empty, moved to new tab",ExtentColor.RED));
             }
+            else childTest.log(Status.PASS, MarkupHelper.createLabel("Mandatory fields empty, can't switch to next tab", ExtentColor.GREEN));
+        }
+        driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[1]")).click();
+        if(!groupMandatoryFieldCheck(driver)){
+            driver.findElement(By.xpath(".//mat-dialog-container/app-form-dialog/div/div[2]/button/span[1]")).click();
+            childTest.log(Status.PASS,MarkupHelper.createLabel("Next button clicked",ExtentColor.GREEN));
+            if(driver.findElement(By.xpath(".//app-form-dialog/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).getAttribute("class").contains("mat-tab-label-active")){
+                System.out.println("Security tab opened");
+                childTest.log(Status.FAIL,MarkupHelper.createLabel("Mandatory fields empty, moved to new tab",ExtentColor.RED));
+            }
+            else childTest.log(Status.PASS, MarkupHelper.createLabel("Mandatory fields empty, can't switch to next tab", ExtentColor.GREEN));
         }
 
-//        driver.findElement(By.id("mat-tab-label-0-1")).click();
-//        driver.findElement(By.id("mat-tab-label-0-2")).click();
-//        driver.findElement(By.id("mat-tab-label-0-3")).click();
-//        driver.findElement(ByAngular.partialButtonText("Submit")).click();
-//        driver.findElement(By.cssSelector("button[class='mat-focus-indicator close-btn mat-icon-button mat-button-base']")).click();
-        driver.close();
+//        driver.close();
     }
 
     public static Boolean groupMandatoryFieldCheck(ChromeDriver driver) {
@@ -66,8 +71,8 @@ public class MyGroups {
         return true;
     }
     public static void login(ChromeDriver driver, String loginId, String password) {
-        driver.findElement(By.id("mat-input-0")).sendKeys(loginId);
-        driver.findElement(By.id("mat-input-1")).sendKeys(password);
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[1]/div/div[1]/div/input")).sendKeys(loginId);
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[1]/input")).sendKeys(password);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));

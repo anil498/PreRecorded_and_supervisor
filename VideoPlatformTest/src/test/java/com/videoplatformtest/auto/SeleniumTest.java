@@ -16,8 +16,6 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.fail;
-
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SeleniumTest extends TestBaseClass {
 
@@ -25,15 +23,18 @@ public class SeleniumTest extends TestBaseClass {
     File file = new File(relativePath);
     String absolutePath = file.getAbsolutePath();
 
-    public String webUrl = "https://video.progate.mobi/#/";
+    public String webUrl = "https://demo2.progate.mobi/#/";
     public ExtentReports extentReports;
     public ExtentSparkReporter extentSparkReporter;
+    public ChromeDriver driver;
 
     @BeforeClass
     public void beforeClass() {
         System.out.println("Before class!");
+        System.setProperty("webdriver.chrome.driver", absolutePath);
+        driver = new ChromeDriver();
         extentReports = new ExtentReports();
-        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_video.html");
+        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_demo2.html");
         extentReports.setSystemInfo("Environment", "Dev");
         extentReports.setSystemInfo("User Name", "mCarbon");
         extentSparkReporter.config().setDocumentTitle("Video Platform Test Report");
@@ -41,6 +42,9 @@ public class SeleniumTest extends TestBaseClass {
         extentSparkReporter.config().setTheme(Theme.STANDARD);
         extentSparkReporter.config().setTimelineEnabled(true);
     }
+
+    @AfterClass
+    public void afterClass(){ driver.close(); }
 
     @BeforeMethod
     public void startReport() {
@@ -51,65 +55,47 @@ public class SeleniumTest extends TestBaseClass {
     public void endReport() { extentReports.flush();}
 
     @Test
-    public void TC0001_LoginTest() throws Exception {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
-        LoginPage.loginPage(driver, extentReports, webUrl);
-    }
-
-    @Test
-    public void TC0002_LogOutTest() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
-        LogoutCheck.logOut(driver, extentReports, "mcarbon", "mcarbon", webUrl);
-    }
-
-    @Test
     public void TC0001_DashboardTest() throws Exception {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
         Dashboard.dashboard(driver,extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
+    public void TC0002_LoginTest() throws Exception {
+        LoginPage.loginPage(driver, extentReports, webUrl);
+    }
+
+    @Test
+    public void TC0003_LogOutTest() throws InterruptedException {
+        LogoutCheck.logOut(driver, extentReports, "mcarbon", "mcarbon", webUrl);
+    }
+
+    @Test
     public void TC0004_ProfileCheck() throws InterruptedException, IOException {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
         ProfileCheck.profileCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
     public void TC0005_SideNavCheck() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
         SideNavCheck.sideNavCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
     public void TC0006_CustomerManagement() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
         CustomerManagement.customerManagementCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
-    public void TC0006_MyGroups() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
+    public void TC0007_MyGroups() throws InterruptedException {
         MyGroups.myGroupsCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
     @Test
-    public void TC0007_SendLink() throws InterruptedException, IOException {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
+    public void TC0008_SendLink() throws InterruptedException, IOException {
         SendLink.sendLinkCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 
-    @Test
-    public void TC0008_CustomerRolesCheck() throws InterruptedException, IOException {
-        System.setProperty("webdriver.chrome.driver", absolutePath);
-        ChromeDriver driver = new ChromeDriver();
+    @Test(dependsOnMethods = "TC0006_CustomerManagement")
+    public void TC0009_CustomerRolesCheck() throws InterruptedException, IOException {
         CustomerManagement.customerRolesCheck(driver, extentReports, "mcarbon", "mcarbon", webUrl);
     }
 }

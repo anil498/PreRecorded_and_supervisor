@@ -110,7 +110,24 @@ public class SessionController {
         return ok(sessionService.getByKey(sessionKey));
 
     }
-    @DeleteMapping("/Delete/{key}")
+    @PostMapping("/GetSessions")
+    public ResponseEntity<?> getSessionByCount(@RequestBody Map<String, Integer> params, HttpServletRequest request) {
+        String authKey = request.getHeader("Authorization");
+        String token = request.getHeader("Token");
+
+        Integer count = params.get("count");
+        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        List<String> sessionKeys = new ArrayList<>();
+        while(count!=0){
+            SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","","","","Customer");
+            sessionKeys.add(sessionEntityCustomer.getSessionKey());
+            count--;
+        }
+        return ResponseEntity.ok(sessionKeys);
+    }
+        @DeleteMapping("/Delete/{key}")
     public ResponseEntity<?> deleteSession(@PathVariable String key, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");

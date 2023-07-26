@@ -85,7 +85,7 @@ public class CustomerManagement {
             }
         }
         driver.findElement(By.xpath(".//app-create-account/div/div/h4/button/span[1]/mat-icon")).click();
-        driver.close();
+//        driver.close();
     }
 
     public static void customerRolesCheck(ChromeDriver driver, ExtentReports extentReports, String loginId, String password, String webUrl) throws InterruptedException {
@@ -120,12 +120,22 @@ public class CustomerManagement {
         if(driver.findElement(By.xpath(".//app-account-management/div/div/div/div/div/div[2]/div/table/tbody/tr[1]/td[5]/button")).getText().equalsIgnoreCase("Deleted")){
             childTest.log(Status.PASS, MarkupHelper.createLabel("Deleted User", ExtentColor.GREEN));
             driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
-            Thread.sleep(1000);
-            if(driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("Edit") || driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("Delete"))
+            if(driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("Edit") || driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("Delete")) {
                 childTest.log(Status.FAIL, MarkupHelper.createLabel("Deleted user must not contain delete and edit properties", ExtentColor.RED));
+                fail("Deleted user must not contain delete and edit properties");
+            }
             if(driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("View"))
                 childTest.log(Status.PASS, MarkupHelper.createLabel("Edit and Delete is not allowed for deleted user, only view is displayed", ExtentColor.GREEN));
-            Thread.sleep(1000);
+        }
+        else if(driver.findElement(By.xpath(".//app-account-management/div/div/div/div/div/div[2]/div/table/tbody/tr[1]/td[5]/button")).getText().equalsIgnoreCase("Expired")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Expired User", ExtentColor.GREEN));
+            driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
+            if(driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("Delete")){
+                childTest.log(Status.FAIL, MarkupHelper.createLabel("Expired user must not contain delete option", ExtentColor.RED));
+                fail("Expired user must not contain delete option");
+            }
+            if(driver.findElement(By.xpath("/html/body/div[3]/div[2]/div/div/div")).getText().contains("View"))
+                childTest.log(Status.PASS, MarkupHelper.createLabel("Delete is not allowed for expired user, only view and edit is displayed", ExtentColor.GREEN));
         }
         else{
             driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
@@ -133,9 +143,12 @@ public class CustomerManagement {
             Thread.sleep(1000);
             if(checkRoles(driver,responseBody)){
                 childTest.log(Status.PASS, MarkupHelper.createLabel("Roles displayed and are present in customer's permission", ExtentColor.GREEN));
-            }else childTest.log(Status.FAIL, MarkupHelper.createLabel("Roles displayed but not present in customer's permission", ExtentColor.RED));
+            }else{
+                childTest.log(Status.FAIL, MarkupHelper.createLabel("Roles displayed but not present in customer's permission", ExtentColor.RED));
+                fail("Roles displayed but not present in customer's permission");
+            }
         }
-        driver.close();
+//        driver.close();
     }
 
     public static Boolean checkRoles(ChromeDriver driver, AtomicReference<String> responseBody) {
@@ -185,8 +198,8 @@ public class CustomerManagement {
     }
 
     public static void login(ChromeDriver driver, String loginId, String password) {
-        driver.findElement(By.id("mat-input-0")).sendKeys(loginId);
-        driver.findElement(By.id("mat-input-1")).sendKeys(password);
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[1]/div/div[1]/div/input")).sendKeys(loginId);
+        driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[1]/input")).sendKeys(password);
 
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
         WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.className("login-button")));
