@@ -7,6 +7,7 @@ export enum Signal {
 	SCREEN='screen',
 	QUESTION='question',
 	CLOSEQUESTIONPANEL='closequestionpanel',
+	FORMSUBMITTED="formSubmit",
 	SUPERVISOR="supervisor",
 	HOLD="hold",
 	UNHOLD="unhold",

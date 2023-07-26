@@ -234,13 +234,6 @@ export class UpdateUserDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
-    await this.restService
-      .getIcdcData("Icdc/GetNames", this.user.userId, this.user.accountId)
-      .then((response) => {
-        this.forms = response;
-      });
-    console.log(this.forms);
-
     this.userForm1 = this.fb.group({
       user_fname: [
         this.user.fname,
@@ -299,6 +292,15 @@ export class UpdateUserDialogComponent implements OnInit {
       featureList: [this.user.features],
       featureMeta: [this.user.featuresMeta],
     });
+
+    if (this.userForm4.get("featureMeta").hasOwnProperty("16")) {
+      await this.restService
+        .getIcdcData("Icdc/GetNames", this.user.userId, this.user.accountId)
+        .then((response) => {
+          this.forms = response;
+        });
+      console.log(this.forms);
+    }
 
     this.accessData.forEach((access) => {
       console.log(access);

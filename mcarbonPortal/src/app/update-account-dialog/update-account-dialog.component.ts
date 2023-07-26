@@ -255,11 +255,13 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    await this.restService
-      .getIcdcData("Icdc/GetNames", null, this.account.accountId)
-      .then((response) => {
-        this.forms = response;
-      });
+    if (this.account.featuresMeta.hasOwnProperty("16")) {
+      await this.restService
+        .getIcdcData("Icdc/GetNames", null, this.account.accountId)
+        .then((response) => {
+          this.forms = response;
+        });
+    }
     console.log(this.forms);
     console.log(this.account.expDate);
     console.log(new Date(this.account.expDate));
