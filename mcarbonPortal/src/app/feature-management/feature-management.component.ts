@@ -187,7 +187,6 @@ export class FeatureManagementComponent implements OnInit {
   }
   async deleteFeature(featureId: number) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "25%";
     console.log("Confirm Delete");
 
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);

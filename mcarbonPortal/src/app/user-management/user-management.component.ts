@@ -266,8 +266,6 @@ export class UserManagementComponent implements OnInit {
 
   deleteUser(userId: number) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "25%";
-    dialogConfig.height = "20%";
     console.log("Confirm Delete");
 
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
