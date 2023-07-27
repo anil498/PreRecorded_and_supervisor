@@ -109,8 +109,10 @@ export class UpdateUserDialogComponent implements OnInit {
         console.log(reader.result);
         this.photoUrl = reader.result;
         this.photoControl = true;
-
-        this.logo = { byte: reader.result, type: file.type };
+        const type = file.type.split("/")[1];
+        const byte = (reader.result as string).split(",")[1];
+        this.logo = { byte: byte, type: type, name: file.name };
+        //this.logo = { byte: reader.result, type: file.type };
         console.log(this.logo);
         console.log(this.photoControl);
         console.log(this.photoUrl);
@@ -234,14 +236,14 @@ export class UpdateUserDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
-    if (this.user.featuresMeta.hasOwnProperty("16")) {
-      await this.restService
-        .getIcdcData("Icdc/GetNames", this.user.userId, this.user.accountId)
-        .then((response) => {
-          this.forms = response;
-        });
-      console.log(this.forms);
-    }
+    // if (this.user.featuresMeta.hasOwnProperty("16")) {
+    //   await this.restService
+    //     .getIcdcData("Icdc/GetNames", this.user.userId, this.user.accountId)
+    //     .then((response) => {
+    //       this.forms = response;
+    //     });
+    //   console.log(this.forms);
+    // }
     this.userForm1 = this.fb.group({
       user_fname: [
         this.user.fname,
@@ -479,13 +481,13 @@ export class UpdateUserDialogComponent implements OnInit {
     console.log(this.acc_exp_date);
     console.log(this.exp_date);
     let response: any;
-    if (
-      this.selectedFeaturesMeta.hasOwnProperty("16") &&
-      this.selectedFeaturesMeta["16"]["id_icdc"]
-    ) {
-      this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
-    }
-    console.log(this.icdcId);
+    // if (
+    //   this.selectedFeaturesMeta.hasOwnProperty("16") &&
+    //   this.selectedFeaturesMeta["16"]["id_icdc"]
+    // ) {
+    //   this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
+    // }
+    // console.log(this.icdcId);
     try {
       response = await this.restService.updateUser(
         "Update",
@@ -506,7 +508,6 @@ export class UpdateUserDialogComponent implements OnInit {
 
         this.selectedFeatures.sort(),
         this.selectedFeaturesMeta,
-        this.icdcId
       );
       console.warn(response);
       console.log(this.login_id);

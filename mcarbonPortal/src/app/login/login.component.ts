@@ -127,7 +127,7 @@ export class LoginComponent implements OnInit {
     } else {
       this.state = loginResponse.description;
       this.showDescription = true;
-      this.timeOut(300000);
+      this.timeOut(3000);
     }
   }
 
@@ -136,7 +136,7 @@ export class LoginComponent implements OnInit {
     snackBarConfig.duration = 3000;
     snackBarConfig.panelClass = [color];
     console.log(snackBarConfig.panelClass);
-    this.snackBar.open(message, "Dismiss", snackBarConfig);
+    this.snackBar.open(message, null, snackBarConfig);
   }
   private timeOut(time: number) {
     setTimeout(() => {
