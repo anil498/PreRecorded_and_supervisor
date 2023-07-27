@@ -38,6 +38,8 @@ export class QuestionTemplateComponent implements OnInit {
       icon: "arrow_drop_down_circle",
     },
   ];
+
+  @Input("question")
   selectedValue: any;
   questionTypeSub: Subscription;
   constructor(
