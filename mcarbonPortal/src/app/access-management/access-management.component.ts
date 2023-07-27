@@ -56,9 +56,7 @@ export class AccessManagementComponent implements OnInit {
     private domSanitizer: DomSanitizer,
     private restService: RestService,
     private snackBar: MatSnackBar
-  ) {
-    
-  }
+  ) {}
 
   async ngOnInit(): Promise<void> {
     this.browserRefresh = browserRefresh;
@@ -195,7 +193,6 @@ export class AccessManagementComponent implements OnInit {
   }
   async deleteAccess(accessId: number) {
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.width = "25%";
     console.log("Confirm Delete");
 
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);

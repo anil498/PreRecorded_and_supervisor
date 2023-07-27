@@ -1,7 +1,6 @@
 package io.openvidu.call.java.controllers;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
@@ -165,18 +164,7 @@ public class SessionController {
               Connection screenConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
               sessionProperty.setScreenToken(screenConnection.getToken());
             } else {
-              String path= map.get("pre_recorded_video_file").toString();
-              int lastIndex = path.lastIndexOf('/');
-              if (lastIndex != -1) {
-                // Extract the substring after the last '/'
-                String result = path.substring(lastIndex + 1);
-                logger.debug("Prerecorded Substring after last '/': " + result);
-                sessionProperty.getSettings().setFileUrl("downloadFile/" +result);
-              } else {
-                // Handle the case when there is no '/'
-                logger.error("No '/' found in the Prerecorded path .");
-              }
-
+              sessionProperty.getSettings().setFileUrl(map.get("pre_recorded_video_file").toString());
             }
         }else{
         sessionProperty.getSettings().setPreRecorded(false);

@@ -393,15 +393,15 @@ export class IcdcQuestions {
 	}
 }
 export class QuestionData {
-	private _q_id: string;
+	private _q_id: number;
 	private _type: string;
 	private _question: string;
 	private _meta: any;
 
-	public get q_id(): string {
+	public get q_id(): number {
 		return this._q_id;
 	}
-	public set q_id(value: string) {
+	public set q_id(value: number) {
 		this._q_id = value;
 	}
 

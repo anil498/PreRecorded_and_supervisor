@@ -33,11 +33,9 @@ public class SessionService {
     try {
       // Publish the camera only if it is not already published
       if (!alreadyPublishedCameras.contains("{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}")) {
-        File file = new File(cameraUri);
-        String fileName = file.getName();
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
           .type(ConnectionType.IPCAM)
-          .rtspUri("file://"+fileName)
+          .rtspUri("file://"+cameraUri)
           .adaptativeBitrate(true)
           .onlyPlayWithSubscribers(true)
                 .data("{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}")
