@@ -97,14 +97,14 @@ public class MapType implements UserType {
         try {
             if (json != null) {
                 if (json.startsWith("[")) {
-                    LOGGER.info("Deserializing JSON array: {}", json);
+//                    LOGGER.info("Deserializing JSON array: {}", json);
                     List<Map<String, Object>> deserializedList = MAPPER.readValue(json, new TypeReference<List<Map<String, Object>>>(){});
-                    LOGGER.info("Deserialization result: {}", deserializedList);
+//                    LOGGER.info("Deserialization result: {}", deserializedList);
                     return deserializedList;
                 } else {
-                    LOGGER.info("Deserializing JSON object: {}", json);
+//                    LOGGER.info("Deserializing JSON object: {}", json);
                     Map<String, Object> deserializedMap = MAPPER.readValue(json, MapType.getJavaType());
-                    LOGGER.info("Deserialization result: {}", deserializedMap);
+//                    LOGGER.info("Deserialization result: {}", deserializedMap);
                     return deserializedMap;
                 }
             }
@@ -126,9 +126,9 @@ public class MapType implements UserType {
                             SharedSessionContractImplementor session) throws HibernateException, SQLException {
         String json = "";
         try {
-            LOGGER.info("Deserializing JSON array: {}", json);
+//            LOGGER.info("Deserializing JSON array: {}", json);
             json = MAPPER.writeValueAsString(value);
-            LOGGER.info("Deserializing JSON array: {}", json);
+//            LOGGER.info("Deserializing JSON array: {}", json);
         } catch (JsonParseException e) {
             LOGGER.error("Error parsing JSON string: {}", json);
             LOGGER.error(e.getMessage(), e);

@@ -60,27 +60,27 @@ public class IcdcServiceImpl implements IcdcService{
         icdcResponseEntity.setUserId(sessionEntity.getUserId());
         return icdcResponseRepository.save(icdcResponseEntity);
     }
-    @Override
-    public List<Map<String,Object>> getNames(Map<String,Object> params){
-        List<Map<String, Object>> list = new ArrayList<>();
-        if(params.containsKey("userId") && params.containsKey("accountId")) {
-            Integer userId = (Integer) params.get("userId");
-            Integer accountId = (Integer) params.get("accountId");
-            list = icdcRepository.findNamesByUserId(userId);
-            if (list.isEmpty() || list == null) {
-                list = icdcRepository.findNamesByAccountId(accountId);
-                if (list.isEmpty() || list == null) {
-                    logger.info("Both user and account doesn't contain any form");
-                }
-            }
-        }
-        else {
-            Integer accountId = (Integer) params.get("accountId");
-            list = icdcRepository.findNamesByAccountId(accountId);
-            if (list.isEmpty() || list == null) {
-                logger.info("Account doesn't contain any form");
-            }
-        }
-        return list;
-    }
+//    @Override
+//    public List<Map<String,Object>> getNames(Map<String,Object> params){
+//        List<Map<String, Object>> list = new ArrayList<>();
+//        if(params.containsKey("userId") && params.containsKey("accountId")) {
+//            Integer userId = (Integer) params.get("userId");
+//            Integer accountId = (Integer) params.get("accountId");
+//            list = icdcRepository.findNamesByUserId(userId);
+//            if (list.isEmpty() || list == null) {
+//                list = icdcRepository.findNamesByAccountId(accountId);
+//                if (list.isEmpty() || list == null) {
+//                    logger.info("Both user and account doesn't contain any form");
+//                }
+//            }
+//        }
+//        else {
+//            Integer accountId = (Integer) params.get("accountId");
+//            list = icdcRepository.findNamesByAccountId(accountId);
+//            if (list.isEmpty() || list == null) {
+//                logger.info("Account doesn't contain any form");
+//            }
+//        }
+//        return list;
+//    }
 }

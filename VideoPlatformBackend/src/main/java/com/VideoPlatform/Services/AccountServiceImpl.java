@@ -11,11 +11,16 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -40,6 +45,12 @@ public class AccountServiceImpl implements AccountService {
     UserServiceImpl userService;
     @Autowired
     AccessRepository accessRepository;
+    @Value("${file.path}")
+    private String FILE_DIRECTORY;
+    @Value("${image.name}")
+    private String imgName;
+
+
 
     private static final Logger logger= LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -79,7 +90,6 @@ public class AccountServiceImpl implements AccountService {
         acc.setAddress(params.get("address").getAsString());
         acc.setCreationDate(creation);
         acc.setMaxUser(params.get("maxUser").getAsInt());
-        acc.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
         acc.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
         acc.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
         acc.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
@@ -102,7 +112,6 @@ public class AccountServiceImpl implements AccountService {
         user.setCreationDate(creation);
         user.setParentId(u.getUserId());
         user.setExpDate(expDate);
-        user.setLogo(objectMapper.readValue(params.get("logo").toString(),HashMap.class));
         user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
         user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
         user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
@@ -147,6 +156,33 @@ public class AccountServiceImpl implements AccountService {
             ua.setAuthKey(accountAuthEntity.getAuthKey());
             userAuthRepository.save(ua);
         }
+        try{
+            if(params.get("logo").isJsonNull() || params.get("logo").toString().equals("")){
+                String defaultPath = FILE_DIRECTORY+"/media/default/image/"+imgName;
+                accountRepository.updateLogoPath(acc.getAccountId(), defaultPath);
+                userRepository.updateLogoPath(user.getUserId(),defaultPath);
+            }else {
+                HashMap<String, Object> logoA = commonService.getMapOfLogo(params.get("logo").toString());
+                HashMap<String, Object> logoU = commonService.getMapOfLogo(params.get("logo").toString());
+                Path pathU = Paths.get(FILE_DIRECTORY + "/media/" + acc.getAccountId() + "/" + user.getUserId() + "/image");
+                Path pathA = Paths.get(FILE_DIRECTORY + "/media/" + acc.getAccountId() + "/image");
+                if (!Files.exists(pathU)) {
+                    Files.createDirectories(pathU);
+                }
+                if (!Files.exists(pathA)) {
+                    Files.createDirectories(pathA);
+                }
+                String newPathA = pathA.toString() + "/" + logoA.get("name");
+                String newPathU = pathU.toString() + "/" + logoU.get("name");
+                logger.info("Account Path : {} , User Path : {}", newPathA, newPathU);
+                commonService.decodeToImage(logoA.get("byte").toString(), newPathA);
+                commonService.decodeToImage(logoU.get("byte").toString(), newPathU);
+                userRepository.updateLogoPath(user.getUserId(), newPathU);
+                accountRepository.updateLogoPath(acc.getAccountId(), newPathA);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return new ResponseEntity<>(commonService.responseData("200","Account created!"),HttpStatus.OK);
     }
     @Override
@@ -171,8 +207,18 @@ public class AccountServiceImpl implements AccountService {
         commonService.compareAndChange(params,existing,params.get("accountId").getAsInt());
 
         try {
-            if(!params.get("logo").isJsonNull())
-                existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+            if(!params.get("logo").isJsonNull() || !params.get("logo").toString().equals("")) {
+                HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
+                Path path = Paths.get(FILE_DIRECTORY +"/media/"+existing.getAccountId()+"/image");
+                logger.info(path.toString());
+                if (!Files.exists(path)) {
+                    Files.createDirectories(path);
+                }
+                String newPath = path.toString()+"/"+logo.get("name");
+                logger.info("New Path : "+newPath);
+                commonService.decodeToImage(logo.get("byte").toString(),newPath);
+                existing.setLogo(newPath);
+            }
             if(!params.get("session").isJsonNull())
                 existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
             if(!params.get("featuresMeta").isJsonNull())
@@ -191,12 +237,11 @@ public class AccountServiceImpl implements AccountService {
                 existing.setName(params.get("name").getAsString());
             if(!params.get("address").isJsonNull())
                 existing.setAddress(params.get("address").getAsString());
-            if(!params.get("icdcId").isJsonNull())
-                existing.setIcdcId(params.get("icdcId").getAsInt());
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
         accountRepository.save(existing);
         logger.info("New Entity {}",existing);
         return new ResponseEntity<>(commonService.responseData("200","Account updated!"),HttpStatus.OK);

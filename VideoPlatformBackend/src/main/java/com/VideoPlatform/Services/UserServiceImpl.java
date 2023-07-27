@@ -13,11 +13,16 @@ import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -48,6 +53,8 @@ public class UserServiceImpl implements UserService{
     private DashboardService dashboardService;
     @Autowired
     private CommonService commonService;
+    @Value("${file.path}")
+    private String FILE_DIRECTORY;
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
@@ -75,53 +82,84 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ResponseEntity<?> createUser(UserEntity user,String authKey,String token) {
+    public ResponseEntity<?> createUser(String params1,String authKey,String token) throws JsonProcessingException {
+        logger.info(params1);
+        Gson gson=new Gson();
+        JsonObject params=gson.fromJson(params1,JsonObject.class);
+
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
         AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
         Integer accountId = accountAuthEntity.getAccountId();
         AccountEntity accountEntity = accountRepository.findByAccountId(accountId);
-        if(userRepository.findByLoginId(user.getLoginId()) != null){
-            logger.info("Login Id {} already exists !",user.getLoginId());
+
+        if(userRepository.findByLoginId(params.get("loginId").getAsString()) != null){
+            logger.info("Login Id {} already exists !",params.get("loginId").getAsString());
             return new ResponseEntity<>(commonService.responseData("406","Login Id already exist !"),HttpStatus.NOT_ACCEPTABLE);
         }
         int maxUsers = accountEntity.getMaxUser();
         if(maxUsers<=(userRepository.usersAccount(accountId)-1)){
-            logger.info("No more users are allowed for account {} having login id {} , max limit exceed..!",accountId,user.getLoginId());
+            logger.info("No more users are allowed for account {} having login id {} , max limit exceed..!",accountId,params.get("loginId").getAsString());
             return new ResponseEntity<>(commonService.responseData("406","Max limit exceed, No more users are allowed."),HttpStatus.NOT_ACCEPTABLE);
         }
 
         Integer[] featuresId = accountEntity.getFeatures();
         Integer[] accessId = accountEntity.getAccessId();
         HashMap<String, Object> sessionA = accountEntity.getSession();
+        UserEntity user = new UserEntity();
 
-            if (checkIfAllowedFeature(featuresId, user.getFeatures(),accountId)) {
-                user.setFeatures(user.getFeatures());
+            if (checkIfAllowedFeature(featuresId, objectMapper.readValue(params.get("features").toString(),Integer[].class),accountId)) {
+                user.setFeatures(objectMapper.readValue(params.get("features").toString(),Integer[].class));
             } else {
                 return new ResponseEntity<>(commonService.responseData("406","Feature not allowed, Try again."), HttpStatus.NOT_ACCEPTABLE);
             }
-            if (checkIfAllowedAccess(accessId,user.getAccessId(),accountId)) {
-                user.setAccessId(user.getAccessId());
+            if (checkIfAllowedAccess(accessId,objectMapper.readValue(params.get("accessId").toString(),Integer[].class),accountId)) {
+                user.setAccessId(objectMapper.readValue(params.get("accessId").toString(),Integer[].class));
             } else {
                 return new ResponseEntity<>(commonService.responseData("406","Access not allowed, Try again."), HttpStatus.NOT_ACCEPTABLE);
             }
-            if (checkIfAllowedSession(sessionA, user.getSession())) {
-                user.setSession(user.getSession());
+            if (checkIfAllowedSession(sessionA, objectMapper.readValue(params.get("session").toString(),HashMap.class))) {
+                user.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
             } else {
                 logger.info("Invalid session values. Not allowed to create !");
                 return new ResponseEntity<>(commonService.responseData("406","Invalid session values."), HttpStatus.NOT_ACCEPTABLE);
             }
-
-        logger.info("User details {}",user.toString());
-
+        user.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(),HashMap.class));
+        user.setLoginId(params.get("loginId").getAsString());
+        user.setFname(params.get("fname").getAsString());
+        user.setLname(params.get("lname").getAsString());
+        user.setContact(params.get("contact").getAsString());
+        user.setEmail(params.get("email").getAsString());
+        user.setLastLogin("");
+        Date expDate = TimeUtils.parseDate(objectMapper.readValue(params.get("expDate").toString(),String.class));
+        user.setExpDate(expDate);
         UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
         Date creation = TimeUtils.getDate();
         user.setAccountId(accountId);
         user.setCreationDate(creation);
         user.setParentId(userAuthEntity.getUserId());
-        String myPass = passwordEncoder.encode(user.getPassword());
+        String myPass = passwordEncoder.encode(params.get("password").getAsString());
         user.setPassword(myPass);
-
         userRepository.save(user);
-
+        try{
+            HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
+            if(logo==null || logo.isEmpty()){
+                userRepository.updateLogoPath(user.getUserId(), String.valueOf(accountEntity.getLogo()));
+            }else{
+                Path path = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/"+user.getUserId()+"/image");
+                logger.info(path.toString());
+                if (!Files.exists(path)) {
+                    Files.createDirectories(path);
+                }
+                String newPath = path.toString()+"/"+logo.get("name");
+                logger.info("New Path : "+newPath);
+                commonService.decodeToImage(logo.get("byte").toString(),newPath);
+                userRepository.updateLogoPath(user.getUserId(),newPath);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
         result.put("msg", "User created!");
@@ -185,8 +223,18 @@ public class UserServiceImpl implements UserService{
                         return new ResponseEntity<>(commonService.responseData("406","Invalid Session values!"), HttpStatus.NOT_ACCEPTABLE);
                     }
                 }
-                if(!params.get("logo").isJsonNull())
-                    existing.setLogo(objectMapper.readValue(params.get("logo").toString(), HashMap.class));
+                if(!params.get("logo").isJsonNull() || !params.get("logo").toString().equals("")) {
+                    HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
+                    Path path = Paths.get(FILE_DIRECTORY +"/media/"+accountEntity.getAccountId()+"/"+existing.getUserId()+"/image");
+                    logger.info(path.toString());
+                    if (!Files.exists(path)) {
+                        Files.createDirectories(path);
+                    }
+                    String newPath = path.toString()+"/"+logo.get("name");
+                    logger.info("New Path : "+newPath);
+                    commonService.decodeToImage(logo.get("byte").toString(),newPath);
+                    existing.setLogo(newPath);
+                }
 
                 if(!params.get("featuresMeta").isJsonNull())
                     existing.setFeaturesMeta(objectMapper.readValue(params.get("featuresMeta").toString(), HashMap.class));
@@ -198,9 +246,9 @@ public class UserServiceImpl implements UserService{
                     existing.setContact(params.get("contact").getAsString());
                 if(!params.get("email").isJsonNull())
                     existing.setEmail(params.get("email").getAsString());
-                if(!params.get("icdcId").isJsonNull())
-                    existing.setIcdcId(params.get("icdcId").getAsInt());
             } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
             logger.info("New Entity {}", existing);

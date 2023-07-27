@@ -23,6 +23,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.util.*;
 
@@ -283,88 +284,30 @@ public class CommonService {
         return deletedValues;
     }
 
+    public HashMap<String,Object> getMapOfLogo(String params1){
+        Gson gson=new Gson();
+        JsonObject params=gson.fromJson(String.valueOf(params1),JsonObject.class);
+        ObjectMapper objectMapper=new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("byte",params.get("byte").getAsString());
+        map.put("name",params.get("name").getAsString());
+        map.put("type",params.get("type").getAsString());
+        return map;
+    }
+    public void decodeToImage(String base64,String path){
+        byte[] data = DatatypeConverter.parseBase64Binary(base64);
+        File file = new File(path);
+        try(OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))){
+            outputStream.write(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public Map<String,String> responseData(String statusCode,String message){
         Map<String ,String> response = new HashMap<>();
         response.put("status_code",statusCode);
         response.put("msg",message);
         return response;
-    }
-//    public void writeByteToFile(String encodedString) {
-//
-//        logger.info("Encoded String : {}",encodedString);
-//        String newStr = encodedString.substring(0,100);
-//        logger.info("Substr : {}",newStr);
-//        byte[] decodedBytes = Base64.getMimeDecoder().decode(encodedString.getBytes());
-//        try {
-//            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//            FileOutputStream out = new FileOutputStream("/home/Vatsala.Vats/vid-content/test.mp4");
-//            out.write(decodedBytes);
-//            out.close();
-//        } catch (Exception e) {
-//            logger.info("Error {}", e.toString());
-//        }
-//    }
-//       public String writeByteToFile(String loginId){
-//        try{
-//            logger.info("loginId : {}",loginId);
-//
-//            UserEntity userEntity = userRepository.findByLoginId(loginId);
-////            logger.info("UserEntity : {}",userEntity);
-////            logger.info("UserEntity userId : {}",userEntity.getUserId());
-////            logger.info("UserEntity logo : {}",userEntity.getLogo());
-//           // Object logoByte = userEntity.getLogo().get("byte");
-//            Map<String,Object> map= (Map<String, Object>) (userEntity.getFeaturesMeta().get("4"));
-//            HashMap<String,Object> vidByte = (HashMap<String, Object>) map.get("pre_recorded_video_file");
-//            String encodedByte = (String) vidByte.get("byte");
-//            //logger.info("VidByte : {}",vidByte);
-//            ByteArrayOutputStream output = new ByteArrayOutputStream();
-//            ObjectOutputStream obj;
-//            try {
-//                obj = new ObjectOutputStream(output);
-//                obj.writeObject(encodedByte);
-//                logger.info("Bytes written successfully !");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            byte[] bytes = output.toByteArray();
-//            try {
-//                OutputStream os = new FileOutputStream("/home/Vatsala.Vats/vid-content/test.mp4");
-//                os.write(bytes);
-//                logger.info("Bytes written successfully !");
-//                os.close();
-//            }
-//            catch (Exception e) {
-//                logger.info("Exception: " + e);
-//            }
-//        }
-//        catch (Exception e){
-//            logger.info("Exception: {} ",e);
-//        }
-//        return "Written !!!";
-//    }
-//
-
-    public void base64ToMultiPart(Object base64){
-
-        byte[] decodedBytes = Base64.getDecoder().decode(base64.toString());
-        String decodedString = new String(decodedBytes);
-        logger.info("Decoded String is : {}",decodedString);
-
-    }
-    public void removeFeatureMetaVideo(UserEntity userEntity){
-//        logger.info("userEntity : {}",userEntity);
-        HashMap<String,Object> featureMeta = userEntity.getFeaturesMeta();
-        logger.info("feature meta : {}",featureMeta);
-        if(featureMeta==null){
-            return;
-        }
-        Gson gson=new Gson();
-        String jsonFeature=gson.toJson(featureMeta);
-        if(jsonFeature.contains("pre_recorded_video_file")){
-            featureMeta.replace("pre_recorded_video_file",null);
-            logger.info("Updated features meta : {}",featureMeta);
-            userEntity.setFeaturesMeta(featureMeta);
-            logger.info("Updated userEntity : {}",userEntity);
-        }
     }
 }

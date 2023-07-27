@@ -59,4 +59,9 @@ public interface AccountRepository extends JpaRepository<AccountEntity, Integer>
     @Transactional
     @Query(nativeQuery = true, value = "UPDATE account_data SET icdc_id = :icdcId WHERE account_id = :accountId")
     void setIcdcId(@Param("accountId") Integer accountId, @Param("icdcId") Integer icdcId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery=true, value = "UPDATE account_data SET logo=:logo where account_id = :accountId")
+    void updateLogoPath(@Param("accountId") Integer accountId, @Param("logo") String logo);
 }

@@ -29,8 +29,7 @@ public class AccountEntity {
     private String address;
 
     @Column(name="logo",columnDefinition="text")
-    @Type(type="com.VideoPlatform.Utils.MapType")
-    private HashMap<String, Object> logo = new HashMap<String, Object>(0);
+    private String logo = "";
 
     @Column(name = "creation_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
@@ -54,9 +53,6 @@ public class AccountEntity {
     @Column(name = "access_id",columnDefinition = "integer[]")
     @Type(type="com.VideoPlatform.Utils.GenericArrayUserType")
     private Integer[] accessId = {};
-
-    @Column(name = "icdc_id")
-    private int icdcId=0;
 
     @Column(name = "status")
     private int status=1;
@@ -91,11 +87,11 @@ public class AccountEntity {
             this.address = address;
     }
 
-    public HashMap<String, Object> getLogo() {
+    public String getLogo() {
         return logo;
     }
 
-    public void setLogo(HashMap<String, Object> logo) {
+    public void setLogo(String logo) {
         if(logo != null)
             this.logo = logo;
     }
@@ -169,19 +165,10 @@ public class AccountEntity {
             this.expDate = expDate;
     }
 
-    public int getIcdcId() {
-        return icdcId;
-    }
-
-    public void setIcdcId(int icdcId) {
-        this.icdcId = icdcId;
-    }
-
     @Override
     public String toString() {
         return "AccountEntity{" +
                 "accountId=" + accountId +
-                ", icdcId=" + icdcId +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +
                 ", logo=" + logo +

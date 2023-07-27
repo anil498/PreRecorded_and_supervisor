@@ -7,6 +7,7 @@ import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Services.UserService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,7 @@ public class UserController {
     }
 
     @PostMapping("/Create")
-    public ResponseEntity<?> createUser(@RequestBody UserEntity userEntity, HttpServletRequest request) {
+    public ResponseEntity<?> createUser(@RequestBody String userEntity, HttpServletRequest request) throws JsonProcessingException {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -146,15 +147,16 @@ public class UserController {
         catch(Exception e){
         }
         if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
-            return new ResponseEntity<>("Must contain loginId or name",HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Request must contain loginId or name",HttpStatus.UNAUTHORIZED);
         }
         String fileName="";
         String filePathA="";
         String filePathU="";
         try {
-            Path path = Paths.get(FILE_DIRECTORY);
+            Path path = Paths.get(FILE_DIRECTORY+"media");
+            logger.info(path.toString());
             if (!Files.exists(path)) {
-                logger.info("Data/Prerecorded does not exist, creating...");
+                logger.info("Media does not exist, creating...");
                 Files.createDirectories(path);
             }
             if(!request.getHeader("loginId").isEmpty() && !request.getHeader("name").isEmpty()){
@@ -162,10 +164,13 @@ public class UserController {
                 UserEntity userEntity = userRepository.findByLoginId(loginId);
                 Integer userId = userEntity.getUserId();
                 Integer accountId = userEntity.getAccountId();
-                Path path1 = Paths.get(FILE_DIRECTORY +"/"+accountId+"/"+userId+"/");
-                Path path2 = Paths.get(FILE_DIRECTORY +"/"+accountId+"/");
+                Path path1 = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/"+userId+"/video");
+                Path path2 = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/video");
                 if (!Files.exists(path1)) {
                     Files.createDirectories(path1);
+                }
+                if (!Files.exists(path2)) {
+                    Files.createDirectories(path2);
                 }
                 Files.copy(file.getInputStream(), Paths.get(String.valueOf(path1),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
                 Files.copy(file.getInputStream(), Paths.get(String.valueOf(path2),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
@@ -177,7 +182,7 @@ public class UserController {
                 UserEntity userEntity = userRepository.findByLoginId(loginId);
                 Integer userId = userEntity.getUserId();
                 Integer accountId = userEntity.getAccountId();
-                path = Paths.get(FILE_DIRECTORY +"/"+accountId+"/"+userId+"/");
+                path = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/"+userId+"/video");
                 if (!Files.exists(path)) {
                     Files.createDirectories(path);
                 }
@@ -188,7 +193,7 @@ public class UserController {
                 logger.info("Account creation or update!");
                 AccountEntity accountEntity = accountRepository.findByAccountName(name);
                 Integer accountId = accountEntity.getAccountId();
-                path = Paths.get(FILE_DIRECTORY+"/"+accountId+"/");
+                path = Paths.get(FILE_DIRECTORY+"/media/"+accountId+"/video");
                 if (!Files.exists(path)) {
                     Files.createDirectories(path);
                 }
@@ -198,7 +203,6 @@ public class UserController {
             fileName = file.getOriginalFilename();
             logger.info("File Path : {}",(path));
             logger.info("Path : {}",path);
-           // logger.info("fileName : {}",fileName);
 
         }catch (Exception e){
             logger.info("Exception while uploading file is : ",e);
@@ -219,7 +223,13 @@ public class UserController {
         return ResponseEntity.ok("File Uploaded Successfully");
     }
 
-    @PostMapping("/login")
+    @PostMapping("/test")
+    public ResponseEntity<?> test(@RequestBody Map<String, Object> params,HttpServletRequest request) {
+        commonService.decodeToImage(params.get("byte").toString(),FILE_DIRECTORY+params.get("name"));
+        return ok("Image Uploaded!");
+    }
+
+        @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> params,HttpServletRequest request) {
         String authKey = request.getHeader("Authorization");
         int authId = commonService.isValidAuthKey(authKey);
@@ -233,6 +243,7 @@ public class UserController {
 
         return userService.loginService(loginId, password, authId);
     }
+
     @PostMapping("/checkLoginId")
     public ResponseEntity<?> checkLogin(@RequestBody Map<String, String> params,HttpServletRequest request){
         String loginId = params.get("loginId");

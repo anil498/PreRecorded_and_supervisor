@@ -72,15 +72,11 @@ public class UserEntity implements Serializable {
     @Type(type="com.VideoPlatform.Utils.MapType")
     private HashMap<String, Object> featuresMeta = new HashMap<String, Object>(0);
 
-    @Column(name = "icdc_id")
-    private int icdcId=0;
-
     @Column(name = "status")
     private int status = 1;
 
     @Column(name="logo",columnDefinition="text")
-    @Type(type="com.VideoPlatform.Utils.MapType")
-    private HashMap<String, Object> logo = new HashMap<String, Object>(0);
+    private String logo = "";
 
     public int getUserId() {
         return userId;
@@ -231,21 +227,13 @@ public class UserEntity implements Serializable {
         this.status = status;
     }
 
-    public HashMap<String, Object> getLogo() {
+    public String getLogo() {
         return logo;
     }
 
-    public void setLogo(HashMap<String, Object> logo) {
+    public void setLogo(String logo) {
         if(logo!=null)
             this.logo = logo;
-    }
-
-    public int getIcdcId() {
-        return icdcId;
-    }
-
-    public void setIcdcId(int icdcId) {
-        this.icdcId = icdcId;
     }
 
     @Override
@@ -253,7 +241,6 @@ public class UserEntity implements Serializable {
         return "{" +
                 "userId=" + userId +
                 ", accountId=" + accountId +
-                ", icdcId=" + icdcId +
                 ", loginId='" + loginId + '\'' +
                 ", password='" + password + '\'' +
                 ", fname='" + fname + '\'' +

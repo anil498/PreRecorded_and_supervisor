@@ -97,4 +97,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Transactional
     @Query(nativeQuery = true, value = "UPDATE user_data SET icdc_id = :icdcId WHERE user_id = :userId")
     void setIcdcId(@Param("userId") Integer userId, @Param("icdcId") Integer icdcId);
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET logo = :logo WHERE user_id = :userId")
+    void updateLogoPath(@Param("userId") Integer userId,@Param("logo") String logo);
 }

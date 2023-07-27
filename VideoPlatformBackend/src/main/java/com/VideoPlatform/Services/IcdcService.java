@@ -9,6 +9,6 @@ import java.util.Map;
 public interface IcdcService {
     IcdcResponseEntity saveIcdcResponse(IcdcResponseEntity icdcResponseEntity);
     IcdcEntity createIcdc(IcdcEntity icdcEntity, String authKey, String token);
-    List<Map<String,Object>> getNames(Map<String,Object> params);
+//    List<Map<String,Object>> getNames(Map<String,Object> params);
 
 }

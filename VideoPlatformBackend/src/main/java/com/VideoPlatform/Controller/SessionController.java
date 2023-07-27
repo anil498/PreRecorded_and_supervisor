@@ -69,10 +69,8 @@ public class SessionController {
         if(params.containsKey("participantName")){
             participantName= String.valueOf(params.get("participantName"));
         }
-
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName,"Support");
-
 
         Map<String,String> result = new HashMap<>();
         result.put("status_code","200");
@@ -193,7 +191,7 @@ public class SessionController {
         result.put("callUrl",callUrl);
         return ok(result);
     }
-        @GetMapping("/Download/{filename}")
+    @GetMapping("/Download/{filename}")
     public ResponseEntity<byte[]> handleFileDownload(@PathVariable("filename") String filename) throws IOException {
         Path file = Paths.get(FILE_DIRECTORY, filename);
         byte[] bytes = new byte[0];

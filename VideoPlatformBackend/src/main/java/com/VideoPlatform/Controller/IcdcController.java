@@ -59,14 +59,14 @@ public class IcdcController {
             return new ResponseEntity<>(commonService.responseData("406","Null entity"),HttpStatus.NOT_ACCEPTABLE);
         return new ResponseEntity<>(commonService.responseData("200","Response saved!"),HttpStatus.OK);
     }
-    @PostMapping("/GetNames")
-    public ResponseEntity<?> getNames(@RequestBody Map<String,Object> params, HttpServletRequest request) {
-        String authKey = request.getHeader("Authorization");
-        String token = request.getHeader("Token");
-        if(!commonService.authorizationCheck(authKey,token,"icdc")){
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
-        }
-        List<Map<String,Object>> list = icdcService.getNames(params);
-        return ResponseEntity.ok(list);
-    }
+//    @PostMapping("/GetNames")
+//    public ResponseEntity<?> getNames(@RequestBody Map<String,Object> params, HttpServletRequest request) {
+//        String authKey = request.getHeader("Authorization");
+//        String token = request.getHeader("Token");
+//        if(!commonService.authorizationCheck(authKey,token,"icdc")){
+//            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+//        }
+//        List<Map<String,Object>> list = icdcService.getNames(params);
+//        return ResponseEntity.ok(list);
+//    }
 }

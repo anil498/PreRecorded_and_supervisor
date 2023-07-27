@@ -122,13 +122,16 @@ public class SessionServiceImpl implements SessionService{
                 settingsEntity.setRecordingDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
             }
             else if (2 == featureId) {
-                settingsEntity.setScreenShare(true);
-                try{
-                    Map<String,Boolean> map= (Map<String, Boolean>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setScreenShareWithAudio(map.get("share_with_audio"));
-                }
-                catch (Exception e){
-                    logger.info("Getting null value from participants_ticker_text 2 !");
+                if(type.equalsIgnoreCase("Supervisor")){
+                    settingsEntity.setScreenShare(false);
+                }else {
+                    settingsEntity.setScreenShare(true);
+                    try {
+                        Map<String, Boolean> map = (Map<String, Boolean>) (userEntity.getFeaturesMeta().get(featureId.toString()));
+                        settingsEntity.setScreenShareWithAudio(map.get("share_with_audio"));
+                    } catch (Exception e) {
+                        logger.info("Getting null value from participants_ticker_text 2 !");
+                    }
                 }
             }
             else if (3 == featureId) {
@@ -136,24 +139,26 @@ public class SessionServiceImpl implements SessionService{
             }
             else if (4 == featureId) {
                 HashMap<String,Object> fmeta = (HashMap<String, Object>) userEntity.getFeaturesMeta().get(featureId.toString());
-                if(moderator == true){
-                    settingsEntity.setPreRecorded(true);
-                    try{
-                        logger.info("Pre recorded val : {}",userEntity.getFeaturesMeta().get(featureId.toString()));
-                        settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    }
-                    catch (Exception e){
-                        logger.info("Getting null value from pre_recorded_video_file 1 !",e);
-                    }
+                if(type.equalsIgnoreCase("Supervisor")){
+                    settingsEntity.setPreRecorded(false);
                 }
-                else if(fmeta.get("share_pre_recorded_video").equals(false)){
-                    settingsEntity.setPreRecorded(true);
-                    try{
-                        logger.info("Pre recorded val : {}",userEntity.getFeaturesMeta().get(featureId.toString()));
-                        settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
-                    }
-                    catch (Exception e){
-                        logger.info("Getting null value from pre_recorded_video_file 1 !",e);
+                else {
+                    if (moderator == true) {
+                        settingsEntity.setPreRecorded(true);
+                        try {
+                            logger.info("Pre recorded val : {}", userEntity.getFeaturesMeta().get(featureId.toString()));
+                            settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+                        } catch (Exception e) {
+                            logger.info("Getting null value from pre_recorded_video_file 1 !", e);
+                        }
+                    } else if (fmeta.get("share_pre_recorded_video").equals(false)) {
+                        settingsEntity.setPreRecorded(true);
+                        try {
+                            logger.info("Pre recorded val : {}", userEntity.getFeaturesMeta().get(featureId.toString()));
+                            settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+                        } catch (Exception e) {
+                            logger.info("Getting null value from pre_recorded_video_file 1 !", e);
+                        }
                     }
                 }
             }
@@ -234,51 +239,30 @@ public class SessionServiceImpl implements SessionService{
                     Map<String, Object> map1 = (Map<String, Object>) (userEntity.getFeaturesMeta().get(featureId.toString()));
                     Map<String, Object> map2 = map1;
                     Map<String, Object> ques = new HashMap<>();
-                    if(moderator == false){
-                        Integer icdcId = userEntity.getIcdcId();
-                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
 
-                        map1.replace("icdc",false);
-                        map1.replace("display_icdc",true);
-                        map1.replace("edit_icdc",true);
-                        map1.replace("title_icdc",icdcEntity.getFormName());
-
-                        logger.info("Map1 : {}",map1);
+                    if (type.equalsIgnoreCase("Customer")) {
+                        map1.replace("icdc", false);
+                        map1.replace("display_icdc", true);
+                        map1.replace("edit_icdc", true);
+                        map1.replace("title_icdc", "ICDC Panel");
                         settingsEntity.setIcdcDetails(map1);
-
-                        logger.info("ICDC : {}",icdcEntity);
-                        if(icdcEntity!=null) {
-                            List<Map<String, Object>> icdcData1 = icdcEntity.getIcdcData();
-                            logger.info("ICDC DATA : {}", icdcData1);
-                            ques.put("icdc_id", icdcId);
-                            ques.put("question_data", icdcData1);
-                            logger.info("Ques {}", ques);
-                            settingsEntity.setIcdcQuestions(ques);
-                        }
-                    }
-                    else {
-                        Integer icdcId = userEntity.getIcdcId();
-                        IcdcEntity icdcEntity = icdcRepository.findByIcdcId(icdcId);
-
-                        map2.replace("icdc",true);
-                        map2.replace("display_icdc",true);
-                        map2.replace("edit_icdc",false);
-                        map2.replace("title_icdc",icdcEntity.getFormName());
-
-                        logger.info("Map1 : {}",map2);
+                    } else if (type.equalsIgnoreCase("Support")) {
+                        map2.replace("icdc", true);
+                        map2.replace("display_icdc", true);
+                        map2.replace("edit_icdc", false);
+                        map2.replace("title_icdc", "ICDC Panel");
                         settingsEntity.setIcdcDetails(map2);
-
-                        logger.info("ICDC : {}",icdcEntity);
-                        if(icdcEntity!=null) {
-                            List<Map<String,Object>> icdcData = icdcEntity.getIcdcData();
-                            logger.info("ICDC DATA : {}",icdcData);
-                            ques.put("icdc_id", icdcId);
-                            ques.put("question_data",icdcData);
-                            logger.info("Ques {}",ques );
-                            settingsEntity.setIcdcQuestions(ques);
-                        }
+                    } else {
+                        map2.replace("icdc", false);
+                        map2.replace("display_icdc", true);
+                        map2.replace("edit_icdc", false);
+                        map2.replace("title_icdc", "ICDC Panel");
+                        logger.info("Map1 : {}", map2);
+                        settingsEntity.setIcdcDetails(map2);
                     }
-
+                        List<Map<String, Object>> icdcData = icdcRepository.findNamesByUserId(userEntity.getUserId());
+                        logger.info("ICDC DATA : {}", icdcData);
+                        settingsEntity.setIcdcQuestions(icdcData);
                 }
                 catch (Exception e){
                     logger.error("Getting exception while setting object for featureId 16 {}",e.getMessage());
