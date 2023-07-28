@@ -45,7 +45,7 @@ export class UpdateUserDialogComponent implements OnInit {
   login_id: string;
   acc_exp_date: Date;
   exp_date: string;
-  logo: any = null;
+  logo: any = "";
   photoUrl: any;
   photoControl: boolean = false;
   max_duration: number;
@@ -125,7 +125,7 @@ export class UpdateUserDialogComponent implements OnInit {
   onPhotoDeselected() {
     this.photoUrl = {};
     this.photoControl = false;
-    this.logo = {};
+    this.logo = "";
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {

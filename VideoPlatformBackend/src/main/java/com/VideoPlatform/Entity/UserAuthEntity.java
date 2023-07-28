@@ -30,11 +30,11 @@ public class UserAuthEntity {
     private String systemNames;
 
     @Column(nullable = false,name="creation_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date creationDate;
 
     @Column(nullable = false,name="exp_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expDate;
 
     public int getUserId() { return userId; }

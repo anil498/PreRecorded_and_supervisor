@@ -142,6 +142,7 @@ export class FeedbackFormComponent implements OnInit {
     return this.questionDisable;
   }
   ngOnDestroy() {
+    this.onCancel();
     if (this.answerFormSub) this.answerFormSub.unsubscribe();
     if (this.questionFormSub) this.questionFormSub.unsubscribe();
     if (this.isAnswerDisableSub) this.isAnswerDisableSub.unsubscribe();
@@ -160,7 +161,7 @@ export class FeedbackFormComponent implements OnInit {
   onQuestionDrop(event) {
     if (this.questionDisable == true) {
       console.log("please fill current question");
-      this.openSnackBar("Please Save the current question first", "error");
+      this.openSnackBar("Please Add this Question First", "error");
       return;
     }
     //moveItemInArray(this.selectedAnswers, event.previousIndex, event.currentIndex);
@@ -189,7 +190,7 @@ export class FeedbackFormComponent implements OnInit {
   onAnswerDrop(event) {
     if (this.answerDisable == true) {
       console.log("please fill current current");
-      this.openSnackBar("Please Save the current question first", "error");
+      this.openSnackBar("Please Add this Question FIrst", "error");
       return;
     }
     this.showAnswerIcon = false;
@@ -227,13 +228,12 @@ export class FeedbackFormComponent implements OnInit {
     //this.metaArray.push(this.ansObject);
     //console.log(this.ansArray);
     if (this.questionObject.value.question == "") {
-      this.openSnackBar("Please complete Question before Saving", "error");
+      this.openSnackBar("Please Complete this Question First", "error");
       return;
     }
     console.warn(this.questionObject);
     console.log(this.metaArray);
-    console.log(this.questionObject);
-    console.log(this.ansObject);
+    console.warn(this.ansObject);
     this.feedbackForm = Object.assign(
       this.questionObject.value,
       this.ansObject.value
@@ -291,7 +291,11 @@ export class FeedbackFormComponent implements OnInit {
       return;
     }
     if (this.questionArray.length < 1) {
-      this.openSnackBar("PLease create at least one question", "error");
+      this.openSnackBar("PLease Add At least 1 Question", "error");
+      return;
+    }
+    if (this.questionDisable == true) {
+      this.openSnackBar("Please Add this Question FIrst", "error");
       return;
     }
     console.log("form saved");
@@ -327,6 +331,7 @@ export class FeedbackFormComponent implements OnInit {
   // }
 
   onCancel() {
+    this.formName = "";
     const quesDiv = document.getElementById("question-div");
     const ansDiv = document.getElementById("answer-div");
     const quesTabDiv = document.getElementById("question-tab");

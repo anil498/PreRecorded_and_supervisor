@@ -18,9 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
-
 import static org.springframework.http.ResponseEntity.ok;
 
 @Service
@@ -79,7 +77,7 @@ public class AccessServiceImpl implements AccessService {
 
     @Override
     public List<AccessEntity> getAllAccess(){
-        return accessRepository.findAll();
+        return accessRepository.findAllAccess();
     }
 
     @Override

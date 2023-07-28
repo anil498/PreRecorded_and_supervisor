@@ -83,11 +83,13 @@ public class SessionController {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-
-        if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
-            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        if(commonService.authorizationCheck(authKey,token,"get_all")){
+            return ok(sessionService.getAllSupportSessions());
         }
-        return ok(sessionService.getAllSupportSessions(authKey,token));
+        if(commonService.authorizationCheck(authKey,token,"my_sessions")){
+            return ok(sessionService.getAllSupportSessionsUser(token));
+        }
+        return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PostMapping("/GetByKey")

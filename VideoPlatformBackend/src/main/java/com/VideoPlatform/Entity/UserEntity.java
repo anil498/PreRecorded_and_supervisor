@@ -43,14 +43,14 @@ public class UserEntity implements Serializable {
     private String email = "";
 
     @Column(name = "creation_date",columnDefinition = "TIMESTAMP")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date creationDate;
 
     @Column(name = "last_login")
     private String lastLogin;
 
     @Column(name = "exp_date",columnDefinition = "TIMESTAMP")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expDate;
 
     @Column(name = "parent_id")

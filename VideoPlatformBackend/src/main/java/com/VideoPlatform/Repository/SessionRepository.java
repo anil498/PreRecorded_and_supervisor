@@ -19,6 +19,9 @@ public interface SessionRepository extends JpaRepository<SessionEntity,String> {
     @Query(nativeQuery = true,value = "select * from sessions where user_id=:userId and type='Support'")
     List<SessionEntity> findSupportSessions(@Param("userId") Integer userId);
 
+    @Query(nativeQuery = true,value = "select * from sessions where type='Support'")
+    List<SessionEntity> findAllSupportSessions();
+
     @Modifying
     @Transactional
     @Query(nativeQuery=true, value = "UPDATE sessions SET status = 2 where session_key = :sessionKey ")
@@ -49,5 +52,6 @@ public interface SessionRepository extends JpaRepository<SessionEntity,String> {
     @Transactional
     @Query(nativeQuery=true, value = "UPDATE sessions SET hold = :hold where session_key = :sessionKey")
     void updateHold(@Param("sessionKey") String sessionKey,@Param("hold") Boolean hold);
+
 
 }

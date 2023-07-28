@@ -39,7 +39,7 @@ public class IcdcResponseEntity {
     private List<Map<String, Object>> icdcResult;
 
     @Column(name = "creation_date",columnDefinition = "TIMESTAMP")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date creationDate;
 
     public int getIcdcId() { return icdcId; }

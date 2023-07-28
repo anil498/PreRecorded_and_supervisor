@@ -8,6 +8,7 @@ import { DynamicSupportComponent } from "../../dynamic-support/dynamic-support.c
 import { AccountManagementComponent } from "app/account-management/account-management.component";
 import { AccessManagementComponent } from "app/access-management/access-management.component";
 import { FeatureManagementComponent } from "app/feature-management/feature-management.component";
+import { IcdcManagementComponent } from "app/icdc-management/icdc-management.component";
 import { FeedbackFormComponent } from "app/feedback-form/feedback-form.component";
 
 export const AdminLayoutRoutes: Routes = [
@@ -19,5 +20,6 @@ export const AdminLayoutRoutes: Routes = [
   { path: "dynamic_links", component: DynamicSupportComponent },
   { path: "manage_platform_access", component: AccessManagementComponent },
   { path: "manage_platform_feature", component: FeatureManagementComponent },
-  { path: "icdc", component: FeedbackFormComponent },
+  { path: "icdc", component: IcdcManagementComponent },
+  { path: "icdc/create", component: FeedbackFormComponent }
 ];

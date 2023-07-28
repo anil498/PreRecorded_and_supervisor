@@ -32,7 +32,7 @@ public class AccountEntity {
     private String logo = "";
 
     @Column(name = "creation_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date creationDate;
 
     @Column(name = "max_user")
@@ -58,7 +58,7 @@ public class AccountEntity {
     private int status=1;
 
     @Column(name = "exp_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss",timezone = "IST")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expDate;
 
     public int getAccountId() {
