@@ -8,6 +8,7 @@ import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Services.UserService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,13 +224,20 @@ public class UserController {
         return ResponseEntity.ok("File Uploaded Successfully");
     }
 
-    @PostMapping("/test")
-    public ResponseEntity<?> test(@RequestBody Map<String, Object> params,HttpServletRequest request) {
-        commonService.decodeToImage(params.get("byte").toString(),FILE_DIRECTORY+params.get("name"));
-        return ok("Image Uploaded!");
+    @PostMapping("/getImage")
+    public ResponseEntity<?> getImage(@RequestBody Map<String, Object> params,HttpServletRequest request) throws IOException {
+
+        String encodedImage = userService.getImage(params);
+//        logger.info("Encoded String : {}",encodedImage);
+        if(encodedImage==null){
+            return new ResponseEntity<>("Image encoding failed!",HttpStatus.FORBIDDEN);
+        }
+        Map<String,String> map = new HashMap<>();
+        map.put("byte",encodedImage);
+        return new ResponseEntity<>(map,HttpStatus.OK);
     }
 
-        @PostMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> params,HttpServletRequest request) {
         String authKey = request.getHeader("Authorization");
         int authId = commonService.isValidAuthKey(authKey);

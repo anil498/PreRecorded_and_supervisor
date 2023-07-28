@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -405,6 +408,33 @@ public class UserServiceImpl implements UserService{
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String getImage(Map<String,Object> params) throws IOException {
+        Integer userId = (Integer) params.get("userId");
+        Integer accountId = (Integer) params.get("accountId");
+        String path = "";
+        String encodedString="";
+        if(userId==null && accountId!=null) {
+            AccountEntity accountEntity = accountRepository.findByAccountId(accountId);
+            if (accountEntity != null) {
+                path = accountEntity.getLogo();
+                byte[] fileContent = FileUtils.readFileToByteArray(new File(path));
+                encodedString = Base64.getEncoder().encodeToString(fileContent);
+                return encodedString;
+            }
+        }
+        else if(accountId==null && userId!=null){
+            UserEntity userEntity = userRepository.findByUserId(userId);
+            if(userEntity!=null){
+                path=userEntity.getLogo();
+                byte[] fileContent = FileUtils.readFileToByteArray(new File(path));
+                encodedString = Base64.getEncoder().encodeToString(fileContent);
+                return encodedString;
+            }
+        }
+        return null;
     }
 //    public String resetPassword(String newPassword, String loginId, Integer userId){
 //        UserEntity userEntity = userRepository.findByUserId(userId);

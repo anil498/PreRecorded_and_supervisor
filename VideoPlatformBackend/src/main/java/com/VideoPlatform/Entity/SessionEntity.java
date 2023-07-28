@@ -42,11 +42,11 @@ public class SessionEntity {
 
     @Column(name = "hold") private Boolean hold = false;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "creation_date") private Date creationDate;
 
     @Column(name = "exp_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "IST")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date expDate;
 
     @Column(name = "status") private Integer status = 1;

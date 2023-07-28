@@ -157,32 +157,6 @@ public class CommonService {
         return false;
     }
 
-//    public Boolean checkMandatoryU(Object params1){
-//        int f=0;
-//        logger.info("Params get : {}",params1);
-//        ObjectMapper objectMapper=new ObjectMapper();
-//        Map<String,Object> params = objectMapper.convertValue(params1,Map.class);
-//        logger.info("Params Value : {}",params);
-//
-//        if(params.containsKey("session")){
-//            if(params.get("session") == null) f=1;
-//        }
-//        if(params.containsKey("accessId")){
-//            if(params.get("accessId")==null) f=1;
-//        }
-//        if(params.containsKey("features")){
-//            if(params.get("features")==null) f=1;
-//        }
-//        if(params.containsKey("featuresMeta")){
-//            if(params.get("featuresMeta")==null) f=1;
-//        }
-//        if(params.containsKey("expDate")){
-//            if(params.get("expDate")==null) f=1;
-//        }
-//        if(f==0) return true;
-//        return false;
-//    }
-
     public void compareAndChange(JsonObject params, AccountEntity storedExisting,Integer accountId) {
 
         ObjectMapper objectMapper=new ObjectMapper();

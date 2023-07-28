@@ -25,22 +25,6 @@ public class FeatureEntity {
     @Column(name = "name")
     private String name;
 
-//    @Column(name="meta_list",columnDefinition="text")
-//    @Type(type="com.VideoPlatform.Utils.MapType")
-//    private HashMap<String, Object> metaList = new HashMap<String, Object>(0);
-
-//    @Column(name="meta_list",columnDefinition="text")
-//    private String metaList;
-
-//    @Column(name = "meta_list", columnDefinition = "jsonb")
-//
-//    @Type(type = "jsonb")
-//
-//    private JsonNode metaList;
-
-//    @Column(name = "meta_list", columnDefinition = "jsonb")
-//    private String metaList;
-
     @Column(name = "meta_list", columnDefinition = "text")
     @JsonRawValue
     private String metaList;

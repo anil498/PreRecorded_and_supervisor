@@ -1,10 +1,12 @@
 package com.VideoPlatform.Entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.hibernate.annotations.Type;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,10 @@ public class IcdcEntity {
     @Column(name="icdc_data",columnDefinition="text")
     @Type(type="com.VideoPlatform.Utils.MapType")
     private List<Map<String, Object>> icdcData;
+
+    @Column(name = "creation_date",columnDefinition = "TIMESTAMP")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date creationDate;
 
     @Column(name = "status")
     private int status = 1;
@@ -80,6 +86,10 @@ public class IcdcEntity {
         this.icdcData = icdcData;
     }
 
+    public Date getCreationDate() { return creationDate; }
+
+    public void setCreationDate(Date creationDate) { this.creationDate = creationDate; }
+
     @Override
     public String toString() {
         return "IcdcEntity{" +
@@ -88,9 +98,8 @@ public class IcdcEntity {
                 ", accountId=" + accountId +
                 ", userId=" + userId +
                 ", icdcData=" + icdcData +
+                ", creationDate=" + creationDate +
                 ", status=" + status +
                 '}';
     }
-
-
 }

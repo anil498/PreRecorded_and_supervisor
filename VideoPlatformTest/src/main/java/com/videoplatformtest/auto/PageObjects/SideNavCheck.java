@@ -100,7 +100,7 @@ public class SideNavCheck  {
                 if (element.getText().contains("My Reports")) { if(!accessValues.contains("My Reports")) fail(); else System.out.println("My Reports");}
                 if (element.getText().contains("Platform Access")) { if(!accessValues.contains("Platform Access")) fail(); else System.out.println("Platform Access");}
                 if (element.getText().contains("Platform Feature")) { if(!accessValues.contains("Platform Feature")) fail(); else System.out.println("Platform Features");}
-                if (element.getText().contains("ICDC")) { if(!accessValues.contains("ICDC")) fail(); else System.out.println("ICDC");}
+                if (element.getText().contains("My ICDC")) { if(!accessValues.contains("My ICDC")) fail(); else System.out.println("ICDC");}
             }
         } catch (IOException e) {
             e.printStackTrace();
