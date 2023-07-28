@@ -714,11 +714,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleQuestionPanel() {
 		this.onQuestionPanelButtonClicked.emit();
-		if (this.displayicdc) {
+		if ( !this.isQuestionOpened) {
 			this.panelService.togglePanel(PanelType.QUESTIONS);
 		}
 
-		
+		//send signal for close customer question panel if open(we need observers to check this)
 	}
 
 	/**
@@ -854,6 +854,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.isChatOpened = ev.opened && ev.type === PanelType.CHAT;
 			this.isParticipantsOpened = ev.opened && ev.type === PanelType.PARTICIPANTS;
 			this.isActivitiesOpened = ev.opened && ev.type === PanelType.ACTIVITIES;
+			this.isQuestionOpened = ev.opened && ev.type === PanelType.QUESTIONS;
 			if (this.isChatOpened) {
 				this.unreadMessages = 0;
 			}
