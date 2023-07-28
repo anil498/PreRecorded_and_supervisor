@@ -26,4 +26,7 @@ public interface AccessRepository extends JpaRepository<AccessEntity, Integer> {
     @Transactional
     @Query(nativeQuery=true, value = "UPDATE platform_access SET status = 2 where access_id = :accessId ")
     void deleteAccess(@Param("accessId") Integer accessId);
+
+    @Query(nativeQuery=true, value = "select * from platform_access where status = 1")
+    List<AccessEntity> findAllAccess();
 }

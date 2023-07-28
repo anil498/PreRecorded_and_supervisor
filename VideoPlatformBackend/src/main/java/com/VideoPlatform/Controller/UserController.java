@@ -67,21 +67,24 @@ public class UserController {
         logger.info(commonService.getHeaders(request).toString());
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-        if(!commonService.authorizationCheck(authKey,token,"my_users")){
-            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+        if(commonService.authorizationCheck(authKey,token,"get_all")){
+            return ok(userService.getAllUsers());
         }
-        return ok(userService.getAllUsers());
+        if(commonService.authorizationCheck(authKey,token,"my_users")){
+            return ok(userService.getAllChild(token));
+        }
+        return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
     }
 
-    @GetMapping("/Child")
-    public ResponseEntity<List<UserEntity>> getAllChild(HttpServletRequest request) {
-        String authKey = request.getHeader("Authorization");
-        String token = request.getHeader("Token");
-        if(!commonService.authorizationCheck(authKey,token,"my_users")){
-            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
-        }
-        return ResponseEntity.ok(userService.getAllChild(token));
-    }
+//    @GetMapping("/Child")
+//    public ResponseEntity<List<UserEntity>> getAllChild(HttpServletRequest request) {
+//        String authKey = request.getHeader("Authorization");
+//        String token = request.getHeader("Token");
+//        if(!commonService.authorizationCheck(authKey,token,"my_users")){
+//            return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+//        }
+//        return ResponseEntity.ok(userService.getAllChild(token));
+//    }
 
     @GetMapping("/GetById/{id}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id, HttpServletRequest request) {

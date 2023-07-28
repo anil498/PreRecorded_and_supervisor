@@ -61,12 +61,12 @@ public class CommonService {
         return accountId;
     }
     public Boolean isValidRequest(String token,String authKey,String systemName){
-        UserAuthEntity user = userAuthRepository.findByTokenAndAuthKey(token,authKey);
-        if(user == null)return false;
-        String systemNames = user.getSystemNames();
+        UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
+        if(userAuthEntity == null)return false;
+        String systemNames = userAuthEntity.getSystemNames();
         logger.info("SystemNames : {}",systemNames);
 
-        if(TimeUtils.isExpire(user.getExpDate()))
+        if(TimeUtils.isExpire(userAuthEntity.getExpDate()))
             return false;
         if(!systemNames.contains(systemName)){
             logger.info("Permission Denied. Don't have access for this service!");

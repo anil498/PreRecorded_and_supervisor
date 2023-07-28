@@ -278,10 +278,14 @@ public class SessionServiceImpl implements SessionService{
     }
 
     @Override
-    public List<SessionEntity> getAllSupportSessions(String authKey,String token) {
+    public List<SessionEntity> getAllSupportSessionsUser(String token) {
         UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
         Integer userId = userAuthEntity.getUserId();
         return sessionRepository.findSupportSessions(userId);
+    }
+    @Override
+    public List<SessionEntity> getAllSupportSessions() {
+        return sessionRepository.findAllSupportSessions();
     }
 
     @Override

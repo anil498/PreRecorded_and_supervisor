@@ -10,7 +10,8 @@ import java.util.Map;
 
 public interface SessionService {
     SessionEntity createSession(String authKey,String token,Boolean moderator,String sessionId,String sessionKey,String description,String participantName,String type);
-    List<SessionEntity> getAllSupportSessions(String authKey,String token);
+    List<SessionEntity> getAllSupportSessionsUser(String token);
+    List<SessionEntity> getAllSupportSessions();
     SessionEntity getByKey(String key);
     String deleteSession(String sessionKey);
     ResponseEntity<?> sendLink(Map<String,?> params, HttpServletRequest request, HttpServletResponse response);

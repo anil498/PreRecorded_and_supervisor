@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -71,11 +70,6 @@ public class UserServiceImpl implements UserService{
     public List<UserEntity> getAllChild(String token) {
 
          UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
-//         List<UserEntity> listUser= userRepository.findAllChild(userAuthEntity.getUserId());
-//         for(UserEntity userEntity : listUser){
-//             commonService.removeFeatureMetaVideo(userEntity);
-//         }
-//         return listUser;
          return userRepository.findAllChild(userAuthEntity.getUserId());
     }
 

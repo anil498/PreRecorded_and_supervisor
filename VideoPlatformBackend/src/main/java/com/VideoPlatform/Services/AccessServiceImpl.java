@@ -79,7 +79,7 @@ public class AccessServiceImpl implements AccessService {
 
     @Override
     public List<AccessEntity> getAllAccess(){
-        return accessRepository.findAll();
+        return accessRepository.findAllAccess();
     }
 
     @Override
