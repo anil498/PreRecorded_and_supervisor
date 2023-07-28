@@ -718,12 +718,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.panelService.togglePanel(PanelType.QUESTIONS);
 		}
 
-		const data = {
-			message: 'Question Panel Signal From Support to open Question Panel in Customer side',
-			nickname: this.participantService.getMyNickname()
-		};
-
-		this.openviduService.sendSignal(Signal.QUESTION, undefined, data);
+		
 	}
 
 	/**

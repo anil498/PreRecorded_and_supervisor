@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+
+::ng-deep .error .mat-snack-bar-container {
+  background: linear-gradient(60deg, #da0505, #eb6161) !important;
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+::ng-deep .success .mat-snack-bar-container {
+  background: linear-gradient(60deg, #37da05, #abeb61) !important;
+  color: #ffffff !important;
+  font-weight: bold;
+}

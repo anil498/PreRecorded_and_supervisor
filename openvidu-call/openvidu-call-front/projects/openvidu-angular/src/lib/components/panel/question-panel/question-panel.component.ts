@@ -65,7 +65,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	/**
 	 * Provides event notifications that fire when submit button has been clicked.
 	 */
-	@Output() onSubmitButtonClicked: EventEmitter<string> = new EventEmitter<any>();
+	@Output() onSubmitButtonClicked: EventEmitter<any> = new EventEmitter<any>();
 
 	private log: ILogger;
 
@@ -89,6 +89,13 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	private editicdcSub: Subscription;
 	private titleicdcSub: Subscription;
 	private questionsicdcSub: Subscription;
+	public Selectformpanel: boolean = false;
+	FormArray: string[] = [];
+	selectedFormName: string = '';
+	selectedFormindex: number;
+	selectedIdx: number = -1;
+	isformselected: boolean = false;
+	isformpreviewmode: boolean = false;
 
 	myTextQuestionMap: Map<number, number> = new Map<number, number>();
 
@@ -117,21 +124,71 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	ngOnInit(): void {
 		this.subscribetoParameters();
 		this.subscribeToSignal();
+		if (this.usertype === 'Support') {
+			this.Selectformpanel = true;
+		}
 		this.form.valueChanges.subscribe((value) => {
 			if (!this.form.pristine) {
 				this.openviduService.sendSignal(Signal.SUPPORT, undefined, value);
 			}
 		});
+		this.loadFormInArray();
 	}
 
 	ngAfterViewInit() {
-		this.fillform();
+		//this.fillform();
+	}
+	loadFormInArray() {
+		const totQjsonarray = JSON.parse(this.questionsicdc); //this is a array of json object
+		for (let i = 0; i < totQjsonarray.length; i++) {
+			this.FormArray.push(totQjsonarray[i].form_name);
+		}
 	}
 
-	fillform() {
-		const questionjson = JSON.parse(this.questionsicdc);
-		this.questions = questionjson.question_data;
-		let autoindexing = 0;
+	selectItem(index: number) {
+		this.isformselected = true;
+		this.selectedIdx = index;
+		this.selectedFormindex = index;
+		this.selectedFormName = this.FormArray[index];
+	}
+
+	previewToquestion(): void {
+		this.isformpreviewmode = true;
+		this.ShowquestionTouser();
+	}
+
+	ShowquestionTouser(): void {
+		//send signal to open panel in customer side
+
+		if (!this.isformpreviewmode) {
+			const data = {
+				index: String(this.selectedFormindex),
+				formtitle: this.selectedFormName
+			};
+			this.openviduService.sendSignal(Signal.QUESTION, undefined, data);
+		}
+
+		const totQjsonarray = JSON.parse(this.questionsicdc); //this is a array of json object
+
+		for (let i = 0; i < totQjsonarray.length; i++) {
+			for (const key in totQjsonarray[i]) {
+				if (totQjsonarray[i].hasOwnProperty(key) && totQjsonarray[i][key] === this.selectedFormName) {
+					this.selectedFormindex = i;
+				}
+			}
+		}
+
+		this.titleicdc = this.selectedFormName;
+		this.Selectformpanel = !this.Selectformpanel;
+		this.fillform(this.selectedFormindex);
+	}
+
+	fillform(formindex: number) {
+		const totQjsonarray = JSON.parse(this.questionsicdc);
+
+		this.questions = JSON.parse(totQjsonarray[formindex].icdc_data);
+
+		let autoindex = 0;
 		this.questions.forEach((question) => {
 			//Set custom Controls for a Checkbox Question
 			if (question.type === 'checkbox') {
@@ -143,10 +200,12 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				this.form.addControl(question.q_id, this.formBuilder.control(checkboxOptions));
 			} else {
 				//fill map
+
 				if (question.type === 'text') {
-					this.myTextQuestionMap.set(question.q_id, autoindexing);
-					autoindexing++;
+					this.myTextQuestionMap.set(question.q_id, autoindex);
+					autoindex++;
 				}
+
 				//Add Controls for Questions other than the checkbox
 				this.form.addControl(question.q_id, this.formBuilder.control('', Validators.required));
 			}
@@ -158,19 +217,62 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		} else {
 			this.isSubmit = true;
 		}
-
 		if (this.usertype == 'Customer') {
 			this.isClose = false;
 		}
-
 		//Update UI
 		if (this.panelService.isQuestionPanelOpened()) {
 			this.cd.markForCheck();
 		}
 	} //fill form fun end
 
+	Close_Submit_button(): void {
+		if (this.isformpreviewmode) {
+			//click on close button
+			this.isformpreviewmode = false;
+			this.Selectformpanel = true;
+		} //click on submit button
+		else {
+			this.submitForm(this.selectedFormindex);
+		}
+	}
+
+	submitForm(formindex:number) {
+		const formresponse = JSON.stringify(this.form.value);
+		const totalformjson = {};
+
+		totalformjson['selectformindex'] = formindex;
+		totalformjson['formresponsevalue'] =formresponse;
+		this.onSubmitButtonClicked.emit(totalformjson);
+
+		this.form.reset();
+		this.selectedAnswers = [];
+		this.close();
+		const data = {
+			message: 'Submit Form Signal',
+			sendby:this.usertype
+		};
+
+		this.openviduService.sendSignal(Signal.FORMSUBMITTED, undefined, data);
+
+		this.openviduService.sendSignal(Signal.CLOSE, undefined, data);
+	}
+
+
 	//Subscribe to Signals
 	protected subscribeToSignal() {
+		//signal for find selected form index in  Panel
+		this.session.on(`signal:${Signal.FORMINDEX}`, (event: any) => {
+			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
+			const isMyOwnConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
+			if (isMyOwnConnection) {
+                this.titleicdc=data.formtitle;
+				this.selectedFormindex=data.index;
+				this.fillform(this.selectedFormindex);
+
+			}
+		});
 		// Data Signal From Other Participant
 		this.session.on(`signal:${Signal.SUPPORT}`, (event: any) => {
 			const connectionId = event.from.connectionId;
@@ -231,17 +333,13 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				this.scrolling = false;
 			}
 		});
-		//FORM SUBMITTED
+		//user submitted the form openDialog for support
 		this.session.on(`signal:${Signal.FORMSUBMITTED}`, (event: any) => {
-			const data = JSON.parse(event.data);
 			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
 			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
 			if (!isMyOwnConnection) {
-				this.actionService.openDialog(
-					this.translateService.translate('Form Submit'),
-					'From has been submitted by ' + data.nickname,
-					true
-				);
+				this.actionService.openDialog(this.translateService.translate('Form Submit'), 'From has been submitted by '+data.sendby, true);
 			}
 		});
 	}
@@ -327,22 +425,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 		this.openviduService.sendSignal(Signal.SUPPORT, undefined, data);
 	}
 
-	submitForm() {
-		const formresponse = JSON.stringify(this.form.value);
-		this.onSubmitButtonClicked.emit(formresponse);
-		this.form.reset();
-
-		this.selectedAnswers = [];
-		this.close();
-
-		const data = {
-			msg: 'Submit Form Signal',
-			nickname: this.participantService.getMyNickname()
-		};
-		this.openviduService.sendSignal(Signal.FORMSUBMITTED, undefined, data);
-
-		this.openviduService.sendSignal(Signal.CLOSE, undefined, data);
-	}
+	
 
 	close() {
 		if (this.panelService.isQuestionPanelOpened() == true) {

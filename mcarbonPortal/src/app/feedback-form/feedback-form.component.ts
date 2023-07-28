@@ -158,6 +158,11 @@ export class FeedbackFormComponent implements OnInit {
   }
 
   onQuestionDrop(event) {
+    if (this.questionDisable == true) {
+      console.log("please fill current question");
+      this.openSnackBar("Please Save the current question first", "error");
+      return;
+    }
     //moveItemInArray(this.selectedAnswers, event.previousIndex, event.currentIndex);
     this.showQuestionIcon = false;
     console.log("Dropped");
@@ -175,24 +180,36 @@ export class FeedbackFormComponent implements OnInit {
     this.observerService.isQuestionDisable.next(true);
     this.observerService.isAnswerDisable.next(false);
     this.answerDisable = false;
+    this.onAnswerDrop(null);
+    const quesBody = <HTMLElement>(
+      document.getElementsByClassName("question-body")[0]
+    );
+    quesBody.style.border = "2px solid #ccc";
   }
   onAnswerDrop(event) {
+    if (this.answerDisable == true) {
+      console.log("please fill current current");
+      this.openSnackBar("Please Save the current question first", "error");
+      return;
+    }
     this.showAnswerIcon = false;
     if (this.questionType !== "text" || this.totalAnswer < 1) {
       console.log("Dropped");
       console.log(event);
-      const droppedIndex = event.currentIndex;
+      //const droppedIndex = event.currentIndex;
       const ansComponent = this.viewComponentRef.createComponent(
         AnswerTemplateComponent
       );
       const ansElement = ansComponent.location.nativeElement;
-      const ansDiv = document.getElementById("answer-div");
+      //const ansDiv = document.getElementById("answer-div");
+      const quesDiv = document.getElementById("question-div");
       this.uniqueId = "ans" + this.totalAnswer;
       this.renderer.setAttribute(ansElement, "id", this.uniqueId);
       this.renderer.setAttribute(ansElement, "cdkdrag", "");
       this.renderer.addClass(ansElement, "cdk-drag");
       this.observerService.ansUniqueId.next(this.uniqueId);
-      this.renderer.appendChild(ansDiv, ansElement);
+      // this.renderer.appendChild(ansDiv, ansElement);
+      this.renderer.appendChild(quesDiv, ansElement);
       this.totalAnswer++;
       this.observerService.totalAnswer.next(this.totalAnswer);
     } else {
@@ -209,6 +226,10 @@ export class FeedbackFormComponent implements OnInit {
     const qId = this.index;
     //this.metaArray.push(this.ansObject);
     //console.log(this.ansArray);
+    if (this.questionObject.value.question == "") {
+      this.openSnackBar("Please complete Question before Saving", "error");
+      return;
+    }
     console.warn(this.questionObject);
     console.log(this.metaArray);
     console.log(this.questionObject);
@@ -233,10 +254,10 @@ export class FeedbackFormComponent implements OnInit {
     while (quesDiv.childElementCount > 0) {
       quesDiv.removeChild(quesDiv.firstChild);
     }
-    console.log(ansDiv.childElementCount);
-    while (ansDiv.childElementCount > 0) {
-      ansDiv.removeChild(ansDiv.firstChild);
-    }
+    // console.log(ansDiv.childElementCount);
+    // while (ansDiv.childElementCount > 0) {
+    //   ansDiv.removeChild(ansDiv.firstChild);
+    // }
 
     this.questionDisable = false;
     this.observerService.isQuestionDisable.next(false);
@@ -265,6 +286,14 @@ export class FeedbackFormComponent implements OnInit {
   }
 
   async onFormSave() {
+    if (this.formName == null || this.formName == "") {
+      this.openSnackBar("Please Enter a Form Name", "error");
+      return;
+    }
+    if (this.questionArray.length < 1) {
+      this.openSnackBar("PLease create at least one question", "error");
+      return;
+    }
     console.log("form saved");
     console.log(this.formName, this.questionArray);
     let response: any;
@@ -277,11 +306,13 @@ export class FeedbackFormComponent implements OnInit {
       console.log(response);
       if (response.status_code == 200) {
         console.log("created");
-        this.openSnackBar(response.msg, "snackBar");
+        this.openSnackBar(response.msg, "success");
         this.onCancel();
       } else {
       }
     } catch (error) {
+      console.log("error");
+      this.openSnackBar(response.msg, "error");
       console.log(error);
     }
   }
@@ -304,16 +335,21 @@ export class FeedbackFormComponent implements OnInit {
         quesDiv.removeChild(quesDiv.firstChild);
       }
     }
-    if (ansDiv) {
-      console.log(ansDiv.childElementCount);
-      while (ansDiv.childElementCount > 0) {
-        ansDiv.removeChild(ansDiv.firstChild);
-      }
-    }
+    // if (ansDiv) {
+    //   console.log(ansDiv.childElementCount);
+    //   while (ansDiv.childElementCount > 0) {
+    //     ansDiv.removeChild(ansDiv.firstChild);
+    //   }
+    // }
 
     while (quesTabDiv.childElementCount > 0) {
       quesTabDiv.removeChild(quesTabDiv.firstChild);
     }
+
+    const quesBody = <HTMLElement>(
+      document.getElementsByClassName("question-body")[0]
+    );
+    quesBody.style.border = "2px dashed #ccc";
 
     this.questionDisable = false;
     this.observerService.isQuestionDisable.next(false);

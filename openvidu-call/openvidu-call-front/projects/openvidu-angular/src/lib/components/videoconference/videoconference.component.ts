@@ -400,7 +400,7 @@ export class VideoconferenceComponent implements OnInit, OnDestroy, AfterViewIni
 	/**
 	 * Provides event notifications that fire when form submit button has been clicked.
 	 */
-	@Output() onSubmitButtonClicked: EventEmitter<string> = new EventEmitter<any>();
+	@Output() onSubmitButtonClicked: EventEmitter<any> = new EventEmitter<any>();
 	/**
 	 * Provides event notifications that fire when start recording button is clicked {@link ActivitiesPanelComponent}.
 	 *  The recording should be stopped using the REST API.
