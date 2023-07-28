@@ -1,7 +1,50 @@
+li {
+	cursor: pointer;
+	padding: 10px;
+  }
+  
+  .scrollable-list {
+	height: 300px; /* Set the maximum height to your desired value */
+	overflow-y: auto; /* Enable vertical scrolling when the list exceeds the maximum height */
+    list-style: none; 
+	 
+}
+  
+.scrollable-list li {
+	position: relative;
+	padding-left: 30px; /* Add padding to the left to make space for the tick box */
+	cursor: pointer;
+	border-bottom: 1px solid #ccc;
+  }
+  
+  .scrollable-list li::before {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 0;
+	transform: translateY(-50%);
+	width: 10px; /* Adjust the width and height of the tick box as needed */
+	height: 10px;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	pointer-events: none; /* Prevent the pseudo-element from capturing mouse events */
+  }
+  .scrollable-list li.selected::before {
+	background-color: #3f51b5; /* Change the background color to indicate selection */
+	border-color: #3f51b5; /* Change the border color to match the background color */
+	content: "\2713"; /* Add a checkmark character (✓) as content */
+	color: #fff; /* Change the color of the checkmark */
+	text-align: center;
+	line-height: 10px;
+	font-size: 16px;
+  }
+
+  /* /// */
 .panel-container{
 	border-radius: 10px;
 	padding: 10px;
 	background-color: lightyellow;
+	/* background-color: rgb(255, 224, 226); */
 }
 
 .panel-header-container{
@@ -20,7 +63,7 @@
 	display: block !important;
 	overflow-y: auto;
 	overflow-x: hidden;
-	padding-top: 20px;
+	padding-top: 10px;
 }
 
 
@@ -84,6 +127,7 @@ form {
   input[type="text"] {
 	width: 90%;
 	padding: 5px;
+	color: #1a73e8;
 	height: 20%;
 	border: 1px solid #ccc;
 	border-radius: 3px;

@@ -501,6 +501,8 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const isMyOwnConnection: boolean = this.openviduService.isMyOwnConnection(connectionId);
 			if (!isMyOwnConnection) {
 				this.panelService.togglePanel(PanelType.QUESTIONS);
+				this.openviduService.sendSignal(Signal.FORMINDEX, undefined, data);
+
 			}
 		});
 
