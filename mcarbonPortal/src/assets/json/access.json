@@ -126,5 +126,29 @@
     "class": "icdc",
     "show": false,
     "systemName": "icdc"
+  },
+  {
+    "path": "",
+    "title": "ICDC Creation",
+    "icon": "",
+    "class": "icdc_creation",
+    "show": false,
+    "systemName": "icdc_creation"
+  },
+  {
+    "path": "",
+    "title": "ICDC Update",
+    "icon": "",
+    "class": "icdc_update",
+    "show": false,
+    "systemName": "icdc_update"
+  },
+  {
+    "path": "",
+    "title": "ICDC Delete",
+    "icon": "",
+    "class": "icdc_delete",
+    "show": false,
+    "systemName": "icdc_delete"
   }
 ]

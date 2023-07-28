@@ -44,7 +44,7 @@ export class FormDialogComponent implements OnInit {
   loginResponse: any;
 
   emptyField: boolean = false;
-  logo: any = {};
+  logo: any = "";
   photoUrl: any;
   photoControl: boolean = false;
   user_fname: string;
@@ -139,7 +139,7 @@ export class FormDialogComponent implements OnInit {
   onPhotoDeselected() {
     this.photoUrl = {};
     this.photoControl = false;
-    this.logo = {};
+    this.logo = "";
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {

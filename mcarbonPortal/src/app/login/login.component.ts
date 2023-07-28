@@ -82,6 +82,19 @@ export class LoginComponent implements OnInit {
       );
       if (loginResponse.status_code == 200) {
         this.token = loginResponse.token;
+        let logoResponse;
+        try {
+          logoResponse = await this.restService.getLogo(
+            "User/getImage",
+            null,
+            loginResponse.user_data.userId
+          );
+          console.log(logoResponse);
+          loginResponse.user_data.logo = logoResponse;
+        } catch (err) {
+          console.log(err);
+          this.openSnackBar("Something Went Wrong", "error");
+        }
         this.restService.setData(loginResponse);
         this.restService.setToken(this.token);
         this.restService.setAuthKey(loginResponse.auth_key);

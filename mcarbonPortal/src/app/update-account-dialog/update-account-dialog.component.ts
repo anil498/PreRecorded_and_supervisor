@@ -39,7 +39,7 @@ export class UpdateAccountDialogComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: any = null;
+  logo: any = "";
   photoUrl: any;
   photoControl: boolean = false;
   acc_exp_date: Date;
@@ -124,7 +124,7 @@ export class UpdateAccountDialogComponent implements OnInit {
   onPhotoDeselected() {
     this.photoUrl = {};
     this.photoControl = false;
-    this.logo = {};
+    this.logo = "";
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
