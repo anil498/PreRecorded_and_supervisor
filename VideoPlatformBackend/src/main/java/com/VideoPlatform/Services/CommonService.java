@@ -259,6 +259,7 @@ public class CommonService {
     }
 
     public HashMap<String,Object> getMapOfLogo(String params1){
+
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(String.valueOf(params1),JsonObject.class);
         ObjectMapper objectMapper=new ObjectMapper();

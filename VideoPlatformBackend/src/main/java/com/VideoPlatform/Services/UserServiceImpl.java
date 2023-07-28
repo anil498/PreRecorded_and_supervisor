@@ -140,10 +140,11 @@ public class UserServiceImpl implements UserService{
         user.setPassword(myPass);
         userRepository.save(user);
         try{
-            HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
-            if(logo==null || logo.isEmpty()){
+
+            if(params.get("logo").isJsonNull() || params.get("logo").getAsString().equals("") || params.get("logo").toString()==null){
                 userRepository.updateLogoPath(user.getUserId(), String.valueOf(accountEntity.getLogo()));
             }else{
+                HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
                 Path path = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/"+user.getUserId()+"/image");
                 logger.info(path.toString());
                 if (!Files.exists(path)) {

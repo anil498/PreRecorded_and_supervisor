@@ -157,15 +157,15 @@ public class AccountServiceImpl implements AccountService {
             userAuthRepository.save(ua);
         }
         try{
-            if(params.get("logo").isJsonNull() || params.get("logo").toString().equals("")){
+            if(params.get("logo").isJsonNull() || params.get("logo").getAsString().equals("") || params.get("logo").toString()==null){
                 String defaultPath = FILE_DIRECTORY+"/media/default/image/"+imgName;
                 accountRepository.updateLogoPath(acc.getAccountId(), defaultPath);
                 userRepository.updateLogoPath(user.getUserId(),defaultPath);
             }else {
                 HashMap<String, Object> logoA = commonService.getMapOfLogo(params.get("logo").toString());
                 HashMap<String, Object> logoU = commonService.getMapOfLogo(params.get("logo").toString());
-                Path pathU = Paths.get(FILE_DIRECTORY + "/media/" + acc.getAccountId() + "/" + user.getUserId() + "/image");
-                Path pathA = Paths.get(FILE_DIRECTORY + "/media/" + acc.getAccountId() + "/image");
+                Path pathU = Paths.get(FILE_DIRECTORY + "media/" + acc.getAccountId() + "/" + user.getUserId() + "/image");
+                Path pathA = Paths.get(FILE_DIRECTORY + "media/" + acc.getAccountId() + "/image");
                 if (!Files.exists(pathU)) {
                     Files.createDirectories(pathU);
                 }
