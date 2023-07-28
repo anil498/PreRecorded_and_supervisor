@@ -28,8 +28,7 @@ RUN apk add --update docker openrc \
 COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
-RUN ls -ltrh
-RUN chmod +x docker/entrypoint.sh \
-    && mv docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x entrypoint.sh \
+    && mv entrypoint.sh /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
