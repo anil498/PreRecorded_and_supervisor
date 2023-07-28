@@ -120,20 +120,24 @@ export class CallComponent implements OnInit {
 			console.error('Getting error while calling update session API');
 		}
 	}
-	async onSubmitButtonClicked(value: string) {
-		console.log('Submit Form button clicked');
-		const formjson = JSON.parse(value);
-		const questionjson = JSON.parse(this.questionsicdc);
+	async onSubmitButtonClicked(value: any) {
+		const formjson = JSON.parse(value.formresponsevalue);
+
+		const icdcQuestionsarray = JSON.parse(this.questionsicdc); //total array
+
+		const specificformquestionsarray = JSON.parse(icdcQuestionsarray[value.selectformindex].icdc_data);
+
+		this.icdcId = String(icdcQuestionsarray[value.selectformindex].icdc_id);
+
 		var ansarray: any[] = [];
-		for (let i = 0; i < questionjson.question_data.length; i++) {
+		for (let i = 0; i < specificformquestionsarray.length; i++) {
 			const item = {};
 			const formkey = String(i);
-			item['q_id'] = questionjson.question_data[i]['q_id'];
-			item['type'] = questionjson.question_data[i]['type'];
-			item['question'] = questionjson.question_data[i]['question'];
-			item['meta'] = questionjson.question_data[i]['meta'];
-
-			if (questionjson.question_data[i]['type'] === 'checkbox') {
+			item['q_id'] = specificformquestionsarray[i]['q_id'];
+			item['type'] = specificformquestionsarray[i]['type'];
+			item['question'] = specificformquestionsarray[i]['question'];
+			item['meta'] = specificformquestionsarray[i]['meta'];
+			if (specificformquestionsarray[i]['type'] === 'checkbox') {
 				const checkboxjson = formjson[formkey];
 				var checkanswers: string[] = [];
 				for (let key in checkboxjson) {
@@ -147,7 +151,6 @@ export class CallComponent implements OnInit {
 			}
 			ansarray.push(item);
 		}
-
 		try {
 			await this.restService.saveIcdcResponse(this.sessionId, this.icdcId, ansarray);
 		} catch (error) {
@@ -236,7 +239,6 @@ export class CallComponent implements OnInit {
 			this.isAutoFullScreen = response.settings.isAutoFullScreen;
 
 			if (response.settings.icdcQuestions) {
-				this.icdcId = String(response.settings.icdcQuestions.icdc_id);
 				this.questionsicdc = JSON.stringify(response.settings.icdcQuestions);
 			}
 
@@ -259,12 +261,12 @@ export class CallComponent implements OnInit {
 				} else {
 					this.isVideoMuted = true;
 				}
-				if(response.settings.supervisor) {
+				if (response.settings.supervisor) {
 					this.participantNameValue = 'Support';
 					this.addSupervisor = true;
-					this.isVideoMuted=false
+					this.isVideoMuted = false;
 				}
-			}else{
+			} else {
 				this.isAudioMuted = false;
 				this.isVideoMuted = false;
 			}
