@@ -26,7 +26,7 @@ export class DockerService {
       }
     public async startContainer(options: Docker.ContainerCreateOptions): Promise<string> {
         this.logger.log('Launching container ' + options.Image);
-        const newBind = "/data/prerecoded:/data/prerecoded";
+        const newBind = "/data/prerecorded:/data/prerecorded";
         this.addNewBind(options, newBind);
         this.logger.log(options);
         
