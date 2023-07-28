@@ -430,7 +430,6 @@ export class RestService {
 
     features: number[],
     featuresMeta: any,
-    icdcId: number
   ) {
     return this.putRequest1(type, {
       accountId,
@@ -452,7 +451,6 @@ export class RestService {
 
       features,
       featuresMeta,
-      icdcId,
     });
   }
 
@@ -523,7 +521,6 @@ export class RestService {
 
     features: number[],
     featuresMeta: any,
-    icdcId: number
   ) {
     return this.putRequest2(type, {
       accountId,
@@ -543,7 +540,6 @@ export class RestService {
 
       features,
       featuresMeta,
-      icdcId,
     });
   }
 
@@ -800,36 +796,36 @@ export class RestService {
     }
   }
 
-  async getIcdcData(path: string, userId: number, accountId: number) {
-    const headers = new HttpHeaders({
-      Token: `${this._token}`,
-      Authorization: `${this.authKey}`,
-      "Content-Type": "application/json",
-    });
-    var body;
-    if (userId == null) {
-      body = {
-        accountId,
-      };
-    } else {
-      body = {
-        userId,
-        accountId,
-      };
-    }
-    console.log(body);
-    try {
-      return lastValueFrom(
-        this.http.post<any>(this.baseHref + path, body, { headers })
-      );
-    } catch (error) {
-      if (error.status === 404) {
-        throw {
-          status: error.status,
-          message: "Cannot connect with backend. " + error.url + " not found",
-        };
-      }
-      throw error;
-    }
-  }
+  // async getIcdcData(path: string, userId: number, accountId: number) {
+  //   const headers = new HttpHeaders({
+  //     Token: `${this._token}`,
+  //     Authorization: `${this.authKey}`,
+  //     "Content-Type": "application/json",
+  //   });
+  //   var body;
+  //   if (userId == null) {
+  //     body = {
+  //       accountId,
+  //     };
+  //   } else {
+  //     body = {
+  //       userId,
+  //       accountId,
+  //     };
+  //   }
+  //   console.log(body);
+  //   try {
+  //     return lastValueFrom(
+  //       this.http.post<any>(this.baseHref + path, body, { headers })
+  //     );
+  //   } catch (error) {
+  //     if (error.status === 404) {
+  //       throw {
+  //         status: error.status,
+  //         message: "Cannot connect with backend. " + error.url + " not found",
+  //       };
+  //     }
+  //     throw error;
+  //   }
+  // }
 }

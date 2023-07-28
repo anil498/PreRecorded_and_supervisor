@@ -109,8 +109,10 @@ export class UpdateAccountDialogComponent implements OnInit {
       reader.onloadend = () => {
         this.photoUrl = reader.result;
         this.photoControl = true;
-
-        this.logo = { byte: reader.result, type: file.type };
+        const type = file.type.split("/")[1];
+        const byte = (reader.result as string).split(",")[1];
+        this.logo = { byte: byte, type: type, name: file.name };
+        //this.logo = { byte: reader.result, type: file.type };
         console.log(this.logo);
         console.log(this.photoControl);
         console.log(this.photoUrl);
@@ -255,16 +257,16 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    if (this.account.featuresMeta.hasOwnProperty("16")) {
-      await this.restService
-        .getIcdcData("Icdc/GetNames", null, this.account.accountId)
-        .then((response) => {
-          this.forms = response;
-        });
-    }
-    console.log(this.forms);
-    console.log(this.account.expDate);
-    console.log(new Date(this.account.expDate));
+    // if (this.account.featuresMeta.hasOwnProperty("16")) {
+    //   await this.restService
+    //     .getIcdcData("Icdc/GetNames", null, this.account.accountId)
+    //     .then((response) => {
+    //       this.forms = response;
+    //     });
+    // }
+    // console.log(this.forms);
+    // console.log(this.account.expDate);
+    // console.log(new Date(this.account.expDate));
     this.userForm1 = this.fb.group({
       name: [
         this.account.name,
@@ -468,7 +470,6 @@ export class UpdateAccountDialogComponent implements OnInit {
       return;
     }
 
-    
     if (this.selectedFeaturesMeta.hasOwnProperty("4")) {
       if (this.formData == null) {
         this.openSnackBar("Please Select a video file", "snackbar");
@@ -490,14 +491,14 @@ export class UpdateAccountDialogComponent implements OnInit {
     this.selectedAccessId = this.userForm2.value.accessList;
     this.selectedFeatures = this.userForm3.value.featureList;
     this.selectedFeaturesMeta = this.userForm3.value.featureMeta;
-    if (
-      this.selectedFeaturesMeta.hasOwnProperty("16") &&
-      this.selectedFeaturesMeta["16"]["id_icdc"]
-    ) {
-      this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
-    }
+    // if (
+    //   this.selectedFeaturesMeta.hasOwnProperty("16") &&
+    //   this.selectedFeaturesMeta["16"]["id_icdc"]
+    // ) {
+    //   this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
+    // }
 
-    console.log(this.icdcId);
+    // console.log(this.icdcId);
     let response: any;
 
     try {
@@ -517,7 +518,6 @@ export class UpdateAccountDialogComponent implements OnInit {
 
         this.selectedFeatures.sort(),
         this.selectedFeaturesMeta,
-        this.icdcId
       );
       console.warn(response);
       let videoResponse;

@@ -143,8 +143,10 @@ export class CreateAccountComponent implements OnInit {
       reader.onloadend = () => {
         this.photoUrl = image.url;
         this.photoControl = true;
-
-        this.logo = { byte: reader.result, type: file.type };
+        const type = file.type.split("/")[1];
+        const byte = (reader.result as string).split(",")[1];
+        this.logo = { byte: byte, type: type , name: file.name};
+        console.log(reader.result);
         console.log(this.logo);
         console.log(this.photoControl);
         console.log(this.photoUrl);
@@ -426,12 +428,17 @@ export class CreateAccountComponent implements OnInit {
       this.userForm2.invalid ||
       this.userForm3.invalid
     ) {
-      console.warn("CHECKING VALIDATIONS");
       console.warn("Selected Feature Meta: ");
       console.log(this.selectedFeaturesMeta);
       this.focusOnInvalidFields();
-      console.warn("CHECKED");
       return false;
+    }
+
+    if (this.selectedFeaturesMeta.hasOwnProperty("4")) {
+      if (this.formData == null) {
+        this.openSnackBar("Please Select a video file", "snackbar");
+        return;
+      }
     }
 
     this.emptyError = false;
