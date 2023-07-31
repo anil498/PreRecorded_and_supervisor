@@ -6,7 +6,7 @@ import { Sessions } from "../model/sessions";
 import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
 import { RestService } from "app/services/rest.service";
 import { SessionDialogComponent } from "../session-dialog/session-dialog.component";
-import { MatSnackBar } from "@angular/material/snack-bar";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 import { ViewSessionSettingDialogComponent } from "app/view-session-setting-dialog/view-session-setting-dialog.component";
 import { browserRefresh } from "app/app.component";
 import { SessionJoinDialogComponent } from "app/session-join-dialog/session-join-dialog.component";
@@ -66,6 +66,20 @@ export class SessionManagementComponent implements OnInit {
         localStorage.getItem("password")
       );
       if (loginResponse.status_code == 200) {
+        let logoResponse;
+        try {
+          logoResponse = await this.restService.getLogo(
+            "User/getImage",
+            null,
+            loginResponse.user_data.userId
+          );
+          console.log("logo1",logoResponse);
+          loginResponse.user_data.logo = logoResponse;
+        } catch (err) {
+          console.log(err);
+          loginResponse.user_data.logo = null;
+          this.openSnackBar("Something Went Wrong", "error");
+        }
         this.restService.setData(loginResponse);
         this.restService.setToken(loginResponse.token);
         this.restService.setAuthKey(loginResponse.auth_key);
@@ -192,5 +206,13 @@ export class SessionManagementComponent implements OnInit {
       this.restService.closeDialog();
       this.viewTable();
     });
+  }
+
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    console.log(snackBarConfig.panelClass);
+    this.snackBar.open(message, null, snackBarConfig);
   }
 }

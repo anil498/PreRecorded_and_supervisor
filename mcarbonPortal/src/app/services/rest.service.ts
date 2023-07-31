@@ -654,7 +654,7 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "Icdc/GetAllByUser", { headers })
+        this.http.get<any>(this.baseHref + "Icdc/GetAll", { headers })
       );
     } catch (error) {
       if (error.status === 404) {

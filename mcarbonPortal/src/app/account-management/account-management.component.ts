@@ -80,6 +80,20 @@ export class AccountManagementComponent implements OnInit {
         localStorage.getItem("password")
       );
       if (loginResponse.status_code == 200) {
+        let logoResponse;
+        try {
+          logoResponse = await this.restService.getLogo(
+            "User/getImage",
+            null,
+            loginResponse.user_data.userId
+          );
+          console.log("logo1", logoResponse);
+          loginResponse.user_data.logo = logoResponse;
+        } catch (err) {
+          console.log(err);
+          loginResponse.user_data.logo = null;
+          this.openSnackBar("Something Went Wrong", "error");
+        }
         this.restService.setData(loginResponse);
         this.restService.setToken(loginResponse.token);
         this.restService.setAuthKey(loginResponse.auth_key);
@@ -294,5 +308,9 @@ export class AccountManagementComponent implements OnInit {
       this.restService.closeDialog();
       this.viewTable();
     });
+  }
+
+  ngOnDestroy() {
+    
   }
 }

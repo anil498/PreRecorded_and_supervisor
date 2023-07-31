@@ -64,7 +64,7 @@ export class CreateAccountComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: any = "";
+  logo: any = null;
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
@@ -144,8 +144,8 @@ export class CreateAccountComponent implements OnInit {
         this.photoUrl = image.url;
         this.photoControl = true;
         const type = file.type.split("/")[1];
-        const byte = (reader.result as string).split(",")[1];
-        this.logo = { byte: byte, type: type, name: file.name };
+        const byte = reader.result as string;
+        this.logo = { byte: byte, name: file.name };
         console.log(reader.result);
         console.log(this.logo);
         console.log(this.photoControl);
@@ -160,7 +160,7 @@ export class CreateAccountComponent implements OnInit {
     console.log("image removed");
     this.photoUrl = null;
     this.photoControl = false;
-    this.logo = "";
+    this.logo = null;
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
@@ -466,6 +466,10 @@ export class CreateAccountComponent implements OnInit {
     console.log("From Date selection: " + this.userForm1.value.acc_exp_date);
     console.log("function toISOString(): " + this.acc_exp_date.toISOString());
     console.log(this.exp_date);
+    if (this.photoControl) {
+      this.logo.byte = this.logo.byte.split(",")[1];
+    }
+
     let response: any;
     try {
       response = await this.restService.createAccountUser(
