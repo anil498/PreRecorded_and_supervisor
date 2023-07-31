@@ -336,6 +336,9 @@ export class OpenViduService {
 		this.log.d('Initializing publisher with properties: ', properties);
 		if (this.platformService.isMobile()) {
 			properties['resolution'] = '320x240';
+			this.log.w('Initializing publisher with properties for mobile users: ', properties);
+			console.log('Initializing publisher with properties for mobile users: ', properties);
+
 		}
 		return await this.OV.initPublisherAsync(targetElement, properties);
 	}
