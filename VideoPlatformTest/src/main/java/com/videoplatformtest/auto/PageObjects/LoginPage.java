@@ -61,13 +61,13 @@ public class LoginPage {
             userName.sendKeys("abcedfg");
             loginButton.click();
             Thread.sleep(30);
-//            System.out.println("Element val is : " +driver.findElement(By.xpath("/html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText());
+            System.out.println("Element val is : " +driver.findElement(By.xpath("/html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText());
             if(driver.findElement(By.xpath("/html/body/app-root/app-login/div/div/mat-card/mat-card-content/form/div")).getText().contains(cardLabelTextP)) {
-//                System.out.println("COrrect label ");
+                System.out.println("COrrect label ");
                 childTest.log(Status.PASS, MarkupHelper.createLabel("Empty password field giving right response label", ExtentColor.GREEN));
             }
             else {
-//                System.out.println("wrong label");
+                System.out.println("wrong label");
                 childTest.log(Status.FAIL, MarkupHelper.createLabel("Empty password field giving wrong response label", ExtentColor.RED));
             }
         }

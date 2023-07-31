@@ -157,8 +157,8 @@ public class AccountServiceImpl implements AccountService {
             userAuthRepository.save(ua);
         }
         try{
-            if(params.get("logo").isJsonNull() || params.get("logo").getAsString().equals("") || params.get("logo").toString()==null){
-                String defaultPath = FILE_DIRECTORY+"/media/default/image/"+imgName;
+            if(params.get("logo").isJsonNull() || params.get("logo").toString().equals("") || params.get("logo").toString()==null){
+                String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
                 accountRepository.updateLogoPath(acc.getAccountId(), defaultPath);
                 userRepository.updateLogoPath(user.getUserId(),defaultPath);
             }else {
@@ -207,7 +207,12 @@ public class AccountServiceImpl implements AccountService {
         commonService.compareAndChange(params,existing,params.get("accountId").getAsInt());
 
         try {
-            if(!params.get("logo").isJsonNull() || !params.get("logo").toString().equals("")) {
+            logger.info("Checking :::::: ",params.get("logo").toString());
+            if(params.get("logo").isJsonNull() ||  params.get("logo").toString()==null){
+                String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
+                accountRepository.updateLogoPath(existing.getAccountId(), defaultPath);
+            }
+            else{
                 HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
                 Path path = Paths.get(FILE_DIRECTORY +"/media/"+existing.getAccountId()+"/image");
                 logger.info(path.toString());

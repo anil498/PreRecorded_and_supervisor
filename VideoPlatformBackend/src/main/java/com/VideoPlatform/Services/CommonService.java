@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,11 +266,27 @@ public class CommonService {
         ObjectMapper objectMapper=new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         HashMap<String,Object> map = new HashMap<>();
-        map.put("byte",params.get("byte").getAsString());
-        map.put("name",params.get("name").getAsString());
-        map.put("type",params.get("type").getAsString());
+        if(params.has("byte"))
+            map.put("byte",params.get("byte").getAsString());
+        if(params.has("name"))
+            map.put("name",params.get("name").getAsString());
         return map;
     }
+
+    public Map<String,String> getImage(String path) throws IOException {
+        Map<String,String> map = new HashMap<>();
+        File file = new File(path);
+        byte[] fileContent = FileUtils.readFileToByteArray(file);
+        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+        String fileName = file.getName();
+        String mimeType = "image/" + fileName.substring(fileName.lastIndexOf('.') + 1);
+        String imageUrl = "data:" + mimeType + ";base64," + encodedString;
+
+        map.put("name",fileName);
+        map.put("byte",imageUrl);
+        return map;
+    }
+
     public void decodeToImage(String base64,String path){
         byte[] data = DatatypeConverter.parseBase64Binary(base64);
         File file = new File(path);
