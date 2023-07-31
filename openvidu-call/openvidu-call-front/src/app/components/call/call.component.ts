@@ -248,10 +248,7 @@ export class CallComponent implements OnInit {
 				this.isediticdc = response.settings.icdcDetails.edit_icdc;
 				this.istitleicdc = response.settings.icdcDetails.title_icdc;
 	           
-				if(this.type==='Support')
-				{this.isdisplayicdc =false;
-				this.isediticdc = false;
-				}
+				
 			}
 
 			if (response.participantName) {

@@ -439,6 +439,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	usertype: string = '';
+
+	/**
+	 * @ignore
+	 */
 	isicdc: boolean = true;
 
 	private log: ILogger;
@@ -475,6 +480,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private supervisorWhenButtonSub: Subscription;
 	private MuteCameraButtonSub: Subscription;
 	private SupervisorSub: Subscription;
+	private usertypeSub: Subscription;
+
 	/**
 	 * @ignore
 	 */
@@ -526,7 +533,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	async ngOnInit() {
 		this.subscribeToToolbarDirectives();
-
+		this.subscribetoUsertype();
 		this.hasVideoDevices = this.oVDevicesService.hasVideoDeviceAvailable();
 		this.hasAudioDevices = this.oVDevicesService.hasAudioDeviceAvailable();
 		this.session = this.openviduService.getWebcamSession();
@@ -642,7 +649,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	leaveSession() {
 		this.log.d('Leaving session...');
-		this.openviduService.closeQuestionpanel();
+		if(this.usertype!='Supervisor') // icdc panel not close of Supervisor leave
+	    {	this.openviduService.closeQuestionpanel();
+		}
 		this.openviduService.disconnect();
 		this.openviduService.stopTune();
 		this.onLeaveButtonClicked.emit();
@@ -861,6 +870,13 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.cd.markForCheck();
 		});
 	}
+
+	private subscribetoUsertype() {
+		this.usertypeSub = this.libService.usertype.subscribe((usertype: string) => {
+			this.usertype = usertype;
+		});
+	}
+
 
 	protected subscribeToChatMessages() {
 		this.chatMessagesSubscription = this.chatService.messagesObs.pipe(skip(1)).subscribe((messages) => {

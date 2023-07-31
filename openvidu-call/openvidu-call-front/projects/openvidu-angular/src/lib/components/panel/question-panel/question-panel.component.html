@@ -87,7 +87,7 @@
 									#inputFieldRef
 									type="text"
 									[formControlName]="question.q_id"
-									(input)="updateTextquestion(question.q_id)"
+									(input)="updateValueOfTextQuestion(question.q_id)"
 								/>
 							</div>
 							<div style="padding-left: 20px" *ngSwitchDefault>
@@ -107,7 +107,7 @@
 					</div> -->
 				</form>
 				<div class="submit-button">
-					<button type="submit" (click)="Close_Submit_button()">
+					<button [disabled]="!isformpreviewmode && !isSubmit" type="submit" (click)="Close_Submit_button()">
 						<span *ngIf="isformpreviewmode">Close</span>
 						<span *ngIf="!isformpreviewmode">Submit</span>
 					</button>

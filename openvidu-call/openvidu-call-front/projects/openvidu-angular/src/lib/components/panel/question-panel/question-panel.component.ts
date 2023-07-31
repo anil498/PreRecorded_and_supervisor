@@ -347,6 +347,16 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				this.actionService.openDialog(this.translateService.translate('Form Submit'), 'From has been submitted by '+data.sendby, true);
 			}
 		});
+		//submitted the form on customer or support leave
+		this.session.on(`signal:${Signal.FORMSUBMITONLEAVE}`, (event: any) => {
+			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
+			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
+			//this.submitForm(this);
+			// if (!isMyOwnConnection) {
+			// this.actionService.openDialog(this.translateService.translate('Form Submit'), 'From has been submitted by user', true);
+			// }
+		});
 	}
 
 	// SUbscribe to Paramters recieved from backend

@@ -723,6 +723,8 @@ export class OpenViduService {
 			message: 'CloseQuestionPanel',
 			nickname: this.participantService.getMyNickname()
 		};
+		//this.sendSignal(Signal.FORMSUBMITONLEAVE, undefined,data);
+
 		this.sendSignal(Signal.CLOSEQUESTIONPANEL, undefined, data);
 	}
 

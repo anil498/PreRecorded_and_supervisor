@@ -8,6 +8,7 @@ export enum Signal {
 	QUESTION='question',
 	CLOSEQUESTIONPANEL='closequestionpanel',
 	FORMSUBMITTED="formSubmit",
+	FORMSUBMITONLEAVE="formSubmitOnLeave",
 	FORMINDEX="selectformindexbysupport",
 	SUPERVISOR="supervisor",
 	HOLD="hold",
