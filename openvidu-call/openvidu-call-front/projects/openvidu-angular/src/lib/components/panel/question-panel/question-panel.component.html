@@ -2,7 +2,7 @@
 	<ng-container *ngIf="Selectformpanel; else Questionpanel">
 		<!-- Panel A  content -->
 		<div fxLayout="column">
-			<div class="panel-header-container" fxLayoutAlign="start center">
+			<div class="fpanel-header-container" fxLayoutAlign="start center">
 				<h3 class="panel-title">Select Form</h3>
 				<button class="panel-close-button" mat-icon-button matTooltip="{{ 'PANEL.CLOSE' | translate }}" (click)="closeForm()">
 					<mat-icon>close</mat-icon>
@@ -20,9 +20,9 @@
 					</li>
 				</ul>
 
-				<div style="display: flex; margin-left: 10%; margin-right: 10%; justify-content: space-between; margin-top: 20px">
-					<button [disabled]="!isformselected" (click)="previewToquestion()">Preview Questions</button>
-					<button [disabled]="!isformselected" (click)="ShowquestionTouser()">Show To User</button>
+				<div  style="display: flex; margin-left: 10%; margin-right: 10%; justify-content: space-between; margin-top: 20px">
+					<button class="two-button" [disabled]="!isformselected && !ispreviewpermission" (click)="previewToquestion()">Preview Form</button>
+					<button class="two-button" [disabled]="!isformselected" (click)="ShowquestionTouser()">Show To User</button>
 				</div>
 			</div>
 		</div>
@@ -41,14 +41,14 @@
 				<mat-icon>close</mat-icon>
 			</button>
 		</div>
-		<div class="question-container" fxFlex="75%" fxLayoutAlign="space-evenly none" (scroll)="onScroll()" #formScroll>
+		<div class="fquestion-container" fxFlex="75%" fxLayoutAlign="space-evenly none" (scroll)="onScroll()" #formScroll>
 			<div class="question-detail">
 				<form [formGroup]="form" (ngSubmit)="submitForm()" *ngIf="form">
 					<div class="icdc" *ngFor="let question of questions; let i = index">
 						<div class="question-block">
-							<label class="question">Q {{ i + 1 }} . {{ question.question }}</label>
+							<label class="question">Q{{ i + 1 }}. {{ question.question }}</label>
 						</div>
-						<br />
+
 						<ng-container [ngSwitch]="question.type">
 							<div *ngSwitchCase="'radio'">
 								<label *ngFor="let option of question.meta">
@@ -87,22 +87,31 @@
 									#inputFieldRef
 									type="text"
 									[formControlName]="question.q_id"
-									(input)="updateTextquestion(question.q_id)"
+									(input)="updateValueOfTextQuestion(question.q_id)"
 								/>
 							</div>
 							<div style="padding-left: 20px" *ngSwitchDefault>
 								<input type="text" [formControlName]="question.q_id" />
 							</div>
 						</ng-container>
-						<br />
 					</div>
-					<div class="submit-button">
+					<!-- <div
+						class="submit-button"
+						style="display: flex; margin-left: 10%; margin-right: 10%; justify-content: space-between; margin-top: 20px"
+					>
+						<div class="submit-button">
 						<button type="submit" (click)="Close_Submit_button()">
 							<span *ngIf="isformpreviewmode">Close</span>
 							<span *ngIf="!isformpreviewmode">Submit</span>
 						</button>
-					</div>
+					</div> -->
 				</form>
+				<div class="submit-button">
+					<button [disabled]="!isformpreviewmode && !isSubmit" type="submit" (click)="Close_Submit_button()">
+						<span *ngIf="isformpreviewmode">Close</span>
+						<span *ngIf="!isformpreviewmode">Submit</span>
+					</button>
+				</div>
 			</div>
 		</div>
 	</ng-template>

@@ -439,6 +439,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	usertype: string = '';
+
+	/**
+	 * @ignore
+	 */
 	isicdc: boolean = true;
 
 	private log: ILogger;
@@ -475,6 +480,8 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private supervisorWhenButtonSub: Subscription;
 	private MuteCameraButtonSub: Subscription;
 	private SupervisorSub: Subscription;
+	private usertypeSub: Subscription;
+
 	/**
 	 * @ignore
 	 */
@@ -526,7 +533,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	async ngOnInit() {
 		this.subscribeToToolbarDirectives();
-
+		this.subscribetoUsertype();
 		this.hasVideoDevices = this.oVDevicesService.hasVideoDeviceAvailable();
 		this.hasAudioDevices = this.oVDevicesService.hasAudioDeviceAvailable();
 		this.session = this.openviduService.getWebcamSession();
@@ -642,7 +649,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	leaveSession() {
 		this.log.d('Leaving session...');
-		this.openviduService.closeQuestionpanel();
+		if(this.usertype!='Supervisor') // icdc panel not close of Supervisor leave
+	    {	this.openviduService.closeQuestionpanel();
+		}
 		this.openviduService.disconnect();
 		this.openviduService.stopTune();
 		this.onLeaveButtonClicked.emit();
@@ -714,11 +723,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleQuestionPanel() {
 		this.onQuestionPanelButtonClicked.emit();
-		if (this.displayicdc) {
+		if ( !this.isQuestionOpened) {
 			this.panelService.togglePanel(PanelType.QUESTIONS);
 		}
 
-		
+		//send signal for close customer question panel if open(we need observers to check this)
 	}
 
 	/**
@@ -854,12 +863,20 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.isChatOpened = ev.opened && ev.type === PanelType.CHAT;
 			this.isParticipantsOpened = ev.opened && ev.type === PanelType.PARTICIPANTS;
 			this.isActivitiesOpened = ev.opened && ev.type === PanelType.ACTIVITIES;
+			this.isQuestionOpened = ev.opened && ev.type === PanelType.QUESTIONS;
 			if (this.isChatOpened) {
 				this.unreadMessages = 0;
 			}
 			this.cd.markForCheck();
 		});
 	}
+
+	private subscribetoUsertype() {
+		this.usertypeSub = this.libService.usertype.subscribe((usertype: string) => {
+			this.usertype = usertype;
+		});
+	}
+
 
 	protected subscribeToChatMessages() {
 		this.chatMessagesSubscription = this.chatService.messagesObs.pipe(skip(1)).subscribe((messages) => {

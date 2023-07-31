@@ -64,7 +64,7 @@ export class CreateAccountComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: any = {};
+  logo: any = "";
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
@@ -145,7 +145,7 @@ export class CreateAccountComponent implements OnInit {
         this.photoControl = true;
         const type = file.type.split("/")[1];
         const byte = (reader.result as string).split(",")[1];
-        this.logo = { byte: byte, type: type , name: file.name};
+        this.logo = { byte: byte, type: type, name: file.name };
         console.log(reader.result);
         console.log(this.logo);
         console.log(this.photoControl);
@@ -160,7 +160,7 @@ export class CreateAccountComponent implements OnInit {
     console.log("image removed");
     this.photoUrl = null;
     this.photoControl = false;
-    this.logo = {};
+    this.logo = "";
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {

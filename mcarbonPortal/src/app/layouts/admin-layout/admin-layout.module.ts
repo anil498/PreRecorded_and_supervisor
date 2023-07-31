@@ -54,6 +54,8 @@ import { QuestionTemplateComponent } from "app/templates/question-template/quest
 import { AnswerTemplateComponent } from "app/templates/answer-template/answer-template.component";
 import { QuestionIconComponent } from "app/question-icon/question-icon.component";
 import { SessionJoinDialogComponent } from "app/session-join-dialog/session-join-dialog.component";
+import { IcdcManagementComponent } from "app/icdc-management/icdc-management.component";
+import { ViewQuestionDialogComponent } from "app/view-question-dialog/view-question-dialog.component";
 
 @NgModule({
   imports: [
@@ -114,6 +116,8 @@ import { SessionJoinDialogComponent } from "app/session-join-dialog/session-join
     AnswerTemplateComponent,
     QuestionIconComponent,
     SessionJoinDialogComponent,
+    IcdcManagementComponent,
+    ViewQuestionDialogComponent,
   ],
   entryComponents: [FormDialogComponent, DeleteDialogComponent],
 })

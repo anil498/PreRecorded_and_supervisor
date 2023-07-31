@@ -74,7 +74,7 @@
         </div>
       </div>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="checkSession() || checkAccount() || checkUser()">
       <div class="col-md-12 graph-select">
         <button class="btn btn-graph">
           <mat-select

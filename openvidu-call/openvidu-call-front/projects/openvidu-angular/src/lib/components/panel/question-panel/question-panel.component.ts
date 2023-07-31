@@ -82,11 +82,13 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	usertype: string = '';
 	editicdc: boolean;
 	titleicdc: string = '';
+	displayicdc: boolean = true;
 	questionsicdc: string = '';
 	isClose: boolean = true;
 
 	private usertypeSub: Subscription;
 	private editicdcSub: Subscription;
+	private displayicdcSub: Subscription;
 	private titleicdcSub: Subscription;
 	private questionsicdcSub: Subscription;
 	public Selectformpanel: boolean = false;
@@ -95,6 +97,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 	selectedFormindex: number;
 	selectedIdx: number = -1;
 	isformselected: boolean = false;
+	ispreviewpermission:boolean=false;
 	isformpreviewmode: boolean = false;
 
 	myTextQuestionMap: Map<number, number> = new Map<number, number>();
@@ -147,6 +150,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 
 	selectItem(index: number) {
 		this.isformselected = true;
+		this.ispreviewpermission=this.displayicdc;
 		this.selectedIdx = index;
 		this.selectedFormindex = index;
 		this.selectedFormName = this.FormArray[index];
@@ -165,6 +169,7 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				index: String(this.selectedFormindex),
 				formtitle: this.selectedFormName
 			};
+			//this signal subscribe in session.ts
 			this.openviduService.sendSignal(Signal.QUESTION, undefined, data);
 		}
 
@@ -342,6 +347,16 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 				this.actionService.openDialog(this.translateService.translate('Form Submit'), 'From has been submitted by '+data.sendby, true);
 			}
 		});
+		//submitted the form on customer or support leave
+		this.session.on(`signal:${Signal.FORMSUBMITONLEAVE}`, (event: any) => {
+			const connectionId = event.from.connectionId;
+			const data = JSON.parse(event.data);
+			const isMyOwnConnection = this.openviduService.isMyOwnConnection(connectionId);
+			//this.submitForm(this);
+			// if (!isMyOwnConnection) {
+			// this.actionService.openDialog(this.translateService.translate('Form Submit'), 'From has been submitted by user', true);
+			// }
+		});
 	}
 
 	// SUbscribe to Paramters recieved from backend
@@ -356,6 +371,9 @@ export class QuestionPanelComponent implements OnInit, AfterViewInit {
 
 		this.editicdcSub = this.libService.editicdc.subscribe((editicdc: boolean) => {
 			this.editicdc = editicdc;
+		});
+		this.displayicdcSub = this.libService.displayicdc.subscribe((displayicdc: boolean) => {
+			this.displayicdc = displayicdc;
 		});
 
 		this.titleicdcSub = this.libService.titleicdc.subscribe((titleicdc: string) => {

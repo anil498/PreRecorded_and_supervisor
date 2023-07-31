@@ -429,7 +429,7 @@ export class RestService {
     max_participants: number,
 
     features: number[],
-    featuresMeta: any,
+    featuresMeta: any
   ) {
     return this.putRequest1(type, {
       accountId,
@@ -520,7 +520,7 @@ export class RestService {
     accessId: number[],
 
     features: number[],
-    featuresMeta: any,
+    featuresMeta: any
   ) {
     return this.putRequest2(type, {
       accountId,
@@ -551,7 +551,7 @@ export class RestService {
     });
     try {
       return lastValueFrom(
-        this.http.get<any>(this.baseHref + "User/Child/", { headers })
+        this.http.get<any>(this.baseHref + "User/GetAll/", { headers })
       );
     } catch (error) {
       if (error.status === 404) {
@@ -645,6 +645,27 @@ export class RestService {
       throw error;
     }
   }
+
+  async getIcdcList(token: string, id: string) {
+    console.warn(token + "\n" + id);
+    const headers = new HttpHeaders({
+      Token: `${token}`,
+      Authorization: `${this.authKey}`,
+    });
+    try {
+      return lastValueFrom(
+        this.http.get<any>(this.baseHref + "Icdc/GetAllByUser", { headers })
+      );
+    } catch (error) {
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
+    }
+  }
   async createAccess(
     type: string,
     pId: number,
@@ -722,6 +743,10 @@ export class RestService {
     return await this.deleteRequest(`User/Delete/${id}`);
   }
 
+  async deleteIcdc(id: number) {
+    return await this.deleteRequest(`Icdc/Delete/${id}`);
+  }
+
   async sendSMS(msisdn: string, getLink: any) {
     console.log("sms Sent");
     try {
@@ -793,6 +818,31 @@ export class RestService {
       });
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async getLogo(path: string, accountId: number, userId: number) {
+    const headers = new HttpHeaders({
+      Token: `${this._token}`,
+      Authorization: `${this.authKey}`,
+    });
+
+    try {
+      return lastValueFrom(
+        this.http.post<any>(
+          this.baseHref + path,
+          { accountId, userId },
+          { headers }
+        )
+      );
+    } catch (error) {
+      if (error.status === 404) {
+        throw {
+          status: error.status,
+          message: "Cannot connect with backend. " + error.url + " not found",
+        };
+      }
+      throw error;
     }
   }
 
