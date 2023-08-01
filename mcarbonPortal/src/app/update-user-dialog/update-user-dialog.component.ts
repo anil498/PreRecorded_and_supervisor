@@ -45,7 +45,8 @@ export class UpdateUserDialogComponent implements OnInit {
   login_id: string;
   acc_exp_date: Date;
   exp_date: string;
-  logo: any = "";
+  logo: any = null;
+  logoResponse: any;
   photoUrl: any;
   photoControl: boolean = false;
   max_duration: number;
@@ -110,8 +111,8 @@ export class UpdateUserDialogComponent implements OnInit {
         this.photoUrl = reader.result;
         this.photoControl = true;
         const type = file.type.split("/")[1];
-        const byte = (reader.result as string).split(",")[1];
-        this.logo = { byte: byte, type: type, name: file.name };
+        const byte = reader.result as string;
+        this.logo = { byte: byte, name: file.name };
         //this.logo = { byte: reader.result, type: file.type };
         console.log(this.logo);
         console.log(this.photoControl);
@@ -125,7 +126,7 @@ export class UpdateUserDialogComponent implements OnInit {
   onPhotoDeselected() {
     this.photoUrl = {};
     this.photoControl = false;
-    this.logo = "";
+    this.logo = null;
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
@@ -236,6 +237,18 @@ export class UpdateUserDialogComponent implements OnInit {
     }
   }
   async ngOnInit(): Promise<void> {
+    this.logoResponse;
+    try {
+      this.logoResponse = await this.restService.getLogo(
+        "User/getImage",
+        null,
+        this.user.userId
+      );
+      console.log(this.logoResponse);
+      this.photoControl = true;
+    } catch (err) {
+      this.photoControl = false;
+    }
     // if (this.user.featuresMeta.hasOwnProperty("16")) {
     //   await this.restService
     //     .getIcdcData("Icdc/GetNames", this.user.userId, this.user.accountId)
@@ -274,7 +287,7 @@ export class UpdateUserDialogComponent implements OnInit {
       ],
       email: [this.user.email, [Validators.required, Validators.email]],
       login_id: [this.user.loginId],
-      logo: [this.user.logo],
+      logo: [this.logoResponse],
       acc_exp_date: [
         new Date(this.user.expDate),
         [Validators.required, this.dateValidator],
@@ -476,7 +489,9 @@ export class UpdateUserDialogComponent implements OnInit {
     this.max_duration = this.userForm3.value.max_duration;
     this.max_participants = this.userForm3.value.max_participants;
     this.max_active_sessions = this.userForm3.value.max_active_sessions;
-
+    if (this.photoControl) {
+      this.logo.byte = this.logo.byte.split(",")[1];
+    }
     console.log(this.userForm1.value.acc_exp_date);
     console.log(this.acc_exp_date);
     console.log(this.exp_date);
@@ -507,7 +522,7 @@ export class UpdateUserDialogComponent implements OnInit {
         this.max_participants,
 
         this.selectedFeatures.sort(),
-        this.selectedFeaturesMeta,
+        this.selectedFeaturesMeta
       );
       console.warn(response);
       console.log(this.login_id);

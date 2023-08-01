@@ -89,17 +89,18 @@ export class LoginComponent implements OnInit {
             null,
             loginResponse.user_data.userId
           );
-          console.log(logoResponse);
+          console.log("logo1",logoResponse);
           loginResponse.user_data.logo = logoResponse;
         } catch (err) {
           console.log(err);
+          loginResponse.user_data.logo = null;
           this.openSnackBar("Something Went Wrong", "error");
         }
         this.restService.setData(loginResponse);
         this.restService.setToken(this.token);
         this.restService.setAuthKey(loginResponse.auth_key);
         this.restService.setUserId(this.username);
-        console.log(loginResponse);
+        console.log("logo2",loginResponse);
         localStorage.setItem("loginId", this.username);
         localStorage.setItem("password", this.password);
       }

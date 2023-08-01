@@ -1,13 +1,13 @@
 <div class="card card-1">
-    <div class="card-header card-header-danger">
-      <h4 class="card-title">
-        {{icdc.formName}}
-        <button mat-icon-button mat-dialog-close class="close-btn">
-          <mat-icon aria-label="Close dialog">close</mat-icon>
-        </button>
-      </h4>
-    </div>
-    <!-- <div class="row">
+  <div class="card-header card-header-danger">
+    <h4 class="card-title">
+      {{ icdc.formName }}
+      <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon aria-label="Close dialog">close</mat-icon>
+      </button>
+    </h4>
+  </div>
+  <!-- <div class="row">
       <ng-container *ngFor="let access of accessName">
         <div class="col-md-5 offset-md-1 justify-content-center">
           <mat-checkbox  checked disabled>
@@ -16,65 +16,67 @@
         </div>
       </ng-container>
     </div> -->
-    <div class="card-body card-body-1">
-      <!-- <section class="feature-section">
-        <div class="grid-container">
-          <div *ngFor="let topAccess of topLevelAccess1" class="grid-item">
-            <ng-container *ngIf="isCheckAccess(topAccess)">
-              <mat-checkbox
-                [value]="topAccess.accessId"
-                [checked]="true"
-                disabled
-              >
-                {{ topAccess.name }}
-              </mat-checkbox>
-              <div
-                class="grid-item-content"
-                *ngIf="accessId.includes(topAccess.accessId)"
-              >
-                <div *ngFor="let access of accessData">
-                  <mat-checkbox
-                    *ngIf="topAccess.accessId === access.pId && access.pId !== 0"
-                    [value]="access.accessId"
-                    [checked]="true"
-                    disabled
-                  >
-                    {{ access.name }}
-                  </mat-checkbox>
-                </div>
-              </div>
-            </ng-container>
-          </div>
+  <div class="card-body card-body-1">
+    <form [formGroup]="form" *ngIf="form">
+      <div class="icdc" *ngFor="let question of questions; let i = index">
+        <div class="question-block">
+          <mat-label class="question"
+            >Q{{ i + 1 }}. {{ question.question }}</mat-label
+          >
         </div>
-        <div class="grid-container">
-          <div *ngFor="let topAccess of topLevelAccess2" class="grid-item">
-            <ng-container *ngIf="isCheckAccess(topAccess)">
-              <mat-checkbox
-                [value]="topAccess.accessId"
-                [checked]="true"
-                disabled
+
+        <ng-container [ngSwitch]="question.type">
+          <div class="answer" *ngSwitchCase="'radio'">
+            <mat-radio-group
+              aria-labelledby="example-radio-group-label"
+              class="example-radio-group"
+            >
+              <mat-radio-button
+                class="example-radio-button"
+                *ngFor="let option of question.meta"
+                [value]="option"
               >
-                {{ topAccess.name }}
-              </mat-checkbox>
-              <div
-                class="grid-item-content"
-                *ngIf="accessId.includes(topAccess.accessId)"
-              >
-                <div *ngFor="let access of accessData">
-                  <mat-checkbox
-                    *ngIf="topAccess.accessId === access.pId && access.pId !== 0"
-                    [value]="access.accessId"
-                    [checked]="true"
-                    disabled
-                  >
-                    {{ access.name }}
-                  </mat-checkbox>
-                </div>
-              </div>
-            </ng-container>
+                {{ option }}
+              </mat-radio-button>
+            </mat-radio-group>
           </div>
-        </div>
-      </section> -->
-    </div>
+          <div *ngSwitchCase="'checkbox'">
+            <div class="answer" *ngFor="let option of question.meta">
+              <mat-checkbox [value]="option" [checked]="false">
+                {{ option }} </mat-checkbox
+              ><br />
+            </div>
+          </div>
+          <div class="answer" *ngSwitchCase="'dropdown'">
+            <mat-form-field appearance="outline">
+              <may-label>Select an option</may-label>
+              <mat-select [formControlName]="question.q_id">
+                <mat-option
+                  *ngFor="let option of question.meta"
+                  [value]="option"
+                >
+                  {{ option }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="answer" *ngSwitchCase="'text'">
+            <mat-form-field>
+              <input
+                matInput
+                #inputFieldRef
+                type="text"
+                [formControlName]="question.q_id"
+              />
+            </mat-form-field>
+          </div>
+          <div class="answer" *ngSwitchDefault>
+            <mat-form-field
+              ><input matInput type="text" [formControlName]="question.q_id"
+            /></mat-form-field>
+          </div>
+        </ng-container>
+      </div>
+    </form>
   </div>
-  
+</div>

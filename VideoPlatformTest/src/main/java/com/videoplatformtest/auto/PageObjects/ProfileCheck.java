@@ -49,7 +49,7 @@ public class ProfileCheck {
             String url = responseReceived.getResponse().getUrl();
             if(url.contains("/VPService/v1/User/login")) {
                 responseBody.set(finalDevTools.send(Network.getResponseBody(requestIds[0])).getBody());
-                System.out.println("Response Body :"+responseBody);
+//                System.out.println("Response Body :"+responseBody);
             }
         });
         driver.get(webUrl);
@@ -89,71 +89,39 @@ public class ProfileCheck {
             for (WebElement element : elements) {
                 if (element.getText().equalsIgnoreCase("dashboard")) {
                     if (!accessValues.contains("Dashboard")) fail();
-                } else if (element.getText().equalsIgnoreCase("Customer Management")) {
-                    if (!accessValues.contains("Customer Management")) fail();
-                } else if (element.getText().equalsIgnoreCase("My Groups")) {
-                    if (!accessValues.contains("My Groups")) fail();
-                } else if (element.getText().equalsIgnoreCase("My Sessions")) {
-                    if (!accessValues.contains("My Sessions")) fail();
-                } else if (element.getText().equalsIgnoreCase("Send Link")) {
-                    if (!accessValues.contains("Send Link")) fail();
-                } else if (element.getText().equalsIgnoreCase("MY Reports")) {
-                    if (!accessValues.contains("My Reports")) fail();
-                } else if (element.getText().equalsIgnoreCase("Platform Access")) {
-                    if (!accessValues.contains("Platform Access")) fail();
-                } else if (element.getText().equalsIgnoreCase("Platform Feature")) {
-                    if (!accessValues.contains("Platform Feature")) fail();
-                } else if (element.getText().equalsIgnoreCase("Customer Creation")) {
-                    if (!accessValues.contains("Customer Creation")) fail();
-                } else if (element.getText().equalsIgnoreCase("Customer Update")) {
-                    if (!accessValues.contains("Customer Update")) fail();
-                } else if (element.getText().equalsIgnoreCase("Customer Delete")) {
-                    if (!accessValues.contains("Customer Delete")) fail();
-                } else if (element.getText().equalsIgnoreCase("Group Creation")) {
-                    if (!accessValues.contains("Group Creation")) fail();
-                } else if (element.getText().equalsIgnoreCase("Group Delete")) {
-                    if (!accessValues.contains("Group Delete")) fail();
-                } else if (element.getText().equalsIgnoreCase("Session Create")) {
-                    if (!accessValues.contains("Session Create")) fail();
-                } else if (element.getText().equalsIgnoreCase("Whatsapp")) {
-                    if (!accessValues.contains("Whatsapp")) fail();
-                } else if (element.getText().equalsIgnoreCase("Send Notification")) {
-                    if (!accessValues.contains("Send Notification")) fail();
-                } else if (element.getText().equalsIgnoreCase("SMS")) {
-                    if (!accessValues.contains("SMS")) fail();
-                } else if (element.getText().equalsIgnoreCase("Report Review")) {
-                    if (!accessValues.contains("Report Review")) fail();
-                } else if (element.getText().equalsIgnoreCase("Report Download")) {
-                    if (!accessValues.contains("Report Download")) fail();
-                } else if (element.getText().equalsIgnoreCase("Recording")) {
-                    if (!featureValues.contains("Recording")) fail();
-                } else if (element.getText().equalsIgnoreCase("Screen Share")) {
-                    if (!featureValues.contains("Screen Share")) fail();
-                } else if (element.getText().equalsIgnoreCase("Chat")) {
-                    if (!featureValues.contains("Chat")) fail();
-                } else if (element.getText().equalsIgnoreCase("Pre Recorded Video")) {
-                    if (!featureValues.contains("Pre Recorded Video")) fail();
-                } else if (element.getText().equalsIgnoreCase("Participant Ticker")) {
-                    if (!featureValues.contains("Participant Ticker")) fail();
-                } else if (element.getText().equalsIgnoreCase("Customer Info To Agent")) {
-                    if (!featureValues.contains("Customer info to Agent")) fail();
-                } else if (element.getText().equalsIgnoreCase("Customised Layout")) {
-                    if (!featureValues.contains("Customised Layout")) fail();
-                } else if (element.getText().equalsIgnoreCase("Add Supervisor")) {
-                    if (!featureValues.contains("Add Supervisor")) fail();
-                } else if (element.getText().equalsIgnoreCase("Session Timer")) {
-                    if (!featureValues.contains("Session Timer")) fail();
-                } else if (element.getText().equalsIgnoreCase("Session Activities")) {
-                    if (!featureValues.contains("Session Activities")) fail();
-                } else if (element.getText().equalsIgnoreCase("Session Participants")) {
-                    if (!featureValues.contains("Session Participants")) fail();
-                } else if (element.getText().equalsIgnoreCase("Agent Landing Page URL")) {
-                    if (!featureValues.contains("Agent Landing Page URL")) fail();
-                } else if (element.getText().equalsIgnoreCase("Participant Landing Page URL")) {
-                    if (!featureValues.contains("Participant Landing Page URL")) fail();
-                } else if (element.getText().equalsIgnoreCase("In Call Data Collection")) {
-                    if (!featureValues.contains("In Call Data Collection")) fail();
                 }
+                else if (element.getText().equalsIgnoreCase("Customer Management")) { if (!accessValues.contains("Customer Management")) fail(); }
+                else if (element.getText().equalsIgnoreCase("My Groups")) { if (!accessValues.contains("My Groups")) fail(); }
+                else if (element.getText().equalsIgnoreCase("My Sessions")) { if (!accessValues.contains("My Sessions")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Send Link")) { if (!accessValues.contains("Send Link")) fail(); }
+                else if (element.getText().equalsIgnoreCase("MY Reports")) { if (!accessValues.contains("My Reports")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Platform Access")) { if (!accessValues.contains("Platform Access")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Platform Feature")) { if (!accessValues.contains("Platform Feature")) fail();}
+                else if (element.getText().equalsIgnoreCase("Customer Creation")) { if (!accessValues.contains("Customer Creation")) fail();}
+                else if (element.getText().equalsIgnoreCase("Customer Update")) { if (!accessValues.contains("Customer Update")) fail();}
+                else if (element.getText().equalsIgnoreCase("Customer Delete")) { if (!accessValues.contains("Customer Delete")) fail();}
+                else if (element.getText().equalsIgnoreCase("Group Creation")) { if (!accessValues.contains("Group Creation")) fail();}
+                else if (element.getText().equalsIgnoreCase("Group Delete")) { if (!accessValues.contains("Group Delete")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Session Create")) { if (!accessValues.contains("Session Create")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Whatsapp")) { if (!accessValues.contains("Whatsapp")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Send Notification")) { if (!accessValues.contains("Send Notification")) fail(); }
+                else if (element.getText().equalsIgnoreCase("SMS")) { if (!accessValues.contains("SMS")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Report Review")) { if (!accessValues.contains("Report Review")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Report Download")) { if (!accessValues.contains("Report Download")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Recording")) { if (!featureValues.contains("Recording")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Screen Share")) { if (!featureValues.contains("Screen Share")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Chat")) { if (!featureValues.contains("Chat")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Pre Recorded Video")) { if (!featureValues.contains("Pre Recorded Video")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Participant Ticker")) { if (!featureValues.contains("Participant Ticker")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Customer Info To Agent")) { if (!featureValues.contains("Customer info to Agent")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Customised Layout")) { if (!featureValues.contains("Customised Layout")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Add Supervisor")) { if (!featureValues.contains("Add Supervisor")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Session Timer")) { if (!featureValues.contains("Session Timer")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Session Activities")) { if (!featureValues.contains("Session Activities")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Session Participants")) { if (!featureValues.contains("Session Participants")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Agent Landing Page URL")) { if (!featureValues.contains("Agent Landing Page URL")) fail(); }
+                else if (element.getText().equalsIgnoreCase("Participant Landing Page URL")) { if (!featureValues.contains("Participant Landing Page URL")) fail(); }
+                else if (element.getText().equalsIgnoreCase("In Call Data Collection")) { if (!featureValues.contains("In Call Data Collection")) fail(); }
             }
             Thread.sleep(1000);
         } catch (IOException | InterruptedException e) {
@@ -181,7 +149,7 @@ public class ProfileCheck {
     public static List<String> getFeatureData(String responseBody) throws IOException {
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(responseBody,JsonObject.class);
-        System.out.println("Params : "+params);
+//        System.out.println("Params : "+params);
         ObjectMapper objectMapper=new ObjectMapper();
         if(params.isJsonNull()) return null;
         List<String>name = new ArrayList<>();

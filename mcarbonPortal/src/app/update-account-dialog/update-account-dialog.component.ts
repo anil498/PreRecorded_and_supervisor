@@ -39,14 +39,14 @@ export class UpdateAccountDialogComponent implements OnInit {
 
   name: string;
   address: string;
-  logo: any = "";
+  logo: any = null;
   photoUrl: any;
   photoControl: boolean = false;
   acc_exp_date: Date;
   exp_date: string;
   max_user: number;
   creationDate: string;
-
+  logoResponse: any;
   max_duration: number;
   max_active_sessions: number;
   max_participants: number;
@@ -110,8 +110,8 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.photoUrl = reader.result;
         this.photoControl = true;
         const type = file.type.split("/")[1];
-        const byte = (reader.result as string).split(",")[1];
-        this.logo = { byte: byte, type: type, name: file.name };
+        const byte = reader.result as string;
+        this.logo = { byte: byte, name: file.name };
         //this.logo = { byte: reader.result, type: file.type };
         console.log(this.logo);
         console.log(this.photoControl);
@@ -124,7 +124,7 @@ export class UpdateAccountDialogComponent implements OnInit {
   onPhotoDeselected() {
     this.photoUrl = {};
     this.photoControl = false;
-    this.logo = "";
+    this.logo = null;
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
@@ -257,6 +257,19 @@ export class UpdateAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.logoResponse;
+    try {
+      this.logoResponse = await this.restService.getLogo(
+        "User/getImage",
+        this.account.accountId,
+        null
+      );
+      console.log(this.logoResponse);
+      this.photoControl = true;
+    } catch (err) {
+      this.photoControl = false;
+    }
+
     // if (this.account.featuresMeta.hasOwnProperty("16")) {
     //   await this.restService
     //     .getIcdcData("Icdc/GetNames", null, this.account.accountId)
@@ -285,7 +298,7 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.account.maxUser,
         [Validators.required, Validators.min(0)],
       ],
-      logo: [this.account.logo],
+      logo: [this.logoResponse],
     });
     this.userForm2 = this.fb.group({
       accessList: [this.account.accessId],
@@ -308,7 +321,6 @@ export class UpdateAccountDialogComponent implements OnInit {
       featureMeta: [this.account.featuresMeta],
     });
     this.accessData.forEach((access) => {
-      console.log(access);
       if (access.systemName == "customer_update") {
         this.title = access.name;
       }
@@ -497,6 +509,9 @@ export class UpdateAccountDialogComponent implements OnInit {
     // ) {
     //   this.icdcId = this.selectedFeaturesMeta["16"]["id_icdc"];
     // }
+    if (this.photoControl) {
+      this.logo.byte = this.logo.byte.split(",")[1];
+    }
 
     // console.log(this.icdcId);
     let response: any;
@@ -517,7 +532,7 @@ export class UpdateAccountDialogComponent implements OnInit {
         this.selectedAccessId.sort(),
 
         this.selectedFeatures.sort(),
-        this.selectedFeaturesMeta,
+        this.selectedFeaturesMeta
       );
       console.warn(response);
       let videoResponse;

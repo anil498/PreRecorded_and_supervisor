@@ -44,7 +44,7 @@ export class FormDialogComponent implements OnInit {
   loginResponse: any;
 
   emptyField: boolean = false;
-  logo: any = "";
+  logo: any = null;
   photoUrl: any;
   photoControl: boolean = false;
   user_fname: string;
@@ -123,8 +123,8 @@ export class FormDialogComponent implements OnInit {
         this.photoUrl = image.url;
         this.photoControl = true;
         const type = file.type.split("/")[1];
-        const byte = (reader.result as string).split(",")[1];
-        this.logo = { byte: byte, type: type, name: file.name };
+        const byte = reader.result as string;
+        this.logo = { byte: byte, name: file.name };
         console.log(reader.result);
         //this.logo = { byte: reader.result, type: file.type };
         console.log(this.logo);
@@ -139,7 +139,7 @@ export class FormDialogComponent implements OnInit {
   onPhotoDeselected() {
     this.photoUrl = {};
     this.photoControl = false;
-    this.logo = "";
+    this.logo = null;
   }
 
   onFileInputChange(event: any, meta: any, featureId: number): void {
@@ -464,6 +464,10 @@ export class FormDialogComponent implements OnInit {
     this.max_participants = this.userForm3.value.max_participants;
     this.max_active_sessions = this.userForm3.value.max_active_sessions;
 
+    if (this.photoControl) {
+      this.logo.byte = this.logo.byte.split(",")[1];
+    }
+    
     let response: any;
     try {
       response = await this.restService.createUser(

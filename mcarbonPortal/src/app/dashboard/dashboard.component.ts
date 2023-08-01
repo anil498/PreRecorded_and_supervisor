@@ -5,6 +5,7 @@ import { DashSession } from "app/model/dash_session";
 import { DashAccount } from "app/model/dash_account";
 import { DashUser } from "app/model/dash_user";
 import { browserRefresh } from "app/app.component";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
@@ -21,7 +22,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   accountTitle: string = "Daily Account Creation";
   userTitle: string = "Daily User Creation";
   sessionTitle: string = "Daily Session Creation";
-  constructor(private restService: RestService) {}
+  constructor(private restService: RestService,private  snackBar: MatSnackBar) {}
 
   checkAccount() {
     if (this.accounts !== null && this.accounts.isDisplay === true) return true;
@@ -110,6 +111,20 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         localStorage.getItem("password")
       );
       if (loginResponse.status_code == 200) {
+        let logoResponse;
+        try {
+          logoResponse = await this.restService.getLogo(
+            "User/getImage",
+            null,
+            loginResponse.user_data.userId
+          );
+          console.log("logo1",logoResponse);
+          loginResponse.user_data.logo = logoResponse;
+        } catch (err) {
+          console.log(err);
+          loginResponse.user_data.logo = null;
+          this.openSnackBar("Something Went Wrong", "error");
+        }
         this.restService.setData(loginResponse);
         this.restService.setToken(loginResponse.token);
         this.restService.setAuthKey(loginResponse.auth_key);
@@ -375,5 +390,13 @@ export class DashboardComponent implements OnInit, AfterViewInit {
       var userArray = Object.values(this.users.dailyUserCreation).map(Number);
       this.userGraph(dayArray, userArray);
     }
+  }
+
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    console.log(snackBarConfig.panelClass);
+    this.snackBar.open(message, null, snackBarConfig);
   }
 }

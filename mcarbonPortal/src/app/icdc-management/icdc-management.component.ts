@@ -258,6 +258,8 @@ export class IcdcManagementComponent implements OnInit {
   }
   viewQuestionDialog(icdc: Icdc) {
     const dialogConfig = new MatDialogConfig();
+    dialogConfig.maxHeight = "60%";
+    dialogConfig.minWidth = "60%";
     dialogConfig.data = icdc;
     console.log("Dialog Form Opened");
     const dialogRef = this.dialog.open(

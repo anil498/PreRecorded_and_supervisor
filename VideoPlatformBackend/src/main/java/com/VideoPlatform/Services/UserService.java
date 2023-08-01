@@ -20,6 +20,6 @@ public interface UserService {
     Boolean checkLoginId(String loginId);
     void saveFilePathToFeature(String filePath,String loginId,String name);
 
-    String getImage(Map<String, Object> params) throws IOException;
+    Map<String,String> getImage(Map<String, Object> params) throws IOException;
 //    String resetPassword(String newPassword, String loginId, Integer userId);
 }

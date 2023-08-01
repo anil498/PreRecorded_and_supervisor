@@ -57,6 +57,9 @@ public class UserServiceImpl implements UserService{
     private CommonService commonService;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
+    @Value("${image.name}")
+    private String imgName;
+
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
 
@@ -141,11 +144,11 @@ public class UserServiceImpl implements UserService{
         userRepository.save(user);
         try{
 
-            if(params.get("logo").isJsonNull() || params.get("logo").getAsString().equals("") || params.get("logo").toString()==null){
+            if(params.get("logo").isJsonNull() || params.get("logo").toString()==null){
                 userRepository.updateLogoPath(user.getUserId(), String.valueOf(accountEntity.getLogo()));
             }else{
                 HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
-                Path path = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/"+user.getUserId()+"/image");
+                Path path = Paths.get(FILE_DIRECTORY +"media/"+accountId+"/"+user.getUserId()+"/image");
                 logger.info(path.toString());
                 if (!Files.exists(path)) {
                     Files.createDirectories(path);
@@ -158,24 +161,18 @@ public class UserServiceImpl implements UserService{
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "User created!");
-        return ok(result);
+        return ok(commonService.responseData("200","User Created!"));
     }
     @Override
-    public ResponseEntity<?> createUserZero(UserEntity user) {
+    public ResponseEntity<?> createUserZero(UserEntity userEntity) {
 
-        userRepository.save(user);
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "User created!");
-        return ok(result);
+        userRepository.save(userEntity);
+        return ok(commonService.responseData("200","User Created!"));
     }
 
     @Override
     public ResponseEntity<?> updateUser(String params1,String authKey) {
-        logger.info("Params Update : {}",params1);
+        logger.info("Params to Update : {}",params1);
 
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
@@ -221,9 +218,13 @@ public class UserServiceImpl implements UserService{
                         return new ResponseEntity<>(commonService.responseData("406","Invalid Session values!"), HttpStatus.NOT_ACCEPTABLE);
                     }
                 }
-                if(!params.get("logo").isJsonNull() || !params.get("logo").toString().equals("")) {
+                if(params.get("logo").isJsonNull() ||  params.get("logo").toString()==null){
+                    String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
+                    userRepository.updateLogoPath(existing.getUserId(), defaultPath);
+                }
+                else {
                     HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
-                    Path path = Paths.get(FILE_DIRECTORY +"/media/"+accountEntity.getAccountId()+"/"+existing.getUserId()+"/image");
+                    Path path = Paths.get(FILE_DIRECTORY +"media/"+accountEntity.getAccountId()+"/"+existing.getUserId()+"/image");
                     logger.info(path.toString());
                     if (!Files.exists(path)) {
                         Files.createDirectories(path);
@@ -249,7 +250,6 @@ public class UserServiceImpl implements UserService{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            logger.info("New Entity {}", existing);
 
             userRepository.save(existing);
 
@@ -258,10 +258,8 @@ public class UserServiceImpl implements UserService{
                 userAuthEntity.setSystemNames(accessCheck(params.get("userId").getAsInt()));
                 userAuthRepository.save(userAuthEntity);
             }
-            Map<String, String> result = new HashMap<>();
-            result.put("status_code", "200");
-            result.put("msg", "User updated!");
-            return ok(result);
+
+            return ok(commonService.responseData("200","User Updated!"));
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
@@ -391,7 +389,6 @@ public class UserServiceImpl implements UserService{
         logger.info("getFeatureMeta1 {} ", userEntity.getFeaturesMeta());
         Gson gson=new Gson();
         String json=gson.toJson(featuresMeta);
-//        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
         logger.info("Json {}",json);
         userRepository.updateFeaturesMeta(loginId,json);
         logger.info("getFeatureMeta2 {} ", userEntity.getFeaturesMeta());
@@ -406,27 +403,23 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public String getImage(Map<String,Object> params) throws IOException {
+    public Map<String,String> getImage(Map<String,Object> params) throws IOException {
         Integer userId = (Integer) params.get("userId");
         Integer accountId = (Integer) params.get("accountId");
         String path = "";
-        String encodedString="";
+        Map<String,String> map = new HashMap<>();
         if(userId==null && accountId!=null) {
             AccountEntity accountEntity = accountRepository.findByAccountId(accountId);
             if (accountEntity != null) {
                 path = accountEntity.getLogo();
-                byte[] fileContent = FileUtils.readFileToByteArray(new File(path));
-                encodedString = Base64.getEncoder().encodeToString(fileContent);
-                return encodedString;
+                return commonService.getImage(path);
             }
         }
         else if(accountId==null && userId!=null){
             UserEntity userEntity = userRepository.findByUserId(userId);
             if(userEntity!=null){
                 path=userEntity.getLogo();
-                byte[] fileContent = FileUtils.readFileToByteArray(new File(path));
-                encodedString = Base64.getEncoder().encodeToString(fileContent);
-                return encodedString;
+                return commonService.getImage(path);
             }
         }
         return null;

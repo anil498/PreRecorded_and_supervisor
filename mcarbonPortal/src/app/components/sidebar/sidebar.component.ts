@@ -7,6 +7,7 @@ import { RouteInfo } from "../../model/ROUTE";
 import { ROUTE } from "app/app.component";
 import { browserRefresh } from "app/app.component";
 import { Subscription } from "rxjs";
+import { MatSnackBar, MatSnackBarConfig } from "@angular/material/snack-bar";
 //import { ObserverService } from "app/services/observer.service";
 declare const $: any;
 
@@ -73,7 +74,11 @@ export class SidebarComponent implements OnInit {
   logo: any;
   isLogo: boolean;
   srcImg: string;
-  constructor(private restService: RestService, private http: HttpClient) {}
+  constructor(
+    private restService: RestService,
+    private http: HttpClient,
+    private snackBar: MatSnackBar
+  ) {}
 
   async ngOnInit() {
     this.browserRefresh = browserRefresh;
@@ -90,6 +95,20 @@ export class SidebarComponent implements OnInit {
         localStorage.getItem("password")
       );
       if (loginResponse.status_code == 200) {
+        let logoResponse;
+        try {
+          logoResponse = await this.restService.getLogo(
+            "User/getImage",
+            null,
+            loginResponse.user_data.userId
+          );
+          console.log("logo1", logoResponse);
+          loginResponse.user_data.logo = logoResponse;
+        } catch (err) {
+          console.log(err);
+          loginResponse.user_data.logo = null;
+          this.openSnackBar("Something Went Wrong", "error");
+        }
         this.restService.setData(loginResponse);
         this.restService.setToken(loginResponse.token);
         this.restService.setAuthKey(loginResponse.auth_key);
@@ -109,6 +128,14 @@ export class SidebarComponent implements OnInit {
       this.srcImg = this.logo.byte;
     }
     this.showSideNav();
+  }
+
+  openSnackBar(message: string, color: string) {
+    const snackBarConfig = new MatSnackBarConfig();
+    snackBarConfig.duration = 3000;
+    snackBarConfig.panelClass = [color];
+    console.log(snackBarConfig.panelClass);
+    this.snackBar.open(message, null, snackBarConfig);
   }
 
   ngOnDestroy() {

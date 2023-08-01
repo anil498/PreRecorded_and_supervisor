@@ -230,14 +230,12 @@ public class UserController {
     @PostMapping("/getImage")
     public ResponseEntity<?> getImage(@RequestBody Map<String, Object> params,HttpServletRequest request) throws IOException {
 
-        String encodedImage = userService.getImage(params);
+        Map<String,String> encodedImage = userService.getImage(params);
 //        logger.info("Encoded String : {}",encodedImage);
         if(encodedImage==null){
             return new ResponseEntity<>("Image encoding failed!",HttpStatus.FORBIDDEN);
         }
-        Map<String,String> map = new HashMap<>();
-        map.put("byte",encodedImage);
-        return new ResponseEntity<>(map,HttpStatus.OK);
+        return new ResponseEntity<>(encodedImage,HttpStatus.OK);
     }
 
     @PostMapping("/login")

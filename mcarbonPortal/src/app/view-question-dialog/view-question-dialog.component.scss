@@ -1,102 +1,132 @@
 .card-1 {
-    min-height: 80% !important;
-  }
-  
-  .card-header {
-    margin-bottom: 10px;
-  }
-  
-  .row {
-    margin-right: -15px;
-    margin-left: -15px;
-  }
-  
-  ::ng-deep .mat-checkbox-checked .mat-checkbox-background,
-  ::ng-deep
-    .mat-checkbox-indeterminate
-    .mat-checkbox-background
-    .mat-checkbox-ripple.mat-ripple-active
-    .mat-ripple-element {
-    background-color: #17d1be !important;
-    border-color: #17d1be !important;
-  }
-  
-  .container {
-    padding-top: 10px;
-  }
-  
-  .example-section {
-    margin-top: 10px;
-  }
-  
-  ::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
-    opacity: 0.5;
-    height: 1px;
-    background: #009688;
-  }
-  
-  ::ng-deep .mat-form-field-label-wrapper {
-    font-size: 0.75rem;
-  }
-  
-  ::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
-  .mat-tab-nav-bar.mat-primary .mat-ink-bar {
-    background-color: #009688;
-  }
-  
-  input[type="file"] {
-    display: none;
-  }
-  
-  button[type="button"] {
-    border-radius: 50%;
-  }
-  
-  img {
-    border-radius: 50%;
-  }
-  
-  ::ng-deep .mat-datepicker-content {
-    margin-top: 100px !important;
-  }
-  
-  .close-btn {
-    position: absolute;
-    right: 1px;
-    top: 10px;
-  }
-  
-  .col-custom {
-    padding-left: 0px !important;
-    padding-right: 0px !important;
-  }
-  
-  .example-section {
-    width: 100%;
-  }
-  
-  .label {
-    font-weight: bolder;
-    font-size: 1rem;
-  }
-  
-  .feature-section {
-    display: flex;
-    justify-content: space-around;
-  }
-  
-  .grid-container {
-    display: flex;
-    flex-direction: column;
-    grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: min-content;
-  }
-  
-  .grid-item {
-    width: 90%;
-  }
-  
-  .grid-item-content {
-    margin-left: 10%;
-  }
-  
+  min-height: 80% !important;
+}
+
+.card-header {
+  margin-bottom: 10px;
+}
+
+.row {
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+::ng-deep .mat-dialog-container {
+  height: auto !important;
+}
+
+::ng-deep .mat-checkbox-checked .mat-checkbox-background,
+::ng-deep
+  .mat-checkbox-indeterminate
+  .mat-checkbox-background
+  .mat-checkbox-ripple.mat-ripple-active
+  .mat-ripple-element {
+  background-color: #17d1be !important;
+  border-color: #17d1be !important;
+}
+
+.container {
+  padding-top: 10px;
+}
+
+.example-section {
+  margin-top: 10px;
+}
+
+::ng-deep .mat-form-field-appearance-legacy .mat-form-field-underline {
+  opacity: 0.5;
+  height: 1px;
+  background: #009688;
+}
+
+::ng-deep .mat-form-field-label-wrapper {
+  font-size: 0.75rem;
+}
+
+::ng-deep .mat-tab-group.mat-primary .mat-ink-bar,
+.mat-tab-nav-bar.mat-primary .mat-ink-bar {
+  background-color: #009688;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+button[type="button"] {
+  border-radius: 50%;
+}
+
+img {
+  border-radius: 50%;
+}
+
+::ng-deep .mat-datepicker-content {
+  margin-top: 100px !important;
+}
+
+.close-btn {
+  position: absolute;
+  right: 1px;
+  top: 10px;
+}
+
+.col-custom {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.example-section {
+  width: 100%;
+}
+
+.label {
+  font-weight: bolder;
+  font-size: 1rem;
+}
+
+.feature-section {
+  display: flex;
+  justify-content: space-around;
+}
+
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: min-content;
+}
+
+.grid-item {
+  width: 90%;
+}
+
+.grid-item-content {
+  margin-left: 10%;
+}
+
+.example-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  align-items: flex-start;
+}
+
+.example-radio-button {
+  margin: 5px;
+}
+
+::ng-deep
+  .mat-radio-button.mat-accent.mat-radio-checked
+  .mat-radio-outer-circle {
+  border-color: #009688 !important;
+}
+
+::ng-deep .mat-radio-button.mat-accent .mat-radio-inner-circle {
+  background-color: #009688 !important;
+}
+
+.answer {
+  padding-left: 20px;
+}

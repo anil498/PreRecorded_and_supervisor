@@ -69,21 +69,25 @@ public class IcdcController {
         logger.info(commonService.getHeaders(request).toString());
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
-        if(!commonService.authorizationCheck(authKey,token,"icdc")){
-            return  new ResponseEntity<List<IcdcEntity>>(HttpStatus.UNAUTHORIZED);
+        if(commonService.authorizationCheck(authKey,token,"get_all")){
+            return ok(icdcService.getAllIcdc());
         }
-        return ok(icdcService.getAllIcdc());
-    }
-    @GetMapping("/GetAllByUser")
-    public ResponseEntity<List<IcdcEntity>> getAllIcdcByUser(HttpServletRequest request){
-        logger.info(commonService.getHeaders(request).toString());
-        String authKey = request.getHeader("Authorization");
-        String token = request.getHeader("Token");
-        if(!commonService.authorizationCheck(authKey,token,"icdc")){
-            return  new ResponseEntity<List<IcdcEntity>>(HttpStatus.UNAUTHORIZED);
+        if(commonService.authorizationCheck(authKey,token,"icdc")){
+           return ok(icdcService.getAllUserIcdc(token));
         }
-        return ok(icdcService.getAllUserIcdc(token));
+        return  new ResponseEntity<List<IcdcEntity>>(HttpStatus.UNAUTHORIZED);
+
     }
+//    @GetMapping("/GetAllByUser")
+//    public ResponseEntity<List<IcdcEntity>> getAllIcdcByUser(HttpServletRequest request){
+//        logger.info(commonService.getHeaders(request).toString());
+//        String authKey = request.getHeader("Authorization");
+//        String token = request.getHeader("Token");
+//        if(!commonService.authorizationCheck(authKey,token,"icdc")){
+//            return  new ResponseEntity<List<IcdcEntity>>(HttpStatus.UNAUTHORIZED);
+//        }
+//        return ok(icdcService.getAllUserIcdc(token));
+//    }
 
     @PutMapping("/Update")
     public ResponseEntity<?> updateIcdc(@RequestBody String params1, HttpServletRequest request) throws JsonProcessingException {
