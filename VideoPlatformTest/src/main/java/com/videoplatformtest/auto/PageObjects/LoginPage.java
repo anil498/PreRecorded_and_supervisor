@@ -88,7 +88,18 @@ public class LoginPage {
         }
         userName.clear();
         password.clear();
+
+            childTest = parentTest.createNode("VIEW PASSWORD ICON");
+        if(driver.findElement(By.xpath(".//mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[2]/button/span[1]/mat-icon")).isDisplayed()){
+            childTest.log(Status.PASS,MarkupHelper.createLabel("View password icon displayed",ExtentColor.GREEN));
+            Thread.sleep(3000);
+            password.sendKeys("Hello");
+            driver.findElement(By.xpath(".//mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[2]/button/span[1]/mat-icon")).click();
+            Thread.sleep(1000);
+        }
+        else { fail(); childTest.log(Status.FAIL,MarkupHelper.createLabel("View Password icon not displayed",ExtentColor.RED));}
         childTest = parentTest.createNode("VALID USER CREDENTIALS");
+        password.clear();
         userName.sendKeys("mcarbon");
         password.sendKeys("mcarbon");
         childTest.log(Status.PASS,MarkupHelper.createLabel("Credentials entered",ExtentColor.GREEN));

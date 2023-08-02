@@ -12,19 +12,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -47,10 +47,12 @@ public class AccountServiceImpl implements AccountService {
     AccessRepository accessRepository;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
-    @Value("${image.name}")
+    @Value("${defaultImgName}")
     private String imgName;
-
-
+    @Value("${defaultPath}")
+    private String defaultExtractPath;
+    @Autowired
+    ResourceLoader resourceLoader;
 
     private static final Logger logger= LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -158,9 +160,29 @@ public class AccountServiceImpl implements AccountService {
         }
         try{
             if(params.get("logo").isJsonNull() || params.get("logo").toString().equals("") || params.get("logo").toString()==null){
-                String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
-                accountRepository.updateLogoPath(acc.getAccountId(), defaultPath);
-                userRepository.updateLogoPath(user.getUserId(),defaultPath);
+                Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
+
+                if (!Files.exists(defaultPath)) {
+                    Files.createDirectories(defaultPath);
+                    String newPath = defaultPath+"/"+imgName;
+                    logger.info("Default new path : {}",newPath);
+                    Resource resource = resourceLoader.getResource(defaultExtractPath);
+                    logger.info("URL: {}",resource.getURL());
+                    InputStream inputStream = resource.getInputStream();
+                    byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
+                    Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
+                    logger.info("Logo Img Byte : {}",logo.get("byte"));
+                    logger.info("Logo Img Name : {}",imgName);
+                    commonService.decodeToImage(logo.get("byte").toString(), newPath);
+                    accountRepository.updateLogoPath(acc.getAccountId(), String.valueOf(newPath));
+                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(newPath));
+                }
+                else {
+                    accountRepository.updateLogoPath(acc.getAccountId(), String.valueOf(defaultPath+"/"+imgName));
+                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(defaultPath+"/"+imgName));
+                }
+
+
             }else {
                 HashMap<String, Object> logoA = commonService.getMapOfLogo(params.get("logo").toString());
                 HashMap<String, Object> logoU = commonService.getMapOfLogo(params.get("logo").toString());
@@ -207,10 +229,28 @@ public class AccountServiceImpl implements AccountService {
         commonService.compareAndChange(params,existing,params.get("accountId").getAsInt());
 
         try {
-            logger.info("Checking :::::: ",params.get("logo").toString());
             if(params.get("logo").isJsonNull() ||  params.get("logo").toString()==null){
-                String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
-                accountRepository.updateLogoPath(existing.getAccountId(), defaultPath);
+                logger.info("Entered Account logo update!");
+                Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
+                if (!Files.exists(defaultPath)) {
+                    logger.info("Dir doesn't exist..creating...");
+                    Files.createDirectories(defaultPath);
+                    String newPath = defaultPath+"/"+imgName;
+                    logger.info("Default new path : {}",newPath);
+                    Resource resource = resourceLoader.getResource(defaultExtractPath);
+                    logger.info("URL: {}",resource.getURL());
+                    InputStream inputStream = resource.getInputStream();
+                    byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
+                    Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
+                    logger.info("Logo Img Byte : {}",logo.get("byte"));
+                    logger.info("Logo Img Name : {}",imgName);
+                    commonService.decodeToImage(logo.get("byte").toString(), newPath);
+                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(newPath));
+                }
+                else {
+                    logger.info("Dir exist, updating path..");
+                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(defaultPath+"/"+imgName));
+                }
             }
             else{
                 HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());

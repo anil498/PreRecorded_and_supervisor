@@ -286,6 +286,17 @@ public class CommonService {
         map.put("byte",imageUrl);
         return map;
     }
+    public Map<String,Object> getDefaultImageToStore(byte[] fileContent,String imgName) throws IOException {
+        Map<String,Object> map = new HashMap<>();
+//        File file = new File(path);
+//        fileContent = FileUtils.readFileToByteArray(file);
+        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+//        String fileName = file.getName();
+        map.put("name",imgName);
+        map.put("byte",encodedString);
+        logger.info(map.toString());
+        return map;
+    }
 
     public void decodeToImage(String base64,String path){
         byte[] data = DatatypeConverter.parseBase64Binary(base64);

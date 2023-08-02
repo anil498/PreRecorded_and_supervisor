@@ -10,18 +10,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.apache.commons.io.FileUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -57,8 +60,12 @@ public class UserServiceImpl implements UserService{
     private CommonService commonService;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
-    @Value("${image.name}")
+    @Value("${defaultImgName}")
     private String imgName;
+    @Value("${defaultPath}")
+    private String defaultExtractPath;
+    @Autowired
+    ResourceLoader resourceLoader;
 
 
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMATTER);
@@ -145,6 +152,24 @@ public class UserServiceImpl implements UserService{
         try{
 
             if(params.get("logo").isJsonNull() || params.get("logo").toString()==null){
+//                Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
+//                if (!Files.exists(defaultPath)) {
+//                    Files.createDirectories(defaultPath);
+//                    String newPath = defaultPath+"/"+imgName;
+//                    logger.info("Default new path : {}",newPath);
+//                    Resource resource = resourceLoader.getResource(String.valueOf(defaultExtractPath));
+//                    logger.info("URL: {}",resource.getURL());
+//                    InputStream inputStream = resource.getInputStream();
+//                    byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
+//                    Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
+//                    logger.info("Logo Img Byte : {}",logo.get("byte"));
+//                    logger.info("Logo Img Name : {}",imgName);
+//                    commonService.decodeToImage(logo.get("byte").toString(), newPath);
+//                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(defaultPath+"/"+imgName));
+//                }
+//                else {
+//                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(defaultPath+"/"+imgName));
+//                }
                 userRepository.updateLogoPath(user.getUserId(), String.valueOf(accountEntity.getLogo()));
             }else{
                 HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
@@ -219,8 +244,25 @@ public class UserServiceImpl implements UserService{
                     }
                 }
                 if(params.get("logo").isJsonNull() ||  params.get("logo").toString()==null){
-                    String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
-                    userRepository.updateLogoPath(existing.getUserId(), defaultPath);
+//                    Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
+//                    if (!Files.exists(defaultPath)) {
+//                        Files.createDirectories(defaultPath);
+//                        String newPath = defaultPath+"/"+imgName;
+//                        logger.info("Default new path : {}",newPath);
+//                        Resource resource = resourceLoader.getResource(String.valueOf(defaultExtractPath));
+//                        logger.info("URL: {}",resource.getURL());
+//                        InputStream inputStream = resource.getInputStream();
+//                        byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
+//                        Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
+//                        logger.info("Logo Img Byte : {}",logo.get("byte"));
+//                        logger.info("Logo Img Name : {}",imgName);
+//                        commonService.decodeToImage(logo.get("byte").toString(), newPath);
+//                        userRepository.updateLogoPath(existing.getUserId(), String.valueOf(defaultPath+"/"+imgName));
+//                    }
+//                    else {
+//                        userRepository.updateLogoPath(existing.getUserId(), String.valueOf(defaultPath+"/"+imgName));
+//                    }
+                    userRepository.updateLogoPath(existing.getUserId(), String.valueOf(accountEntity.getLogo()));
                 }
                 else {
                     HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
