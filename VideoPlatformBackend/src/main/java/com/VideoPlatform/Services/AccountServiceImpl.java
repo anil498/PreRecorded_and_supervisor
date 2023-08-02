@@ -245,11 +245,13 @@ public class AccountServiceImpl implements AccountService {
                     logger.info("Logo Img Byte : {}",logo.get("byte"));
                     logger.info("Logo Img Name : {}",imgName);
                     commonService.decodeToImage(logo.get("byte").toString(), newPath);
-                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(newPath));
+                    existing.setLogo(newPath);
+//                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(newPath));
                 }
                 else {
                     logger.info("Dir exist, updating path..");
-                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(defaultPath+"/"+imgName));
+//                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(defaultPath+"/"+imgName));
+                    existing.setLogo(String.valueOf(defaultPath+"/"+imgName));
                     commonService.changeUserLogo(existing.getAccountId(),"",String.valueOf(defaultPath+"/"+imgName));
                 }
             }
