@@ -542,7 +542,7 @@ export class UpdateUserDialogComponent implements OnInit {
       }
     } catch (error) {
       console.warn(error);
-      this.openSnackBar(error.error, "snackBar");
+      this.openSnackBar(error.error.msg, "snackBar");
       this.timeOut(3000);
     }
   }

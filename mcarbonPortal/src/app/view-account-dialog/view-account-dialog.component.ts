@@ -57,7 +57,7 @@ export class ViewAccountDialogComponent implements OnInit {
   topLevelAccess1: any[] = [];
   topLevelAccess2: any[] = [];
   selectedFeaturesMeta = {};
-
+  logoResponse: any;
   constructor(
     private router: Router,
     private dialogRef: MatDialogRef<ViewAccountDialogComponent>,
@@ -125,12 +125,23 @@ export class ViewAccountDialogComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    try {
+      this.logoResponse = await this.restService.getLogo(
+        "User/getImage",
+        this.account.accountId,
+        null
+      );
+      console.log(this.logoResponse);
+      this.photoControl = true;
+    } catch (err) {
+      this.photoControl = false;
+    }
     this.userForm = this.fb.group({
       name: [this.account.name, Validators.required],
       address: [this.account.address, Validators.required],
       acc_exp_date: [new Date(this.account.expDate), Validators.required],
       max_user: [this.account.maxUser, Validators.required],
-      logo: [this.account.logo],
+      logo: [this.logoResponse],
       accessList: [this.account.accessId, Validators.required],
 
       max_duration: [this.account.session.max_duration, Validators.required],
