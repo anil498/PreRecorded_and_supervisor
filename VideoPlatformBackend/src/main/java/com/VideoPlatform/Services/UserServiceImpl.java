@@ -60,8 +60,6 @@ public class UserServiceImpl implements UserService{
     private CommonService commonService;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
-    @Value("${defaultPath}")
-    private String defaultExtractPath;
     @Autowired
     ResourceLoader resourceLoader;
 

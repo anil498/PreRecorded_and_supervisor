@@ -45,11 +45,11 @@ public class AccountServiceImpl implements AccountService {
     UserServiceImpl userService;
     @Autowired
     AccessRepository accessRepository;
-    @Value("${file.path}")
+    @Value("${file.path:-}")
     private String FILE_DIRECTORY;
     @Value("${defaultImgName:default.png}")
     private String imgName;
-    @Value("${defaultPath:}")
+    @Value("${defaultPath:classpath:default/default.png}")
     private String defaultExtractPath;
     @Autowired
     ResourceLoader resourceLoader;
