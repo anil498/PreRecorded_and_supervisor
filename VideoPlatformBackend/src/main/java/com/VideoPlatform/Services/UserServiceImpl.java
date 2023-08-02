@@ -15,16 +15,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -222,8 +220,8 @@ public class UserServiceImpl implements UserService{
                     }
                 }
                 if(params.get("logo").isJsonNull() ||  params.get("logo").toString()==null){
-
-                    userRepository.updateLogoPath(existing.getUserId(), String.valueOf(accountEntity.getLogo()));
+//                    userRepository.updateLogoPath(existing.getUserId(), String.valueOf(accountEntity.getLogo()));
+                    existing.setLogo(accountEntity.getLogo());
                 }
                 else {
                     HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
