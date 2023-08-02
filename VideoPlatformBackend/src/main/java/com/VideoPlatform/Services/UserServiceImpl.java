@@ -60,8 +60,6 @@ public class UserServiceImpl implements UserService{
     private CommonService commonService;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
-    @Value("${defaultImgName}")
-    private String imgName;
     @Value("${defaultPath}")
     private String defaultExtractPath;
     @Autowired
@@ -152,24 +150,6 @@ public class UserServiceImpl implements UserService{
         try{
 
             if(params.get("logo").isJsonNull() || params.get("logo").toString()==null){
-//                Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
-//                if (!Files.exists(defaultPath)) {
-//                    Files.createDirectories(defaultPath);
-//                    String newPath = defaultPath+"/"+imgName;
-//                    logger.info("Default new path : {}",newPath);
-//                    Resource resource = resourceLoader.getResource(String.valueOf(defaultExtractPath));
-//                    logger.info("URL: {}",resource.getURL());
-//                    InputStream inputStream = resource.getInputStream();
-//                    byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
-//                    Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
-//                    logger.info("Logo Img Byte : {}",logo.get("byte"));
-//                    logger.info("Logo Img Name : {}",imgName);
-//                    commonService.decodeToImage(logo.get("byte").toString(), newPath);
-//                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(defaultPath+"/"+imgName));
-//                }
-//                else {
-//                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(defaultPath+"/"+imgName));
-//                }
                 userRepository.updateLogoPath(user.getUserId(), String.valueOf(accountEntity.getLogo()));
             }else{
                 HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
@@ -244,24 +224,7 @@ public class UserServiceImpl implements UserService{
                     }
                 }
                 if(params.get("logo").isJsonNull() ||  params.get("logo").toString()==null){
-//                    Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
-//                    if (!Files.exists(defaultPath)) {
-//                        Files.createDirectories(defaultPath);
-//                        String newPath = defaultPath+"/"+imgName;
-//                        logger.info("Default new path : {}",newPath);
-//                        Resource resource = resourceLoader.getResource(String.valueOf(defaultExtractPath));
-//                        logger.info("URL: {}",resource.getURL());
-//                        InputStream inputStream = resource.getInputStream();
-//                        byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
-//                        Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
-//                        logger.info("Logo Img Byte : {}",logo.get("byte"));
-//                        logger.info("Logo Img Name : {}",imgName);
-//                        commonService.decodeToImage(logo.get("byte").toString(), newPath);
-//                        userRepository.updateLogoPath(existing.getUserId(), String.valueOf(defaultPath+"/"+imgName));
-//                    }
-//                    else {
-//                        userRepository.updateLogoPath(existing.getUserId(), String.valueOf(defaultPath+"/"+imgName));
-//                    }
+
                     userRepository.updateLogoPath(existing.getUserId(), String.valueOf(accountEntity.getLogo()));
                 }
                 else {

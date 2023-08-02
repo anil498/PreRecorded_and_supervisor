@@ -4,10 +4,7 @@ import com.VideoPlatform.Entity.AccountAuthEntity;
 import com.VideoPlatform.Entity.AccountEntity;
 import com.VideoPlatform.Entity.UserAuthEntity;
 import com.VideoPlatform.Entity.UserEntity;
-import com.VideoPlatform.Repository.AccessRepository;
-import com.VideoPlatform.Repository.AccountAuthRepository;
-import com.VideoPlatform.Repository.UserAuthRepository;
-import com.VideoPlatform.Repository.UserRepository;
+import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,6 +38,8 @@ public class CommonService {
     UserRepository userRepository;
     @Autowired
     AccessRepository accessRepository;
+    @Autowired
+    AccountRepository accountRepository;
 
     public int isValidAuthKey(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
@@ -271,6 +270,18 @@ public class CommonService {
         if(params.has("name"))
             map.put("name",params.get("name").getAsString());
         return map;
+    }
+
+    public void changeUserLogo(Integer accountId, String oldPath, String newPath){
+        List<UserEntity> userEntities = userRepository.findByAccountId(accountId);
+        if(userEntities.isEmpty() || userEntities==null){
+            return;
+        }
+        for(UserEntity userEntity : userEntities){
+            if(userEntity.getLogo().equals(oldPath)){
+                userRepository.updateLogoPath(userEntity.getUserId(),newPath);
+            }
+        }
     }
 
     public Map<String,String> getImage(String path) throws IOException {

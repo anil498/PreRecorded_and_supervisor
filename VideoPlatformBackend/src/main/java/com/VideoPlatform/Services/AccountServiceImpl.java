@@ -47,9 +47,9 @@ public class AccountServiceImpl implements AccountService {
     AccessRepository accessRepository;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
-    @Value("${defaultImgName}")
+    @Value("${defaultImgName:default.png}")
     private String imgName;
-    @Value("${defaultPath}")
+    @Value("${defaultPath:}")
     private String defaultExtractPath;
     @Autowired
     ResourceLoader resourceLoader;
@@ -250,9 +250,11 @@ public class AccountServiceImpl implements AccountService {
                 else {
                     logger.info("Dir exist, updating path..");
                     accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(defaultPath+"/"+imgName));
+                    commonService.changeUserLogo(existing.getAccountId(),"",String.valueOf(defaultPath+"/"+imgName));
                 }
             }
             else{
+                String oldPath = existing.getLogo();
                 HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
                 Path path = Paths.get(FILE_DIRECTORY +"/media/"+existing.getAccountId()+"/image");
                 logger.info(path.toString());
@@ -263,6 +265,7 @@ public class AccountServiceImpl implements AccountService {
                 logger.info("New Path : "+newPath);
                 commonService.decodeToImage(logo.get("byte").toString(),newPath);
                 existing.setLogo(newPath);
+                commonService.changeUserLogo(existing.getAccountId(), oldPath, newPath);
             }
             if(!params.get("session").isJsonNull())
                 existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
