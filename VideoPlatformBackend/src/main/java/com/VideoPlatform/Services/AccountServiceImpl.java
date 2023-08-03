@@ -296,13 +296,13 @@ public class AccountServiceImpl implements AccountService {
     public ResponseEntity<?> deleteAccount(Integer accountId) {
         accountRepository.deleteAccount(accountId);
         accountAuthRepository.deleteById(accountId);
-        userRepository.deleteUserOfAccount(accountId);
-        List<Integer> userIdList = userRepository.findDeletedUser();
-        for(Integer deletedUser : userIdList){
-            UserAuthEntity userAuthEntity = userAuthRepository.findByUId(deletedUser);
-            if(userAuthEntity!=null)
-                userAuthRepository.deleteById(deletedUser);
-        }
+//        userRepository.deleteUserOfAccount(accountId);
+//        List<Integer> userIdList = userRepository.findDeletedUser();
+//        for(Integer deletedUser : userIdList){
+//            UserAuthEntity userAuthEntity = userAuthRepository.findByUId(deletedUser);
+//            if(userAuthEntity!=null)
+//                userAuthRepository.deleteById(deletedUser);
+//        }
         return new ResponseEntity<>(commonService.responseData("200","Account Deleted!"),HttpStatus.OK);
     }
 
@@ -327,24 +327,5 @@ public class AccountServiceImpl implements AccountService {
         return String.valueOf(accessEntities);
     }
 
-    @Override
-    public void saveFilePathToFeature(String filePath, String loginId, String name){
 
-        AccountEntity accountEntity= accountRepository.findByAccountName(name);
-
-        HashMap<String,Object> featuresMeta=accountEntity.getFeaturesMeta();
-        HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
-        map.replace("pre_recorded_video_file",filePath);
-        featuresMeta.replace("4",map);
-        logger.info("Features Meta {}",featuresMeta);
-        accountEntity.setFeaturesMeta(featuresMeta);
-        logger.info("Pre recorded val : {}",map.get("pre_recorded_video_file"));
-        logger.info("getFeatureMeta1 {} ", accountEntity.getFeaturesMeta());
-        Gson gson=new Gson();
-        String json=gson.toJson(featuresMeta);
-        logger.info("Json {}",json);
-        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
-        accountRepository.updateFeatureMeta(name,json);
-        logger.info("getFeatureMeta2 {} ", accountEntity.getFeaturesMeta());
-    }
 }

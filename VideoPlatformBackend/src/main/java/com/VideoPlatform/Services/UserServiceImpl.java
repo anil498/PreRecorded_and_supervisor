@@ -55,8 +55,7 @@ public class UserServiceImpl implements UserService{
     private DashboardService dashboardService;
     @Autowired
     private CommonService commonService;
-    @Autowired
-    private AccountService accountService;
+
     @Value("${file.path}")
     private String FILE_DIRECTORY;
 
@@ -297,14 +296,17 @@ public class UserServiceImpl implements UserService{
 
         if(userEntity == null){
             logger.info("No user present with given login id !");
-
             return  new ResponseEntity<>(commonService.responseData("401","Invalid username or password!"),HttpStatus.UNAUTHORIZED);
         }
         if(userEntity.getStatus()!=1){
             logger.info("User does not exist !");
             return  new ResponseEntity<>(commonService.responseData("401","User does not exist!"),HttpStatus.UNAUTHORIZED);
         }
-
+        AccountEntity accountEntity = accountRepository.findByAccountId(userEntity.getAccountId());
+        if(accountEntity.getStatus()==2){
+            logger.info("Account Deleted!");
+            return  new ResponseEntity<>(commonService.responseData("401","Account Deleted!"),HttpStatus.UNAUTHORIZED);
+        }
         logger.info("user "+userEntity);
         int userId = userEntity.getUserId();
 
@@ -336,7 +338,6 @@ public class UserServiceImpl implements UserService{
             return  ResponseEntity.ok(response);
         }
         else {
-
             if (passwordEncoder.matches(password,userEntity.getPassword())) {
                 AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(userEntity.getAccountId());
                 if(TimeUtils.isExpire(accountAuthEntity.getExpDate())){
@@ -389,7 +390,6 @@ public class UserServiceImpl implements UserService{
         }
         logger.info("Last login return invoked !");
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
     }
 
     @Override
@@ -523,11 +523,11 @@ public class UserServiceImpl implements UserService{
             saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
         }
         else if(loginId.isEmpty()){
-            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
+            commonService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
         }
         else{
             saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
-            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
+            commonService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
         }
         return new ResponseEntity<>(commonService.responseData("200","File Path Written!"),HttpStatus.OK);
     }

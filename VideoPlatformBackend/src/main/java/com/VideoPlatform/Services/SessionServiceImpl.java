@@ -34,8 +34,6 @@ public class SessionServiceImpl implements SessionService{
     @Autowired
     private SessionRepository sessionRepository;
     @Autowired
-    private FeatureRepository featureRepository;
-    @Autowired
     private AccountRepository accountRepository;
     @Autowired
     private AccountAuthRepository accountAuthRepository;
@@ -56,18 +54,27 @@ public class SessionServiceImpl implements SessionService{
         Date expDate = TimeUtils.increaseDateTimeSession(creation);
         logger.info("Session ExpDate = {}", expDate);
 
-        UserAuthEntity userAuth = userAuthRepository.findByToken(token);
-        AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
-        AccountEntity account = accountRepository.findByAccountId(acc.getAccountId());
-        UserEntity userEntity = userRepository.findByUserId(userAuth.getUserId());
+        UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
+        AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAuthKey(authKey);
+        AccountEntity accountEntity = accountRepository.findByAccountId(accountAuthEntity.getAccountId());
+        UserEntity userEntity = userRepository.findByUserId(userAuthEntity.getUserId());
 
-        HashMap<String,Object> fMeta = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("4");
-        if(moderator==true) {
-            if (fMeta == null){
-                logger.info("Pre recorded video property is not present !");
-            }
-            else if(fMeta.get("share_pre_recorded_video").equals(false)){
-                return null;
+        if(userAuthEntity==null || accountAuthEntity==null || accountEntity==null || userEntity==null){
+            logger.info("Don't have required inputs to create session!");
+            return null;
+        }
+
+        if(userEntity.getFeaturesMeta().containsKey("4")){
+            HashMap<String,Object> fMeta = (HashMap<String, Object>) userEntity.getFeaturesMeta().get("4");
+            if(moderator==true) {
+                if (fMeta==null || fMeta.isEmpty()){
+                    logger.info("Pre recorded video property is not present !");
+                }
+                else if(fMeta.containsKey("share_pre_recorded_video")){
+                    if(fMeta.get("share_pre_recorded_video").equals(false)){
+                        return null;
+                    }
+                }
             }
         }
 
@@ -86,15 +93,17 @@ public class SessionServiceImpl implements SessionService{
         }
 
         if(sessionId.length()==0)
-            sessionId = account.getAccountId() + "_" + userAuth.getUserId() + "_" + sessionKey;
+            sessionId = accountEntity.getAccountId() + "_" + userAuthEntity.getUserId() + "_" + sessionKey;
 
         session.setSessionId(sessionId);
         session.setSessionKey(sessionKey);
-        session.setSessionName(account.getName());
-        session.setUserId(userAuth.getUserId());
-        session.setAccountId(account.getAccountId());
-        session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_active_sessions").toString()));
-        session.setAccountMaxSessions(Integer.valueOf(account.getSession().get("max_active_sessions").toString()));
+        session.setSessionName(accountEntity.getName());
+        session.setUserId(userAuthEntity.getUserId());
+        session.setAccountId(accountEntity.getAccountId());
+        if(userEntity.getSession().containsKey("max_active_sessions"))
+            session.setUserMaxSessions(Integer.valueOf(userEntity.getSession().get("max_active_sessions").toString()));
+        if(accountEntity.getSession().containsKey("max_active_sessions"))
+            session.setAccountMaxSessions(Integer.valueOf(accountEntity.getSession().get("max_active_sessions").toString()));
         session.setCreationDate(creation);
         session.setExpDate(expDate);
         if(participantName==null){
@@ -105,16 +114,18 @@ public class SessionServiceImpl implements SessionService{
 
         SettingsEntity settingsEntity = new SettingsEntity();
 
-        session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
-        settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
+        if(userEntity.getSession().containsKey("max_participants"))
+            session.setTotalParticipants(Integer.valueOf(userEntity.getSession().get("max_participants").toString()));
+        if(userEntity.getSession().containsKey("max_duration"))
+            settingsEntity.setDuration(Integer.valueOf(userEntity.getSession().get("max_duration").toString()));
         if (userEntity.getLogo() != null) {
             settingsEntity.setLogo(userEntity.getLogo());
         }
-        else if(account.getLogo() != null) {
-            settingsEntity.setLogo(account.getLogo());
+        else if(accountEntity.getLogo() != null) {
+            settingsEntity.setLogo(accountEntity.getLogo());
         }
         else{
-            settingsEntity.setLogo("{}");
+            settingsEntity.setLogo("");
         }
         for (Integer featureId : userEntity.getFeatures()) {
             if (1 == featureId) {
@@ -128,7 +139,8 @@ public class SessionServiceImpl implements SessionService{
                     settingsEntity.setScreenShare(true);
                     try {
                         Map<String, Boolean> map = (Map<String, Boolean>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                        settingsEntity.setScreenShareWithAudio(map.get("share_with_audio"));
+                        if(map.containsKey("share_with_audio"))
+                            settingsEntity.setScreenShareWithAudio(map.get("share_with_audio"));
                     } catch (Exception e) {
                         logger.info("Getting null value from participants_ticker_text 2 !");
                     }
@@ -149,15 +161,17 @@ public class SessionServiceImpl implements SessionService{
                             logger.info("Pre recorded val : {}", userEntity.getFeaturesMeta().get(featureId.toString()));
                             settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
                         } catch (Exception e) {
-                            logger.info("Getting null value from pre_recorded_video_file 1 !", e);
+                            logger.info("Getting null value from pre_recorded_video_file!", e);
                         }
-                    } else if (fmeta.get("share_pre_recorded_video").equals(false)) {
-                        settingsEntity.setPreRecorded(true);
-                        try {
-                            logger.info("Pre recorded val : {}", userEntity.getFeaturesMeta().get(featureId.toString()));
-                            settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
-                        } catch (Exception e) {
-                            logger.info("Getting null value from pre_recorded_video_file 1 !", e);
+                    } else if (fmeta.containsKey("share_pre_recorded_video")){
+                        if (fmeta.get("share_pre_recorded_video").equals(false)) {
+                            settingsEntity.setPreRecorded(true);
+                            try {
+                                logger.info("Pre recorded val : {}", userEntity.getFeaturesMeta().get(featureId.toString()));
+                                settingsEntity.setPreRecordedDetails(userEntity.getFeaturesMeta().get(featureId.toString()));
+                            } catch (Exception e) {
+                                logger.info("Getting null value from pre_recorded_video_file!", e);
+                            }
                         }
                     }
                 }
@@ -166,7 +180,8 @@ public class SessionServiceImpl implements SessionService{
                 settingsEntity.setDisplayTicker(true);
                 try{
                     Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setDescription(map.get("participants_ticker_text"));
+                    if(map.containsKey("participants_ticker_text"))
+                        settingsEntity.setDescription(map.get("participants_ticker_text"));
                 }
                 catch (Exception e){
                     logger.info("Getting null value from participants_ticker_text 2 !");
@@ -176,7 +191,8 @@ public class SessionServiceImpl implements SessionService{
                 settingsEntity.setDisplayTicker(true);
                 try{
                     Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setDescription(map.get("admin_ticker_text"));
+                    if(map.containsKey("admin_ticker_text"))
+                        settingsEntity.setDescription(map.get("admin_ticker_text"));
                 }
                 catch (Exception e){
                     logger.info("Getting null value from admin_ticker_text !");
@@ -189,7 +205,8 @@ public class SessionServiceImpl implements SessionService{
                 settingsEntity.setFloatingLayout(true);
                 try{
                     Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setLayoutType(map.get("customised_layout"));
+                    if(map.containsKey("customised_layout"))
+                        settingsEntity.setLayoutType(map.get("customised_layout"));
                 }
                 catch (Exception e){
                     logger.info("Getting null value from custom layout !");
@@ -198,15 +215,6 @@ public class SessionServiceImpl implements SessionService{
             else if (9 == featureId && moderator==true) {
                 settingsEntity.setSupervisor(true);
             }
-//            else if (10 == featureId) {
-//                try{
-//                    Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-//                    settingsEntity.setPreRecordedDetails(map.get("pre_recorded_video_file"));
-//                }
-//                catch (Exception e){
-//                    logger.info("Getting null value from pre_recorded_video_file !");
-//                }
-//            }
             else if (11 == featureId) {
                 settingsEntity.setDisplayTimer(true);
             }
@@ -219,7 +227,8 @@ public class SessionServiceImpl implements SessionService{
             else if (14 == featureId && moderator==true) {
                 try{
                     Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setLandingPage(map.get("admin_landing_page"));
+                    if(map.containsKey("admin_landing_page"))
+                        settingsEntity.setLandingPage(map.get("admin_landing_page"));
                 }
                 catch (Exception e){
                     logger.info("Getting null value from admin_landing_page !");
@@ -228,7 +237,8 @@ public class SessionServiceImpl implements SessionService{
             else if (15 == featureId && moderator==false) {
                 try{
                     Map<String,String> map= (Map<String, String>) (userEntity.getFeaturesMeta().get(featureId.toString()));
-                    settingsEntity.setLandingPage(map.get("participants_landing_page"));
+                    if(map.containsKey("admin_landing_page"))
+                        settingsEntity.setLandingPage(map.get("participants_landing_page"));
                 }
                 catch (Exception e){
                     logger.info("Getting null value from participants_landing_page !");
@@ -265,7 +275,7 @@ public class SessionServiceImpl implements SessionService{
                         settingsEntity.setIcdcQuestions(icdcData);
                 }
                 catch (Exception e){
-                    logger.error("Getting exception while setting object for featureId 16 {}",e.getMessage());
+                    logger.error("Getting exception while setting object for featureId 16 i.e. icdc {}",e.getMessage());
                 }
             }
         }
@@ -298,9 +308,9 @@ public class SessionServiceImpl implements SessionService{
         return sessionEntity;
     }
     @Override
-    public String deleteSession(String sessionKey) {
+    public ResponseEntity<?> deleteSession(String sessionKey) {
         sessionRepository.deleteSession(sessionKey);
-        return "Session deleted";
+        return new ResponseEntity<>(commonService.responseData("200","Session Deleted!"),HttpStatus.OK);
     }
     @Override
     public void updateHold(Map<String, Object> params){

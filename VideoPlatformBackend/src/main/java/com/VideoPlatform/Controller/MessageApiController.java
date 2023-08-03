@@ -4,7 +4,6 @@ import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Entity.*;
 import com.VideoPlatform.Models.AppNotification;
 import com.VideoPlatform.Models.SubmitResponse;
-import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Services.MessagingService;
 import com.VideoPlatform.Services.SessionService;
@@ -13,7 +12,6 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import io.openvidu.java.client.OpenViduHttpException;
@@ -47,21 +45,7 @@ public class MessageApiController {
     @Autowired
     FirebaseMessaging firebaseMessaging;
     @Autowired
-    FirebaseAuth firebaseAuth;
-    @Autowired
     Firestore db;
-    @Autowired
-    AccountAuthRepository accountAuthRepository;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    UserAuthRepository userAuthRepository;
-    @Autowired
-    SessionRepository sessionRepository;
-    @Autowired
-    AccessRepository accessRepository;
-    @Autowired
-    UserRepository userRepository;
     @Autowired
     SessionService sessionService;
     @Autowired
