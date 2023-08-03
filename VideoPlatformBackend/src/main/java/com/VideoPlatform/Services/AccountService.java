@@ -12,7 +12,7 @@ public interface AccountService {
     ResponseEntity<?> accountCreation(String params1, String authKey, String token) throws JsonProcessingException;
     AccountEntity createAccount(AccountEntity account);
     ResponseEntity<?> updateAccount(String params1);
-    String deleteAccount(Integer accountId);
-    Boolean checkAccountName(String accountName);
+    ResponseEntity<?> deleteAccount(Integer accountId);
+    ResponseEntity<?> checkAccountName(String accountName);
     void saveFilePathToFeature(String filePath, String loginId, String name);
 }

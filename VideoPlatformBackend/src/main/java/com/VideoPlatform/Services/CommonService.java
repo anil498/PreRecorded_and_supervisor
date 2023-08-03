@@ -49,6 +49,7 @@ public class CommonService {
         int authId = acc.getAuthId();
         return authId;
     }
+
     public int isValidAuthKeyU(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         if(acc == null) return 0;
@@ -59,6 +60,7 @@ public class CommonService {
         int accountId = acc.getAccountId();
         return accountId;
     }
+
     public Boolean isValidRequest(String token,String authKey,String systemName){
         UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
         if(userAuthEntity == null)return false;
@@ -73,6 +75,7 @@ public class CommonService {
         }
         return true;
     }
+
     public Boolean isValidRequestUserUpdate(String authKey,String token,String systemName1,String systemName2){
         UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
         logger.info("UserAuthEntity : {} ",userAuthEntity);
@@ -88,6 +91,7 @@ public class CommonService {
         }
         return true;
     }
+
     public Boolean isAccessAllowed(String token,String systemName){
         UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
         String systemNames = userAuthEntity.getSystemNames();
@@ -102,17 +106,19 @@ public class CommonService {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
         return generatedString;
     }
+
     public String generateToken(Integer userId,String type) {
         String val = String.format("%03d", userId);
         return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
+
     public String generatedKey(int accountId){
         String val = String.format("%03d", accountId);
         String key = "AC"+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
         return key;
     }
-    public Boolean authorizationCheck(String authKey, String token, String systemName){
 
+    public Boolean authorizationCheck(String authKey, String token, String systemName){
         if(!isValidRequest(token,authKey,systemName)) {
             logger.info("Unauthorised user, wrong authorization key or Invalid Token !");
             return false;
@@ -184,6 +190,7 @@ public class CommonService {
             e.printStackTrace();
         }
     }
+
     private void removeFromFeatureMeta(Integer[] featureId, Integer accountId){
         List<UserEntity> list = userRepository.findUsersByAccountId(accountId);
         logger.info("Users : {}",list);
@@ -284,6 +291,9 @@ public class CommonService {
     }
 
     public Map<String,String> getImage(String path) throws IOException {
+        if(path.isEmpty() || path.contains("{}")){
+            return null;
+        }
         Map<String,String> map = new HashMap<>();
         File file = new File(path);
         byte[] fileContent = FileUtils.readFileToByteArray(file);
@@ -296,12 +306,10 @@ public class CommonService {
         map.put("byte",imageUrl);
         return map;
     }
+
     public Map<String,Object> getDefaultImageToStore(byte[] fileContent,String imgName) throws IOException {
         Map<String,Object> map = new HashMap<>();
-//        File file = new File(path);
-//        fileContent = FileUtils.readFileToByteArray(file);
         String encodedString = Base64.getEncoder().encodeToString(fileContent);
-//        String fileName = file.getName();
         map.put("name",imgName);
         map.put("byte",encodedString);
         logger.info(map.toString());
@@ -317,6 +325,7 @@ public class CommonService {
             e.printStackTrace();
         }
     }
+
     public Map<String,String> responseData(String statusCode,String message){
         Map<String ,String> response = new HashMap<>();
         response.put("status_code",statusCode);

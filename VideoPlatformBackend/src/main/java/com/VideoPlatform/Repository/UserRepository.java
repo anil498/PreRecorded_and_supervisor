@@ -36,7 +36,15 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Modifying
     @Transactional
-    @Query(nativeQuery = true, value = "UPDATE user_data SET last_login = :lastlogin WHERE user_id = :userId")
+    @Query(nativeQuery=true, value = "UPDATE user_data SET status = 2 where account_id = :accountId ")
+    void deleteUserOfAccount(@Param("accountId") Integer accountId);
+
+    @Query(nativeQuery=true, value = "SELECT user_id from user_data where status = 2")
+    List<Integer> findDeletedUser();
+
+    @Modifying
+    @Transactional
+    @Query(nativeQuery = true, value = "UPDATE user_data SET last_login = :lastlogin WHERE user_id = :userId ")
     void setLogin(@Param("lastlogin") String lastlogin, @Param("userId") Integer userId);
 
     @Modifying

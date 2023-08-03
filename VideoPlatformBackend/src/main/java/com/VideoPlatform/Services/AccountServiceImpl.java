@@ -68,7 +68,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ResponseEntity<?> accountCreation(String params1, String authKey, String token) throws JsonProcessingException {
-        logger.info(params1);
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
 
@@ -77,17 +76,17 @@ public class AccountServiceImpl implements AccountService {
 
         String loginId = params.get("loginId").getAsString();
         if(userRepository.findByLoginId(loginId) != null){
+            logger.info("Login Id {} already exist !",loginId);
             return new ResponseEntity<>(commonService.responseData("400","Login Id already exist!"), HttpStatus.CONFLICT);
         }
         String accountName = params.get("name").getAsString();
         if(accountRepository.findByAccountName(accountName) != null){
-            logger.info("Account name already exist !");
+            logger.info("Account name {} already exist !",accountName);
             return new ResponseEntity<>(commonService.responseData("400","Account Name already exist!"), HttpStatus.CONFLICT);
         }
         Date creation = TimeUtils.getDate();
         AccountEntity acc = new AccountEntity();
         UserEntity user = new UserEntity();
-        logger.info(String.valueOf(params));
         acc.setName(params.get("name").getAsString());
         acc.setAddress(params.get("address").getAsString());
         acc.setCreationDate(creation);
@@ -100,14 +99,11 @@ public class AccountServiceImpl implements AccountService {
         acc.setExpDate(expDate);
 
         UserAuthEntity u = userAuthRepository.findByToken(token);
-        logger.info("User Data : "+u);
         user.setFname(params.get("fname").getAsString());
         user.setLname(params.get("lname").getAsString());
         user.setLoginId(params.get("loginId").getAsString());
         String pass = params.get("password").getAsString();
-        logger.info("Password Check !!! {}",pass);
         String myPass = passwordEncoder.encode(pass);
-        logger.info("Encoded Pass : {}",myPass);
         user.setPassword(myPass);
         user.setContact(params.get("contact").getAsString());
         user.setEmail(params.get("email").getAsString());
@@ -145,7 +141,6 @@ public class AccountServiceImpl implements AccountService {
 
         AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user.getAccountId());
         if(acc.getMaxUser() == 0){
-            logger.info("Checking userId : "+user.getUserId());
             String token1 = commonService.generateToken(user.getUserId(),"UR");
             UserAuthEntity ua = new UserAuthEntity();
             ua.setLoginId(user.getLoginId());
@@ -296,18 +291,27 @@ public class AccountServiceImpl implements AccountService {
         logger.info("New Entity {}",existing);
         return new ResponseEntity<>(commonService.responseData("200","Account updated!"),HttpStatus.OK);
     }
+
     @Override
-    public String deleteAccount(Integer accountId) {
+    public ResponseEntity<?> deleteAccount(Integer accountId) {
         accountRepository.deleteAccount(accountId);
         accountAuthRepository.deleteById(accountId);
-        return "Account successfully deleted.";
-    }
-    @Override
-    public Boolean checkAccountName(String accountName){
-        if(accountRepository.findByAccountName(accountName) == null){
-            return true;
+        userRepository.deleteUserOfAccount(accountId);
+        List<Integer> userIdList = userRepository.findDeletedUser();
+        for(Integer deletedUser : userIdList){
+            UserAuthEntity userAuthEntity = userAuthRepository.findByUId(deletedUser);
+            if(userAuthEntity!=null)
+                userAuthRepository.deleteById(deletedUser);
         }
-        return false;
+        return new ResponseEntity<>(commonService.responseData("200","Account Deleted!"),HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> checkAccountName(String accountName){
+        if(accountRepository.findByAccountName(accountName) == null){
+            return new ResponseEntity<>(commonService.responseData("200","Valid Name value!"),HttpStatus.OK);
+        }
+        return new ResponseEntity<>(commonService.responseData("409","Name already exist!"),HttpStatus.CONFLICT);
     }
 
     public String accessCheck(Integer userId){

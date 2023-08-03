@@ -27,16 +27,9 @@ public class AccountController {
     private static final Logger logger= LoggerFactory.getLogger(AccountController.class);
 
     @Autowired
-    private UserService userService;
-    @Autowired
     private CommonService commonService;
     @Autowired
     private AccountService accountService;
-
-    @Value("${secret.key}")
-    private String secret;
-    @Value("${access.time}")
-    private int accessTime;
 
     @GetMapping("/GetAll")
     public ResponseEntity<List<AccountEntity>> getAllAccounts(HttpServletRequest request) {
@@ -99,20 +92,12 @@ public class AccountController {
         if(!commonService.authorizationCheck(authKey,token,"customer_delete")){
             return  new ResponseEntity<List<AccountEntity>>(HttpStatus.UNAUTHORIZED);
         }
-        accountService.deleteAccount(id);
-
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Account deleted!");
-
-        return ok(result);
+        return accountService.deleteAccount(id);
     }
+
     @PostMapping("/checkAccountName")
-    public ResponseEntity<?> checkAccountName(@RequestBody Map<String, String> params,HttpServletRequest request){
+    public ResponseEntity<?> checkAccountName(@RequestBody Map<String, String> params,HttpServletRequest request) {
         String accountName = params.get("accountName");
-        if(!accountService.checkAccountName(accountName)){
-            return new ResponseEntity<>(commonService.responseData("409","Name already exist!"),HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(commonService.responseData("200","Valid Name value!"),HttpStatus.OK);
+        return accountService.checkAccountName(accountName);
     }
 }

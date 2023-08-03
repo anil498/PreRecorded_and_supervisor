@@ -42,27 +42,15 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private UserAuthRepository userAuthRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    AccountAuthRepository accountAuthRepository;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    private AccessRepository accessRepository;
+    private AccountRepository accountRepository;
     @Autowired
     private CommonService commonService;
 
-    @Value("${secret.key}")
-    private String secret;
-    @Value("${access.time}")
-    private int accessTime;
     @Value("${file.path}")
     private String FILE_DIRECTORY;
 
     @GetMapping("/GetAll")
-    public ResponseEntity<List<UserEntity>> getAllUsers(HttpServletRequest request){
+    public ResponseEntity<?> getAllUsers(HttpServletRequest request){
         logger.info(commonService.getHeaders(request).toString());
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -72,7 +60,7 @@ public class UserController {
         if(commonService.authorizationCheck(authKey,token,"my_users")){
             return ok(userService.getAllChild(token));
         }
-        return  new ResponseEntity<List<UserEntity>>(HttpStatus.UNAUTHORIZED);
+        return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
 //    @GetMapping("/Child")
@@ -86,12 +74,12 @@ public class UserController {
 //    }
 
     @GetMapping("/GetById/{id}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable Integer id, HttpServletRequest request) {
+    public ResponseEntity<?> getUserById(@PathVariable Integer id, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
         if(!commonService.authorizationCheck(authKey,token,"my_users")){
-            return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
+            return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         return ok(userService.getUserById(id));
     }
@@ -126,111 +114,22 @@ public class UserController {
         if(!commonService.authorizationCheck(authKey,token,"user_delete")){
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
-        userService.deleteUser(id);
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "User deleted!");
-        return ok(result);
+
+
+        return userService.deleteUser(id);
     }
 
     @PostMapping("/getVideo")
-    public ResponseEntity<String> handleFileUpload(@RequestParam(value = "prerecorded_video_file", required = false) MultipartFile file,HttpServletRequest request) throws IOException {
+    public ResponseEntity<?> handleFileUpload(@RequestParam(value = "prerecorded_video_file", required = false) MultipartFile file,HttpServletRequest request) throws IOException {
         String loginId = request.getHeader("loginId");
         String name = request.getHeader("name");
-        logger.info("loginId : {}",loginId);
-        if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
-            return new ResponseEntity<String>("Invalid credentials !",HttpStatus.UNAUTHORIZED);
-        }
-        System.out.println(file);
-        try{
-            if(file.isEmpty()){
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Request must contain file");
-            }
-        }
-        catch(Exception e){
-        }
-        if(request.getHeader("name").isEmpty() && request.getHeader("loginId").isEmpty()){
-            return new ResponseEntity<>("Request must contain loginId or name",HttpStatus.UNAUTHORIZED);
-        }
-        String fileName="";
-        String filePathA="";
-        String filePathU="";
-        try {
-            Path path = Paths.get(FILE_DIRECTORY+"media");
-            logger.info(path.toString());
-            if (!Files.exists(path)) {
-                logger.info("Media does not exist, creating...");
-                Files.createDirectories(path);
-            }
-            if(!request.getHeader("loginId").isEmpty() && !request.getHeader("name").isEmpty()){
-                logger.info("New Account Creation Case!");
-                UserEntity userEntity = userRepository.findByLoginId(loginId);
-                Integer userId = userEntity.getUserId();
-                Integer accountId = userEntity.getAccountId();
-                Path path1 = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/"+userId+"/video");
-                Path path2 = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/video");
-                if (!Files.exists(path1)) {
-                    Files.createDirectories(path1);
-                }
-                if (!Files.exists(path2)) {
-                    Files.createDirectories(path2);
-                }
-                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path1),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path2),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-                filePathA = String.valueOf(path2);
-                filePathU = String.valueOf(path1);
-            }
-            else if (!request.getHeader("loginId").isEmpty()) {
-                logger.info("User Creation or update!");
-                UserEntity userEntity = userRepository.findByLoginId(loginId);
-                Integer userId = userEntity.getUserId();
-                Integer accountId = userEntity.getAccountId();
-                path = Paths.get(FILE_DIRECTORY +"/media/"+accountId+"/"+userId+"/video");
-                if (!Files.exists(path)) {
-                    Files.createDirectories(path);
-                }
-                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-                filePathU = String.valueOf(path);
-            }
-            else if (!request.getHeader("name").isEmpty()) {
-                logger.info("Account creation or update!");
-                AccountEntity accountEntity = accountRepository.findByAccountName(name);
-                Integer accountId = accountEntity.getAccountId();
-                path = Paths.get(FILE_DIRECTORY+"/media/"+accountId+"/video");
-                if (!Files.exists(path)) {
-                    Files.createDirectories(path);
-                }
-                Files.copy(file.getInputStream(), Paths.get(String.valueOf(path),file.getOriginalFilename()), StandardCopyOption.REPLACE_EXISTING);
-                filePathA = String.valueOf(path);
-            }
-            fileName = file.getOriginalFilename();
-            logger.info("File Path : {}",(path));
-            logger.info("Path : {}",path);
-
-        }catch (Exception e){
-            logger.info("Exception while uploading file is : ",e);
-        }
-
-        logger.info("loginId : {}",loginId);
-
-        if(request.getHeader("name").isEmpty()){
-            userService.saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
-        }
-        else if(request.getHeader("loginId").isEmpty()){
-            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
-        }
-        else{
-            userService.saveFilePathToFeature(filePathU+"/"+fileName,loginId,name);
-            accountService.saveFilePathToFeature(filePathA+"/"+fileName,loginId,name);
-        }
-        return ResponseEntity.ok("File Uploaded Successfully");
+        return userService.handleFileUpload(loginId,name,file);
     }
 
     @PostMapping("/getImage")
-    public ResponseEntity<?> getImage(@RequestBody Map<String, Object> params,HttpServletRequest request) throws IOException {
+    public ResponseEntity<?> getImage(@RequestBody Map<String, Object> params) throws IOException {
 
         Map<String,String> encodedImage = userService.getImage(params);
-//        logger.info("Encoded String : {}",encodedImage);
         if(encodedImage==null){
             return new ResponseEntity<>("Image encoding failed!",HttpStatus.FORBIDDEN);
         }
