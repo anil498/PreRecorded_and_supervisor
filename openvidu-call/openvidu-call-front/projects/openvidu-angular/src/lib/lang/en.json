@@ -62,7 +62,9 @@
 		"ZOOM_OUT": "Zoom out",
 		"REPLACE_SCREEN": "Replace screen",
 		"HOLD": "Hold the participant",
-		"UNHOLD": "UnHold the participant"
+		"UNHOLD": "UnHold the participant",
+		"UNHOLD_REMOVESUPERVISOR": "UnHold and Remove Supervisor"
+
 	},
 	"PANEL": {
 		"CLOSE": "Close",

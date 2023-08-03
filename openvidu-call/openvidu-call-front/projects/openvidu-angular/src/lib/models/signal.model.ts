@@ -11,6 +11,7 @@ export enum Signal {
 	FORMSUBMITONLEAVE="formSubmitOnLeave",
 	FORMINDEX="selectformindexbysupport",
 	SUPERVISOR="supervisor",
+	LEAVEMEETING="leavemeeting",
 	HOLD="hold",
 	UNHOLD="unhold",
 	SUPPORT='support',

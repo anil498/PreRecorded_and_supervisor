@@ -78,6 +78,11 @@ export class SessionComponent implements OnInit, OnDestroy {
 	 */
 	@Output() onUnHoldButtonClicked: EventEmitter<void> = new EventEmitter<void>();
 
+	/**
+	 * Provides event notifications that fire when leave button has been clicked.
+	 */
+	@Output() onLeaveButtonClicked: EventEmitter<void> = new EventEmitter<any>();
+
 	session: Session;
 	sessionScreen: Session;
 
@@ -199,6 +204,7 @@ export class SessionComponent implements OnInit, OnDestroy {
 			this.subscribeToReconnection();
 			this.subscribeToDisplayTrickerDirectives();
 			this.subscribeToHold();
+			this.subscribeToLeave();
 			this.subscribeToUnhold();
 			const recordingEnabled = this.libService.recordingButton.getValue() && this.libService.recordingActivity.getValue();
 			if (recordingEnabled) {
@@ -322,10 +328,10 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const data = event.connection?.data;
 			if (isRemoteConnection && isCameraConnection) {
 				// Adding participant when connection is created and it's not screen
-				if (this.participantService.getMyNickname() == 'Support' ) {
-					if(this.libService.isSupervisorActive.getValue()){
+				if (this.participantService.getMyNickname() == 'Support') {
+					if (this.libService.isSupervisorActive.getValue()) {
 						this.libService.supervisorWhenButton.next(false);
-					}else{
+					} else {
 						this.libService.supervisorWhenButton.next(true);
 					}
 				}
@@ -417,9 +423,12 @@ export class SessionComponent implements OnInit, OnDestroy {
 			const isRemoteConnection: boolean = !this.openviduService.isMyOwnConnection(connectionId);
 			const lang = this.captionService.getLangSelected().ISO;
 			const localNickname = this.participantService.getMyNickname();
-			if (nickname == 'Supervisor' && localNickname != 'Customer') {
-				this.libService.isOnHold.next(false);
-			}
+			/*  
+			//this comment for solve double time click on hold button before merge the call
+			if (nickname == 'Supervisor' && localNickname != 'Customer' ) {
+			 	this.libService.isOnHold.next(false);
+			 }
+			 */
 
 			if (isRemoteConnection && (!this.libService.isOnHold.getValue() || localNickname == 'Support')) {
 				const subscriber: Subscriber = this.session.subscribe(event.stream, undefined);
@@ -502,7 +511,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 			if (!isMyOwnConnection) {
 				this.panelService.togglePanel(PanelType.QUESTIONS);
 				this.openviduService.sendSignal(Signal.FORMINDEX, undefined, data);
-
 			}
 		});
 
@@ -516,7 +524,6 @@ export class SessionComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
-	
 
 	private subscribeToNicknameChanged() {
 		this.session.on(`signal:${Signal.NICKNAME_CHANGED}`, (event: any) => {
@@ -532,6 +539,16 @@ export class SessionComponent implements OnInit, OnDestroy {
 			}
 		});
 	}
+	private subscribeToLeave() {
+		this.session.on(`signal:${Signal.LEAVEMEETING}`, async (event: any) => {
+			this.log.d('Supervisor recieved Leave Meeting signal');
+			if (this.participantService.getMyNickname() == 'Supervisor') {
+				this.leaveSession();
+				this.onLeaveButtonClicked.emit();
+			}
+		});
+	}
+
 	private subscribeToHold() {
 		this.session.on(`signal:${Signal.HOLD}`, async (event: any) => {
 			const data = JSON.parse(event.data);
@@ -595,19 +612,19 @@ export class SessionComponent implements OnInit, OnDestroy {
 					this.openviduService.unholdPartiticipant(subscriber);
 					this.libService.isOnHold.next(false);
 					const remoteParticipants = this.participantService.getRemoteParticipants();
-					if(this.participantService.getMyNickname() == 'Customer'){
-					const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Support');
-					if (participantToUpdate) {
-						participantToUpdate.isOnHold = false;
-						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+					if (this.participantService.getMyNickname() == 'Customer') {
+						const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Support');
+						if (participantToUpdate) {
+							participantToUpdate.isOnHold = false;
+							this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+						}
+					} else if (this.participantService.getMyNickname() == 'Supervisor') {
+						const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
+						if (participantToUpdate) {
+							participantToUpdate.isOnHold = false;
+							this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
+						}
 					}
-				}else if(this.participantService.getMyNickname() == 'Supervisor'){
-					const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
-					if (participantToUpdate) {
-						participantToUpdate.isOnHold = false;
-						this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
-					}
-				}
 				}
 			}
 		});

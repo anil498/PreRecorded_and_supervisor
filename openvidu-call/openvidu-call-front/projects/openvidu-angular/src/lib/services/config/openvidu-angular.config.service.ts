@@ -30,6 +30,9 @@ export class OpenViduAngularConfigService {
 	isSupervisorActive = <BehaviorSubject<boolean>>new BehaviorSubject(false);
 	isSupervisorActiveObs: Observable<boolean>;
 
+	isMergedone = <BehaviorSubject<boolean>>new BehaviorSubject(false);
+	isMergedoneObs: Observable<boolean>;
+
 	prejoin = <BehaviorSubject<boolean>>new BehaviorSubject(true);
 	prejoinObs: Observable<boolean>;
 
@@ -182,6 +185,7 @@ export class OpenViduAngularConfigService {
 		this.titleicdcObs = this.titleicdc.asObservable();
 		this.isOnHoldObs = this.isOnHold.asObservable();
 		this.isSupervisorActiveObs=this.isSupervisorActive.asObservable();
+		this.isMergedoneObs=this.isMergedone.asObservable();
 		this.prejoinObs = this.prejoin.asObservable();
 		this.prefullscreenObs = this.prefullscreen.asObservable();
 		this.videoMutedObs = this.videoMuted.asObservable();

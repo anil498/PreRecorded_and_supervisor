@@ -273,6 +273,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	/**
 	 * @ignore
 	 */
+	isMergedone: boolean = false;
+
+	/**
+	 * @ignore
+	 */
 	isChatOpened: boolean = false;
 	/**
 	 * @ignore
@@ -480,6 +485,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	private supervisorWhenButtonSub: Subscription;
 	private MuteCameraButtonSub: Subscription;
 	private SupervisorSub: Subscription;
+	private isMergedoneSub: Subscription;
 	private usertypeSub: Subscription;
 
 	/**
@@ -649,8 +655,9 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	leaveSession() {
 		this.log.d('Leaving session...');
-		if(this.usertype!='Supervisor') // icdc panel not close of Supervisor leave
-	    {	this.openviduService.closeQuestionpanel();
+		if (this.usertype != 'Supervisor') {
+			// icdc panel not close of Supervisor leave
+			this.openviduService.closeQuestionpanel();
 		}
 		this.openviduService.disconnect();
 		this.openviduService.stopTune();
@@ -723,7 +730,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 	 */
 	toggleQuestionPanel() {
 		this.onQuestionPanelButtonClicked.emit();
-		if ( !this.isQuestionOpened) {
+		if (!this.isQuestionOpened) {
 			this.panelService.togglePanel(PanelType.QUESTIONS);
 		}
 
@@ -820,6 +827,7 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 					.getRemoteConnections()
 					.filter((connection) => this.openviduService.unholdPartiticipantSignal(connection.connectionId));
 				this.libService.isOnHold.next(false);
+				this.libService.isMergedone.next(true);
 				this.libService.supervisorWhenButton.next(false);
 				const remoteParticipants = this.participantService.getRemoteParticipants();
 				const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
@@ -876,7 +884,6 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 			this.usertype = usertype;
 		});
 	}
-
 
 	protected subscribeToChatMessages() {
 		this.chatMessagesSubscription = this.chatService.messagesObs.pipe(skip(1)).subscribe((messages) => {
@@ -1028,6 +1035,11 @@ export class ToolbarComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 		this.SupervisorSub = this.libService.isSupervisorActiveObs.subscribe((value: boolean) => {
 			this.isSupervisorActive = value;
+			this.cd.markForCheck();
+		});
+
+		this.isMergedoneSub = this.libService.isMergedoneObs.subscribe((value: boolean) => {
+			this.isMergedone = value;
 			this.cd.markForCheck();
 		});
 	}
