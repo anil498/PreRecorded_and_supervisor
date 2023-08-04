@@ -16,7 +16,7 @@ import java.util.*;
 
 @Service
 public class DashboardService {
-    private static final Logger logger= LoggerFactory.getLogger(SessionController.class);
+    private static final Logger logger= LoggerFactory.getLogger(DashboardService.class);
 
     @Autowired
     private UserAuthRepository userAuthRepository;

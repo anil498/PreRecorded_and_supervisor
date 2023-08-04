@@ -27,7 +27,7 @@ import java.util.*;
 @Service
 public class CommonService {
 
-    private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
+    private static final Logger logger= LoggerFactory.getLogger(CommonService.class);
 
     @Autowired
     AccountAuthRepository accountAuthRepository;

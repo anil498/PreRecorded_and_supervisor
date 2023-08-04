@@ -59,8 +59,8 @@ public class SessionServiceImpl implements SessionService{
         AccountEntity accountEntity = accountRepository.findByAccountId(accountAuthEntity.getAccountId());
         UserEntity userEntity = userRepository.findByUserId(userAuthEntity.getUserId());
 
-        if(userAuthEntity==null || accountAuthEntity==null || accountEntity==null || userEntity==null){
-            logger.info("Don't have required inputs to create session!");
+        if(userAuthEntity==null || accountAuthEntity==null || accountEntity==null || userEntity==null || userEntity.getFeaturesMeta()==null){
+            logger.error("Don't have required inputs to create session!");
             return null;
         }
 
@@ -142,7 +142,7 @@ public class SessionServiceImpl implements SessionService{
                         if(map.containsKey("share_with_audio"))
                             settingsEntity.setScreenShareWithAudio(map.get("share_with_audio"));
                     } catch (Exception e) {
-                        logger.info("Getting null value from participants_ticker_text 2 !");
+                        logger.error("Getting exception while setting participants_ticker_text {}",e.getMessage());
                     }
                 }
             }

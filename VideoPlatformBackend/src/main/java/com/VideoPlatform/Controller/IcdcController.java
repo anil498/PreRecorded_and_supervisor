@@ -39,6 +39,9 @@ public class IcdcController {
 
     @PostMapping("/Create")
     public ResponseEntity<?> createIcdc(@RequestBody IcdcEntity icdcEntity, HttpServletRequest request) {
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLICDC, icdcEntity != null ? icdcEntity.toString() : "{}",commonService.getHeaders(request));
+        if(icdcEntity==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -51,6 +54,10 @@ public class IcdcController {
 
     @PostMapping("/Save")
     public ResponseEntity<?> icdcResponse(@RequestBody IcdcResponseEntity icdcResponseEntity, HttpServletRequest request) {
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLICDC, icdcResponseEntity != null ? icdcResponseEntity.toString() : "{}",commonService.getHeaders(request));
+        if(icdcResponseEntity==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -90,6 +97,9 @@ public class IcdcController {
 
     @PutMapping("/Update")
     public ResponseEntity<?> updateIcdc(@RequestBody String params1, HttpServletRequest request) throws JsonProcessingException {
+        logger.info("REST API: PUT {} {} Request Headers={}", RequestMappings.APICALLFEATURE, params1 != null ? params1.toString() : "{}",commonService.getHeaders(request));
+        if(params1==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");

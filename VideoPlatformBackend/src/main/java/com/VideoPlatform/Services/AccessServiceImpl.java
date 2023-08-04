@@ -23,7 +23,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Service
 public class AccessServiceImpl implements AccessService {
-    private static final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger logger= LoggerFactory.getLogger(AccessServiceImpl.class);
 
     @Autowired
     private AccessRepository accessRepository;

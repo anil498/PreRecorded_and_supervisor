@@ -40,6 +40,9 @@ public class SessionController {
 
     @PostMapping("/Create")
     public ResponseEntity<?> createSession(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params : "{}",commonService.getHeaders(request));
+        if(params==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -58,10 +61,7 @@ public class SessionController {
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName,"Support");
 
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Session created!");
-        return ok(result);
+        return ok(commonService.responseData("200","Session Created!"));
     }
 
     @GetMapping("/GetAll")
@@ -148,6 +148,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token,"dynamic_links")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
         return sessionService.sendLink(params,request,response);
     }
 

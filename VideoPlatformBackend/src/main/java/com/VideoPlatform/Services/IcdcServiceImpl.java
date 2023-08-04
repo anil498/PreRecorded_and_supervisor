@@ -15,15 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class IcdcServiceImpl implements IcdcService{
 
-    private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
+    private static final Logger logger= LoggerFactory.getLogger(IcdcServiceImpl.class);
 
     @Autowired
     private CommonService commonService;

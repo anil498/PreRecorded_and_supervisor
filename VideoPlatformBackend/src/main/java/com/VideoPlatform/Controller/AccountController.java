@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.*;
 
-import static org.springframework.http.ResponseEntity.ok;
-
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(RequestMappings.APICALLACCOUNT)
@@ -58,6 +56,10 @@ public class AccountController {
 
     @PostMapping("/Create")
     public ResponseEntity<?> create(@RequestBody String params1, HttpServletRequest request, HttpServletResponse response) throws JsonProcessingException {
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLACCOUNT, params1 != null ? params1 : "{}",commonService.getHeaders(request));
+        if(params1==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -73,6 +75,9 @@ public class AccountController {
 
     @PutMapping("/Update")
     public ResponseEntity<?> updateAccount(@RequestBody String params1, HttpServletRequest request){
+        logger.info("REST API: PUT {} {} Request Headers={}", RequestMappings.APICALLACCOUNT, params1 != null ? params1 : "{}",commonService.getHeaders(request));
+        if(params1==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");

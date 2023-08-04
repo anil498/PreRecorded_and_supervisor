@@ -55,6 +55,10 @@ public class MessageApiController {
     @PostMapping(value="/CreateAndSendLink/SMS", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> sendSMS(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException {
 
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
+        if(params.isEmpty() || params==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -67,8 +71,6 @@ public class MessageApiController {
         System.out.println("Contents of the array ::"+Arrays.toString(myArray));
         List <String> myList = Arrays.asList(myArray);
 
-
-        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
         String description=null;
         if(params.containsKey("description")){
             description= String.valueOf(params.get("description"));
@@ -84,9 +86,13 @@ public class MessageApiController {
 
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,agentName,"Support");
-        String callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
-        logger.info("callUrlCustomer : {}",callUrl);
-
+        String callUrl="";
+        if(sessionEntityCustomer!=null){
+            callUrl= callPrefix+sessionEntityCustomer.getSessionKey();
+            logger.info("callUrlCustomer : {}",callUrl);
+        }else {
+            return new ResponseEntity<>(commonService.responseData("500","Session not created!"),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         for(String msisdn : myList) {
             SubmitResponse responseSms = messagingService.sendSms(request, response, msisdn, callUrl);
             responseSms.setCallUrl(callUrl);
@@ -100,28 +106,18 @@ public class MessageApiController {
             returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
-            if(getLink.equals("0")){
-                res.put("status_code","200");
-                res.put("msg","Video link send successfully!");
-            }
-            else if(getLink.equals("1")){
-                res.put("status_code","200");
-                res.put("msg","Video link send successfully!");
-                res.put("link",returnUrl);
-            }
-            else if(getLink.equals("2")){
-                res.put("status_code","200");
-                res.put("msg","Video link send successfully!");
-                res.put("link",returnUrl);
-                res.put("customer_link",callUrl);
-            }
+            res = resData(getLink,callUrl,returnUrl);
         }
         return ResponseEntity.ok(res);
     }
 
     @PostMapping ("/CreateAndSendLink/WhatsApp")
     public ResponseEntity<?> sendWA(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException, URISyntaxException, OpenViduJavaClientException, OpenViduHttpException {
-        logger.info("Rest API {} request {}",params,request);
+
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
+        if(params.isEmpty() || params==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -173,28 +169,18 @@ public class MessageApiController {
         }
         if(params.containsKey("getLink")){
             String getLink = String.valueOf(params.get("getLink"));
-            if(getLink.equals("0")){
-                res.put("status_code","200");
-                res.put("msg","Video link send successfully!");
-            }
-            else if(getLink.equals("1")){
-                res.put("status_code","200");
-                res.put("msg","Video link send successfully!");
-                res.put("link",returnUrl);
-            }
-            else if(getLink.equals("2")){
-                res.put("status_code","200");
-                res.put("msg","Video link send successfully!");
-                res.put("link",returnUrl);
-                res.put("customer_link",placeHolder);
-            }
+            res = resData(getLink,placeHolder,returnUrl);
         }
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/CreateAndSendLink/AppNotification")
     public ResponseEntity<?> sendNotification(@RequestBody(required = false) Map<String, ?> params, HttpServletResponse response, HttpServletRequest request) throws IOException {
-        logger.info("Rest API {}",params);
+
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params.toString() : "{}",commonService.getHeaders(request));
+        if(params.isEmpty() || params==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -252,29 +238,17 @@ public class MessageApiController {
                 String id = firebaseMessaging.send(message);
                 logger.info("FCM Id : {}", id);
             }
-            HashMap<String,String> res=new HashMap<>();
+
             String returnUrl="";
             if(sessionEntitySupport==null){
                 returnUrl = callPrefix+sessionEntityCustomer.getSessionKey();
             }else
                 returnUrl = callPrefix+sessionEntitySupport.getSessionKey();
+
+            HashMap<String,String> res=new HashMap<>();
             if(params.containsKey("getLink")){
                 String getLink = String.valueOf(params.get("getLink"));
-                if(getLink.equals("0")){
-                    res.put("status_code","200");
-                    res.put("msg","Video link send successfully!");
-                }
-                else if(getLink.equals("1")){
-                    res.put("status_code","200");
-                    res.put("msg","Video link send successfully!");
-                    res.put("link",returnUrl);
-                }
-                else if(getLink.equals("2")){
-                    res.put("status_code","200");
-                    res.put("msg","Video link send successfully!");
-                    res.put("link",returnUrl);
-                    res.put("customer_link",callUrl);
-                }
+                res = resData(getLink,callUrl,returnUrl);
             }
             return new ResponseEntity<>(res, HttpStatus.OK);
         } catch (Exception e) {
@@ -282,7 +256,25 @@ public class MessageApiController {
         }
     }
 
-
+    public HashMap<String,String> resData(String getLinkVal, String callUrl, String returnUrl){
+        HashMap<String,String> res=new HashMap<>();
+        if(getLinkVal.equals("0")){
+            res.put("status_code","200");
+            res.put("msg","Video link send successfully!");
+        }
+        else if(getLinkVal.equals("1")){
+            res.put("status_code","200");
+            res.put("msg","Video link send successfully!");
+            res.put("link",returnUrl);
+        }
+        else if(getLinkVal.equals("2")){
+            res.put("status_code","200");
+            res.put("msg","Video link send successfully!");
+            res.put("link",returnUrl);
+            res.put("customer_link",callUrl);
+        }
+        return res;
+    }
 
 }
 
