@@ -161,10 +161,10 @@ public class SessionController {
           HashMap<String,Object> map= (HashMap<String, Object>) sessionProperty.getSettings().getPreRecordedDetails();
             if (!Boolean.TRUE.equals(map.get("share_pre_recorded_video"))) {
               sessionService.autoPlay(sessionCreated, map.get("pre_recorded_video_file").toString(), "{\"clientData\":\"Prerecorded_video\",\"type\":\"SCREEN\"}");
-              Connection customConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
-              sessionProperty.setCustomToken(customConnection.getToken());
             } else {
               sessionProperty.getSettings().setFileUrl(map.get("pre_recorded_video_file").toString());
+              Connection customConnection = this.openviduService.createConnection(sessionCreated, nickname, role,false);
+              sessionProperty.setCustomToken(customConnection.getToken());
             }
         }else{
         sessionProperty.getSettings().setPreRecorded(false);
