@@ -5,6 +5,8 @@ import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Entity.AccessEntity;
 import com.VideoPlatform.Services.AccessService;
 import com.VideoPlatform.Services.CommonService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import static org.springframework.http.ResponseEntity.ok;
 @CrossOrigin(origins = "*")
 @RequestMapping(RequestMappings.APICALLACCESS)
 public class AccessController {
+    private static final Logger logger= LoggerFactory.getLogger(AccessController.class);
     @Autowired
     private CommonService commonService;
     @Autowired
@@ -36,10 +39,7 @@ public class AccessController {
         if(accessService.createAccess(accessEntity,authKey,token)==null){
             return  new ResponseEntity<>("Access Entity already exist !",HttpStatus.UNAUTHORIZED);
         }
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Access created!");
-        return ok(result);
+        return ok(commonService.responseData("200","Access Created!"));
     }
 
     @GetMapping("/GetAll")
@@ -53,7 +53,11 @@ public class AccessController {
     }
 
     @PutMapping("/Update")
-    public ResponseEntity<?> updateUser(@RequestBody String accessEntity, HttpServletRequest request){
+    public ResponseEntity<?> updateAccess(@RequestBody String accessEntity, HttpServletRequest request){
+        logger.info("REST API: PUT {} {} Request Headers={}", RequestMappings.APICALLACCESS, accessEntity != null ? accessEntity : "{}",commonService.getHeaders(request));
+        if(accessEntity==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -72,9 +76,6 @@ public class AccessController {
             return  new ResponseEntity<UserEntity>(HttpStatus.UNAUTHORIZED);
         }
         accessService.deleteAccess(accessId);
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Access deleted!");
-        return ok(result);
+        return ok(commonService.responseData("200","Access Deleted!"));
     }
 }

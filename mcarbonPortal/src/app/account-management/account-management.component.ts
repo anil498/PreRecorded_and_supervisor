@@ -225,11 +225,17 @@ export class AccountManagementComponent implements OnInit {
     const dialogConfig = new MatDialogConfig();
     console.log("Confirm Delete");
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       console.log(confirmed);
       if (confirmed) {
-        this.restService.deleteAccount(accountId);
-        console.log("account Deleted");
+        let response = await this.restService.deleteAccount(accountId);
+        console.log(response);
+        if (response.status_code == 200) {
+          console.log("account Deleted");
+          this.openSnackBar(response.msg, "success");
+        } else {
+          this.openSnackBar("Account not Deleted", "error");
+        }
       } else {
         console.log("account not deleted");
       }
@@ -310,7 +316,5 @@ export class AccountManagementComponent implements OnInit {
     });
   }
 
-  ngOnDestroy() {
-    
-  }
+  ngOnDestroy() {}
 }

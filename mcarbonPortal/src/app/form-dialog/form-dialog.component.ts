@@ -76,6 +76,8 @@ export class FormDialogComponent implements OnInit {
 
   selectedFeaturesMeta = {};
   formData: FormData = null;
+  hide = true;
+  hide2 = true;
   constructor(
     private router: Router,
     private dateAdapter: DateAdapter<Date>,
@@ -316,21 +318,24 @@ export class FormDialogComponent implements OnInit {
       logo: [],
     });
 
-    this.userForm2 = this.fb.group({
-      password: [
-        "",
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(20),
-          Validators.pattern(
-            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
-          ),
+    this.userForm2 = this.fb.group(
+      {
+        password: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.maxLength(20),
+            Validators.pattern(
+              "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+            ),
+          ],
         ],
-      ],
-      confirm_password: ["", [Validators.required]],
-      accessList: [""],
-    });
+        confirm_password: ["", [Validators.required]],
+        accessList: [""],
+      },
+      { validators: this.passwordMatchValidator }
+    );
 
     this.userForm3 = this.fb.group({
       max_duration: ["", [Validators.required, Validators.min(0)]],
@@ -350,15 +355,16 @@ export class FormDialogComponent implements OnInit {
     });
   }
 
-  passwordMatchValidator(formGroup: FormGroup) {
-    const password = formGroup.get("password").value;
-    const confirm_password = formGroup.get("confirm_password").value;
-
-    if (password !== confirm_password) {
-      formGroup.get("confirm_password").setErrors({ mismatch: true });
-    } else {
-      formGroup.get("confirm_password").setErrors(null);
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const confirmPassword = control.get("confirm_password")?.value;
+    const password = control.get("password")?.value;
+    console.log(password, confirmPassword);
+    if (password !== confirmPassword) {
+      console.log(" not same");
+      control.get("confirm_password")?.setErrors({ passMismatch: true });
+      return { passMismatch: true };
     }
+    return null;
   }
 
   dateValidator(control: AbstractControl): ValidationErrors | null {
@@ -467,7 +473,7 @@ export class FormDialogComponent implements OnInit {
     if (this.photoControl) {
       this.logo.byte = this.logo.byte.split(",")[1];
     }
-    
+
     let response: any;
     try {
       response = await this.restService.createUser(
@@ -619,6 +625,11 @@ export class FormDialogComponent implements OnInit {
 
       if (control?.hasError("pattern")) {
         return "Password must contain at least one capital letter, one small letter, one digit, and one special character";
+      }
+    }
+    if (controlName === "confirm_password") {
+      if (control?.hasError("passMismatch")) {
+        return "Password should be same";
       }
     }
 

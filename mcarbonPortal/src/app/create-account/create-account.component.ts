@@ -97,6 +97,8 @@ export class CreateAccountComponent implements OnInit {
   selectedFeaturesMeta: { [key: string]: any } = {};
   videoSelect: any = {};
   formData: FormData = null;
+  hide = true;
+  hide2 = true;
   constructor(
     private dateAdapter: DateAdapter<Date>,
     private router: Router,
@@ -280,57 +282,60 @@ export class CreateAccountComponent implements OnInit {
       featureList: [[]],
     });
 
-    this.userForm4 = this.fb.group({
-      user_fname: [
-        "",
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(20),
-          Validators.pattern("^[a-zA-Z]+$"),
+    this.userForm4 = this.fb.group(
+      {
+        user_fname: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(4),
+            Validators.maxLength(20),
+            Validators.pattern("^[a-zA-Z]+$"),
+          ],
         ],
-      ],
-      user_lname: [
-        "",
-        [
-          Validators.required,
-          Validators.minLength(4),
-          Validators.maxLength(20),
-          Validators.pattern("^[a-zA-Z]+$"),
+        user_lname: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(4),
+            Validators.maxLength(20),
+            Validators.pattern("^[a-zA-Z]+$"),
+          ],
         ],
-      ],
-      mobile: [
-        null,
-        [
-          Validators.required,
-          Validators.minLength(10),
-          Validators.maxLength(10),
-          Validators.pattern("^[0-9]+$"),
+        mobile: [
+          null,
+          [
+            Validators.required,
+            Validators.minLength(10),
+            Validators.maxLength(10),
+            Validators.pattern("^[0-9]+$"),
+          ],
         ],
-      ],
-      email: ["", [Validators.required, Validators.email]],
-      login_id: [
-        "",
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.maxLength(20),
+        email: ["", [Validators.required, Validators.email]],
+        login_id: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(6),
+            Validators.maxLength(20),
+          ],
         ],
-      ],
 
-      password: [
-        "",
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(20),
-          Validators.pattern(
-            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
-          ),
+        password: [
+          "",
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.maxLength(20),
+            Validators.pattern(
+              "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+            ),
+          ],
         ],
-      ],
-      confirm_password: ["", [Validators.required]],
-    });
+        confirm_password: ["", [Validators.required]],
+      },
+      { validators: this.passwordMatchValidator }
+    );
 
     this.accessData.forEach((access) => {
       if (access.systemName == "customer_creation") {
@@ -339,16 +344,17 @@ export class CreateAccountComponent implements OnInit {
     });
   }
 
-  // passwordMatchValidator(formGroup: FormGroup) {
-  //   const password = formGroup.get("password").value;
-  //   const confirm_password = formGroup.get("confirm_password").value;
-
-  //   if (password !== confirm_password) {
-  //     formGroup.get("confirm_password").setErrors({ mismatch: true });
-  //   } else {
-  //     formGroup.get("confirm_password").setErrors(null);
-  //   }
-  // }
+  passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+    const confirmPassword = control.get("confirm_password")?.value;
+    const password = control.get("password")?.value;
+    console.log(password, confirmPassword);
+    if (password !== confirmPassword) {
+      console.log(" not same");
+      control.get("confirm_password")?.setErrors({ passMismatch: true });
+      return { passMismatch: true };
+    }
+    return null;
+  }
 
   dateValidator(control: AbstractControl): ValidationErrors | null {
     const selectedDate = new Date(control.value);
@@ -682,6 +688,11 @@ export class CreateAccountComponent implements OnInit {
 
       if (control?.hasError("pattern")) {
         return "Password must contain at least one capital letter, one small letter, one digit, and one special character";
+      }
+    }
+    if (controlName === "confirm_password") {
+      if (control?.hasError("passMismatch")) {
+        return "Password should be same";
       }
     }
 

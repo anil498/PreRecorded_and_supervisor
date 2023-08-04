@@ -56,10 +56,10 @@
         </li> -->
     </ul>
   </div>
-  <ul class="nav">
+  <ul class="nav img-div">
     <div class="logo-image">
-      <img *ngIf="isLogo" class="img-photo" src="{{ srcImg }}" />
-      <img *ngIf="!isLogo" class="img-photo" src="{{ srcImg }}" />
+      <img class="img-photo" src="{{ srcImg }}" />
+      <!-- <img *ngIf="!isLogo" class="img-photo" src="{{ srcImg }}" /> -->
     </div>
   </ul>
   <ul class="nav" *ngFor="let menuItem of menuItems">

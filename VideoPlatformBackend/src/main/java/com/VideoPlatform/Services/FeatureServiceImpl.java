@@ -21,7 +21,7 @@ import static org.springframework.http.ResponseEntity.ok;
 
 @Service
 public class FeatureServiceImpl implements FeatureService{
-    private static final Logger logger= LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final Logger logger= LoggerFactory.getLogger(FeatureServiceImpl.class);
 
     @Autowired
     private FeatureRepository featureRepository;

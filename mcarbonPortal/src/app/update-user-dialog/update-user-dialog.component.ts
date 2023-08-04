@@ -470,7 +470,14 @@ export class UpdateUserDialogComponent implements OnInit {
     }
 
     if (this.selectedFeaturesMeta.hasOwnProperty("4")) {
-      if (this.formData == null) {
+      console.log(
+        this.selectedFeaturesMeta["4"].hasOwnProperty("pre_recorded_video_file")
+      );
+      if (
+        this.selectedFeaturesMeta["4"].hasOwnProperty("pre_recorded_video_file")
+      ) {
+        console.log("file exist");
+      } else if (this.formData == null) {
         this.openSnackBar("Please Select a video file", "snackbar");
         return;
       }
@@ -542,7 +549,7 @@ export class UpdateUserDialogComponent implements OnInit {
       }
     } catch (error) {
       console.warn(error);
-      this.openSnackBar(error.error, "snackBar");
+      this.openSnackBar(error.error.msg, "snackBar");
       this.timeOut(3000);
     }
   }

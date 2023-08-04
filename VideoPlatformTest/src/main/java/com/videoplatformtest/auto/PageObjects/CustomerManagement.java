@@ -62,6 +62,7 @@ public class CustomerManagement {
         int page = 0;
         driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/mat-tab-header/div/div/div/div[1]")).click();
         System.out.println("Account Clicked!");
+
         if (!custMandatoryFieldCheck(driver, page)) {
             driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/mat-tab-header/div/div/div/div[2]")).click();
             childTest.log(Status.PASS, MarkupHelper.createLabel("Next tab clicked", ExtentColor.GREEN));
@@ -73,6 +74,7 @@ public class CustomerManagement {
         }
 
         driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/mat-tab-header/div/div/div/div[1]")).click();
+
         if (!custMandatoryFieldCheck(driver, page)) {
             driver.findElement(ByAngular.partialButtonText("Next")).click();
             childTest.log(Status.PASS, MarkupHelper.createLabel("Mandatory fields empty, Next button clicked", ExtentColor.GREEN));
@@ -85,6 +87,8 @@ public class CustomerManagement {
             }
         }
         driver.findElement(By.xpath(".//app-create-account/div/div/h4/button/span[1]/mat-icon")).click();
+        driver.findElement(ByAngular.partialButtonText("Create")).click();
+        cardFieldsValidation(driver);
 //        driver.close();
     }
 
@@ -117,6 +121,9 @@ public class CustomerManagement {
         driver.findElement(By.id("customer_management")).click();
         childTest.log(Status.PASS, MarkupHelper.createLabel("Customer Management clicked", ExtentColor.GREEN));
         Thread.sleep(1000);
+
+
+//        checkAccessDataOfEyeIcon(driver,responseBody);
         if(driver.findElement(By.xpath(".//app-account-management/div/div/div/div/div/div[2]/div/table/tbody/tr[1]/td[5]/button")).getText().equalsIgnoreCase("Deleted")){
             childTest.log(Status.PASS, MarkupHelper.createLabel("Deleted User", ExtentColor.GREEN));
             driver.findElement(By.cssSelector("div.card-body>div>table>tbody>tr:nth-child(1)>td.mat-cell.cdk-cell.cdk-column-Action.mat-column-Action.ng-star-inserted>button")).click();
@@ -149,6 +156,27 @@ public class CustomerManagement {
             }
         }
 //        driver.close();
+
+
+
+    }
+
+    public static Boolean checkAccessDataOfEyeIcon(ChromeDriver driver, AtomicReference<String> responseBody) {
+        try {
+            List<String> accessValues = getAccessData(responseBody.get());
+            List<WebElement> list = driver.findElements(By.xpath("/html/body/div[3]/div[2]/div/mat-dialog-container/app-view-access-dialog/div/div[2]/section/div[2]"));
+            System.out.println("Eye icon values are : ");
+            int c=0;
+            for(WebElement listVal : list){
+                System.out.println(c);
+                System.out.println(listVal);
+                c=c+1;
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 
     public static Boolean checkRoles(ChromeDriver driver, AtomicReference<String> responseBody) {
@@ -185,6 +213,7 @@ public class CustomerManagement {
         return name;
     }
         public static Boolean custMandatoryFieldCheck(ChromeDriver driver, int page) {
+
         String name = driver.findElement(By.id("name")).getText();
         String address = driver.findElement(By.id("address")).getText();
         String maxUser = driver.findElement(By.id("max_user")).getText();
@@ -196,8 +225,96 @@ public class CustomerManagement {
             }
         return true;
     }
+    public static Boolean cardFieldsValidation(ChromeDriver driver) throws InterruptedException {
+        childTest = parentTest.createNode("CARD FIELD VALIDATION");
+        WebElement name  = driver.findElement(By.id("name"));
 
-    public static void login(ChromeDriver driver, String loginId, String password) {
+        name.sendKeys("AAA");
+        if(name.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Less than 3 characters on name field marked invalid", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Less than 3 characters on name field marked valid", ExtentColor.RED));
+        }
+
+        name.clear(); name.sendKeys("abcdefghijklmnopqrstuvwxyz");
+        if(name.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Name field exceed 20 chars marked invalid", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Name field exceed 20 chars marked valid", ExtentColor.RED));
+        }
+        name.clear(); name.sendKeys("TESTING ACCOUNT 1");
+
+        WebElement maxUser = driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/div/mat-tab-body[1]/div/div/div[1]/div[1]/div[2]/div/mat-form-field"));
+        maxUser.click();
+        maxUser.sendKeys();
+        if(maxUser.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Max User not accepting alphabets, only numbers accepted", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Max User accepting alphabets", ExtentColor.RED));
+        }
+        maxUser.sendKeys(""+0);
+
+        WebElement maxSession = driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/div/mat-tab-body[2]/div/div/div[1]/div[1]/mat-form-field/div/div[1]/div/input"));
+        maxSession.sendKeys(""+0);
+        if(maxSession.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Max Session not accepting alphabets, only numbers accepted", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Max Session accepting alphabets", ExtentColor.RED));
+        }
+        maxSession.clear();
+        maxSession.sendKeys(""+-1);
+        if(maxSession.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Max Session not accepting negative numbers", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Max Session accepting negative numbers", ExtentColor.RED));
+        }
+        maxSession.clear(); maxSession.sendKeys(""+10);
+
+        WebElement maxDuration = driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/div/mat-tab-body[2]/div/div/div[1]/div[2]/mat-form-field/div/div[1]/div/input"));
+        maxDuration.sendKeys(""+0);
+        if(maxDuration.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Max Duration not accepting alphabets, only numbers accepted", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Max Duration accepting alphabets", ExtentColor.RED));
+        }
+        maxDuration.clear();
+        maxDuration.sendKeys(""+-1);
+        if(maxDuration.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Max Duration not accepting negative numbers", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Max Duration accepting negative numbers", ExtentColor.RED));
+        }
+        maxDuration.clear(); maxDuration.sendKeys(""+10);
+
+        WebElement maxParticipant = driver.findElement(By.xpath(".//app-create-account/div/mat-tab-group/div/mat-tab-body[2]/div/div/div[2]/div/mat-form-field/div/div[1]/div/input"));
+        maxParticipant.sendKeys(""+0);
+        if(maxParticipant.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Max Participant not accepting alphabets, only numbers accepted", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Max Participant accepting alphabets", ExtentColor.RED));
+        }
+        maxParticipant.clear();
+        maxParticipant.sendKeys(""+-1);
+        if(maxParticipant.getAttribute("class").contains("ng-invalid")){
+            childTest.log(Status.PASS, MarkupHelper.createLabel("Max Participant not accepting negative numbers", ExtentColor.GREEN));
+        }
+        else {
+            fail();childTest.log(Status.FAIL, MarkupHelper.createLabel("Max Participant accepting negative numbers", ExtentColor.RED));
+        }
+        maxParticipant.clear(); maxParticipant.sendKeys(""+10);
+
+        return true;
+    }
+
+        public static void login(ChromeDriver driver, String loginId, String password) {
         driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[1]/div/div[1]/div/input")).sendKeys(loginId);
         driver.findElement(By.xpath(".//app-login/div/div/mat-card/mat-card-content/form/mat-form-field[2]/div/div[1]/div[1]/input")).sendKeys(password);
 

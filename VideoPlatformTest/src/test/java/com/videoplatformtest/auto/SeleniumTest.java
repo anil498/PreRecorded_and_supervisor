@@ -23,7 +23,7 @@ public class SeleniumTest extends TestBaseClass {
     File file = new File(relativePath);
     String absolutePath = file.getAbsolutePath();
 
-    public String webUrl = "https://video.progate.mobi/#/";
+    public String webUrl = "https://demo2.progate.mobi/#/";
     public ExtentReports extentReports;
     public ExtentSparkReporter extentSparkReporter;
     public ChromeDriver driver;
@@ -34,7 +34,7 @@ public class SeleniumTest extends TestBaseClass {
         System.setProperty("webdriver.chrome.driver", absolutePath);
         driver = new ChromeDriver();
         extentReports = new ExtentReports();
-        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_video.html");
+        extentSparkReporter = new ExtentSparkReporter("VideoPlatformTestReport_demo2.html");
         extentReports.setSystemInfo("Environment", "Dev");
         extentReports.setSystemInfo("User Name", "mCarbon");
         extentSparkReporter.config().setDocumentTitle("Video Platform Test Report");

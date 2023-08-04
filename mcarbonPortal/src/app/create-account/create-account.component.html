@@ -293,6 +293,28 @@
               </mat-error>
             </mat-form-field>
           </div>
+          <!-- <div class="col-md-5 fixed-plugin">
+            <a
+              href="javascript:void(0)"
+              class="switch-trigger active-color"
+            ></a>
+            <div class="ml-auto mr-auto">
+              <span
+                class="badge filter badge-purple"
+                data-color="purple"
+              ></span>
+              <span class="badge filter badge-azure" data-color="azure"></span>
+              <span class="badge filter badge-green" data-color="green"></span>
+              <span
+                class="badge filter badge-orange"
+                data-color="orange"
+              ></span>
+              <span
+                class="badge filter badge-danger active"
+                data-color="danger"
+              ></span>
+            </div>
+          </div> -->
         </div>
 
         <div class="row">
@@ -788,7 +810,7 @@
             <mat-form-field>
               <input
                 matInput
-                type="password"
+                [type]="hide ? 'password' : 'text'"
                 id="password"
                 placeholder="Password"
                 formControlName="password"
@@ -796,6 +818,16 @@
                 [matTooltip]="getErrorMessage4('password')"
                 matTooltipClass="tooltip-style"
               />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="hide ? 'Show password' : 'Hide password'"
+              >
+                <mat-icon>{{
+                  hide ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
               <mat-error
                 *ngIf="
                   userForm4.get('password').invalid &&
@@ -831,15 +863,21 @@
               <input
                 matInput
                 id="confirm_password"
-                type="password"
+                [type]="hide2 ? 'password' : 'text'"
                 placeholder="Confirm Password"
                 formControlName="confirm_password"
                 [(ngModel)]="confirm_password"
+                [matTooltip]="getErrorMessage4('confirm_password')"
+                matTooltipClass="tooltip-style"
               />
-              <mat-error
-                *ngIf="userForm4.hasError('mismatch', 'confirm_password')"
-                >Passwords does not match</mat-error
-              >
+              <button
+              mat-icon-button
+              matSuffix
+              (click)="hide2 = !hide2"
+              [attr.aria-label]="hide2 ? 'Show password' : 'Hide password'"
+            >
+              <mat-icon>{{ hide2 ? "visibility_off" : "visibility" }}</mat-icon>
+            </button>
             </mat-form-field>
           </div>
         </div>

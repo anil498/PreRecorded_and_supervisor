@@ -12,19 +12,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -45,12 +45,14 @@ public class AccountServiceImpl implements AccountService {
     UserServiceImpl userService;
     @Autowired
     AccessRepository accessRepository;
-    @Value("${file.path}")
+    @Value("${file.path:-}")
     private String FILE_DIRECTORY;
-    @Value("${image.name}")
+    @Value("${defaultImgName:default.png}")
     private String imgName;
-
-
+    @Value("${defaultPath:classpath:default/default.png}")
+    private String defaultExtractPath;
+    @Autowired
+    ResourceLoader resourceLoader;
 
     private static final Logger logger= LoggerFactory.getLogger(AccountServiceImpl.class);
 
@@ -66,7 +68,6 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public ResponseEntity<?> accountCreation(String params1, String authKey, String token) throws JsonProcessingException {
-        logger.info(params1);
         Gson gson=new Gson();
         JsonObject params=gson.fromJson(params1,JsonObject.class);
 
@@ -75,17 +76,17 @@ public class AccountServiceImpl implements AccountService {
 
         String loginId = params.get("loginId").getAsString();
         if(userRepository.findByLoginId(loginId) != null){
+            logger.info("Login Id {} already exist !",loginId);
             return new ResponseEntity<>(commonService.responseData("400","Login Id already exist!"), HttpStatus.CONFLICT);
         }
         String accountName = params.get("name").getAsString();
         if(accountRepository.findByAccountName(accountName) != null){
-            logger.info("Account name already exist !");
+            logger.info("Account name {} already exist !",accountName);
             return new ResponseEntity<>(commonService.responseData("400","Account Name already exist!"), HttpStatus.CONFLICT);
         }
         Date creation = TimeUtils.getDate();
         AccountEntity acc = new AccountEntity();
         UserEntity user = new UserEntity();
-        logger.info(String.valueOf(params));
         acc.setName(params.get("name").getAsString());
         acc.setAddress(params.get("address").getAsString());
         acc.setCreationDate(creation);
@@ -98,14 +99,11 @@ public class AccountServiceImpl implements AccountService {
         acc.setExpDate(expDate);
 
         UserAuthEntity u = userAuthRepository.findByToken(token);
-        logger.info("User Data : "+u);
         user.setFname(params.get("fname").getAsString());
         user.setLname(params.get("lname").getAsString());
         user.setLoginId(params.get("loginId").getAsString());
         String pass = params.get("password").getAsString();
-        logger.info("Password Check !!! {}",pass);
         String myPass = passwordEncoder.encode(pass);
-        logger.info("Encoded Pass : {}",myPass);
         user.setPassword(myPass);
         user.setContact(params.get("contact").getAsString());
         user.setEmail(params.get("email").getAsString());
@@ -143,7 +141,6 @@ public class AccountServiceImpl implements AccountService {
 
         AccountAuthEntity accountAuthEntity = accountAuthRepository.findByAccountId(user.getAccountId());
         if(acc.getMaxUser() == 0){
-            logger.info("Checking userId : "+user.getUserId());
             String token1 = commonService.generateToken(user.getUserId(),"UR");
             UserAuthEntity ua = new UserAuthEntity();
             ua.setLoginId(user.getLoginId());
@@ -158,9 +155,29 @@ public class AccountServiceImpl implements AccountService {
         }
         try{
             if(params.get("logo").isJsonNull() || params.get("logo").toString().equals("") || params.get("logo").toString()==null){
-                String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
-                accountRepository.updateLogoPath(acc.getAccountId(), defaultPath);
-                userRepository.updateLogoPath(user.getUserId(),defaultPath);
+                Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
+
+                if (!Files.exists(defaultPath)) {
+                    Files.createDirectories(defaultPath);
+                    String newPath = defaultPath+"/"+imgName;
+                    logger.info("Default new path : {}",newPath);
+                    Resource resource = resourceLoader.getResource(defaultExtractPath);
+                    logger.info("URL: {}",resource.getURL());
+                    InputStream inputStream = resource.getInputStream();
+                    byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
+                    Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
+                    logger.info("Logo Img Byte : {}",logo.get("byte"));
+                    logger.info("Logo Img Name : {}",imgName);
+                    commonService.decodeToImage(logo.get("byte").toString(), newPath);
+                    accountRepository.updateLogoPath(acc.getAccountId(), String.valueOf(newPath));
+                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(newPath));
+                }
+                else {
+                    accountRepository.updateLogoPath(acc.getAccountId(), String.valueOf(defaultPath+"/"+imgName));
+                    userRepository.updateLogoPath(user.getUserId(), String.valueOf(defaultPath+"/"+imgName));
+                }
+
+
             }else {
                 HashMap<String, Object> logoA = commonService.getMapOfLogo(params.get("logo").toString());
                 HashMap<String, Object> logoU = commonService.getMapOfLogo(params.get("logo").toString());
@@ -207,12 +224,34 @@ public class AccountServiceImpl implements AccountService {
         commonService.compareAndChange(params,existing,params.get("accountId").getAsInt());
 
         try {
-            logger.info("Checking :::::: ",params.get("logo").toString());
             if(params.get("logo").isJsonNull() ||  params.get("logo").toString()==null){
-                String defaultPath = FILE_DIRECTORY+"media/default/image/"+imgName;
-                accountRepository.updateLogoPath(existing.getAccountId(), defaultPath);
+                logger.info("Entered Account logo update!");
+                Path defaultPath = Paths.get(FILE_DIRECTORY+"media/default/image");
+                if (!Files.exists(defaultPath)) {
+                    logger.info("Dir doesn't exist..creating...");
+                    Files.createDirectories(defaultPath);
+                    String newPath = defaultPath+"/"+imgName;
+                    logger.info("Default new path : {}",newPath);
+                    Resource resource = resourceLoader.getResource(defaultExtractPath);
+                    logger.info("URL: {}",resource.getURL());
+                    InputStream inputStream = resource.getInputStream();
+                    byte[] dataAsBytes = FileCopyUtils.copyToByteArray(inputStream);
+                    Map<String, Object> logo = commonService.getDefaultImageToStore(dataAsBytes,imgName);
+                    logger.info("Logo Img Byte : {}",logo.get("byte"));
+                    logger.info("Logo Img Name : {}",imgName);
+                    commonService.decodeToImage(logo.get("byte").toString(), newPath);
+                    existing.setLogo(newPath);
+//                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(newPath));
+                }
+                else {
+                    logger.info("Dir exist, updating path..");
+//                    accountRepository.updateLogoPath(existing.getAccountId(), String.valueOf(defaultPath+"/"+imgName));
+                    existing.setLogo(String.valueOf(defaultPath+"/"+imgName));
+                    commonService.changeUserLogo(existing.getAccountId(),"",String.valueOf(defaultPath+"/"+imgName));
+                }
             }
             else{
+                String oldPath = existing.getLogo();
                 HashMap<String, Object> logo = commonService.getMapOfLogo(params.get("logo").toString());
                 Path path = Paths.get(FILE_DIRECTORY +"/media/"+existing.getAccountId()+"/image");
                 logger.info(path.toString());
@@ -223,6 +262,7 @@ public class AccountServiceImpl implements AccountService {
                 logger.info("New Path : "+newPath);
                 commonService.decodeToImage(logo.get("byte").toString(),newPath);
                 existing.setLogo(newPath);
+                commonService.changeUserLogo(existing.getAccountId(), oldPath, newPath);
             }
             if(!params.get("session").isJsonNull())
                 existing.setSession(objectMapper.readValue(params.get("session").toString(),HashMap.class));
@@ -251,18 +291,27 @@ public class AccountServiceImpl implements AccountService {
         logger.info("New Entity {}",existing);
         return new ResponseEntity<>(commonService.responseData("200","Account updated!"),HttpStatus.OK);
     }
+
     @Override
-    public String deleteAccount(Integer accountId) {
+    public ResponseEntity<?> deleteAccount(Integer accountId) {
         accountRepository.deleteAccount(accountId);
         accountAuthRepository.deleteById(accountId);
-        return "Account successfully deleted.";
+//        userRepository.deleteUserOfAccount(accountId);
+//        List<Integer> userIdList = userRepository.findDeletedUser();
+//        for(Integer deletedUser : userIdList){
+//            UserAuthEntity userAuthEntity = userAuthRepository.findByUId(deletedUser);
+//            if(userAuthEntity!=null)
+//                userAuthRepository.deleteById(deletedUser);
+//        }
+        return new ResponseEntity<>(commonService.responseData("200","Account Deleted!"),HttpStatus.OK);
     }
+
     @Override
-    public Boolean checkAccountName(String accountName){
+    public ResponseEntity<?> checkAccountName(String accountName){
         if(accountRepository.findByAccountName(accountName) == null){
-            return true;
+            return new ResponseEntity<>(commonService.responseData("200","Valid Name value!"),HttpStatus.OK);
         }
-        return false;
+        return new ResponseEntity<>(commonService.responseData("409","Name already exist!"),HttpStatus.CONFLICT);
     }
 
     public String accessCheck(Integer userId){
@@ -278,24 +327,5 @@ public class AccountServiceImpl implements AccountService {
         return String.valueOf(accessEntities);
     }
 
-    @Override
-    public void saveFilePathToFeature(String filePath, String loginId, String name){
 
-        AccountEntity accountEntity= accountRepository.findByAccountName(name);
-
-        HashMap<String,Object> featuresMeta=accountEntity.getFeaturesMeta();
-        HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
-        map.replace("pre_recorded_video_file",filePath);
-        featuresMeta.replace("4",map);
-        logger.info("Features Meta {}",featuresMeta);
-        accountEntity.setFeaturesMeta(featuresMeta);
-        logger.info("Pre recorded val : {}",map.get("pre_recorded_video_file"));
-        logger.info("getFeatureMeta1 {} ", accountEntity.getFeaturesMeta());
-        Gson gson=new Gson();
-        String json=gson.toJson(featuresMeta);
-        logger.info("Json {}",json);
-        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
-        accountRepository.updateFeatureMeta(name,json);
-        logger.info("getFeatureMeta2 {} ", accountEntity.getFeaturesMeta());
-    }
 }

@@ -4,10 +4,7 @@ import com.VideoPlatform.Entity.AccountAuthEntity;
 import com.VideoPlatform.Entity.AccountEntity;
 import com.VideoPlatform.Entity.UserAuthEntity;
 import com.VideoPlatform.Entity.UserEntity;
-import com.VideoPlatform.Repository.AccessRepository;
-import com.VideoPlatform.Repository.AccountAuthRepository;
-import com.VideoPlatform.Repository.UserAuthRepository;
-import com.VideoPlatform.Repository.UserRepository;
+import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Utils.TimeUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +27,7 @@ import java.util.*;
 @Service
 public class CommonService {
 
-    private static final Logger logger= LoggerFactory.getLogger(SessionService.class);
+    private static final Logger logger= LoggerFactory.getLogger(CommonService.class);
 
     @Autowired
     AccountAuthRepository accountAuthRepository;
@@ -41,6 +37,8 @@ public class CommonService {
     UserRepository userRepository;
     @Autowired
     AccessRepository accessRepository;
+    @Autowired
+    AccountRepository accountRepository;
 
     public int isValidAuthKey(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
@@ -51,6 +49,7 @@ public class CommonService {
         int authId = acc.getAuthId();
         return authId;
     }
+
     public int isValidAuthKeyU(String authKey){
         AccountAuthEntity acc = accountAuthRepository.findByAuthKey(authKey);
         if(acc == null) return 0;
@@ -61,6 +60,7 @@ public class CommonService {
         int accountId = acc.getAccountId();
         return accountId;
     }
+
     public Boolean isValidRequest(String token,String authKey,String systemName){
         UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
         if(userAuthEntity == null)return false;
@@ -75,6 +75,7 @@ public class CommonService {
         }
         return true;
     }
+
     public Boolean isValidRequestUserUpdate(String authKey,String token,String systemName1,String systemName2){
         UserAuthEntity userAuthEntity = userAuthRepository.findByTokenAndAuthKey(token,authKey);
         logger.info("UserAuthEntity : {} ",userAuthEntity);
@@ -90,6 +91,7 @@ public class CommonService {
         }
         return true;
     }
+
     public Boolean isAccessAllowed(String token,String systemName){
         UserAuthEntity userAuthEntity = userAuthRepository.findByToken(token);
         String systemNames = userAuthEntity.getSystemNames();
@@ -104,17 +106,19 @@ public class CommonService {
         String generatedString = RandomStringUtils.randomAlphanumeric(10);
         return generatedString;
     }
+
     public String generateToken(Integer userId,String type) {
         String val = String.format("%03d", userId);
         return type+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
     }
+
     public String generatedKey(int accountId){
         String val = String.format("%03d", accountId);
         String key = "AC"+val+givenUsingApache_whenGeneratingRandomAlphanumericString_thenCorrect();
         return key;
     }
-    public Boolean authorizationCheck(String authKey, String token, String systemName){
 
+    public Boolean authorizationCheck(String authKey, String token, String systemName){
         if(!isValidRequest(token,authKey,systemName)) {
             logger.info("Unauthorised user, wrong authorization key or Invalid Token !");
             return false;
@@ -186,6 +190,7 @@ public class CommonService {
             e.printStackTrace();
         }
     }
+
     private void removeFromFeatureMeta(Integer[] featureId, Integer accountId){
         List<UserEntity> list = userRepository.findUsersByAccountId(accountId);
         logger.info("Users : {}",list);
@@ -273,7 +278,22 @@ public class CommonService {
         return map;
     }
 
+    public void changeUserLogo(Integer accountId, String oldPath, String newPath){
+        List<UserEntity> userEntities = userRepository.findByAccountId(accountId);
+        if(userEntities.isEmpty() || userEntities==null){
+            return;
+        }
+        for(UserEntity userEntity : userEntities){
+            if(userEntity.getLogo().equals(oldPath)){
+                userRepository.updateLogoPath(userEntity.getUserId(),newPath);
+            }
+        }
+    }
+
     public Map<String,String> getImage(String path) throws IOException {
+        if(path.isEmpty() || path.contains("{}")){
+            return null;
+        }
         Map<String,String> map = new HashMap<>();
         File file = new File(path);
         byte[] fileContent = FileUtils.readFileToByteArray(file);
@@ -287,6 +307,15 @@ public class CommonService {
         return map;
     }
 
+    public Map<String,Object> getDefaultImageToStore(byte[] fileContent,String imgName) throws IOException {
+        Map<String,Object> map = new HashMap<>();
+        String encodedString = Base64.getEncoder().encodeToString(fileContent);
+        map.put("name",imgName);
+        map.put("byte",encodedString);
+        logger.info(map.toString());
+        return map;
+    }
+
     public void decodeToImage(String base64,String path){
         byte[] data = DatatypeConverter.parseBase64Binary(base64);
         File file = new File(path);
@@ -296,6 +325,26 @@ public class CommonService {
             e.printStackTrace();
         }
     }
+    public void saveFilePathToFeature(String filePath, String loginId, String name){
+
+        AccountEntity accountEntity= accountRepository.findByAccountName(name);
+
+        HashMap<String,Object> featuresMeta=accountEntity.getFeaturesMeta();
+        HashMap<String,Object> map= (HashMap<String, Object>) featuresMeta.get("4");
+        map.replace("pre_recorded_video_file",filePath);
+        featuresMeta.replace("4",map);
+        logger.info("Features Meta {}",featuresMeta);
+        accountEntity.setFeaturesMeta(featuresMeta);
+        logger.info("Pre recorded val : {}",map.get("pre_recorded_video_file"));
+        logger.info("getFeatureMeta1 {} ", accountEntity.getFeaturesMeta());
+        Gson gson=new Gson();
+        String json=gson.toJson(featuresMeta);
+        logger.info("Json {}",json);
+        JsonObject jsonObject=gson.fromJson(json,JsonObject.class);
+        accountRepository.updateFeatureMeta(name,json);
+        logger.info("getFeatureMeta2 {} ", accountEntity.getFeaturesMeta());
+    }
+
     public Map<String,String> responseData(String statusCode,String message){
         Map<String ,String> response = new HashMap<>();
         response.put("status_code",statusCode);

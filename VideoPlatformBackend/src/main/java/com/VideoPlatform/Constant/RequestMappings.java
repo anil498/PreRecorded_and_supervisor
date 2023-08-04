@@ -7,4 +7,5 @@ public class RequestMappings {
     final public static String APICALLFEATURE="/VPService/v1/Feature";
     final public static String APICALLACCESS="/VPService/v1/Access";
     final public static String APICALLICDC="/VPService/v1/Icdc";
+    final public static String APICALLPRERECORDED="/VPService/v1/PreRecorded";
 }

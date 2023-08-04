@@ -1,15 +1,22 @@
 <div
 	*ngIf="this._stream"
 	class="OV_stream"
-	[ngClass]="{'no-size': !showVideo}"
+	[ngClass]="{ 'no-size': !showVideo }"
 	[id]="'container-' + this._stream.streamManager?.stream?.streamId"
 	#streamContainer
 >
 	<div *ngIf="!isMinimal && showNickname" id="nickname-container" class="nickname" [class.fullscreen]="isFullscreen">
 		<div (click)="toggleNicknameForm()" class="nicknameContainer" selected *ngIf="!toggleNickname">
 			<span id="nickname" *ngIf="this._stream.type === 'CAMERA'">{{ this._stream.participant.nickname }}</span>
-			<span id="nickname" *ngIf="this._stream.type === 'SCREEN'">{{ this._stream.participant.nickname }}</span>
-			<span id="nickname" *ngIf="this._stream.type !== 'CAMERA' && this._stream.type !== 'SCREEN'">{{ this._stream.participant.nickname }}</span>
+			<span id="nickname" *ngIf="this._stream.type === 'SCREEN' && this._stream.participant.isLocal()"
+				>{{ this._stream.participant.nickname }}_SCREEN</span
+			>
+			<span id="nickname" *ngIf="this._stream.type === 'SCREEN' && !this._stream.participant.isLocal()">{{
+				this._stream.participant.nickname
+			}}</span>
+			<span id="nickname" *ngIf="this._stream.type !== 'CAMERA' && this._stream.type !== 'SCREEN'">{{
+				this._stream.participant.nickname
+			}}</span>
 		</div>
 		<div *ngIf="toggleNickname && !this._stream.streamManager?.remote" [class.fullscreen]="isFullscreen" id="nickname-input-container">
 			<input
@@ -52,7 +59,13 @@
 	</div>
 
 	<div *ngIf="!isMinimal && showSettingsButton" id="settings-container" class="videoButtons">
-		<button mat-icon-button (click)="toggleVideoMenu($event)" matTooltip="{{ 'STREAM.SETTINGS' | translate }}" matTooltipPosition="above" aria-label="Video settings menu">
+		<button
+			mat-icon-button
+			(click)="toggleVideoMenu($event)"
+			matTooltip="{{ 'STREAM.SETTINGS' | translate }}"
+			matTooltipPosition="above"
+			aria-label="Video settings menu"
+		>
 			<mat-icon>more_vert</mat-icon>
 		</button>
 		<span [matMenuTriggerFor]="menu"></span>
@@ -78,12 +91,28 @@
 				<mat-icon>picture_in_picture</mat-icon>
 				<span>{{ 'STREAM.REPLACE_SCREEN' | translate }}</span>
 			</button>
-			<button mat-menu-item id="holdButton" *ngIf="!this._stream.participant.local && this._stream.participant.nickname=='Customer' && !this._stream.participant.nickname=='Supervisor'" (click)="toggleHold()">
-				<mat-icon *ngIf="!this.isOnHold">pause</mat-icon>
-				<span *ngIf="!this.isOnHold">{{ 'STREAM.HOLD' | translate }}</span>
+			<button
+				mat-menu-item
+				id="holdButton"
+				*ngIf="
+					!this._stream.participant.local &&
+					this._stream.participant.nickname == 'Customer' &&
+					!(this.localparticipantnickname == 'Supervisor')
+				"
+				(click)="toggleHold()"
+			>
+				<mat-icon *ngIf="(this.isMergedone && !this.isOnHold) || (!this.isOnHold && !this.isSupervisorActive)">pause</mat-icon>
+				<span *ngIf="(this.isMergedone && !this.isOnHold) || (!this.isOnHold && !this.isSupervisorActive)">{{
+					'STREAM.HOLD' | translate
+				}}</span>
 
-				<mat-icon *ngIf="this.isOnHold">play_arrow</mat-icon>
-				<span *ngIf="this.isOnHold">{{ 'STREAM.UNHOLD' | translate }}</span>
+				<mat-icon *ngIf="(this.isMergedone && this.isOnHold) || (this.isOnHold && !this.isSupervisorActive)">play_arrow</mat-icon>
+				<span *ngIf="(this.isMergedone && this.isOnHold) || (this.isOnHold && !this.isSupervisorActive)">{{
+					'STREAM.UNHOLD' | translate
+				}}</span>
+
+				<mat-icon *ngIf="!isMergedone && this.isSupervisorActive">picture_in_picture</mat-icon>
+				<span *ngIf="!isMergedone && this.isSupervisorActive">{{ 'STREAM.UNHOLD_REMOVESUPERVISOR' | translate }}</span>
 			</button>
 		</mat-menu>
 	</div>

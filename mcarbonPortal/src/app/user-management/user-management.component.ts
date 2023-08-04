@@ -90,7 +90,7 @@ export class UserManagementComponent implements OnInit {
             null,
             loginResponse.user_data.userId
           );
-          console.log("logo1",logoResponse);
+          console.log("logo1", logoResponse);
           loginResponse.user_data.logo = logoResponse;
         } catch (err) {
           console.log(err);
@@ -133,9 +133,7 @@ export class UserManagementComponent implements OnInit {
   checkStatus(user: Users) {
     let currentDate = new Date();
     let time = currentDate.toTimeString().split(" ")[0];
-    console.log("time " + time);
     let currentDateString = currentDate.toISOString().split("T")[0];
-    console.log(currentDateString);
     currentDateString = currentDateString + " " + time;
 
     if (user.expDate < currentDateString && user.status !== 2) {
@@ -283,11 +281,17 @@ export class UserManagementComponent implements OnInit {
     console.log("Confirm Delete");
 
     const dialogRef = this.dialog.open(DeleteDialogComponent, dialogConfig);
-    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+    dialogRef.afterClosed().subscribe(async (confirmed: boolean) => {
       console.log(confirmed);
       if (confirmed) {
-        this.restService.deleteUser(userId);
-        console.log("user Deleted");
+        let response = await this.restService.deleteUser(userId);
+        console.log(response);
+        if (response.status_code == 200) {
+          console.log("user Deleted");
+          this.openSnackBar(response.msg, "success");
+        } else {
+          this.openSnackBar("User Not Deleted", "error");
+        }
       } else {
         console.log("user not deleted");
       }

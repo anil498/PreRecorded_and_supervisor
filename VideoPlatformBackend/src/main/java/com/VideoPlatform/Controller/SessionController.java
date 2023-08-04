@@ -2,7 +2,6 @@ package com.VideoPlatform.Controller;
 
 import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Entity.*;
-import com.VideoPlatform.Repository.*;
 import com.VideoPlatform.Services.CommonService;
 import com.VideoPlatform.Services.SessionService;
 
@@ -30,21 +29,8 @@ import static org.springframework.http.ResponseEntity.ok;
 public class SessionController {
 
     private static final Logger logger= LoggerFactory.getLogger(SessionController.class);
-
-    @Autowired
-    AccountAuthRepository accountAuthRepository;
-    @Autowired
-    UserAuthRepository userAuthRepository;
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    AccessRepository accessRepository;
     @Autowired
     SessionService sessionService;
-    @Autowired
-    AccountRepository accountRepository;
-    @Autowired
-    SessionRepository sessionRepository;
     @Autowired
     CommonService commonService;
     @Value("${file.path}")
@@ -54,6 +40,9 @@ public class SessionController {
 
     @PostMapping("/Create")
     public ResponseEntity<?> createSession(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLSESSION, params != null ? params : "{}",commonService.getHeaders(request));
+        if(params==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -72,10 +61,7 @@ public class SessionController {
         SessionEntity sessionEntityCustomer = sessionService.createSession(authKey,token,false,"","",description,participantName,"Customer");
         SessionEntity sessionEntitySupport = sessionService.createSession(authKey,token,true,sessionEntityCustomer.getSessionId(),sessionEntityCustomer.getSessionKey(),description,participantName,"Support");
 
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Session created!");
-        return ok(result);
+        return ok(commonService.responseData("200","Session Created!"));
     }
 
     @GetMapping("/GetAll")
@@ -110,6 +96,7 @@ public class SessionController {
         return ok(sessionService.getByKey(sessionKey));
 
     }
+
     @PostMapping("/GetSessions")
     public ResponseEntity<?> getSessionByCount(@RequestBody Map<String, Integer> params, HttpServletRequest request) {
         String authKey = request.getHeader("Authorization");
@@ -127,7 +114,8 @@ public class SessionController {
         }
         return ResponseEntity.ok(sessionKeys);
     }
-        @DeleteMapping("/Delete/{key}")
+
+    @DeleteMapping("/Delete/{key}")
     public ResponseEntity<?> deleteSession(@PathVariable String key, HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
@@ -136,13 +124,7 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token,"my_sessions")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
-        sessionService.deleteSession(key);
-
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Session deleted!");
-
-        return ok(result);
+        return sessionService.deleteSession(key);
     }
 
     @PutMapping("/Update")
@@ -166,10 +148,12 @@ public class SessionController {
         if(!commonService.authorizationCheck(authKey,token,"dynamic_links")){
             return  new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
+
         return sessionService.sendLink(params,request,response);
     }
+
     @PostMapping("/sessionPlugin")
-    public ResponseEntity<?> sessionPlugin(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<?> sessionPlugin(@RequestBody(required = false) Map<String, ?> params,HttpServletRequest request) {
 
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
@@ -193,6 +177,7 @@ public class SessionController {
         result.put("callUrl",callUrl);
         return ok(result);
     }
+
     @GetMapping("/Download/{filename}")
     public ResponseEntity<byte[]> handleFileDownload(@PathVariable("filename") String filename) throws IOException {
         Path file = Paths.get(FILE_DIRECTORY, filename);

@@ -104,6 +104,10 @@ export class StreamComponent implements OnInit {
 	/**
 	 * @ignore
 	 */
+	localparticipantnickname: string;
+	/**
+	 * @ignore
+	 */
 	isMinimal: boolean = false;
 	/**
 	 * @ignore
@@ -120,6 +124,15 @@ export class StreamComponent implements OnInit {
 	showVideo: boolean;
 	displayTickerValue: string;
 	isOnHold: boolean;
+	/**
+	 * @ignore
+	 */
+	isSupervisorActive: boolean = false;
+
+	/**
+	 * @ignore
+	 */
+	isMergedone: boolean = false;
 	protected log: ILogger;
 
 	/**
@@ -173,6 +186,8 @@ export class StreamComponent implements OnInit {
 	private settingsButtonSub: Subscription;
 	private displayTickerValueSub: Subscription;
 	private isOnHoldSubs: Subscription;
+	private isSupervisorActiveSub: Subscription;
+	private isMergedoneSub: Subscription;
 
 	/**
 	 * @ignore
@@ -187,6 +202,7 @@ export class StreamComponent implements OnInit {
 		private loggerSrv: LoggerService
 	) {
 		this.log = this.loggerSrv.get('StreamComponent');
+		this.localparticipantnickname = this.participantService.getMyNickname();
 	}
 
 	ngOnInit() {
@@ -257,18 +273,27 @@ export class StreamComponent implements OnInit {
 			this.log.d('Going to hold the partiticpant: ', connectionId);
 			this.openviduService.holdPartiticipantSiganl(connectionId);
 			this.libService.isOnHold.next(true);
-		    const remoteParticipants = this.participantService.getRemoteParticipants();
-			const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
+			const remoteParticipants = this.participantService.getRemoteParticipants();
+			const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
 			if (participantToUpdate) {
 				participantToUpdate.isOnHold = true;
 				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
 			}
 		} else {
 			this.log.d('Going to unhold the partiticpant: ', connectionId);
+			if (this.isSupervisorActive && this.isOnHold && !this.isMergedone) {
+				//send leave signal to supervisor
+				const data = {
+					message: 'leave meeting',
+					nickname: this.participantService.getMyNickname()
+				};
+				this.log.d('send signal to supervisor for leavemeeting');
+				this.openviduService.sendSignal(Signal.LEAVEMEETING, undefined, data);
+			}
 			this.openviduService.unholdPartiticipantSignal(connectionId);
 			this.libService.isOnHold.next(false);
 			const remoteParticipants = this.participantService.getRemoteParticipants();
-			const participantToUpdate = remoteParticipants.find(participant => participant.nickname === 'Customer');
+			const participantToUpdate = remoteParticipants.find((participant) => participant.nickname === 'Customer');
 			if (participantToUpdate) {
 				participantToUpdate.isOnHold = false;
 				this.participantService.updateRemoteParticipantsByModel(participantToUpdate);
@@ -334,6 +359,14 @@ export class StreamComponent implements OnInit {
 		this.isOnHoldSubs = this.libService.isOnHoldObs.subscribe((value: boolean) => {
 			this.isOnHold = value;
 			// this.cd.markForCheck();
+		});
+		this.isSupervisorActiveSub = this.libService.isSupervisorActiveObs.subscribe((value: boolean) => {
+			this.isSupervisorActive = value;
+			//this.cd.markForCheck();
+		});
+		this.isMergedoneSub = this.libService.isMergedoneObs.subscribe((value: boolean) => {
+			this.isMergedone = value;
+			//this.cd.markForCheck();
 		});
 	}
 }

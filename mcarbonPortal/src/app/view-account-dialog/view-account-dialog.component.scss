@@ -152,7 +152,7 @@ button[type="button"] {
 
 .feature-section {
   display: flex;
-  justify-content: space-around;
+  padding-left: 10%;
 }
 
 .grid-container {
@@ -160,6 +160,7 @@ button[type="button"] {
   flex-direction: column;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: min-content;
+  width: 50%;
 }
 
 .grid-item {

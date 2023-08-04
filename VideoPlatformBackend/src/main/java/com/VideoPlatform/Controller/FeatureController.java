@@ -7,6 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.VideoPlatform.Constant.RequestMappings;
 import com.VideoPlatform.Entity.FeatureEntity;
 import com.VideoPlatform.Repository.FeatureRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,8 @@ import static org.springframework.http.ResponseEntity.ok;
 @RequestMapping(RequestMappings.APICALLFEATURE)
 public class FeatureController {
 
+    private static final Logger logger= LoggerFactory.getLogger(AccountController.class);
+
     @Autowired
     private FeatureRepository featureRepository;
     @Autowired
@@ -36,6 +40,10 @@ public class FeatureController {
 
     @PostMapping("/Create")
     public ResponseEntity<?> createFeature(@RequestBody FeatureEntity featureEntity, HttpServletRequest request) {
+        logger.info("REST API: POST {} {} Request Headers={}", RequestMappings.APICALLFEATURE, featureEntity != null ? featureEntity.toString() : "{}",commonService.getHeaders(request));
+        if(featureEntity==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -50,6 +58,7 @@ public class FeatureController {
         result.put("msg", "Feature created!");
         return ok(result);
     }
+
     @GetMapping("/GetAll")
     public ResponseEntity<List<FeatureEntity>> featureList(HttpServletRequest request , HttpServletResponse response) {
         String authKey = request.getHeader("Authorization");
@@ -60,11 +69,9 @@ public class FeatureController {
         }
         return ResponseEntity.ok(featureService.getAllFeatures());
     }
+
     @GetMapping("/GetList")
     public ResponseEntity<List<Object>>getIdList(HttpServletRequest request , HttpServletResponse response) throws JsonProcessingException {
-//        ObjectMapper obj = new ObjectMapper();
-//        String res = obj.writeValueAsString(featureRepository.findList());
-//        return ResponseEntity.ok(res);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .body(featureRepository.findList());
@@ -72,6 +79,10 @@ public class FeatureController {
 
     @PutMapping("/Update")
     public ResponseEntity<?> updateFeature(@RequestBody String featureEntity, HttpServletRequest request){
+        logger.info("REST API: PUT {} {} Request Headers={}", RequestMappings.APICALLFEATURE, featureEntity != null ? featureEntity : "{}",commonService.getHeaders(request));
+        if(featureEntity==null)
+            return new ResponseEntity<>(commonService.responseData("500","Request must contain parameter values!"),HttpStatus.INTERNAL_SERVER_ERROR);
+
         String authKey = request.getHeader("Authorization");
         String token = request.getHeader("Token");
 
@@ -90,12 +101,8 @@ public class FeatureController {
             return  new ResponseEntity<List<FeatureEntity>>(HttpStatus.UNAUTHORIZED);
         }
         featureService.deleteFeature(featureId);
-        Map<String,String> result = new HashMap<>();
-        result.put("status_code","200");
-        result.put("msg", "Feature deleted!");
-        return ok(result);
+        return ok(commonService.responseData("200","Feature Deleted!"));
     }
-
 }
 
 

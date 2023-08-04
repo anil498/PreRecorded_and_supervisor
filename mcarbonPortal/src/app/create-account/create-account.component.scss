@@ -232,3 +232,12 @@ img {
   color: red;
   cursor: pointer;
 }
+
+.fixed-plugin {
+  position: relative;
+  top: 0px;
+  background: rgba(0, 0, 0, 0);
+  z-index: 1031;
+  border-radius: 8px 0 0 8px;
+  text-align: center;
+}

@@ -1,6 +1,5 @@
 <div id="call-container">
-
-	<div id="spinner" *ngIf="loading" >
+	<div id="spinner" *ngIf="loading">
 		<mat-spinner [diameter]="50"></mat-spinner>
 		<span>{{ 'PREJOIN.PREPARING' | translate }}</span>
 	</div>
@@ -15,7 +14,12 @@
 	</div>
 
 	<div [@inOutAnimation] id="vc-container" *ngIf="showVideoconference || (!showPrejoin && !loading && !error)">
-		<ov-session  *ngIf="isSessionInitialized && !nodeCrashed" (onSessionCreated)="_onSessionCreated($event)" (onNodeCrashed)="_onNodeCrashed()">
+		<ov-session
+			*ngIf="isSessionInitialized && !nodeCrashed"
+			(onSessionCreated)="_onSessionCreated($event)"
+			(onLeaveButtonClicked)="onLeaveButtonClicked()"
+			(onNodeCrashed)="_onNodeCrashed()"
+		>
 			<ng-template #toolbar>
 				<ng-container *ngIf="openviduAngularToolbarTemplate">
 					<ng-container *ngTemplateOutlet="openviduAngularToolbarTemplate"></ng-container>
@@ -141,8 +145,10 @@
 </ng-template>
 
 <ng-template #defaultStream let-stream>
-	<ov-stream [stream]="stream" id="default-stream"
-	(onUnHoldButtonClicked)="onUnHoldButtonClicked()"
-	(onHoldButtonClicked)="onHoldButtonClicked()"
+	<ov-stream
+		[stream]="stream"
+		id="default-stream"
+		(onUnHoldButtonClicked)="onUnHoldButtonClicked()"
+		(onHoldButtonClicked)="onHoldButtonClicked()"
 	></ov-stream>
 </ng-template>
