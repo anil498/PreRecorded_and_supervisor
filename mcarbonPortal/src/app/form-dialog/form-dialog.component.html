@@ -309,13 +309,23 @@
               <input
                 matInput
                 id="password"
-                type="password"
+                [type]="hide ? 'password' : 'text'"
                 placeholder="Password"
                 formControlName="password"
                 [(ngModel)]="password"
                 [matTooltip]="getErrorMessage2('password')"
                 matTooltipClass="tooltip-style"
               />
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hide = !hide"
+                [attr.aria-label]="hide ? 'Show password' : 'Hide password'"
+              >
+                <mat-icon>{{
+                  hide ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
               <mat-error
                 *ngIf="
                   userForm2.get('password').invalid &&
@@ -351,14 +361,22 @@
               <input
                 matInput
                 id="confirm_password"
-                type="password"
+                [type]="hide2 ? 'password' : 'text'"
                 placeholder="Confirm Password"
                 formControlName="confirm_password"
+                [matTooltip]="getErrorMessage2('confirm_password')"
+                matTooltipClass="tooltip-style"
               />
-              <!-- <mat-error
-                *ngIf="userForm.hasError('mismatch', 'confirm_password')"
-                >Passwords do not match</mat-error
-              > -->
+              <button
+                mat-icon-button
+                matSuffix
+                (click)="hide2 = !hide2"
+                [attr.aria-label]="hide2 ? 'Show password' : 'Hide password'"
+              >
+                <mat-icon>{{
+                  hide2 ? "visibility_off" : "visibility"
+                }}</mat-icon>
+              </button>
             </mat-form-field>
           </div>
         </div>
