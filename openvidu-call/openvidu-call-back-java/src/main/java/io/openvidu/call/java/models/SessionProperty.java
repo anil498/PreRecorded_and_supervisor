@@ -27,6 +27,7 @@ public class SessionProperty {
   private Date expDate;
   private String cameraToken="";
   private String screenToken="";
+  private String customToken="";
   private List<Recording> recordings;
   private String type="Customer";
   private String recordingMode="MANUAL"; // for auto recording need to set {ALWAYS}
@@ -189,6 +190,14 @@ public class SessionProperty {
     this.hold = hold;
   }
 
+  public String getCustomToken() {
+    return customToken;
+  }
+
+  public void setCustomToken(String customToken) {
+    this.customToken = customToken;
+  }
+
   @Override
   public String toString() {
     return "SessionProperty{" +
@@ -206,6 +215,7 @@ public class SessionProperty {
             ", expDate=" + expDate +
             ", cameraToken='" + cameraToken + '\'' +
             ", screenToken='" + screenToken + '\'' +
+            ", customToken='" + customToken + '\'' +
             ", recordings=" + recordings +
             ", type='" + type + '\'' +
             ", recordingMode='" + recordingMode + '\'' +
