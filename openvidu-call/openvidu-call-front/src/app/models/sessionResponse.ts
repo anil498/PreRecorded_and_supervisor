@@ -104,10 +104,7 @@ export class SessionResponse {
 export class Settings {
 	private _duration?: number;
 	private _showLogo?: boolean;
-	private _logo?: {
-		byte?: string;
-		type?: string;
-	};
+	private _logo?:string;
 	private _description?: string;
 	private _landingPage?: string;
 	private _moderators?: boolean;
@@ -168,11 +165,11 @@ export class Settings {
 		this._showLogo = value;
 	}
 
-	get logo(): { byte?: string; type?: string } | undefined {
+	get logo(): string| undefined {
 		return this._logo;
 	}
 
-	set logo(value: { byte?: string; type?: string } | undefined) {
+	set logo(value: string | undefined) {
 		this._logo = value;
 	}
 
