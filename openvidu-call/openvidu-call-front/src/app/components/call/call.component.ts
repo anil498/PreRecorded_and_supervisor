@@ -217,8 +217,10 @@ export class CallComponent implements OnInit {
 			}
 			this.sessionName = response.sessionName;
 			this.showLogo = response.settings.showLogo;
-			const logo=this.restService.getLogo(response.settings.logo);
-			console.log(logo)
+			const logoResponse=await this.restService.getLogo(response.settings.logo);
+			if(logoResponse.logo){
+				this.logo=logoResponse.logo;
+			}
 			this.activitiesButton = response.settings.activitiesButton;
 			this.displayTicker = response.settings.displayTicker;
 			this.displayTimer = response.settings.displayTimer;

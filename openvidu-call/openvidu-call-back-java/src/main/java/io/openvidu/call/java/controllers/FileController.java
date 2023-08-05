@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
@@ -58,5 +60,45 @@ public class FileController {
         }else {
             return ResponseEntity.internalServerError().body("File name not found");
         }
+    }
+    @PostMapping("/downloadLogo")
+    public ResponseEntity<?> downloadLogo(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request) {
+        // Load file as Resource
+        String fileName;
+
+        if (params == null) {
+            return ResponseEntity.internalServerError().body("Body not found");
+        }
+
+        if (params.containsKey("fileName")) {
+            fileName = params.get("fileName").toString();
+            Resource resource = fileStorageService.loadFileAsResource(fileName);
+
+            // Read the file and convert to Base64
+            String base64Data;
+            try {
+                byte[] fileBytes = Files.readAllBytes(resource.getFile().toPath());
+                base64Data = Base64.getEncoder().encodeToString(fileBytes);
+            } catch (IOException ex) {
+                return ResponseEntity.internalServerError().body("Failed to read file.");
+            }
+
+            // Create the Base64 URL and return it
+            String imageUrl = "data:" + getMimeType(fileName) + ";base64," + base64Data;
+            Map<String, String> response = new HashMap<>();
+            response.put("logo", imageUrl);
+
+            return ResponseEntity.ok().body(response);
+        } else {
+            return ResponseEntity.internalServerError().body("File name not found");
+        }
+    }
+
+    // Helper method to get the MIME type based on the file extension
+    private String getMimeType(String fileName) {
+        // You may need to implement this method to get the MIME type based on the file extension.
+        // For simplicity, you can hardcode common image MIME types here or use a library to determine it.
+        // Example: For PNG images, return "image/png".
+        return "application/octet-stream";
     }
 }

@@ -34,8 +34,8 @@ export class RestService {
 	async updateSession(sessionKey: string, isOnHold: boolean): Promise<any> {
 		return this.postRequest('updateSession', { sessionKey, isOnHold });
 	}
-	async getLogo(fileName: string): Promise<string> {
-		return this.postRequest('downloadFile', { fileName });
+	async getLogo(fileName: string): Promise<{logo:string}> {
+		return this.postRequest('downloadLogo', { fileName });
 	}
 	adminLogin(password: string): Promise<any[]> {
 		return this.postRequest('auth/admin/login', { password });
